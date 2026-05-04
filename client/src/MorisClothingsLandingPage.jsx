@@ -1,28 +1,28 @@
 export default function MorisClothingsLandingPage() {
   const products = [
     {
-      name: "Classic T-Shirt",
-      price: "£25",
+      name: "Modern Sofa",
+      price: "£450",
       image:
-        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1617020042027-3f24c5771bee?auto=format&fit=crop&w=800&q=80",
     },
     {
-      name: "Elegant Hoodie",
-      price: "£45",
+      name: "Oak Dining Table",
+      price: "£620",
       image:
-        "https://images.unsplash.com/photo-1503341504253-dff4815485f1?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80",
     },
     {
-      name: "Stylish Jacket",
-      price: "£65",
+      name: "Luxury Armchair",
+      price: "£320",
       image:
-        "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1493666438817-866a91353ca9?auto=format&fit=crop&w=800&q=80",
     },
     {
-      name: "Casual Trouser",
-      price: "£35",
+      name: "Minimalist Console",
+      price: "£210",
       image:
-        "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80",
     },
   ];
 
@@ -31,7 +31,7 @@ export default function MorisClothingsLandingPage() {
       {/* HEADER */}
       <header className="border-b border-white/10 bg-neutral-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <h1 className="text-xl font-bold">Moris Clothings</h1>
+          <h1 className="text-xl font-bold">NewBrend Furniture & Interior</h1>
 
           <div className="text-sm text-neutral-300">
             WhatsApp: +44 7440 092312
@@ -42,10 +42,10 @@ export default function MorisClothingsLandingPage() {
       {/* HERO */}
       <section className="px-6 py-16 text-center">
         <h2 className="text-4xl font-bold md:text-5xl">
-          Wear Confidence. Wear Moris.
+          Live Beautifully. Furnish with NewBrend.
         </h2>
         <p className="mt-4 text-neutral-300">
-          Premium clothing made for everyday style.
+          Luxury furniture and interior styling for modern homes.
         </p>
 
         <a

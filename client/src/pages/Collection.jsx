@@ -27,7 +27,7 @@ export default function Collection() {
           <div className="reveal">
             <h1 className="title">All Products</h1>
             <p className="muted">
-              Explore premium tailoring, custom gowns, senator wears and more.
+              Explore luxury furniture, decorative accents, and custom interior pieces.
             </p>
           </div>
 

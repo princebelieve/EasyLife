@@ -65,9 +65,9 @@ export default function MeasurementForm() {
   return (
     <form className="measurement-form hover-lift" onSubmit={handleSubmit}>
       <div className="measurement-header">
-        <span className="eyebrow">CUSTOM FIT FORM</span>
-        <h2>Send Your Measurements</h2>
-        <p>Fill in your body measurements and preferred outfit type.</p>
+        <span className="eyebrow">CUSTOM DESIGN FORM</span>
+        <h2>Request Custom Furniture</h2>
+        <p>Share your room details, furniture type, and design preferences.</p>
       </div>
 
       <div className="measurement-grid two-col">
@@ -94,12 +94,12 @@ export default function MeasurementForm() {
         value={form.outfitType}
         required
       >
-        <option value="">Select Outfit Type</option>
-        <option value="Senator Wear">Senator Wear</option>
-        <option value="Suit">Suit</option>
-        <option value="Native Wear">Native Wear</option>
-        <option value="Gown">Gown</option>
-        <option value="Kaftan">Kaftan</option>
+        <option value="">Select Furniture Type</option>
+        <option value="Sofa">Sofa</option>
+        <option value="Dining Table">Dining Table</option>
+        <option value="Bed Frame">Bed Frame</option>
+        <option value="Storage Cabinet">Storage Cabinet</option>
+        <option value="Accent Chair">Accent Chair</option>
       </select>
 
       <div className="measurement-section luxury-card">
@@ -179,14 +179,14 @@ export default function MeasurementForm() {
 
       <textarea
         name="notes"
-        placeholder="Extra Notes, fabric preference, style reference, special request..."
+        placeholder="Extra notes, material preference, room size, color palette, special request..."
         onChange={handleChange}
         value={form.notes}
         rows="5"
       />
 
       <button type="submit" className="measurement-submit">
-        Submit Measurement
+        Submit Request
       </button>
     </form>
   );

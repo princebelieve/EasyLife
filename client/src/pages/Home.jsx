@@ -31,20 +31,18 @@ export default function Home() {
       <section className="section reveal">
         <div className="container dual-grid">
           <div className="dual-card hover-lift">
-            <span className="dual-label">READY TO WEAR</span>
-            <h2>Premium Fashion Collection</h2>
+            <span className="dual-label">READY TO SHIP</span>
+            <h2>Premium Furniture Collection</h2>
             <p>
-              Discover senator wears, suits, gowns and refined styles created
-              for modern elegance.
+              Discover curated sofas, tables, chairs and decor designed for elegant living.
             </p>
           </div>
 
           <div className="dual-card hover-lift">
-            <span className="dual-label">BESPOKE TAILORING</span>
-            <h2>Custom-Made To Your Measurements</h2>
+            <span className="dual-label">BESPOKE DESIGN</span>
+            <h2>Custom Interiors For Your Space</h2>
             <p>
-              Every outfit is tailored personally to your preferred fit, fabric
-              and style.
+              Every piece is built to suit your room, materials and lifestyle.
             </p>
           </div>
         </div>
@@ -54,7 +52,7 @@ export default function Home() {
       <section className="section-alt reveal">
         <div className="container">
           <h2 className="title">Featured Collection</h2>
-          <p className="muted">Premium ready-to-wear fashion pieces</p>
+          <p className="muted">Luxury furniture and interior pieces for every room</p>
 
           <ProductGrid products={products} />
         </div>
@@ -67,14 +65,14 @@ export default function Home() {
 
           <div className="service-grid">
             <div className="service-card hover-lift">
-              <h3>Luxury Tailoring</h3>
-              <p>Perfect fit suits, senator wears, gowns & native styles.</p>
+              <h3>Luxury Furniture</h3>
+              <p>Hand-finished sofas, tables, cabinets and upholstered accents.</p>
             </div>
 
             <div className="service-card hover-lift">
               <h3>Custom Design</h3>
               <p>
-                We bring your fashion ideas into reality from sketch to finish.
+                We bring your interior ideas into reality from concept to delivery.
               </p>
             </div>
 
@@ -91,8 +89,8 @@ export default function Home() {
       {/* CTA */}
       <section className="cta-banner reveal">
         <div className="container">
-          <h2>Ready to Upgrade Your Style?</h2>
-          <p>Shop or request a custom outfit today.</p>
+          <h2>Ready to Refresh Your Interior?</h2>
+          <p>Shop furniture or request a custom design consultation today.</p>
         </div>
       </section>
 

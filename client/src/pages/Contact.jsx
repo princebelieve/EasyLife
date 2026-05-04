@@ -16,13 +16,13 @@ export default function Contact() {
         <section className="contact-hero reveal">
           <div className="container contact-hero-card">
             <div className="contact-copy">
-              <span className="eyebrow">CONTACT MORIS CLOTHINGS</span>
+              <span className="eyebrow">CONTACT NEWBREND FURNITURE</span>
 
-              <h1>Luxury Tailoring, Wherever You Are</h1>
+              <h1>Luxury Furniture & Interior Design</h1>
 
               <p>
-                Send your measurements, discuss your preferred style, and let us
-                create a perfectly tailored outfit made for you.
+                Share your room ideas, request a custom furniture quote, and let
+                us craft a stylish interior layout for your home.
               </p>
 
               <div className="contact-strip">
@@ -62,7 +62,7 @@ export default function Contact() {
             <div className="info-list">
               <div>
                 <MapPin size={20} />
-                <span>United Kingdom Remote Tailoring Service</span>
+                <span>United Kingdom furniture & interior design service</span>
               </div>
 
               <div>
@@ -81,9 +81,9 @@ export default function Contact() {
             </div>
 
             <p>
-              Every measurement is reviewed personally before tailoring begins.
-              We will contact you after submission to confirm your preferred
-              fit, fabric and style.
+              Every request is reviewed personally, and we will contact you after
+              submission to confirm your materials, dimensions, and design
+              preferences.
             </p>
           </div>
         </section>

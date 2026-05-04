@@ -14,24 +14,25 @@ export default function About() {
       <section className="about-hero reveal">
         <div className="container about-hero-grid">
           <div className="about-copy">
-            <span className="eyebrow">ABOUT MORIS CLOTHINGS</span>
+            <span className="eyebrow">ABOUT NEWBREND FURNITURE</span>
 
             <h1>
-              Crafted For Confidence.
+              Crafted For Comfort.
               <br />
-              Tailored For You.
+              Designed For Home.
             </h1>
 
             <p>
-              Moris Clothings is a premium tailoring and fashion brand dedicated
-              to helping men and women look elegant, modern and unforgettable.
-              From luxury senator wears and suits to custom gowns and native
-              outfits, every piece is created with precision, detail and style.
+              NewBrend Furniture is a premium furniture and interior brand
+              dedicated to creating beautiful, functional living spaces. From
+              bespoke sofas and dining tables to custom shelving and interior
+              decor, every piece is crafted with luxury materials and attention
+              to detail.
             </p>
           </div>
 
           <div className="about-image-wrap hover-lift">
-            <img src="/about.jpg" alt="Moris Clothings tailoring" />
+            <img src="/about.jpg" alt="NewBrend Furniture interior" />
           </div>
         </div>
       </section>
@@ -42,10 +43,10 @@ export default function About() {
           <div className="story-card hover-lift">
             <h2 className="title">Our Story</h2>
             <p className="muted">
-              Moris Clothings was built from a passion for timeless fashion and
-              quality craftsmanship. We believe clothing should do more than
-              look beautiful — it should give confidence, fit perfectly and make
-              every customer feel exceptional.
+              NewBrend Furniture was built from a passion for timeless design and
+              quality craftsmanship. We believe furniture should do more than
+              look beautiful — it should create comfort, elevate your interior,
+              and make every home feel exceptional.
             </p>
           </div>
 
@@ -53,11 +54,11 @@ export default function About() {
             <h2 className="title">Our Promise</h2>
 
             <ul className="promise-list">
-              <li>Premium fabric sourcing</li>
-              <li>Luxury finishing and clean detailing</li>
-              <li>Fast tailoring and reliable delivery</li>
-              <li>Perfect fit guarantee</li>
-              <li>Custom designs made for your style</li>
+              <li>Premium material sourcing</li>
+              <li>Luxury finishes and refined detailing</li>
+              <li>Fast production and reliable delivery</li>
+              <li>Designs tailored to your space</li>
+              <li>Custom furniture made for your lifestyle</li>
             </ul>
           </div>
         </div>
@@ -68,7 +69,7 @@ export default function About() {
         <div className="container">
           <div className="values-header">
             <span className="eyebrow">WHY CLIENTS CHOOSE US</span>
-            <h2 className="title">Luxury Fashion With Real Craftsmanship</h2>
+            <h2 className="title">Luxury Interiors With Real Craftsmanship</h2>
           </div>
 
           <div className="service-grid">
@@ -91,8 +92,8 @@ export default function About() {
             <div className="service-card hover-lift">
               <h3>Modern Elegance</h3>
               <p>
-                Our designs blend tradition with contemporary fashion for a
-                refined look.
+                Our designs blend tradition with contemporary interiors for a
+                refined home.
               </p>
             </div>
           </div>

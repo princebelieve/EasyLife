@@ -49,11 +49,11 @@ export default function Navbar() {
     <nav className="navbar">
       <Link to="/" className="navbar-brand" onClick={() => setOpen(false)}>
         <img
-          src="/logo.png"
-          alt="Moris Clothing"
+          src="/logo."
+          alt="NewBrend Furniture"
           className={`logo ${scrolled ? "hide-logo" : ""}`}
         />
-        <span className="brand-name">Moris Clothing</span>
+        <span className="brand-name">NewBrend Furniture & Interior</span>
       </Link>
 
       <div className="desktop-nav">

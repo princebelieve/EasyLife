@@ -7,11 +7,10 @@ export default function Hero() {
   return (
     <div className="hero">
       <div>
-        <h1>Tailored Style. Premium Confidence.</h1>
+        <h1>Design Your Perfect Home.</h1>
 
         <p>
-          Premium tailoring, senator wears, suits, gowns and custom fashion for
-          men and women.
+          High-end furniture, custom interiors, and luxury living spaces for every room.
         </p>
 
         <div>

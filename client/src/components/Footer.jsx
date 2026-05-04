@@ -4,8 +4,8 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer-grid">
         <div>
-          <h3>Moris Clothings</h3>
-          <p>Premium tailoring & modern fashion brand.</p>
+          <h3>NewBrend Furniture</h3>
+          <p>Premium furniture and bespoke interior design.</p>
         </div>
 
         <div>
@@ -17,14 +17,14 @@ export default function Footer() {
 
         <div>
           <h4>Services</h4>
-          <p>Custom Tailoring</p>
-          <p>Ready-to-Wear</p>
-          <p>Design Consultation</p>
+          <p>Furniture Design</p>
+          <p>Interior Styling</p>
+          <p>Custom Builds</p>
         </div>
       </div>
 
       <div className="footer-bottom">
-        © {new Date().getFullYear()} Moris Clothings. All rights reserved.
+        © {new Date().getFullYear()} NewBrend Furniture. All rights reserved.
       </div>
     </footer>
   );
