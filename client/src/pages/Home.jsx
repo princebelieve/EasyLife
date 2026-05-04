@@ -79,7 +79,7 @@ export default function Home() {
             <div className="service-card hover-lift">
               <h3>Fast Delivery</h3>
               <p>
-                UK-based operations with reliable production and delivery flow.
+                Abraka, Delta State. We deliver to your doorstep within 3-5 business days.
               </p>
             </div>
           </div>

@@ -34,7 +34,7 @@ export default function MorisClothingsLandingPage() {
           <h1 className="text-xl font-bold">NewBrend Furniture & Interior</h1>
 
           <div className="text-sm text-neutral-300">
-            WhatsApp: +44 7440 092312
+            WhatsApp: 2348037757718
           </div>
         </div>
       </header>
@@ -49,7 +49,7 @@ export default function MorisClothingsLandingPage() {
         </p>
 
         <a
-          href="https://wa.me/447440092312"
+          href="https://wa.me/2348037757718"
           className="mt-6 inline-block rounded-xl bg-green-600 px-6 py-3 font-semibold"
         >
           Chat on WhatsApp
@@ -74,7 +74,7 @@ export default function MorisClothingsLandingPage() {
               <p className="text-neutral-300">{product.price}</p>
 
               <a
-                href="https://wa.me/447440092312?text=I%20want%20to%20order%20a%20product"
+                href="https://wa.me/2348037757718?text=I%20want%20to%20order%20a%20product"
                 className="mt-3 block rounded-lg bg-green-600 px-4 py-2 text-center text-sm font-semibold"
               >
                 Order via WhatsApp
@@ -99,7 +99,7 @@ export default function MorisClothingsLandingPage() {
           <h3 className="text-2xl font-bold">Contact</h3>
 
           <div className="mt-4 space-y-2 text-neutral-300">
-            <p>WhatsApp: +44 7440 092312</p>
+            <p>WhatsApp: 2348037757718</p>
             <p>Email: moris.era@yahoo.com</p>
             <p>Instagram: Add your Instagram handle</p>
           </div>

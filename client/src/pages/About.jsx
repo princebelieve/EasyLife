@@ -32,7 +32,7 @@ export default function About() {
           </div>
 
           <div className="about-image-wrap hover-lift">
-            <img src="/about.jpg" alt="NewBrend Furniture interior" />
+            <img src="/about.jpeg" alt="NewBrend Furniture interior" />
           </div>
         </div>
       </section>

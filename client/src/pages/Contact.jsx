@@ -1,9 +1,10 @@
 // client/src/pages/Contact.jsx
-import { MessageCircle, Mail, Phone, CreditCard, MapPin } from "lucide-react";
+import { MessageCircle, Mail, Phone, MapPin, Clock } from "lucide-react";
 
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import useScrollReveal from "../hooks/useScrollReveal";
-import MeasurementForm from "../components/MeasurementForm";
+import FurnitureInquiryForm from "../components/FurnitureInquiryForm";
 
 export default function Contact() {
   useScrollReveal();
@@ -18,16 +19,16 @@ export default function Contact() {
             <div className="contact-copy">
               <span className="eyebrow">CONTACT NEWBREND FURNITURE</span>
 
-              <h1>Luxury Furniture & Interior Design</h1>
+              <h1>Get In Touch For Your Perfect Interior</h1>
 
               <p>
-                Share your room ideas, request a custom furniture quote, and let
-                us craft a stylish interior layout for your home.
+                Ready to transform your space? Contact us for custom furniture design,
+                interior consultations, or to discuss your next furniture project.
               </p>
 
               <div className="contact-strip">
                 <a
-                  href="https://wa.me/447440092312"
+                  href="https://wa.me/2348037757718"
                   target="_blank"
                   rel="noreferrer"
                   className="strip-card"
@@ -40,12 +41,12 @@ export default function Contact() {
                   </div>
                 </a>
 
-                <a href="mailto:moris.era@yahoo.com" className="strip-card">
+                <a href="mailto:info@newbrendfurniture.com" className="strip-card">
                   <Mail size={22} />
 
                   <div>
                     <strong>Email</strong>
-                    <span>moris.era@yahoo.com</span>
+                    <span>info@newbrendfurniture.com</span>
                   </div>
                 </a>
               </div>
@@ -53,41 +54,153 @@ export default function Contact() {
           </div>
         </section>
 
+        <section className="container reveal">
+          <div className="dual-grid">
+            <div className="contact-info-panel hover-lift">
+              <h2>Contact Information</h2>
+
+              <div className="info-list">
+                <div>
+                  <MapPin size={20} />
+                  <span>From Abraka, Delta State, to anywhere around the Nation</span>
+                </div>
+
+                <div>
+                  <Phone size={20} />
+                  <span>+2348037757718</span>
+                </div>
+
+                <div>
+                  <Mail size={20} />
+                  <span>info@newbrendfurniture.com</span>
+                </div>
+
+                <div>
+                  <Clock size={20} />
+                  <span>Mon-Fri: 9AM-6PM, Sat: 10AM-4PM</span>
+                </div>
+              </div>
+
+              <p>
+                Whether you're looking for ready-to-ship furniture or bespoke custom pieces,
+                our team is here to help bring your interior vision to life.
+              </p>
+            </div>
+
+            <div className="contact-info-panel hover-lift">
+              <h2>Start Your Project</h2>
+
+              <div className="info-list">
+                <div>
+                  <span>📐</span>
+                  <span>Room measurements & space planning</span>
+                </div>
+
+                <div>
+                  <span>🎨</span>
+                  <span>Custom design consultations</span>
+                </div>
+
+                <div>
+                  <span>🛋️</span>
+                  <span>Furniture selection & styling</span>
+                </div>
+
+                <div>
+                  <span>🚚</span>
+                  <span>Delivery & installation services</span>
+                </div>
+              </div>
+
+              <p>
+                Every project starts with understanding your needs. Share your ideas
+                and let's create something beautiful together.
+              </p>
+            </div>
+          </div>
+        </section>
+
         <section className="container reveal measurement-layout">
-          <MeasurementForm />
+          <FurnitureInquiryForm />
 
           <div className="contact-info-panel hover-lift">
-            <h2>Why Clients Choose Moris Clothings</h2>
+            <h2>Why Choose NewBrend Furniture?</h2>
 
             <div className="info-list">
               <div>
-                <MapPin size={20} />
-                <span>United Kingdom furniture & interior design service</span>
+                <span>⭐</span>
+                <span>Premium quality materials & craftsmanship</span>
               </div>
 
               <div>
-                <Phone size={20} />
-                <span>+44 7440 092312</span>
+                <span>🎯</span>
+                <span>Custom designs tailored to your space</span>
               </div>
 
               <div>
-                <span>@moris.era</span>
+                <span>⚡</span>
+                <span>Fast production and reliable delivery</span>
               </div>
 
               <div>
-                <CreditCard size={20} />
-                <span>Secure Stripe Payments Coming Soon</span>
+                <span>💬</span>
+                <span>Personal consultation and support</span>
               </div>
             </div>
 
             <p>
-              Every request is reviewed personally, and we will contact you after
-              submission to confirm your materials, dimensions, and design
-              preferences.
+              Every inquiry is reviewed personally, and we will contact you within 24 hours
+              to discuss your project details, timeline, and next steps.
             </p>
           </div>
         </section>
+
+        <section className="section reveal">
+          <div className="container">
+            <div className="values-header">
+              <span className="eyebrow">HOW WE WORK</span>
+              <h2 className="title">From Concept to Completion</h2>
+            </div>
+
+            <div className="service-grid">
+              <div className="service-card hover-lift">
+                <h3>1. Consultation</h3>
+                <p>
+                  We discuss your vision, budget, and timeline to understand
+                  your unique requirements.
+                </p>
+              </div>
+
+              <div className="service-card hover-lift">
+                <h3>2. Design & Planning</h3>
+                <p>
+                  Our designers create detailed plans, material selections,
+                  and 3D visualizations for your approval.
+                </p>
+              </div>
+
+              <div className="service-card hover-lift">
+                <h3>3. Manufacturing</h3>
+                <p>
+                  Premium materials are carefully crafted in our workshops
+                  with attention to every detail.
+                </p>
+              </div>
+
+              <div className="service-card hover-lift">
+                <h3>4. Delivery & Setup</h3>
+                <p>
+                  Professional delivery and installation ensures your new
+                  furniture fits perfectly in your space.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
+
+      <Footer />
     </>
   );
 }
+

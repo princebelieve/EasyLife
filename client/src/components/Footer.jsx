@@ -11,7 +11,7 @@ export default function Footer() {
         <div>
           <h4>Quick Links</h4>
           <p>Home</p>
-          <p>Collection</p>
+          <p>Show Room</p>
           <p>Contact</p>
         </div>
 

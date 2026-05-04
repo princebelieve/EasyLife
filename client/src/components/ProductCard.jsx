@@ -19,7 +19,7 @@ export default function ProductCard({ product }) {
         className="wa"
         onClick={() =>
           window.open(
-            `https://wa.me/447440092312?text=Hello, I want to order ${product.name}`,
+            `https://wa.me/2348037757718?text=Hello, I want to order ${product.name}`,
             "_blank",
           )
         }

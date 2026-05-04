@@ -49,7 +49,7 @@ export default function Navbar() {
     <nav className="navbar">
       <Link to="/" className="navbar-brand" onClick={() => setOpen(false)}>
         <img
-          src="/logo."
+          src="/logo.jpeg"
           alt="NewBrend Furniture"
           className={`logo ${scrolled ? "hide-logo" : ""}`}
         />
@@ -59,7 +59,7 @@ export default function Navbar() {
       <div className="desktop-nav">
         <div className="nav-links">
           <Link to="/">Home</Link>
-          <Link to="/collection">Collection</Link>
+          <Link to="/collection">Show Room</Link>
           <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>
 
@@ -106,7 +106,7 @@ export default function Navbar() {
           </Link>
 
           <Link to="/collection" onClick={() => setOpen(false)}>
-            Collection
+            Show Room
           </Link>
 
           <Link to="/about" onClick={() => setOpen(false)}>

@@ -1,10 +1,12 @@
 :root {
   --navy: #1f3556;
   --navy-light: #2d4a73;
+  --brown: #7c4a20;
+  --brown-light: #b07a4f;
   --gold: #c9a24a;
   --bg: #f7f9fc;
   --white: #ffffff;
-  --text: #1b2a41;
+  --text: #5c3d2d;
 
   --radius: 12px;
 }
@@ -58,7 +60,7 @@ button {
 .brand-name {
   font-size: 18px;
   font-weight: 700;
-  color: var(--navy);
+  color: var(--text);
   white-space: nowrap;
 }
 
@@ -93,7 +95,7 @@ button {
 
 .nav-links a,
 .nav-links button {
-  color: var(--navy);
+  color: var(--text);
   font-weight: 600;
   background: none;
   border: none;
@@ -138,7 +140,7 @@ button {
   background: none;
   border: none;
   text-align: left;
-  color: var(--navy);
+  color: var(--text);
   font-size: 18px;
   font-weight: 600;
   padding: 6px 0;
@@ -181,14 +183,14 @@ button {
   background:
     linear-gradient(
       to right,
-      rgba(0,0,0,0.92) 0%,
-      rgba(0,0,0,0.82) 28%,
-      rgba(0,0,0,0.55) 46%,
-      rgba(0,0,0,0.10) 70%
+      rgba(0,0,0,0.70) 0%,
+      rgba(0,0,0,0.55) 28%,
+      rgba(0,0,0,0.35) 46%,
+      rgba(0,0,0,0.15) 70%
     ),
-    url("/hero.jpg");
+    url("/hero.jpeg");
   background-size: cover;
-  background-position: 72% center;
+  background-position: left center;
   background-repeat: no-repeat;
 }
 
@@ -210,7 +212,7 @@ button {
 .hero p {
   max-width: 420px;
   margin: 0 0 30px;
-  color: rgba(255,255,255,0.78);
+  color: rgba(255,255,255,0.92);
   font-size: 18px;
   line-height: 1.75;
 }
@@ -344,7 +346,7 @@ button {
   max-width: 1200px;
   margin: 40px auto 0;
   padding: 0 20px;
-  color: var(--navy);
+  color: var(--text);
   font-size: 24px;
   font-weight: 600;
 }
@@ -362,7 +364,7 @@ button {
 
 .title {
   font-size: 28px;
-  color: var(--navy);
+  color: var(--text);
   margin-bottom: 20px;
 }
 
@@ -455,7 +457,7 @@ button:hover {
 .form h2,
 .form h1 {
   margin-bottom: 18px;
-  color: var(--navy);
+  color: var(--text);
   font-size: 24px;
 }
 
@@ -485,7 +487,7 @@ button:hover {
 
 .form .btn-primary {
   background: var(--gold);
-  color: var(--navy);
+  color: var(--text);
 }
 
 .form .btn-dark {
@@ -550,7 +552,7 @@ button:hover {
 
 .dual-card h2 {
   margin-bottom: 10px;
-  color: var(--navy);
+  color: var(--text);
 }
 
 .dual-label {
@@ -597,7 +599,7 @@ button:hover {
 }
 
 .cta-banner {
-  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  background: linear-gradient(135deg, var(--brown), var(--brown-light));
   color: white;
   padding: 70px 20px;
   text-align: center;
@@ -609,15 +611,19 @@ button:hover {
 }
 
 .footer {
-  background: #0f1c2e;
+  background: #2f1f14;
   color: white;
-  padding: 60px 20px 20px;
-}
-
-.footer-grid {
-  display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
+}
+
+.footer a,
+.footer p,
+.footer h3,
+.footer h4,
+.footer h5,
+.footer span {
+  color: white;
 }
 
 .footer-bottom {
@@ -671,7 +677,7 @@ button:hover {
 
 .dual-card,
 .service-card {
-  background: var(--navy);
+  background: var(--brown);
   color: white;
   border: 1px solid rgba(201, 162, 74, 0.25);
 }
@@ -683,8 +689,8 @@ button:hover {
   background:
     linear-gradient(
       135deg,
-      rgba(15, 28, 46, 0.96),
-      rgba(31, 53, 86, 0.92)
+      rgba(124, 74, 32, 0.96),
+      rgba(123, 67, 20, 0.92)
     );
   color: white;
 }
@@ -742,7 +748,7 @@ button:hover {
 }
 
 .story-card {
-  background: var(--navy);
+  background: var(--brown);
   padding: 38px;
   border-radius: 22px;
   border: 1px solid rgba(201, 162, 74, 0.25);
@@ -830,7 +836,7 @@ button:hover {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("/contact-hero.jpg");
+  background-image: url("/contact-hero.jpeg");
   background-size: cover;
   background-position: center;
   opacity: 0.12;
@@ -850,7 +856,7 @@ button:hover {
 
 .contact-hero h1 {
   font-size: 42px;
-  color: var(--navy);
+  color: var(--text);
   margin-bottom: 10px;
 }
 
@@ -883,7 +889,7 @@ button:hover {
   box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 
   transition: all 0.25s ease;
-  color: var(--navy);
+  color: var(--text);
   font-size: 13px;
   font-weight: 600;
   gap: 8px;
@@ -931,7 +937,7 @@ button:hover {
 
 .contact-card h3 {
   margin: 0 0 6px;
-  color: var(--navy);
+  color: var(--text);
 }
 
 .contact-card p {
@@ -978,7 +984,7 @@ button:hover {
 
 .contact-map h2 {
   margin-bottom: 12px;
-  color: var(--navy);
+  color: var(--text);
 }
 
 .contact-map iframe {
@@ -1006,7 +1012,7 @@ button:hover {
 
 .contact-card h3 {
   margin: 0 0 6px;
-  color: var(--navy);
+  color: var(--text);
 }
 
 .contact-card p {
@@ -1030,7 +1036,7 @@ button:hover {
 
 .measurement-section h3 {
   margin-bottom: 10px;
-  color: var(--navy);
+  color: var(--text);
   font-size: 16px;
 }
 }
@@ -1183,12 +1189,12 @@ button:hover {
 
 .measurement-form select option {
   background: #ffffff;
-  color: #1f3556;
+  color: var(--text);
 }
 
 .contact-info-panel {
   background: #ffffff;
-  color: var(--navy);
+  color: var(--text);
   padding: 28px;
   border-radius: 24px;
   border: 1px solid #eef2f6;
@@ -1196,7 +1202,7 @@ button:hover {
 
 .contact-info-panel h2 {
   margin-top: 0;
-  color: var(--navy);
+  color: var(--text);
   font-size: 30px;
 }
 
@@ -1210,7 +1216,7 @@ button:hover {
   display: flex;
   gap: 14px;
   align-items: center;
-  color: var(--navy);
+  color: var(--text);
   font-weight: 500;
 }
 
@@ -1225,7 +1231,7 @@ button:hover {
 }
 
 .info-list div span {
-  color: #1f3556;
+  color: var(--text);
 }
 
 @media (max-width: 900px) {
