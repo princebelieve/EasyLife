@@ -27,7 +27,7 @@ app.use(
 // middleware
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: (process.env.CLIENT_URL || "http://localhost:5173").split(","),
     credentials: true,
   }),
 );
