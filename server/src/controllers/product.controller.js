@@ -7,6 +7,7 @@ async function getProducts(req, res) {
     const products = await Product.find().sort({ _id: -1 });
     res.json(products);
   } catch (err) {
+    console.error("Error in getProducts:", err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -21,17 +22,23 @@ async function getProduct(req, res) {
 
     res.json(product);
   } catch (err) {
+    console.error("Error in getProduct:", err);
     res.status(500).json({ error: err.message });
   }
 }
 
 async function createProduct(req, res) {
   try {
-    const { name, price } = req.body;
+    const name = req.body.name;
+    const price = Number(req.body.price);
+
+    if (isNaN(price)) {
+      return res.status(400).json({ message: "Invalid price" });
+    }
 
     let image = "";
 
-    if (req.file) {
+    if (req.file && req.file.buffer) {
       image = await uploadToR2(req.file);
     }
 
@@ -43,6 +50,7 @@ async function createProduct(req, res) {
 
     res.status(201).json(product);
   } catch (err) {
+    console.error("Error in createProduct:", err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -55,17 +63,23 @@ async function updateProduct(req, res) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    product.name = req.body.name;
-    product.price = req.body.price;
+    product.name = req.body.name || product.name;
+    product.price = Number(req.body.price);
 
-    if (req.file) {
+    if (isNaN(product.price)) {
+      return res.status(400).json({ message: "Invalid price" });
+    }
+
+    if (req.file && req.file.buffer) {
       product.image = await uploadToR2(req.file);
+      console.log("Updated image uploaded:", product.image);
     }
 
     await product.save();
 
     res.json(product);
   } catch (err) {
+    console.error("Error in updateProduct:", err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -80,6 +94,7 @@ async function deleteProduct(req, res) {
 
     res.json({ message: "Product deleted successfully" });
   } catch (err) {
+    console.error("Error in deleteProduct:", err);
     res.status(500).json({ error: err.message });
   }
 }

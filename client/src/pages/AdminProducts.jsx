@@ -32,7 +32,7 @@ export default function AdminProducts() {
     body.append("name", formData.name);
     body.append("price", formData.price);
 
-    if (formData.image) {
+    if (formData.image instanceof File) {
       body.append("image", formData.image);
     }
 
@@ -48,11 +48,11 @@ export default function AdminProducts() {
 
     if (!res.ok) {
       alert(data.message || "Unable to save product");
-      return;
+      throw new Error(data.message || "Unable to save product");
     }
 
+    await loadProducts();
     setEditingProduct(null);
-    loadProducts();
   }
 
   async function handleDelete(id) {
@@ -111,17 +111,36 @@ export default function AdminProducts() {
                 background: "#fff",
               }}
             >
-              <img
-                src={product.image}
-                alt={product.name}
-                style={{
-                  width: "100%",
-                  height: 180,
-                  objectFit: "cover",
-                  borderRadius: 6,
-                  marginBottom: 12,
-                }}
-              />
+              {product.image ? (
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  style={{
+                    width: "100%",
+                    height: 180,
+                    objectFit: "cover",
+                    borderRadius: 6,
+                    marginBottom: 12,
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    height: 180,
+                    borderRadius: 6,
+                    marginBottom: 12,
+                    background: "#f3f3f3",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#777",
+                    fontSize: 14,
+                  }}
+                >
+                  No Image
+                </div>
+              )}
 
               <h3>{product.name}</h3>
               <p>£{product.price.toLocaleString()}</p>

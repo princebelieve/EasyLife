@@ -13,15 +13,13 @@ export default function ProductForm({
   });
 
   useEffect(() => {
-    if (editingProduct) {
-      setForm({
-        name: editingProduct.name,
-        price: editingProduct.price,
-        image: editingProduct.image,
-      });
-    } else {
-      setForm({ name: "", price: "", image: "" });
-    }
+    if (!editingProduct) return;
+
+    setForm({
+      name: editingProduct.name || "",
+      price: editingProduct.price || "",
+      image: "",
+    });
   }, [editingProduct]);
 
   function handleChange(e) {
@@ -31,15 +29,23 @@ export default function ProductForm({
     });
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    onSubmit({
+    await onSubmit({
       ...form,
       price: Number(form.price),
     });
 
-    setForm({ name: "", price: "", image: "" });
+    if (!editingProduct) {
+      setForm({
+        name: "",
+        price: "",
+        image: "",
+      });
+
+      e.target.reset();
+    }
   }
 
   return (
