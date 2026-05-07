@@ -111,6 +111,20 @@ button {
   font-weight: 700;
 }
 
+.mobile-break {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-break {
+    display: block;
+  }
+
+  .brand-name {
+    line-height: 1.1;
+  }
+}
+
 .mobile-menu-overlay {
   position: fixed;
   top: 76px;

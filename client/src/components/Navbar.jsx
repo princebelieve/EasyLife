@@ -53,7 +53,10 @@ export default function Navbar() {
           alt="NewBrend Furniture"
           className={`logo ${scrolled ? "hide-logo" : ""}`}
         />
-        <span className="brand-name">NewBrend Furniture & Interior</span>
+        <span className="brand-name">
+          NewBrend Furniture
+          <br className="mobile-break" />& Interior
+        </span>
       </Link>
 
       <div className="desktop-nav">
