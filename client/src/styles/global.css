@@ -180,18 +180,10 @@ button {
   align-items: center;
   min-height: 62vh;
   padding: 48px 6%;
-  background:
-    linear-gradient(
-      to right,
-      rgba(0,0,0,0.70) 0%,
-      rgba(0,0,0,0.55) 28%,
-      rgba(0,0,0,0.35) 46%,
-      rgba(0,0,0,0.15) 70%
-    ),
-    url("/hero.jpeg");
   background-size: cover;
-  background-position: left center;
+  background-position: center;
   background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
 }
 
 .hero > div:first-child {
@@ -240,9 +232,16 @@ button {
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 32px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px;
   padding: 48px 0 0;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
 
 /* ================= CARD ================= */
@@ -297,18 +296,29 @@ button {
     align-items: flex-end;
     justify-content: center;
     text-align: left;
-    background-position: center top;
+    background-position: center center;
+    position: relative;
+    overflow: hidden;
   }
 
-  .hero > div:first-child {
-  width: 100%;
-  max-width: 100%;
-  padding: 22px 20px;
-  border-radius: 20px;
-  background: rgba(15, 28, 46, 0.92);
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.22);
-}
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,0.68) 0%,
+      rgba(0,0,0,0.42) 40%,
+      rgba(0,0,0,0.15) 100%
+    );
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
 
   .hero h1 {
     font-size: 34px;

@@ -6,7 +6,12 @@ export default function ProductCard({ product }) {
 
   return (
     <div className="card hover-lift">
-      <img src={product.image} alt={product.name} />
+      <img
+        src={product.image}
+        alt={product.name}
+        loading="lazy"
+        decoding="async"
+      />
 
       <h3>{product.name}</h3>
       <p>£{product.price.toLocaleString()}</p>
