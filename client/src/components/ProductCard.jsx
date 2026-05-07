@@ -6,12 +6,19 @@ export default function ProductCard({ product }) {
 
   return (
     <div className="card hover-lift">
-      <img
-        src={product.image}
-        alt={product.name}
-        loading="lazy"
-        decoding="async"
-      />
+      <div
+        className="card-image-wrap"
+        onClick={() => navigate(`/product/${product._id}`)}
+      >
+        <img
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+          decoding="async"
+        />
+
+        <div className="card-image-overlay" />
+      </div>
 
       <h3>{product.name}</h3>
       <p>£{product.price.toLocaleString()}</p>
