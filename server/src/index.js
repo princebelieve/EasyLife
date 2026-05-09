@@ -7,7 +7,7 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 
 const paymentRoutes = require("./routes/payment.routes");
-const webhookRoutes = require("./routes/webhook.routes");
+const paystackWebhookRoutes = require("./routes/paystack.webhook.routes");
 const productRoutes = require("./routes/product.routes");
 const orderRoutes = require("./routes/order.routes");
 const authRoutes = require("./routes/auth.routes"); // ✅ ADD THIS
@@ -17,12 +17,7 @@ const app = express();
 
 connectDB();
 
-// Stripe webhook (must be raw before json)
-app.use(
-  "/api/webhook",
-  express.raw({ type: "application/json" }),
-  webhookRoutes,
-);
+app.use("/api/paystack/webhook", express.json(), paystackWebhookRoutes);
 
 // middleware
 app.use(
@@ -42,7 +37,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/measurements", measurementRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Moris Clothings API is running");
+  res.send("NewBrend Furniture API is running");
 });
 
 const PORT = process.env.PORT || 4000;

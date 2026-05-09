@@ -1,25 +1,29 @@
 //client/src/pages/Success.jsx
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-
-const BASE_URL = import.meta.env.VITE_API_URL;
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { verifyPayment } from "../services/api";
 
 export default function Success() {
   const [order, setOrder] = useState(null);
   const navigate = useNavigate();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Remove the Stripe page from history
-    window.history.replaceState(null, "", "/success");
+    const reference = searchParams.get("reference");
 
-    fetch(`${BASE_URL}/api/orders/latest`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to load order");
-        return res.json();
+    if (!reference) {
+      setOrder({ error: true });
+      return;
+    }
+
+    verifyPayment(reference)
+      .then((data) => {
+        setOrder(data);
       })
-      .then((data) => setOrder(data))
-      .catch(() => setOrder({ error: true }));
-  }, []);
+      .catch(() => {
+        setOrder({ error: true });
+      });
+  }, [searchParams]);
 
   if (!order) {
     return (
@@ -39,8 +43,8 @@ export default function Success() {
         <div style={{ margin: "24px 0" }}>
           <h3>Order Details</h3>
           <p>Product ID: {order.productId}</p>
-          <p>Amount: £{order.amount.toLocaleString()}</p>
-          <p>Status: {order.status}</p>
+          <p>Amount: ₦{order.amount.toLocaleString()}</p>
+          <p>Status: {order.paymentStatus}</p>
         </div>
       )}
 

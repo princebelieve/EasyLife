@@ -49,21 +49,33 @@ export async function resetPassword(token, password) {
   return res.json();
 }
 
-// -------------------------
-// STRIPE (UNCHANGED)
-// -------------------------
-
-export async function createCheckoutSession(productId) {
-  const res = await fetch(`${BASE_URL}/api/payments/create-checkout-session`, {
+export async function initializePayment(payload) {
+  const res = await fetch(`${BASE_URL}/api/payments/initialize`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ productId }),
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    body: JSON.stringify(payload),
   });
 
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.error || data.message || "Payment session failed");
+    throw new Error(data.message || "Payment initialization failed");
+  }
+
+  return data;
+}
+
+export async function verifyPayment(reference) {
+  const res = await fetch(`${BASE_URL}/api/payments/verify/${reference}`);
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Verification failed");
   }
 
   return data;

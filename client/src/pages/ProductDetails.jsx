@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { createCheckoutSession } from "../services/api";
+import { initializePayment } from "../services/api";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -39,16 +39,30 @@ export default function ProductDetails() {
 
   async function buyNow() {
     try {
-      const data = await createCheckoutSession(id);
-      window.location.href = data.url;
-    } catch (err) {
-      console.error("Checkout session error:", err);
+      const customerName = prompt("Enter your full name");
 
-      if (err.message) {
-        alert(err.message);
-      } else {
-        alert("Unable to start payment. Please try again.");
-      }
+      if (!customerName) return;
+
+      const email = prompt("Enter your email");
+
+      if (!email) return;
+
+      const phone = prompt("Enter your phone number");
+
+      if (!phone) return;
+
+      const data = await initializePayment({
+        productId: id,
+        customerName,
+        email,
+        phone,
+      });
+
+      window.location.href = data.authorization_url;
+    } catch (err) {
+      console.error(err);
+
+      alert("Unable to initialize payment");
     }
   }
 
@@ -76,7 +90,7 @@ export default function ProductDetails() {
           <div className="product-detail-content">
             <h1>{product.name}</h1>
 
-            <h2>£{Number(product?.price || 0).toLocaleString()}</h2>
+            <h2>₦{Number(product?.price || 0).toLocaleString()}</h2>
 
             <button className="primary" onClick={buyNow}>
               Buy Now
@@ -124,7 +138,7 @@ export default function ProductDetails() {
                     {piece.description && <span>{piece.description}</span>}
 
                     <strong>
-                      £{Number(piece.price || 0).toLocaleString()}
+                      ₦{Number(piece.price || 0).toLocaleString()}
                     </strong>
                   </div>
                 </div>
