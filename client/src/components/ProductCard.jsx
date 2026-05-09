@@ -11,7 +11,7 @@ export default function ProductCard({ product }) {
         onClick={() => navigate(`/product/${product._id}`)}
       >
         <img
-          src={product.image}
+          src={product.coverImage}
           alt={product.name}
           loading="lazy"
           decoding="async"
@@ -23,21 +23,23 @@ export default function ProductCard({ product }) {
       <h3>{product.name}</h3>
       <p>£{product.price.toLocaleString()}</p>
 
-      <button onClick={() => navigate(`/product/${product._id}`)}>
-        View Product
-      </button>
+      <div className="card-actions">
+        <button onClick={() => navigate(`/product/${product._id}`)}>
+          View Product
+        </button>
 
-      <button
-        className="wa"
-        onClick={() =>
-          window.open(
-            `https://wa.me/2348037757718?text=Hello, I want to order ${product.name}`,
-            "_blank",
-          )
-        }
-      >
-        WhatsApp
-      </button>
+        <button
+          className="wa"
+          onClick={() =>
+            window.open(
+              `https://wa.me/2348037757718?text=Hello, I want to order ${product.name}`,
+              "_blank",
+            )
+          }
+        >
+          WhatsApp
+        </button>
+      </div>
     </div>
   );
 }

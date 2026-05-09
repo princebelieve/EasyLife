@@ -27,21 +27,12 @@ export default function AdminProducts() {
       ? `${BASE_URL}/api/products/${editingProduct._id}`
       : `${BASE_URL}/api/products`;
 
-    const body = new FormData();
-
-    body.append("name", formData.name);
-    body.append("price", formData.price);
-
-    if (formData.image instanceof File) {
-      body.append("image", formData.image);
-    }
-
     const res = await fetch(url, {
       method,
       headers: {
         Authorization: `Bearer ${getToken()}`,
       },
-      body,
+      body: formData,
     });
 
     const data = await res.json();
@@ -111,9 +102,9 @@ export default function AdminProducts() {
                 background: "#fff",
               }}
             >
-              {product.image ? (
+              {product.coverImage ? (
                 <img
-                  src={product.image}
+                  src={product.coverImage}
                   alt={product.name}
                   style={{
                     width: "100%",
