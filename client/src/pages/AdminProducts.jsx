@@ -44,6 +44,8 @@ export default function AdminProducts() {
 
     await loadProducts();
     setEditingProduct(null);
+
+    return data.product || data;
   }
 
   async function handleDelete(id) {

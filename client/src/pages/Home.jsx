@@ -11,11 +11,24 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 export default function Home() {
   useScrollReveal();
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/api/products`)
-      .then((res) => res.json())
-      .then((data) => setProducts(Array.isArray(data) ? data : []));
+    async function loadProducts() {
+      try {
+        const res = await fetch(`${BASE_URL}/api/products`);
+
+        const data = await res.json();
+
+        setProducts(Array.isArray(data) ? data : []);
+      } catch {
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProducts();
   }, []);
 
   return (
@@ -34,7 +47,8 @@ export default function Home() {
             <span className="dual-label">READY TO SHIP</span>
             <h2>Premium Furniture Collection</h2>
             <p>
-              Discover curated sofas, tables, chairs and decor designed for elegant living.
+              Discover curated sofas, tables, chairs and decor designed for
+              elegant living.
             </p>
           </div>
 
@@ -52,9 +66,25 @@ export default function Home() {
       <section className="section-alt reveal">
         <div className="container">
           <h2 className="title">Featured Collection</h2>
-          <p className="muted">Luxury furniture and interior pieces for every room</p>
+          <p className="muted">
+            Luxury furniture and interior pieces for every room
+          </p>
 
-          <ProductGrid products={products} />
+          {loading ? (
+            <div className="grid">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="card skeleton-card">
+                  <div className="skeleton-image" />
+
+                  <div className="skeleton-line skeleton-title" />
+                  <div className="skeleton-line skeleton-price" />
+                  <div className="skeleton-button" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <ProductGrid products={products} />
+          )}
         </div>
       </section>
 
@@ -66,20 +96,24 @@ export default function Home() {
           <div className="service-grid">
             <div className="service-card hover-lift">
               <h3>Luxury Furniture</h3>
-              <p>Hand-finished sofas, tables, cabinets and upholstered accents.</p>
+              <p>
+                Hand-finished sofas, tables, cabinets and upholstered accents.
+              </p>
             </div>
 
             <div className="service-card hover-lift">
               <h3>Custom Design</h3>
               <p>
-                We bring your interior ideas into reality from concept to delivery.
+                We bring your interior ideas into reality from concept to
+                delivery.
               </p>
             </div>
 
             <div className="service-card hover-lift">
               <h3>Fast Delivery</h3>
               <p>
-                Abraka, Delta State. We deliver to your doorstep within 3-5 business days.
+                Abraka, Delta State. We deliver to your doorstep within 3-5
+                business days.
               </p>
             </div>
           </div>

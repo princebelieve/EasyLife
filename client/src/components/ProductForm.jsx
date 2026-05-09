@@ -1,5 +1,6 @@
 // src/components/ProductForm.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductForm({
   onSubmit,
@@ -14,9 +15,15 @@ export default function ProductForm({
     price: 0,
   };
 
+  const navigate = useNavigate();
+
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
+
   const [form, setForm] = useState({
     name: "",
-    description: "",
+    shortDescription: "",
+    fullDescription: "",
     category: "",
     price: "",
     coverImage: null,
@@ -25,26 +32,44 @@ export default function ProductForm({
   });
 
   useEffect(() => {
-    if (!editingProduct) return;
+    if (editingProduct) {
+      setForm({
+        name: editingProduct.name ?? "",
+        shortDescription: editingProduct.shortDescription ?? "",
+        fullDescription: editingProduct.fullDescription ?? "",
+        category: editingProduct.category ?? "",
+        price: editingProduct.price ?? "",
+        coverImage: null,
+        gallery: [],
+        pieces:
+          editingProduct.pieces?.length > 0
+            ? editingProduct.pieces.map((p) => ({
+                name: p.name ?? "",
+                dimensions: p.dimensions ?? "",
+                material: p.material ?? "",
+                description: p.description ?? "",
+                price: p.price ?? 0,
+                existingImage: p.image ?? "",
+              }))
+            : [{ ...emptyPiece }],
+      });
 
-    setForm({
-      name: editingProduct.name || "",
-      description: editingProduct.description || "",
-      category: editingProduct.category || "",
-      price: editingProduct.price || "",
-      coverImage: null,
-      gallery: [],
-      pieces:
-        editingProduct.pieces?.length > 0
-          ? editingProduct.pieces.map((p) => ({
-              name: p.name || "",
-              dimensions: p.dimensions || "",
-              material: p.material || "",
-              description: p.description || "",
-              price: p.price || 0,
-            }))
-          : [emptyPiece],
-    });
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } else {
+      setForm({
+        name: "",
+        shortDescription: "",
+        fullDescription: "",
+        category: "",
+        price: "",
+        coverImage: null,
+        gallery: [],
+        pieces: [{ ...emptyPiece }],
+      });
+    }
   }, [editingProduct]);
 
   function handleChange(e) {
@@ -84,50 +109,99 @@ export default function ProductForm({
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("name", form.name);
-    formData.append("description", form.description);
-    formData.append("category", form.category);
-    formData.append("price", Number(form.price));
+    try {
+      setIsUploading(true);
+      setUploadMessage(
+        editingProduct ? "Updating product..." : "Uploading product...",
+      );
 
-    if (form.coverImage instanceof File) {
-      formData.append("coverImage", form.coverImage);
-    }
+      const formData = new FormData();
 
-    if (Array.isArray(form.gallery)) {
-      form.gallery.forEach((file) => formData.append("gallery", file));
-    }
+      formData.append("name", form.name);
+      formData.append("shortDescription", form.shortDescription);
+      formData.append("fullDescription", form.fullDescription);
+      formData.append("category", form.category);
+      formData.append("price", Number(form.price || 0));
 
-    const piecesData = form.pieces.map((piece) => ({
-      name: piece.name,
-      material: piece.material,
-      dimensions: piece.dimensions,
-      description: piece.description,
-      price: Number(piece.price || 0),
-    }));
-
-    formData.append("pieces", JSON.stringify(piecesData));
-
-    form.pieces.forEach((piece) => {
-      if (piece.imageFile instanceof File) {
-        formData.append("pieceImages", piece.imageFile);
+      if (form.coverImage instanceof File) {
+        formData.append("coverImage", form.coverImage);
       }
-    });
 
-    await onSubmit(formData);
+      if (Array.isArray(form.gallery)) {
+        form.gallery.forEach((file) => formData.append("gallery", file));
+      }
 
-    if (!editingProduct) {
-      setForm({
-        name: "",
-        description: "",
-        category: "",
-        price: "",
-        coverImage: null,
-        gallery: [],
-        pieces: [{ ...emptyPiece }],
+      const piecesData = form.pieces
+        .filter(
+          (piece) =>
+            piece.name ||
+            piece.material ||
+            piece.dimensions ||
+            piece.description ||
+            piece.imageFile,
+        )
+        .map((piece) => ({
+          name: piece.name || "",
+          material: piece.material || "",
+          dimensions: piece.dimensions || "",
+          description: piece.description || "",
+          price: Number(piece.price || 0),
+          image: piece.existingImage || "",
+        }));
+
+      formData.append("pieces", JSON.stringify(piecesData));
+
+      form.pieces.forEach((piece) => {
+        if (piece.imageFile instanceof File) {
+          formData.append("pieceImages", piece.imageFile);
+        }
       });
 
-      e.target.reset();
+      const savedProduct = await onSubmit(formData);
+
+      setUploadMessage(
+        editingProduct
+          ? "Product updated successfully"
+          : "Product uploaded successfully",
+      );
+
+      if (!editingProduct) {
+        setForm({
+          name: "",
+          shortDescription: "",
+          fullDescription: "",
+          category: "",
+          price: "",
+          coverImage: null,
+          gallery: [],
+          pieces: [{ ...emptyPiece }],
+        });
+
+        e.target.reset();
+      }
+
+      if (editingProduct) {
+        setUploadMessage("Product updated successfully");
+
+        window.scrollTo({
+          top: 500,
+          behavior: "smooth",
+        });
+      } else {
+        setTimeout(() => {
+          if (savedProduct?._id) {
+            navigate(`/product/${savedProduct._id}`);
+          } else {
+            navigate("/");
+          }
+        }, 1200);
+      }
+    } catch (err) {
+      console.error(err);
+
+      setUploadMessage("Upload failed");
+    } finally {
+      setIsUploading(false);
     }
   }
 
@@ -140,13 +214,19 @@ export default function ProductForm({
         placeholder="Collection name"
         value={form.name}
         onChange={handleChange}
-        required
       />
 
       <textarea
-        name="description"
-        placeholder="Description"
-        value={form.description}
+        name="shortDescription"
+        placeholder="Short description"
+        value={form.shortDescription}
+        onChange={handleChange}
+      />
+
+      <textarea
+        name="fullDescription"
+        placeholder="Full description"
+        value={form.fullDescription}
         onChange={handleChange}
       />
 
@@ -160,10 +240,9 @@ export default function ProductForm({
       <input
         name="price"
         type="number"
-        placeholder="Starting price"
+        placeholder="Collection price"
         value={form.price}
         onChange={handleChange}
-        required
       />
 
       <div>
@@ -207,7 +286,6 @@ export default function ProductForm({
             placeholder="Piece name"
             value={piece.name}
             onChange={(e) => handlePieceChange(index, "name", e.target.value)}
-            required
           />
           <input
             type="file"
@@ -254,9 +332,17 @@ export default function ProductForm({
         Add Another Piece
       </button>
 
+      {uploadMessage && <div className="upload-status">{uploadMessage}</div>}
+
       <div className="form-actions">
-        <button type="submit" className="btn-primary">
-          {editingProduct ? "Update Product" : "Add Product"}
+        <button type="submit" className="btn-primary" disabled={isUploading}>
+          {isUploading
+            ? editingProduct
+              ? "Updating..."
+              : "Uploading..."
+            : editingProduct
+              ? "Update Product"
+              : "Add Product"}
         </button>
 
         {editingProduct && (

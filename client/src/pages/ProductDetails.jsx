@@ -9,7 +9,7 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 export default function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const [lightboxImage, setLightboxImage] = useState(null);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
 
   useEffect(() => {
     fetch(`${BASE_URL}/api/products/${id}`)
@@ -22,6 +22,20 @@ export default function ProductDetails() {
         setProduct(data);
       });
   }, [id]);
+
+  const lightboxItems = [
+    ...(product?.gallery || []).map((img, index) => ({
+      image: img,
+      title: product?.name || `Image ${index + 1}`,
+      description: product?.description || "",
+    })),
+
+    ...(product?.pieces || []).map((piece) => ({
+      image: piece.image,
+      title: piece.name,
+      description: piece.description || "",
+    })),
+  ].filter((item) => item.image);
 
   async function buyNow() {
     try {
@@ -59,54 +73,9 @@ export default function ProductDetails() {
             className="product-detail-image"
           />
 
-          {product.gallery?.length > 0 && (
-            <div className="gallery-strip">
-              {product.gallery.map((img, index) => (
-                <img
-                  key={index}
-                  src={img}
-                  alt={`${product.name}-${index}`}
-                  className="gallery-thumb"
-                  onClick={() => setLightboxImage(img)}
-                />
-              ))}
-            </div>
-          )}
-
-          {product.pieces?.length > 0 && (
-            <div className="pieces-section">
-              <h2>Included Pieces</h2>
-
-              <div className="pieces-grid">
-                {product.pieces.map((piece, index) => (
-                  <div key={index} className="piece-display-card">
-                    {piece.image && (
-                      <img
-                        src={piece.image}
-                        alt={piece.name}
-                        className="piece-image"
-                      />
-                    )}
-
-                    <div className="piece-content">
-                      <h3>{piece.name}</h3>
-
-                      {piece.dimensions && <p>{piece.dimensions}</p>}
-
-                      {piece.description && <span>{piece.description}</span>}
-
-                      <strong>
-                        £{Number(piece.price || 0).toLocaleString()}
-                      </strong>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           <div className="product-detail-content">
             <h1>{product.name}</h1>
+
             <h2>£{Number(product?.price || 0).toLocaleString()}</h2>
 
             <button className="primary" onClick={buyNow}>
@@ -114,9 +83,101 @@ export default function ProductDetails() {
             </button>
           </div>
         </div>
-        {lightboxImage && (
-          <div className="lightbox" onClick={() => setLightboxImage(null)}>
-            <img src={lightboxImage} alt="Preview" className="lightbox-image" />
+
+        {product.gallery?.length > 0 && (
+          <div className="gallery-strip">
+            {product.gallery.map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt={`${product.name}-${index}`}
+                className="gallery-thumb"
+                onClick={() => setLightboxIndex(index)}
+              />
+            ))}
+          </div>
+        )}
+
+        {product.pieces?.length > 0 && (
+          <div className="pieces-section">
+            <h2>Included Pieces</h2>
+
+            <div className="pieces-grid">
+              {product.pieces.map((piece, index) => (
+                <div key={index} className="piece-display-card">
+                  {piece.image && (
+                    <img
+                      src={piece.image}
+                      alt={piece.name}
+                      className="piece-image"
+                      onClick={() =>
+                        setLightboxIndex((product.gallery?.length || 0) + index)
+                      }
+                    />
+                  )}
+
+                  <div className="piece-content">
+                    <h3>{piece.name}</h3>
+
+                    {piece.dimensions && <p>{piece.dimensions}</p>}
+
+                    {piece.description && <span>{piece.description}</span>}
+
+                    <strong>
+                      £{Number(piece.price || 0).toLocaleString()}
+                    </strong>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {lightboxIndex !== null && (
+          <div className="lightbox">
+            <button
+              className="lightbox-close"
+              onClick={() => setLightboxIndex(null)}
+            >
+              ✕
+            </button>
+
+            {lightboxIndex > 0 && (
+              <button
+                className="lightbox-arrow left"
+                onClick={() => setLightboxIndex((prev) => prev - 1)}
+              >
+                ‹
+              </button>
+            )}
+
+            {lightboxIndex < lightboxItems.length - 1 && (
+              <button
+                className="lightbox-arrow right"
+                onClick={() => setLightboxIndex((prev) => prev + 1)}
+              >
+                ›
+              </button>
+            )}
+
+            <div
+              className="lightbox-slider"
+              style={{
+                transform: `translateX(-${lightboxIndex * 100}%)`,
+              }}
+            >
+              {lightboxItems.map((item, index) => (
+                <div className="lightbox-slide" key={index}>
+                  <img src={item.image} alt={item.title} />
+
+                  <div className="lightbox-overlay">
+                    <h3>{item.title}</h3>
+
+                    {item.description && <p>{item.description}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

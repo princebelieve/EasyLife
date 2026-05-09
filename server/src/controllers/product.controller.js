@@ -188,7 +188,7 @@ async function updateProduct(req, res) {
       for (let i = 0; i < piecesInput.length; i++) {
         const piece = piecesInput[i];
 
-        let image = "";
+        let image = product.pieces[i]?.image || "";
 
         if (pieceImages[i]) {
           image = await uploadToR2(pieceImages[i]);

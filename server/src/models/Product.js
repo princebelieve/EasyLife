@@ -5,13 +5,13 @@ const pieceSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      default: "",
       trim: true,
     },
 
     image: {
       type: String,
-      required: true,
+      default: "",
     },
 
     dimensions: {

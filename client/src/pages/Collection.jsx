@@ -10,12 +10,24 @@ export default function Collection() {
   useScrollReveal();
 
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/api/products`)
-      .then((res) => res.json())
-      .then((data) => setProducts(Array.isArray(data) ? data : []))
-      .catch(() => setProducts([]));
+    async function loadProducts() {
+      try {
+        const res = await fetch(`${BASE_URL}/api/products`);
+
+        const data = await res.json();
+
+        setProducts(Array.isArray(data) ? data : []);
+      } catch {
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProducts();
   }, []);
 
   return (
@@ -27,12 +39,27 @@ export default function Collection() {
           <div className="reveal">
             <h1 className="title">All Products</h1>
             <p className="muted">
-              Explore luxury furniture, decorative accents, and custom interior pieces.
+              Explore luxury furniture, decorative accents, and custom interior
+              pieces.
             </p>
           </div>
 
           <div className="reveal">
-            <ProductGrid products={products} />
+            {loading ? (
+              <div className="grid">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="card skeleton-card">
+                    <div className="skeleton-image" />
+
+                    <div className="skeleton-line skeleton-title" />
+                    <div className="skeleton-line skeleton-price" />
+                    <div className="skeleton-button" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <ProductGrid products={products} />
+            )}
           </div>
         </div>
       </section>
