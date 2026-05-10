@@ -136,7 +136,7 @@ export default function AdminProducts() {
               )}
 
               <h3>{product.name}</h3>
-              <p>£{product.price.toLocaleString()}</p>
+              <p>₦{Number(product.price || 0).toLocaleString()}</p>
 
               <div style={{ display: "flex", gap: 10 }}>
                 <button

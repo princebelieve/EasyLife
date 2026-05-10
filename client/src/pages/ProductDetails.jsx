@@ -9,18 +9,33 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 export default function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState(null);
 
   useEffect(() => {
-    fetch(`${BASE_URL}/api/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
+    async function loadProduct() {
+      try {
+        setLoading(true);
+
+        const res = await fetch(`${BASE_URL}/api/products/${id}`);
+
+        const data = await res.json();
+
         if (!data || data.message === "Product not found") {
           setProduct(null);
           return;
         }
+
         setProduct(data);
-      });
+      } catch (err) {
+        console.error(err);
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProduct();
   }, [id]);
 
   const lightboxItems = [
@@ -39,17 +54,11 @@ export default function ProductDetails() {
 
   async function buyNow() {
     try {
-      const customerName = prompt("Enter your full name");
+      const customerName = "Customer";
 
-      if (!customerName) return;
+      const email = `guest_${Date.now()}@newbrend.com`;
 
-      const email = prompt("Enter your email");
-
-      if (!email) return;
-
-      const phone = prompt("Enter your phone number");
-
-      if (!phone) return;
+      const phone = "0000000000";
 
       const data = await initializePayment({
         productId: id,
@@ -66,12 +75,35 @@ export default function ProductDetails() {
     }
   }
 
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+
+        <div className="page">
+          <div className="product-detail">
+            <div className="skeleton-image" />
+
+            <div className="product-detail-content">
+              <div className="skeleton-line skeleton-title" />
+              <div className="skeleton-line skeleton-price" />
+              <div className="skeleton-button" />
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   if (!product) {
     return (
-      <div className="page">
+      <>
         <Navbar />
-        <h2>Product not found</h2>
-      </div>
+
+        <div className="page">
+          <h2>Product not found</h2>
+        </div>
+      </>
     );
   }
 

@@ -21,7 +21,7 @@ export default function ProductCard({ product }) {
       </div>
 
       <h3>{product.name}</h3>
-      <p>£{product.price.toLocaleString()}</p>
+      <p>₦{Number(product.price || 0).toLocaleString()}</p>
 
       <div className="card-actions">
         <button onClick={() => navigate(`/product/${product._id}`)}>

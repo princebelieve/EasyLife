@@ -58,7 +58,10 @@ router.post("/initialize", async (req, res) => {
     console.error(err.response?.data || err.message);
 
     res.status(500).json({
-      message: "Unable to initialize payment",
+      message:
+        err.response?.data?.message ||
+        err.message ||
+        "Unable to initialize payment",
     });
   }
 });
