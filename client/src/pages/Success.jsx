@@ -6,7 +6,7 @@ import { verifyPayment } from "../services/api";
 export default function Success() {
   const [order, setOrder] = useState(null);
   const navigate = useNavigate();
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const reference = searchParams.get("reference");
