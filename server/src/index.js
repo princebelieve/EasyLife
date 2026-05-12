@@ -10,8 +10,11 @@ const paymentRoutes = require("./routes/payment.routes");
 const paystackWebhookRoutes = require("./routes/paystack.webhook.routes");
 const productRoutes = require("./routes/product.routes");
 const orderRoutes = require("./routes/order.routes");
-const authRoutes = require("./routes/auth.routes"); // ✅ ADD THIS
+const authRoutes = require("./routes/auth.routes");
 const measurementRoutes = require("./routes/measurementRoutes");
+const cartRoutes = require("./routes/cart.routes");
+const checkoutRoutes = require("./routes/checkout.routes");
+const userRoutes = require("./routes/user.routes");
 
 const app = express();
 
@@ -35,6 +38,9 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/measurements", measurementRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/checkout", checkoutRoutes);
+app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("NewBrend Furniture API is running");

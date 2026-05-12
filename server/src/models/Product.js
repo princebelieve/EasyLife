@@ -36,6 +36,11 @@ const pieceSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    stock: {
+      type: Number,
+      default: 0,
+    },
   },
   { _id: false },
 );
@@ -89,10 +94,35 @@ const productSchema = new mongoose.Schema(
       default: [],
     },
 
-    // OPTIONAL STARTING PRICE
+    // COLLECTION PRICE
     price: {
       type: Number,
       default: 0,
+    },
+
+    stock: {
+      type: Number,
+      default: 0,
+    },
+
+    soldCount: {
+      type: Number,
+      default: 0,
+    },
+
+    inStock: {
+      type: Boolean,
+      default: true,
+    },
+
+    featured: {
+      type: Boolean,
+      default: false,
+    },
+
+    deliveryEstimate: {
+      type: String,
+      default: "7-14 days",
     },
 
     // FURNITURE PIECES INSIDE THE COLLECTION

@@ -1,14 +1,39 @@
 //server/src/models/Order.js
 const mongoose = require("mongoose");
 
-const orderSchema = new mongoose.Schema(
+const orderItemSchema = new mongoose.Schema(
   {
     productId: {
       type: String,
       default: "",
     },
 
-    productName: {
+    name: {
+      type: String,
+      default: "",
+    },
+
+    image: {
+      type: String,
+      default: "",
+    },
+
+    price: {
+      type: Number,
+      default: 0,
+    },
+
+    quantity: {
+      type: Number,
+      default: 1,
+    },
+  },
+  { _id: false },
+);
+
+const orderSchema = new mongoose.Schema(
+  {
+    userId: {
       type: String,
       default: "",
     },
@@ -48,7 +73,22 @@ const orderSchema = new mongoose.Schema(
       default: "",
     },
 
-    amount: {
+    items: {
+      type: [orderItemSchema],
+      default: [],
+    },
+
+    subtotal: {
+      type: Number,
+      default: 0,
+    },
+
+    shippingFee: {
+      type: Number,
+      default: 0,
+    },
+
+    totalAmount: {
       type: Number,
       default: 0,
     },

@@ -1,9 +1,10 @@
-//server/src/routes/webhook.routes.js
+//server/src/routes/paystack.webhook.routes.js
 const express = require("express");
 
 const crypto = require("crypto");
 
 const Order = require("../models/Order");
+const Product = require("../models/Product");
 
 const router = express.Router();
 
@@ -25,19 +26,41 @@ router.post("/", async (req, res) => {
     if (event.event === "charge.success") {
       const reference = event.data.reference;
 
-      const existingOrder = await Order.findOne({
+      const order = await Order.findOne({
         paymentReference: reference,
       });
 
-      if (!existingOrder) {
+      if (!order) {
         return res.json({
           received: true,
         });
       }
 
-      existingOrder.paymentStatus = "paid";
+      // prevent double stock deduction
+      if (order.paymentStatus === "paid") {
+        return res.json({
+          received: true,
+        });
+      }
 
-      await existingOrder.save();
+      order.paymentStatus = "paid";
+
+      const Product = require("../models/Product");
+
+      // update stock for every ordered item
+      for (const item of order.items) {
+        const product = await Product.findById(item.productId);
+
+        if (!product) continue;
+
+        product.stock = Math.max(0, product.stock - item.quantity);
+
+        product.soldCount = (product.soldCount || 0) + item.quantity;
+
+        await product.save();
+      }
+
+      await order.save();
 
       console.log("✅ PAYMENT CONFIRMED:", reference);
     }

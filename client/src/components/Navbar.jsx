@@ -12,6 +12,10 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { isLoggedIn, isAdmin, logout } = useAuth();
 
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
 
@@ -66,6 +70,10 @@ export default function Navbar() {
           <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>
 
+          <Link to="/cart">Cart</Link>
+
+          {isLoggedIn && <Link to="/dashboard">My Orders</Link>}
+
           {isAdmin && <Link to="/admin/products">Admin</Link>}
 
           {!isLoggedIn ? (
@@ -80,13 +88,23 @@ export default function Navbar() {
           )}
         </div>
 
-        <button
-          type="button"
-          className="cta"
-          onClick={() => navigate("/contact")}
-        >
-          Order Now
-        </button>
+        <div className="nav-actions">
+          <button
+            type="button"
+            className="cart-btn"
+            onClick={() => navigate("/cart")}
+          >
+            Cart ({cartCount})
+          </button>
+
+          <button
+            type="button"
+            className="cta"
+            onClick={() => navigate("/contact")}
+          >
+            Order Now
+          </button>
+        </div>
       </div>
 
       <button

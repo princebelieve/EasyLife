@@ -1,0 +1,77 @@
+//server/src/routes/cart.routes.js
+const express = require("express");
+
+const router = express.Router();
+
+const Cart = require("../models/Cart");
+
+const { protect } = require("../middleware/auth");
+
+router.get("/", protect, async (req, res) => {
+  let cart = await Cart.findOne({
+    userId: req.user.id,
+  }).populate("items.productId");
+
+  if (!cart) {
+    cart = await Cart.create({
+      userId: req.user.id,
+      items: [],
+    });
+  }
+
+  res.json(cart);
+});
+
+router.post("/add", protect, async (req, res) => {
+  const { productId, quantity = 1 } = req.body;
+
+  let cart = await Cart.findOne({
+    userId: req.user.id,
+  });
+
+  if (!cart) {
+    cart = await Cart.create({
+      userId: req.user.id,
+      items: [],
+    });
+  }
+
+  const existingItem = cart.items.find(
+    (item) => item.productId.toString() === productId,
+  );
+
+  if (existingItem) {
+    existingItem.quantity += quantity;
+  } else {
+    cart.items.push({
+      productId,
+      quantity,
+    });
+  }
+
+  await cart.save();
+
+  res.json(cart);
+});
+
+router.delete("/remove/:productId", protect, async (req, res) => {
+  const cart = await Cart.findOne({
+    userId: req.user.id,
+  });
+
+  if (!cart) {
+    return res.status(404).json({
+      message: "Cart not found",
+    });
+  }
+
+  cart.items = cart.items.filter(
+    (item) => item.productId.toString() !== req.params.productId,
+  );
+
+  await cart.save();
+
+  res.json(cart);
+});
+
+module.exports = router;

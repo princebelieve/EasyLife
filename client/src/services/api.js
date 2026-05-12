@@ -80,3 +80,24 @@ export async function verifyPayment(reference) {
 
   return data;
 }
+
+export async function initializeCheckout(payload, token) {
+  const res = await fetch(`${BASE_URL}/api/checkout/initialize`, {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Checkout initialization failed");
+  }
+
+  return data;
+}

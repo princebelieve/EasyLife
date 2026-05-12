@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { initializePayment } from "../services/api";
+import { useCart } from "../context/CartContext";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -11,6 +11,7 @@ export default function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState(null);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     async function loadProduct() {
@@ -51,29 +52,6 @@ export default function ProductDetails() {
       description: piece.description || "",
     })),
   ].filter((item) => item.image);
-
-  async function buyNow() {
-    try {
-      const customerName = "Customer";
-
-      const email = `guest_${Date.now()}@newbrend.com`;
-
-      const phone = "0000000000";
-
-      const data = await initializePayment({
-        productId: id,
-        customerName,
-        email,
-        phone,
-      });
-
-      window.location.href = data.authorization_url;
-    } catch (err) {
-      console.error(err);
-
-      alert("Unable to initialize payment");
-    }
-  }
 
   if (loading) {
     return (
@@ -124,7 +102,15 @@ export default function ProductDetails() {
 
             <h2>₦{Number(product?.price || 0).toLocaleString()}</h2>
 
-            <button className="primary" onClick={buyNow}>
+            <button onClick={() => addToCart(product)}>Add To Cart</button>
+
+            <button
+              className="primary"
+              onClick={() => {
+                addToCart(product);
+                window.location.href = "/checkout";
+              }}
+            >
               Buy Now
             </button>
           </div>

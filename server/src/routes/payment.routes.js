@@ -20,6 +20,12 @@ router.post("/initialize", async (req, res) => {
       });
     }
 
+    if (product.stock <= 0) {
+      return res.status(400).json({
+        message: "Product out of stock",
+      });
+    }
+
     const paystackResponse = await paystack.post("/transaction/initialize", {
       email,
 
