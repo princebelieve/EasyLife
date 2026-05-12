@@ -82,7 +82,7 @@ export async function verifyPayment(reference) {
 }
 
 export async function initializeCheckout(payload, token) {
-  const res = await fetch(`${BASE_URL}/api/checkout/initialize`, {
+  const res = await fetch(`${BASE_URL}/api/checkout`, {
     method: "POST",
 
     headers: {
