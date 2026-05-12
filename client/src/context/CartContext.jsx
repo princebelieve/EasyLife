@@ -3,68 +3,105 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const CartContext = createContext();
 
-export function CartProvider({ children }) {
-  const [cart, setCart] = useState(() => {
-    try {
-      const saved = localStorage.getItem("newbrend-cart");
+const BASE_URL = import.meta.env.VITE_API_URL;
 
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
+export function CartProvider({ children }) {
+  const [cart, setCart] = useState([]);
+  const token = localStorage.getItem("token");
+
+  async function loadCart() {
+    if (!token) {
+      setCart([]);
+      return;
     }
-  });
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/cart`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      const formatted = (data.items || []).map((item) => ({
+        productId: item.productId._id,
+        name: item.productId.name,
+        image: item.productId.coverImage,
+        price: Number(item.productId.price || 0),
+        quantity: item.quantity,
+      }));
+
+      setCart(formatted);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   useEffect(() => {
-    localStorage.setItem("newbrend-cart", JSON.stringify(cart));
-  }, [cart]);
+    loadCart();
+  }, []);
 
-  function addToCart(product, quantity = 1) {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.productId === product._id);
+  async function addToCart(product, quantity = 1) {
+    if (!token) {
+      alert("Please login first");
+      return;
+    }
 
-      if (existing) {
-        return prev.map((item) =>
-          item.productId === product._id
-            ? {
-                ...item,
-                quantity: item.quantity + quantity,
-              }
-            : item,
-        );
-      }
+    try {
+      await fetch(`${BASE_URL}/api/cart/add`, {
+        method: "POST",
 
-      return [
-        ...prev,
-        {
-          productId: product._id,
-          name: product.name,
-          image: product.coverImage,
-          price: Number(product.price || 0),
-          quantity,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      ];
-    });
+
+        body: JSON.stringify({
+          productId: product._id,
+          quantity,
+        }),
+      });
+
+      loadCart();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
-  function removeFromCart(productId) {
-    setCart((prev) => prev.filter((item) => item.productId !== productId));
+  async function removeFromCart(productId) {
+    try {
+      await fetch(`${BASE_URL}/api/cart/remove/${productId}`, {
+        method: "DELETE",
+
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      loadCart();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
-  function updateQuantity(productId, quantity) {
+  async function updateQuantity(productId, quantity) {
     if (quantity <= 0) {
       removeFromCart(productId);
       return;
     }
 
-    setCart((prev) =>
-      prev.map((item) =>
-        item.productId === productId
-          ? {
-              ...item,
-              quantity,
-            }
-          : item,
-      ),
+    const item = cart.find((i) => i.productId === productId);
+
+    if (!item) return;
+
+    await removeFromCart(productId);
+
+    await addToCart(
+      {
+        _id: productId,
+      },
+      quantity,
     );
   }
 
@@ -77,19 +114,22 @@ export function CartProvider({ children }) {
   }, [cart]);
 
   const subtotal = useMemo(() => {
-    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    return cart.reduce((sum, item) => {
+      return sum + item.price * item.quantity;
+    }, 0);
   }, [cart]);
 
   return (
     <CartContext.Provider
       value={{
         cart,
+        cartCount,
+        subtotal,
         addToCart,
         removeFromCart,
         updateQuantity,
         clearCart,
-        cartCount,
-        subtotal,
+        loadCart,
       }}
     >
       {children}

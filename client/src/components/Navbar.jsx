@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import useAuth from "../hooks/useAuth";
 import useClickOutside from "../hooks/useClickOutside";
+import { useCart } from "../context/CartContext";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -11,10 +12,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { isLoggedIn, isAdmin, logout } = useAuth();
-
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const { cartCount } = useCart();
 
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
@@ -137,6 +135,17 @@ export default function Navbar() {
           <Link to="/contact" onClick={() => setOpen(false)}>
             Contact
           </Link>
+
+          <Link to="/cart" onClick={() => setOpen(false)}>
+            Cart ({cartCount})
+          </Link>
+
+          {isLoggedIn && (
+            <Link to="/dashboard" onClick={() => setOpen(false)}>
+              My Orders
+            </Link>
+          )}
+
           {isAdmin && (
             <Link to="/admin/products" onClick={() => setOpen(false)}>
               Admin
