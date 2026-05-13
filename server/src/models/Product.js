@@ -130,6 +130,53 @@ const productSchema = new mongoose.Schema(
       type: [pieceSchema],
       default: [],
     },
+
+    sku: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    brand: { type: String, default: "" },
+
+    weight: { type: Number, default: 0 }, // kg
+    dimensions: { type: String, default: "" },
+
+    shippingClass: {
+      type: String,
+      enum: [
+        "light",
+        "medium",
+        "heavy",
+        "furniture",
+        "decor",
+        "installation",
+        "custom",
+      ],
+      default: "furniture",
+    },
+
+    inventoryTracking: {
+      type: Boolean,
+      default: true,
+    },
+
+    lowStockThreshold: {
+      type: Number,
+      default: 5,
+    },
+
+    seoTitle: { type: String, default: "" },
+    seoDescription: { type: String, default: "" },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+    },
+
+    mainCategory: { type: String, default: "" },
+    subCategory: { type: String, default: "" },
+    tags: { type: [String], default: [] },
   },
   {
     timestamps: true,

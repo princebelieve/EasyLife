@@ -1,6 +1,6 @@
 //client/src/pages/Checkout.jsx
-import { useState } from "react";
-import { initializeCheckout } from "../services/api";
+import { useEffect, useState } from "react";
+import { initializeCheckout, previewShipping } from "../services/api";
 import Navbar from "../components/Navbar";
 
 import { useCart } from "../context/CartContext";
@@ -8,9 +8,9 @@ import { useCart } from "../context/CartContext";
 export default function Checkout() {
   const { cart, subtotal } = useCart();
 
-  const shippingFee = subtotal > 0 ? 25000 : 0;
+  const [shippingFee, setShippingFee] = useState(0);
 
-  const total = subtotal + shippingFee;
+  const totalAmount = subtotal + shippingFee;
 
   const [form, setForm] = useState({
     customerName: "",
@@ -28,6 +28,28 @@ export default function Checkout() {
       [e.target.name]: e.target.value,
     });
   }
+
+  useEffect(() => {
+    async function loadShipping() {
+      try {
+        if (!form.state) return;
+
+        const shippingClass = "furniture";
+
+        const data = await previewShipping({
+          city: form.city,
+          state: form.state,
+          shippingClass,
+        });
+
+        setShippingFee(Number(data.shippingFee || 0));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadShipping();
+  }, [form.city, form.state]);
 
   async function handleCheckout(e) {
     e.preventDefault();
@@ -153,7 +175,7 @@ export default function Checkout() {
                 <strong>₦{shippingFee.toLocaleString()}</strong>
               </p>
 
-              <h2>Total: ₦{total.toLocaleString()}</h2>
+              <h2>Total: ₦{totalAmount.toLocaleString()}</h2>
             </div>
           </div>
         )}

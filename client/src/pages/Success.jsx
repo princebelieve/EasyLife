@@ -1,79 +1,52 @@
 //client/src/pages/Success.jsx
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { verifyPayment } from "../services/api";
+import { Link, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 export default function Success() {
-  const [order, setOrder] = useState(null);
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    const reference = searchParams.get("reference");
-
-    if (!reference) {
-      setOrder({ error: true });
-      return;
-    }
-
-    verifyPayment(reference)
-      .then((data) => {
-        setOrder(data);
-      })
-      .catch(() => {
-        setOrder({ error: true });
-      });
-  }, [searchParams]);
-
-  if (!order) {
-    return (
-      <div style={{ padding: "40px" }}>
-        <h1>Payment Successful 🎉</h1>
-        <p>Loading your order...</p>
-      </div>
-    );
-  }
 
   return (
-    <div style={{ padding: "40px", maxWidth: "700px", margin: "0 auto" }}>
-      <h1>Payment Successful 🎉</h1>
-      <p>Thank you for your order.</p>
+    <>
+      <Navbar />
 
-      {!order.error && (
-        <div style={{ margin: "24px 0" }}>
-          <h3>Order Details</h3>
-          <p>Product ID: {order.productId}</p>
-          <p>Amount: ₦{order.amount.toLocaleString()}</p>
-          <p>Status: {order.paymentStatus}</p>
+      <div
+        className="page"
+        style={{
+          maxWidth: 700,
+          margin: "0 auto",
+          textAlign: "center",
+        }}
+      >
+        <div className="cart-summary">
+          <h1>Payment Successful 🎉</h1>
+
+          <p style={{ marginTop: 14 }}>
+            Your payment has been received successfully.
+          </p>
+
+          <p className="muted" style={{ marginTop: 10 }}>
+            Your order is now being processed.
+          </p>
+
+          <div
+            style={{
+              display: "flex",
+              gap: 12,
+              justifyContent: "center",
+              flexWrap: "wrap",
+              marginTop: 30,
+            }}
+          >
+            <button className="primary" onClick={() => navigate("/dashboard")}>
+              View My Orders
+            </button>
+
+            <Link to="/collection">
+              <button>Continue Shopping</button>
+            </Link>
+          </div>
         </div>
-      )}
-
-      <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-        <button
-          onClick={() => navigate("/", { replace: true })}
-          style={{
-            padding: "12px 20px",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-          }}
-        >
-          Back to Home
-        </button>
-
-        <Link
-          to="/collection"
-          replace="true"
-          style={{
-            padding: "12px 20px",
-            border: "1px solid #ccc",
-            borderRadius: "8px",
-            textDecoration: "none",
-          }}
-        >
-          Continue Shopping
-        </Link>
       </div>
-    </div>
+    </>
   );
 }

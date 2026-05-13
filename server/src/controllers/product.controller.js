@@ -45,10 +45,37 @@ async function getProduct(req, res) {
   }
 }
 
+function generateSKU(name, category) {
+  const prefix = (category || "GEN").slice(0, 3).toUpperCase();
+
+  const namePart = (name || "ITEM")
+    .replace(/\s+/g, "")
+    .slice(0, 5)
+    .toUpperCase();
+
+  const timePart = Date.now().toString().slice(-5);
+
+  const randomPart = Math.floor(100 + Math.random() * 900);
+
+  return `${prefix}-${namePart}-${timePart}-${randomPart}`;
+}
+
 async function createProduct(req, res) {
   try {
-    const { name, slug, category, shortDescription, fullDescription, price } =
-      req.body;
+    const {
+      name,
+      slug,
+      category,
+      shortDescription,
+      fullDescription,
+      price,
+      stock,
+      shippingClass,
+      featured,
+      status,
+      weight,
+      deliveryEstimate,
+    } = req.body;
 
     const files = req.files || {};
 
@@ -101,6 +128,8 @@ async function createProduct(req, res) {
       });
     }
 
+    const generatedSku = generateSKU(name, category);
+
     const product = await Product.create({
       name,
 
@@ -117,6 +146,22 @@ async function createProduct(req, res) {
       gallery,
 
       price: Number(price || 0),
+
+      stock: Number(stock || 0),
+
+      shippingClass: shippingClass || "furniture",
+
+      featured: featured === "true" || featured === true,
+
+      status: status || "active",
+
+      sku: generatedSku,
+
+      weight: Number(weight || 0),
+
+      deliveryEstimate: deliveryEstimate || "7-14 days",
+
+      inStock: Number(stock || 0) > 0,
 
       pieces,
     });
@@ -141,8 +186,21 @@ async function updateProduct(req, res) {
       });
     }
 
-    const { name, slug, category, shortDescription, fullDescription, price } =
-      req.body;
+    const {
+      name,
+      slug,
+      category,
+      shortDescription,
+      fullDescription,
+      price,
+      stock,
+      shippingClass,
+      featured,
+      status,
+      sku,
+      weight,
+      deliveryEstimate,
+    } = req.body;
 
     const files = req.files || {};
 
@@ -158,6 +216,32 @@ async function updateProduct(req, res) {
     product.fullDescription = fullDescription || product.fullDescription;
 
     product.price = Number(price || product.price);
+
+    if (stock !== undefined) {
+      product.stock = Number(stock || 0);
+
+      product.inStock = Number(stock || 0) > 0;
+    }
+
+    if (shippingClass) {
+      product.shippingClass = shippingClass;
+    }
+
+    if (featured !== undefined) {
+      product.featured = featured === true || featured === "true";
+    }
+
+    if (status) {
+      product.status = status;
+    }
+
+    if (weight !== undefined) {
+      product.weight = Number(weight || 0);
+    }
+
+    if (deliveryEstimate) {
+      product.deliveryEstimate = deliveryEstimate;
+    }
 
     // COVER IMAGE
     if (files.coverImage?.[0]) {

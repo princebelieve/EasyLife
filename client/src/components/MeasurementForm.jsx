@@ -1,7 +1,6 @@
 //client/src/components/MeasurementForm.jsx
 import { useState } from "react";
-
-const BASE_URL = import.meta.env.VITE_API_URL;
+import { submitMeasurement } from "../services/api";
 
 export default function MeasurementForm() {
   const [form, setForm] = useState({
@@ -30,16 +29,10 @@ export default function MeasurementForm() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const res = await fetch(`${BASE_URL}/api/measurements`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message || "Failed to submit measurement");
+    try {
+      await submitMeasurement(form);
+    } catch (err) {
+      alert(err.message || "Failed to submit measurement");
       return;
     }
 

@@ -1,28 +1,32 @@
 //client/src/context/CartContext.jsx
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-const CartContext = createContext();
+import {
+  getCart,
+  addToCartApi,
+  removeFromCartApi,
+  updateCartApi,
+  clearCartApi,
+} from "../services/api";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const CartContext = createContext();
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
 
   async function loadCart() {
+    setLoading(true);
+
     if (!token) {
       setCart([]);
+      setLoading(false);
       return;
     }
 
     try {
-      const res = await fetch(`${BASE_URL}/api/cart`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await res.json();
+      const data = await getCart(token);
 
       const formatted = (data.items || []).map((item) => ({
         productId: item.productId._id,
@@ -35,6 +39,8 @@ export function CartProvider({ children }) {
       setCart(formatted);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -49,20 +55,7 @@ export function CartProvider({ children }) {
     }
 
     try {
-      await fetch(`${BASE_URL}/api/cart/add`, {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-
-        body: JSON.stringify({
-          productId: product._id,
-          quantity,
-        }),
-      });
-
+      await addToCartApi(token, product._id, quantity);
       loadCart();
     } catch (err) {
       console.error(err);
@@ -71,14 +64,7 @@ export function CartProvider({ children }) {
 
   async function removeFromCart(productId) {
     try {
-      await fetch(`${BASE_URL}/api/cart/remove/${productId}`, {
-        method: "DELETE",
-
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      await removeFromCartApi(token, productId);
       loadCart();
     } catch (err) {
       console.error(err);
@@ -87,26 +73,25 @@ export function CartProvider({ children }) {
 
   async function updateQuantity(productId, quantity) {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      await removeFromCart(productId);
       return;
     }
 
-    const item = cart.find((i) => i.productId === productId);
-
-    if (!item) return;
-
-    await removeFromCart(productId);
-
-    await addToCart(
-      {
-        _id: productId,
-      },
-      quantity,
-    );
+    try {
+      await updateCartApi(token, productId, quantity);
+      loadCart();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
-  function clearCart() {
-    setCart([]);
+  async function clearCart() {
+    try {
+      await clearCartApi(token);
+      setCart([]);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   const cartCount = useMemo(() => {
@@ -123,6 +108,7 @@ export function CartProvider({ children }) {
     <CartContext.Provider
       value={{
         cart,
+        loading,
         cartCount,
         subtotal,
         addToCart,

@@ -1,12 +1,14 @@
 //client/src/pages/Home.jsx
 import { useEffect, useState } from "react";
+
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import ProductGrid from "../components/ProductGrid";
-import useScrollReveal from "../hooks/useScrollReveal";
 import Footer from "../components/Footer";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+import useScrollReveal from "../hooks/useScrollReveal";
+
+import { getProducts } from "../services/api";
 
 export default function Home() {
   useScrollReveal();
@@ -16,9 +18,7 @@ export default function Home() {
   useEffect(() => {
     async function loadProducts() {
       try {
-        const res = await fetch(`${BASE_URL}/api/products`);
-
-        const data = await res.json();
+        const data = await getProducts();
 
         setProducts(Array.isArray(data) ? data : []);
       } catch {

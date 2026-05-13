@@ -1,0 +1,93 @@
+//client/src/pages/AdminOrders.jsx
+import { useEffect, useState } from "react";
+import Navbar from "../components/Navbar";
+
+import { getAdminOrders, updateOrderStatusApi } from "../services/api";
+
+import { getToken } from "../utils/auth";
+
+export default function AdminOrders() {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  async function loadOrders() {
+    try {
+      const data = await getAdminOrders(getToken());
+
+      setOrders(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
+
+  async function updateStatus(orderId, status) {
+    try {
+      await updateOrderStatusApi(orderId, status, getToken());
+
+      loadOrders();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  return (
+    <>
+      <Navbar />
+
+      <div className="page">
+        <h1>Admin Orders</h1>
+
+        {loading ? (
+          <p>Loading orders...</p>
+        ) : (
+          orders.map((order) => (
+            <div key={order._id} className="cart-summary">
+              <h3>{order.orderNumber}</h3>
+
+              <p>
+                Customer: <strong>{order.customerName}</strong>
+              </p>
+
+              <p>Total: ₦{Number(order.totalAmount).toLocaleString()}</p>
+
+              <p>
+                Payment: <strong>{order.paymentStatus}</strong>
+              </p>
+
+              <p>
+                Delivery: <strong>{order.deliveryStatus}</strong>
+              </p>
+
+              <div style={{ marginTop: 10 }}>
+                <select
+                  value={order.deliveryStatus}
+                  onChange={(e) => updateStatus(order._id, e.target.value)}
+                >
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="processing">Processing</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                </select>
+              </div>
+
+              <div style={{ marginTop: 10 }}>
+                {order.items.map((item) => (
+                  <div key={item.productId}>
+                    {item.quantity} × {item.name}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </>
+  );
+}

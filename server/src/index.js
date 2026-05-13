@@ -15,6 +15,9 @@ const measurementRoutes = require("./routes/measurementRoutes");
 const cartRoutes = require("./routes/cart.routes");
 const checkoutRoutes = require("./routes/checkout.routes");
 const userRoutes = require("./routes/user.routes");
+const adminOrderRoutes = require("./routes/admin.order.routes");
+const shippingRoutes = require("./routes/shipping.routes");
+const inquiryRoutes = require("./routes/inquiries.routes");
 
 const app = express();
 
@@ -41,6 +44,9 @@ app.use("/api/measurements", measurementRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/admin/orders", adminOrderRoutes);
+app.use("/api/shipping", shippingRoutes);
+app.use("/api/inquiries", inquiryRoutes);
 
 app.get("/", (req, res) => {
   res.send("NewBrend Furniture API is running");

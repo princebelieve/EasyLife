@@ -1,10 +1,12 @@
 //client/src/pages/Collection.jsx
 import { useEffect, useState } from "react";
+
 import Navbar from "../components/Navbar";
 import ProductGrid from "../components/ProductGrid";
+
 import useScrollReveal from "../hooks/useScrollReveal";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+import { getProducts } from "../services/api";
 
 export default function Collection() {
   useScrollReveal();
@@ -15,9 +17,7 @@ export default function Collection() {
   useEffect(() => {
     async function loadProducts() {
       try {
-        const res = await fetch(`${BASE_URL}/api/products`);
-
-        const data = await res.json();
+        const data = await getProducts();
 
         setProducts(Array.isArray(data) ? data : []);
       } catch {

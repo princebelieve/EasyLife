@@ -74,4 +74,64 @@ router.delete("/remove/:productId", protect, async (req, res) => {
   res.json(cart);
 });
 
+router.put("/update/:productId", protect, async (req, res) => {
+  const { quantity } = req.body;
+
+  if (quantity < 1) {
+    return res.status(400).json({
+      message: "Quantity must be at least 1",
+    });
+  }
+
+  let cart = await Cart.findOne({
+    userId: req.user.id,
+  });
+
+  if (!cart) {
+    return res.status(404).json({
+      message: "Cart not found",
+    });
+  }
+
+  const item = cart.items.find(
+    (i) => i.productId.toString() === req.params.productId,
+  );
+
+  if (!item) {
+    return res.status(404).json({
+      message: "Item not found in cart",
+    });
+  }
+
+  item.quantity = quantity;
+
+  await cart.save();
+
+  const updatedCart = await Cart.findOne({
+    userId: req.user.id,
+  }).populate("items.productId");
+
+  res.json(updatedCart);
+});
+
+router.delete("/clear", protect, async (req, res) => {
+  const cart = await Cart.findOne({
+    userId: req.user.id,
+  });
+
+  if (!cart) {
+    return res.status(404).json({
+      message: "Cart not found",
+    });
+  }
+
+  cart.items = [];
+
+  await cart.save();
+
+  res.json({
+    message: "Cart cleared",
+  });
+});
+
 module.exports = router;

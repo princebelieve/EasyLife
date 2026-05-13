@@ -1,3 +1,4 @@
+//client/src/components/ProductGrid.jsx
 import ProductCard from "./ProductCard";
 
 export default function ProductGrid({ products }) {

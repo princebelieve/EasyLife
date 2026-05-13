@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import Navbar from "../components/Navbar";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+import { getMyOrders } from "../services/api";
 
 export default function Dashboard() {
   const [orders, setOrders] = useState([]);
@@ -13,13 +13,7 @@ export default function Dashboard() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(`${BASE_URL}/api/users/orders`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
+        const data = await getMyOrders(token);
 
         setOrders(data);
       } catch (err) {

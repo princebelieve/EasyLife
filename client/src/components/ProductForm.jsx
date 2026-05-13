@@ -26,6 +26,12 @@ export default function ProductForm({
     fullDescription: "",
     category: "",
     price: "",
+    stock: 0,
+    shippingClass: "furniture",
+    featured: false,
+    status: "active",
+    weight: 0,
+    deliveryEstimate: "7-14 days",
     coverImage: null,
     gallery: [],
     pieces: [emptyPiece],
@@ -39,6 +45,13 @@ export default function ProductForm({
         fullDescription: editingProduct.fullDescription ?? "",
         category: editingProduct.category ?? "",
         price: editingProduct.price ?? "",
+        stock: editingProduct.stock ?? 0,
+        shippingClass: editingProduct.shippingClass ?? "furniture",
+        featured: editingProduct.featured ?? false,
+        status: editingProduct.status ?? "active",
+        sku: editingProduct.sku ?? "",
+        weight: editingProduct.weight ?? 0,
+        deliveryEstimate: editingProduct.deliveryEstimate ?? "7-14 days",
         coverImage: null,
         gallery: [],
         pieces:
@@ -65,6 +78,12 @@ export default function ProductForm({
         fullDescription: "",
         category: "",
         price: "",
+        stock: 0,
+        shippingClass: "furniture",
+        featured: false,
+        status: "active",
+        weight: 0,
+        deliveryEstimate: "7-14 days",
         coverImage: null,
         gallery: [],
         pieces: [{ ...emptyPiece }],
@@ -121,7 +140,19 @@ export default function ProductForm({
       formData.append("shortDescription", form.shortDescription);
       formData.append("fullDescription", form.fullDescription);
       formData.append("category", form.category);
+
       formData.append("price", Number(form.price || 0));
+      formData.append("stock", Number(form.stock || 0));
+
+      formData.append("shippingClass", form.shippingClass);
+
+      formData.append("featured", form.featured);
+
+      formData.append("status", form.status);
+
+      formData.append("weight", Number(form.weight || 0));
+
+      formData.append("deliveryEstimate", form.deliveryEstimate);
 
       if (form.coverImage instanceof File) {
         formData.append("coverImage", form.coverImage);
@@ -172,6 +203,12 @@ export default function ProductForm({
           fullDescription: "",
           category: "",
           price: "",
+          stock: 0,
+          shippingClass: "furniture",
+          featured: false,
+          status: "active",
+          weight: 0,
+          deliveryEstimate: "7-14 days",
           coverImage: null,
           gallery: [],
           pieces: [{ ...emptyPiece }],
@@ -211,7 +248,7 @@ export default function ProductForm({
 
       <input
         name="name"
-        placeholder="Collection name"
+        placeholder="Product or project name"
         value={form.name}
         onChange={handleChange}
       />
@@ -230,20 +267,107 @@ export default function ProductForm({
         onChange={handleChange}
       />
 
-      <input
-        name="category"
-        placeholder="Category"
-        value={form.category}
-        onChange={handleChange}
-      />
+      <select name="category" value={form.category} onChange={handleChange}>
+        <option value="">Select Category</option>
+
+        <option value="Sofa Set">Sofa Set</option>
+
+        <option value="Dining Set">Dining Set</option>
+
+        <option value="Kitchen Cabinet">Kitchen Cabinet</option>
+
+        <option value="Wall Panel">Wall Panel</option>
+
+        <option value="TV Console">TV Console</option>
+
+        <option value="Curtains & Bedsheets">Curtains & Bedsheets</option>
+
+        <option value="Lighting & Fittings">Lighting & Fittings</option>
+
+        <option value="Bedroom Furniture">Bedroom Furniture</option>
+
+        <option value="Office Furniture">Office Furniture</option>
+
+        <option value="Interior Design">Interior Design</option>
+
+        <option value="Custom Project">Custom Project</option>
+      </select>
 
       <input
         name="price"
         type="number"
-        placeholder="Collection price"
+        placeholder="Base price"
         value={form.price}
         onChange={handleChange}
       />
+
+      <input
+        name="stock"
+        type="number"
+        placeholder="Stock Quantity"
+        value={form.stock}
+        onChange={handleChange}
+      />
+
+      <input
+        name="weight"
+        type="number"
+        placeholder="Weight (kg)"
+        value={form.weight}
+        onChange={handleChange}
+      />
+
+      <input
+        name="deliveryEstimate"
+        placeholder="Delivery Estimate"
+        value={form.deliveryEstimate}
+        onChange={handleChange}
+      />
+
+      <select
+        name="shippingClass"
+        value={form.shippingClass}
+        onChange={handleChange}
+      >
+        <option value="light">Light Decor</option>
+
+        <option value="medium">Medium Item</option>
+
+        <option value="heavy">Heavy Item</option>
+
+        <option value="furniture">Large Furniture</option>
+
+        <option value="decor">Decor & Fittings</option>
+
+        <option value="installation">Installation Service</option>
+
+        <option value="custom">Custom Interior Project</option>
+      </select>
+
+      <select name="status" value={form.status} onChange={handleChange}>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+
+      <label
+        style={{
+          display: "flex",
+          gap: 10,
+          alignItems: "center",
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={form.featured}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              featured: e.target.checked,
+            })
+          }
+        />
+        Featured Product
+      </label>
 
       <div>
         <p>Main Image</p>
@@ -278,12 +402,12 @@ export default function ProductForm({
 
       <hr />
 
-      <h3>Furniture Pieces</h3>
+      <h3>Included Items / Components</h3>
 
       {form.pieces.map((piece, index) => (
         <div key={index} className="piece-card">
           <input
-            placeholder="Piece name"
+            placeholder="Item or component name"
             value={piece.name}
             onChange={(e) => handlePieceChange(index, "name", e.target.value)}
           />

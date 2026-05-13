@@ -1,10 +1,13 @@
 //client/src/pages/ProductDetails.jsx
 import { useEffect, useState } from "react";
+
 import { useParams } from "react-router-dom";
+
 import Navbar from "../components/Navbar";
+
 import { useCart } from "../context/CartContext";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+import { getProductById } from "../services/api";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -18,14 +21,7 @@ export default function ProductDetails() {
       try {
         setLoading(true);
 
-        const res = await fetch(`${BASE_URL}/api/products/${id}`);
-
-        const data = await res.json();
-
-        if (!data || data.message === "Product not found") {
-          setProduct(null);
-          return;
-        }
+        const data = await getProductById(id);
 
         setProduct(data);
       } catch (err) {

@@ -25,10 +25,16 @@ export default function Login() {
 
       const payload = JSON.parse(atob(res.token.split(".")[1]));
 
+      const pendingCheckout = localStorage.getItem("pendingCheckout");
+
       if (payload.role === "admin") {
         navigate("/admin/products");
+      } else if (pendingCheckout === "true") {
+        localStorage.removeItem("pendingCheckout");
+
+        navigate("/checkout");
       } else {
-        navigate("/");
+        navigate("/dashboard");
       }
     } else {
       alert(res.message || "Login failed");

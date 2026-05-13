@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar"; // ✅ ADD THIS
+import Navbar from "../components/Navbar";
+import { registerUser } from "../services/api";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -18,28 +19,13 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      const BASE_URL = import.meta.env.VITE_API_URL;
-
-      const res = await fetch(`${BASE_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "Registration failed");
-        return;
-      }
+      await registerUser(form);
 
       alert("Account created successfully");
       navigate("/login");
     } catch (err) {
       console.error(err);
-      alert("Unable to connect to server");
+      alert(err.message || "Unable to connect to server");
     }
   };
 

@@ -1,7 +1,6 @@
 //client/src/components/FurnitureInquiryForm.jsx
 import { useState } from "react";
-
-const BASE_URL = import.meta.env.VITE_API_URL;
+import { submitInquiry } from "../services/api";
 
 export default function FurnitureInquiryForm() {
   const [form, setForm] = useState({
@@ -22,31 +21,26 @@ export default function FurnitureInquiryForm() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const res = await fetch(`${BASE_URL}/api/inquiries`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    try {
+      await submitInquiry(form);
 
-    const data = await res.json();
+      alert(
+        "Inquiry submitted successfully! We'll contact you within 24 hours.",
+      );
 
-    if (!res.ok) {
-      alert(data.message || "Failed to submit inquiry");
-      return;
+      setForm({
+        fullName: "",
+        email: "",
+        phone: "",
+        projectType: "",
+        roomType: "",
+        budget: "",
+        timeline: "",
+        message: "",
+      });
+    } catch (err) {
+      alert(err.message || "Failed to submit inquiry");
     }
-
-    alert("Inquiry submitted successfully! We'll contact you within 24 hours.");
-
-    setForm({
-      fullName: "",
-      email: "",
-      phone: "",
-      projectType: "",
-      roomType: "",
-      budget: "",
-      timeline: "",
-      message: "",
-    });
   }
 
   return (
@@ -122,11 +116,7 @@ export default function FurnitureInquiryForm() {
           </div>
 
           <div className="two-col">
-            <select
-              name="budget"
-              value={form.budget}
-              onChange={handleChange}
-            >
+            <select name="budget" value={form.budget} onChange={handleChange}>
               <option value="">Budget Range (Optional)</option>
               <option value="under-1000">Under £1,000</option>
               <option value="1000-5000">£1,000 - £5,000</option>

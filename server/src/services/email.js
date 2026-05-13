@@ -1,3 +1,4 @@
+//server/src/services/email.js
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
@@ -13,7 +14,11 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendResetPasswordEmail({ to, resetUrl }) {
-  if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+  if (
+    !process.env.EMAIL_HOST ||
+    !process.env.EMAIL_USER ||
+    !process.env.EMAIL_PASS
+  ) {
     console.warn(
       "EMAIL_HOST, EMAIL_USER, or EMAIL_PASS is not configured. Reset link: ",
       resetUrl,

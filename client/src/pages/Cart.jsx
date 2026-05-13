@@ -8,12 +8,8 @@ import { useCart } from "../context/CartContext";
 export default function Cart() {
   const navigate = useNavigate();
 
-  const { cart, subtotal, removeFromCart, updateQuantity, clearCart } =
+  const { cart, subtotal, removeFromCart, updateQuantity, clearCart, loading } =
     useCart();
-
-  const shippingFee = subtotal > 0 ? 25000 : 0;
-
-  const total = subtotal + shippingFee;
 
   return (
     <>
@@ -22,7 +18,58 @@ export default function Cart() {
       <div className="page">
         <h1>Your Cart</h1>
 
-        {cart.length === 0 ? (
+        {loading ? (
+          <div className="cart-list">
+            {[1, 2, 3].map((item) => (
+              <div className="cart-item" key={item}>
+                <div
+                  style={{
+                    width: 120,
+                    height: 120,
+                    background: "#e5e5e5",
+                    borderRadius: 8,
+                  }}
+                />
+
+                <div
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 12,
+                  }}
+                >
+                  <div
+                    style={{
+                      height: 20,
+                      width: "60%",
+                      background: "#e5e5e5",
+                      borderRadius: 6,
+                    }}
+                  />
+
+                  <div
+                    style={{
+                      height: 20,
+                      width: "30%",
+                      background: "#e5e5e5",
+                      borderRadius: 6,
+                    }}
+                  />
+
+                  <div
+                    style={{
+                      height: 40,
+                      width: 140,
+                      background: "#e5e5e5",
+                      borderRadius: 6,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : cart.length === 0 ? (
           <div>
             <p>Your cart is empty.</p>
 
@@ -85,10 +132,10 @@ export default function Cart() {
 
               <p>
                 Delivery:
-                <strong>₦{shippingFee.toLocaleString()}</strong>
+                <strong>Calculated at checkout</strong>
               </p>
 
-              <h2>Total: ₦{total.toLocaleString()}</h2>
+              <h2>Total: Based on checkout (includes shipping)</h2>
 
               <div
                 style={{

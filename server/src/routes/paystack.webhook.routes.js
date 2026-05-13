@@ -5,6 +5,7 @@ const crypto = require("crypto");
 
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const Cart = require("../models/Cart");
 
 const router = express.Router();
 
@@ -45,7 +46,13 @@ router.post("/", async (req, res) => {
 
       order.paymentStatus = "paid";
 
-      const Product = require("../models/Product");
+      order.deliveryStatus = "confirmed";
+
+      order.paidAt = new Date();
+
+      order.statusHistory.push({
+        status: "confirmed",
+      });
 
       // update stock for every ordered item
       for (const item of order.items) {
@@ -61,6 +68,8 @@ router.post("/", async (req, res) => {
       }
 
       await order.save();
+
+      await Cart.findOneAndUpdate({ userId: order.userId }, { items: [] });
 
       console.log("✅ PAYMENT CONFIRMED:", reference);
     }

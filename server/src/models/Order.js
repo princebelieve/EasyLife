@@ -106,13 +106,108 @@ const orderSchema = new mongoose.Schema(
 
     paymentStatus: {
       type: String,
+      enum: ["pending", "paid", "failed", "refunded", "partially_refunded"],
       default: "pending",
     },
 
     deliveryStatus: {
       type: String,
-      default: "processing",
+      enum: [
+        "pending",
+        "confirmed",
+        "processing",
+        "ready_for_dispatch",
+        "shipped",
+        "out_for_delivery",
+        "delivered",
+        "cancelled",
+        "returned",
+      ],
+      default: "pending",
     },
+
+    orderNumber: {
+      type: String,
+      unique: true,
+      default: () => "ORD-" + Date.now(),
+    },
+
+    deliveryMethod: {
+      type: String,
+      default: "home",
+    },
+
+    installationNeeded: {
+      type: String,
+      default: "no",
+    },
+
+    deliveryFee: {
+      type: Number,
+      default: 0,
+    },
+
+    deliveryZone: {
+      type: String,
+      default: "",
+    },
+
+    deliveryContact: {
+      type: String,
+      default: "",
+    },
+
+    estimatedDeliveryDate: {
+      type: String,
+      default: "",
+    },
+
+    trackingNotes: {
+      type: String,
+      default: "",
+    },
+
+    adminNotes: {
+      type: String,
+      default: "",
+    },
+
+    assignedStaff: {
+      type: String,
+      default: "",
+    },
+
+    refundStatus: {
+      type: String,
+      default: "none",
+    },
+
+    refundReason: {
+      type: String,
+      default: "",
+    },
+
+    paidAt: {
+      type: Date,
+    },
+
+    deliveredAt: {
+      type: Date,
+    },
+
+    cancelledAt: {
+      type: Date,
+    },
+
+    statusHistory: [
+      {
+        status: String,
+        date: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

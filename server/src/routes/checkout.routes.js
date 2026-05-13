@@ -7,6 +7,7 @@ const Order = require("../models/Order");
 const Product = require("../models/Product");
 const paystack = require("../services/paystack");
 const { protect } = require("../middleware/auth");
+const { calculateShipping } = require("../config/shipping");
 
 router.post("/", protect, async (req, res) => {
   try {
@@ -41,7 +42,19 @@ router.post("/", protect, async (req, res) => {
       };
     });
 
-    const shippingFee = subtotal > 0 ? 25000 : 0;
+    const deliveryMethod = req.body.deliveryMethod || "home";
+
+    const installationNeeded = req.body.installationNeeded || "no";
+
+    const shippingClass =
+      cart.items[0]?.productId?.shippingClass || "furniture";
+
+    const shippingFee = await calculateShipping({
+      city,
+      state,
+      shippingClass,
+    });
+
     const totalAmount = subtotal + shippingFee;
 
     // 3. CREATE ORDER (pending)
@@ -57,10 +70,15 @@ router.post("/", protect, async (req, res) => {
       items: orderItems,
       subtotal,
       shippingFee,
+      deliveryMethod,
+      installationNeeded,
+      paymentStatus: "pending",
+      deliveryStatus: "pending",
+      deliveryFee: shippingFee,
+      deliveryZone: state,
+      deliveryContact: phone,
       totalAmount,
       currency: "NGN",
-      paymentStatus: "pending",
-      deliveryStatus: "processing",
     });
 
     // 4. INIT PAYSTACK

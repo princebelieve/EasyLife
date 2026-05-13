@@ -1,18 +1,25 @@
 // src/pages/AdminProducts.jsx
 import { useEffect, useState } from "react";
+
 import Navbar from "../components/Navbar";
 import ProductForm from "../components/ProductForm";
-import { getToken } from "../utils/auth";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+import {
+  getProducts,
+  createProductApi,
+  updateProductApi,
+  deleteProductApi,
+} from "../services/api";
+
+import { getToken } from "../utils/auth";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
 
   async function loadProducts() {
-    const res = await fetch(`${BASE_URL}/api/products`);
-    const data = await res.json();
+    const data = await getProducts();
+
     setProducts(data);
   }
 
@@ -21,25 +28,15 @@ export default function AdminProducts() {
   }, []);
 
   async function handleSubmit(formData) {
-    const method = editingProduct ? "PUT" : "POST";
+    let data;
 
-    const url = editingProduct
-      ? `${BASE_URL}/api/products/${editingProduct._id}`
-      : `${BASE_URL}/api/products`;
-
-    const res = await fetch(url, {
-      method,
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-      body: formData,
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message || "Unable to save product");
-      throw new Error(data.message || "Unable to save product");
+    try {
+      data = editingProduct
+        ? await updateProductApi(editingProduct._id, formData, getToken())
+        : await createProductApi(formData, getToken());
+    } catch (err) {
+      alert(err.message || "Unable to save product");
+      throw err;
     }
 
     await loadProducts();
@@ -52,17 +49,10 @@ export default function AdminProducts() {
     const ok = window.confirm("Delete this product?");
     if (!ok) return;
 
-    const res = await fetch(`${BASE_URL}/api/products/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message || "Unable to delete product");
+    try {
+      await deleteProductApi(id, getToken());
+    } catch (err) {
+      alert(err.message || "Unable to delete product");
       return;
     }
 
