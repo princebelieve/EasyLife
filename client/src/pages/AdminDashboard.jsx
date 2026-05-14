@@ -1,34 +1,69 @@
 //client/src/pages/AdminDashboard.jsx
-import Navbar from "../components/Navbar";
+
+import { useEffect, useState } from "react";
+
+import { getProducts, getAdminOrders } from "../services/api";
+
+import { getToken } from "../utils/auth";
 
 export default function AdminDashboard() {
+  const [products, setProducts] = useState([]);
+
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [productsData, ordersData] = await Promise.all([
+          getProducts(),
+          getAdminOrders(getToken()),
+        ]);
+
+        setProducts(productsData);
+
+        setOrders(ordersData);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  const totalRevenue = orders.reduce(
+    (sum, order) => sum + Number(order.totalAmount || 0),
+    0,
+  );
+
+  const lowStock = products.filter((p) => p.stock <= 5);
+
   return (
-    <>
-      <>
-        <Navbar />
+    <div className="page">
+      <div className="kpi-grid">
+        <div className="kpi-card">
+          <h3>Total Products</h3>
 
-        <div className="admin-grid">
-          <div className="admin-card">
-            <h3>Products</h3>
-            <p>Manage inventory, stock, pricing</p>
-          </div>
-
-          <div className="admin-card">
-            <h3>Orders</h3>
-            <p>Track and update customer orders</p>
-          </div>
-
-          <div className="admin-card">
-            <h3>Sales</h3>
-            <p>Monitor revenue and transactions</p>
-          </div>
-
-          <div className="admin-card">
-            <h3>Inquiries</h3>
-            <p>Customer requests and messages</p>
-          </div>
+          <div className="kpi-value">{products.length}</div>
         </div>
-      </>
-    </>
+
+        <div className="kpi-card">
+          <h3>Total Orders</h3>
+
+          <div className="kpi-value">{orders.length}</div>
+        </div>
+
+        <div className="kpi-card">
+          <h3>Total Revenue</h3>
+
+          <div className="kpi-value">₦{totalRevenue.toLocaleString()}</div>
+        </div>
+
+        <div className="kpi-card">
+          <h3>Low Stock</h3>
+
+          <div className="kpi-value">{lowStock.length}</div>
+        </div>
+      </div>
+    </div>
   );
 }

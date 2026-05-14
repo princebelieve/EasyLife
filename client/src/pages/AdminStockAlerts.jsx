@@ -1,6 +1,5 @@
 //client/src/pages/AdminStockAlerts.jsx
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 import { getProducts } from "../services/api";
 
 export default function AdminStockAlerts() {
@@ -14,7 +13,6 @@ export default function AdminStockAlerts() {
 
   return (
     <>
-      <Navbar />
 
       <div className="page">
         <h2>Low Stock Alerts</h2>

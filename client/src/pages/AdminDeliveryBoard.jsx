@@ -1,6 +1,5 @@
 //client/src/pages/AdminDeliveryBoard.jsx
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 import { getAdminOrders } from "../services/api";
 import { getToken } from "../utils/auth";
 
@@ -15,8 +14,6 @@ export default function AdminDeliveryBoard() {
 
   return (
     <>
-      <Navbar />
-
       <h2>Delivery Pipeline</h2>
 
       <div className="kanban">

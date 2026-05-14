@@ -1928,129 +1928,282 @@ button:hover {
   }
 }
 
-/* ================= ADMIN SYSTEM ================= */
+/* ================= ADMIN V2 ================= */
 
-.admin-layout {
+.admin-shell {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  background: #f6f1ea;
 }
 
 .admin-topbar {
-  height: 64px;
-  background: var(--navy);
-  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 3000;
+
+  height: 76px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+
+  padding: 0 20px;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  backdrop-filter: blur(14px);
+
+  border-bottom: 1px solid #ece6dd;
 }
 
-.admin-menu-btn {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 20px;
-}
-
-.admin-logout {
-  background: var(--gold);
-  border: none;
-  padding: 8px 14px;
-  border-radius: var(--radius);
-  font-weight: 700;
-}
-
-.admin-body {
+.admin-topbar-left {
   display: flex;
-  flex: 1;
-}
-
-.admin-sidebar {
-  width: 220px;
-  background: #111;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
+  align-items: center;
   gap: 14px;
 }
 
-.admin-sidebar a {
-  color: white;
+.admin-menu-btn {
+  width: 46px;
+  height: 46px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #f3ede5;
+
+  color: var(--text);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.admin-brand strong {
+  display: block;
+  color: var(--text);
+}
+
+.admin-brand span {
+  font-size: 12px;
+  color: #7b6d61;
+}
+
+.admin-desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.admin-desktop-nav a {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.admin-logout {
+  height: 46px;
+
+  border: none;
+
+  padding: 0 18px;
+
+  border-radius: 12px;
+
+  background: var(--gold);
+
+  color: #111;
+
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 3998;
+}
+
+.admin-sidebar {
+  position: fixed;
+
+  top: 0;
+  left: -320px;
+
+  width: 280px;
+  height: 100vh;
+
+  background: #fff;
+
+  z-index: 3999;
+
+  transition: left 0.25s ease;
+
+  border-right: 1px solid #ece6dd;
+
+  overflow-y: auto;
+}
+
+.admin-sidebar.open {
+  left: 0;
+}
+
+.admin-sidebar-header {
+  height: 76px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  padding: 0 20px;
+
+  border-bottom: 1px solid #f1ece5;
+}
+
+.admin-sidebar-header button {
+  background: none;
+  border: none;
+}
+
+.admin-sidebar-links {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  gap: 8px;
+}
+
+.admin-sidebar-links a {
+  height: 52px;
+
+  border-radius: 14px;
+
+  padding: 0 14px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  color: var(--text);
+
   font-weight: 600;
 }
 
-.admin-content {
-  flex: 1;
-  padding: 20px;
+.admin-sidebar-links a:hover {
+  background: #f7f2eb;
+}
+
+.active-admin-link {
+  background: rgba(201, 162, 74, 0.18);
+}
+
+.admin-main {
+  padding: 26px;
 }
 
 .admin-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
 }
 
 .admin-card {
   background: white;
-  border-radius: var(--radius);
-  padding: 18px;
-  border: 1px solid #eee;
-}
 
-/* ================= KPI CARDS ================= */
+  border-radius: 24px;
+
+  padding: 24px;
+
+  border: 1px solid #ece6dd;
+
+  min-height: 140px;
+}
 
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
 }
 
 .kpi-card {
   background: white;
-  padding: 18px;
-  border-radius: var(--radius);
-  border: 1px solid #eee;
+
+  border-radius: 22px;
+
+  padding: 22px;
+
+  border: 1px solid #ece6dd;
 }
 
 .kpi-value {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--navy);
-}
+  margin-top: 10px;
 
-/* ================= KANBAN ================= */
+  font-size: 32px;
+
+  font-weight: 800;
+
+  color: var(--brown);
+}
 
 .kanban {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
 }
 
 .kanban-column {
   background: white;
-  border-radius: var(--radius);
-  padding: 12px;
-  min-height: 400px;
-  border: 1px solid #eee;
+
+  border-radius: 22px;
+
+  padding: 18px;
+
+  border: 1px solid #ece6dd;
 }
 
 .kanban-card {
-  background: var(--bg);
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  border: 1px solid #eee;
+  background: #f8f4ef;
+
+  border-radius: 14px;
+
+  padding: 14px;
+
+  margin-top: 12px;
+
+  border: 1px solid #ece6dd;
 }
 
-/* ================= ALERTS ================= */
-
 .alert-low-stock {
-  background: #fff3cd;
-  border: 1px solid #ffeeba;
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 8px;
+  background: #fff4d8;
+
+  border: 1px solid #f0d899;
+
+  padding: 14px;
+
+  border-radius: 14px;
+
+  margin-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+  .admin-desktop-nav {
+    display: none;
+  }
+
+  .admin-main {
+    padding: 18px;
+  }
 }

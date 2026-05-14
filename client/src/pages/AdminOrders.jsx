@@ -1,6 +1,5 @@
 //client/src/pages/AdminOrders.jsx
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 
 import { getAdminOrders, updateOrderStatusApi } from "../services/api";
 
@@ -38,8 +37,6 @@ export default function AdminOrders() {
 
   return (
     <>
-      <Navbar />
-
       <div className="page">
         <h1>Admin Orders</h1>
 

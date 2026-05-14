@@ -1,7 +1,6 @@
 // src/pages/AdminProducts.jsx
 import { useEffect, useState } from "react";
 
-import Navbar from "../components/Navbar";
 import ProductForm from "../components/ProductForm";
 
 import {
@@ -65,8 +64,6 @@ export default function AdminProducts() {
 
   return (
     <>
-      <Navbar />
-
       <div className="page">
         <h1>Admin Products</h1>
 

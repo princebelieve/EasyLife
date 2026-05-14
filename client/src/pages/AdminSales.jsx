@@ -1,6 +1,5 @@
 //client/src/pages/AdminSales.jsx
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 import { getAdminOrders } from "../services/api";
 import { getToken } from "../utils/auth";
 
@@ -18,8 +17,6 @@ export default function AdminSales() {
 
   return (
     <>
-      <Navbar />
-
       <div className="page">
         <div className="kpi-grid">
           <div className="kpi-card">

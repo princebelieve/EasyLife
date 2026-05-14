@@ -1,7 +1,6 @@
 //client/src/pages/AdminOrderDetails.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import { getOrderById } from "../services/api";
 import { getToken } from "../utils/auth";
 
@@ -17,8 +16,6 @@ export default function AdminOrderDetails() {
 
   return (
     <>
-      <Navbar />
-
       <div className="page">
         <h2>Order {order.orderNumber}</h2>
 
