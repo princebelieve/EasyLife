@@ -29,6 +29,8 @@ import AdminSales from "./pages/AdminSales";
 import AdminStockAlerts from "./pages/AdminStockAlerts";
 import AdminOrderDetails from "./pages/AdminOrderDetails";
 import AdminDeliveryBoard from "./pages/AdminDeliveryBoard";
+import AdminShipping from "./pages/AdminShipping";
+import AdminInquiries from "./pages/AdminInquiries";
 
 export default function App() {
   return (
@@ -141,6 +143,26 @@ export default function App() {
             <RequireAdmin>
               <AdminLayout>
                 <AdminDeliveryBoard />
+              </AdminLayout>
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/shipping"
+          element={
+            <RequireAdmin>
+              <AdminLayout>
+                <AdminShipping />
+              </AdminLayout>
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/inquiries"
+          element={
+            <RequireAdmin>
+              <AdminLayout>
+                <AdminInquiries />
               </AdminLayout>
             </RequireAdmin>
           }

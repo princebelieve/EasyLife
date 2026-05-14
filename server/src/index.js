@@ -18,6 +18,7 @@ const userRoutes = require("./routes/user.routes");
 const adminOrderRoutes = require("./routes/admin.order.routes");
 const shippingRoutes = require("./routes/shipping.routes");
 const inquiryRoutes = require("./routes/inquiries.routes");
+const adminShippingRoutes = require("./routes/adminShipping.routes");
 
 const app = express();
 
@@ -47,6 +48,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 app.use("/api/shipping", shippingRoutes);
 app.use("/api/inquiries", inquiryRoutes);
+app.use("/api/admin/shipping", adminShippingRoutes);
 
 app.get("/", (req, res) => {
   res.send("NewBrend Furniture API is running");

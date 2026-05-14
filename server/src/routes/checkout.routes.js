@@ -7,7 +7,10 @@ const Order = require("../models/Order");
 const Product = require("../models/Product");
 const paystack = require("../services/paystack");
 const { protect } = require("../middleware/auth");
-const { calculateShipping } = require("../config/shipping");
+const {
+  calculateShipping,
+  getHighestShippingClass,
+} = require("../config/shipping");
 
 router.post("/", protect, async (req, res) => {
   try {
@@ -46,8 +49,7 @@ router.post("/", protect, async (req, res) => {
 
     const installationNeeded = req.body.installationNeeded || "no";
 
-    const shippingClass =
-      cart.items[0]?.productId?.shippingClass || "furniture";
+    const shippingClass = getHighestShippingClass(cart.items);
 
     const shippingData = await calculateShipping({
       city,

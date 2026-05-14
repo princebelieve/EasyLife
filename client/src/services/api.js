@@ -138,6 +138,50 @@ export async function previewShipping(payload) {
   return data;
 }
 
+export async function getShippingZones(token) {
+  return apiRequest("/api/admin/shipping", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function createShippingZone(data, token) {
+  return apiRequest("/api/admin/shipping", {
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateShippingZone(id, data, token) {
+  return apiRequest(`/api/admin/shipping/${id}`, {
+    method: "PUT",
+
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteShippingZone(id, token) {
+  return apiRequest(`/api/admin/shipping/${id}`, {
+    method: "DELETE",
+
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
 // -------------------------
 // USER ORDERS
 // -------------------------

@@ -1,6 +1,30 @@
 //server/src/config/shipping.js
 const ShippingZone = require("../models/ShippingZone");
 
+const SHIPPING_PRIORITY = {
+  light: 1,
+  medium: 2,
+  decor: 3,
+  heavy: 4,
+  furniture: 5,
+  installation: 6,
+  custom: 7,
+};
+
+function getHighestShippingClass(items = []) {
+  let highestClass = "light";
+
+  for (const item of items) {
+    const currentClass = item?.productId?.shippingClass || "furniture";
+
+    if (SHIPPING_PRIORITY[currentClass] > SHIPPING_PRIORITY[highestClass]) {
+      highestClass = currentClass;
+    }
+  }
+
+  return highestClass;
+}
+
 async function calculateShipping({
   city = "",
   state = "",
@@ -19,18 +43,14 @@ async function calculateShipping({
     return {
       shippingFee: 0,
       estimatedDays: "Not available",
+      pickupEnabled: false,
+      installationAvailable: false,
     };
   }
-
-  let shippingFee = zone.baseFee;
 
   const sameCity =
     zone.cities?.some((c) => c.toLowerCase().trim() === normalizedCity) ||
     false;
-
-  if (sameCity && zone.sameCityFee > 0) {
-    shippingFee = zone.sameCityFee;
-  }
 
   const classFees = {
     light: zone.lightFee,
@@ -42,7 +62,11 @@ async function calculateShipping({
     custom: zone.customProjectFee,
   };
 
-  shippingFee += classFees[shippingClass] || 0;
+  // SAME CITY REPLACES BASE FEE
+  // OTHERWISE USE NORMAL BASE FEE
+  const locationFee = sameCity ? zone.sameCityFee : zone.baseFee;
+
+  const shippingFee = locationFee + (classFees[shippingClass] || 0);
 
   return {
     shippingFee,
@@ -52,4 +76,7 @@ async function calculateShipping({
   };
 }
 
-module.exports = { calculateShipping };
+module.exports = {
+  calculateShipping,
+  getHighestShippingClass,
+};

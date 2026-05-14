@@ -11,6 +11,7 @@ import {
   BarChart3,
   AlertTriangle,
   Truck,
+  MapPinned,
   MessageSquare,
   Home,
   User,
@@ -74,6 +75,12 @@ export default function AdminLayout({ children }) {
       to: "/admin/delivery",
       label: "Delivery Board",
       icon: <Truck size={18} />,
+    },
+
+    {
+      to: "/admin/shipping",
+      label: "Shipping Zones",
+      icon: <MapPinned size={18} />,
     },
 
     {
