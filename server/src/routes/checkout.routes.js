@@ -49,11 +49,13 @@ router.post("/", protect, async (req, res) => {
     const shippingClass =
       cart.items[0]?.productId?.shippingClass || "furniture";
 
-    const shippingFee = await calculateShipping({
+    const shippingData = await calculateShipping({
       city,
       state,
       shippingClass,
     });
+
+    const shippingFee = shippingData.shippingFee || 0;
 
     const totalAmount = subtotal + shippingFee;
 
@@ -102,6 +104,8 @@ router.post("/", protect, async (req, res) => {
     res.json({
       authorization_url: data.authorization_url,
       reference: data.reference,
+
+      shipping: shippingData,
     });
   } catch (err) {
     console.error(err.response?.data || err.message);

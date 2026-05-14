@@ -9,15 +9,13 @@ router.post("/preview", async (req, res) => {
   try {
     const { city, state, shippingClass } = req.body;
 
-    const shippingFee = await calculateShipping({
+    const shippingData = await calculateShipping({
       city,
       state,
       shippingClass,
     });
 
-    res.json({
-      shippingFee,
-    });
+    res.json(shippingData);
   } catch (err) {
     console.error(err);
 

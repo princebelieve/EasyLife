@@ -44,42 +44,79 @@ export default function AdminOrders() {
           <p>Loading orders...</p>
         ) : (
           orders.map((order) => (
-            <div key={order._id} className="cart-summary">
-              <h3>{order.orderNumber}</h3>
+            <div
+              key={order._id}
+              className="order-card"
+              style={{ marginBottom: 24 }}
+            >
+              <div className="order-detail-grid">
+                {/* LEFT */}
+                <div className="order-main">
+                  <div className="order-card">
+                    <h2 style={{ marginTop: 0 }}>{order.orderNumber}</h2>
 
-              <p>
-                Customer: <strong>{order.customerName}</strong>
-              </p>
+                    <p>
+                      Customer: <strong>{order.customerName}</strong>
+                    </p>
 
-              <p>Total: ₦{Number(order.totalAmount).toLocaleString()}</p>
-
-              <p>
-                Payment: <strong>{order.paymentStatus}</strong>
-              </p>
-
-              <p>
-                Delivery: <strong>{order.deliveryStatus}</strong>
-              </p>
-
-              <div style={{ marginTop: 10 }}>
-                <select
-                  value={order.deliveryStatus}
-                  onChange={(e) => updateStatus(order._id, e.target.value)}
-                >
-                  <option value="pending">Pending</option>
-                  <option value="confirmed">Confirmed</option>
-                  <option value="processing">Processing</option>
-                  <option value="shipped">Shipped</option>
-                  <option value="delivered">Delivered</option>
-                </select>
-              </div>
-
-              <div style={{ marginTop: 10 }}>
-                {order.items.map((item) => (
-                  <div key={item.productId}>
-                    {item.quantity} × {item.name}
+                    <p>Total: ₦{Number(order.totalAmount).toLocaleString()}</p>
                   </div>
-                ))}
+
+                  <div className="order-card">
+                    <h3>Items</h3>
+
+                    {order.items.map((item) => (
+                      <div key={item.productId} className="order-item">
+                        <span>
+                          {item.quantity} × {item.name}
+                        </span>
+
+                        <strong>
+                          ₦{Number(item.price * item.quantity).toLocaleString()}
+                        </strong>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* RIGHT */}
+                <div className="order-side">
+                  <div className="order-card">
+                    <h3>Status</h3>
+
+                    <p>
+                      Payment:
+                      <strong> {order.paymentStatus}</strong>
+                    </p>
+
+                    <p>
+                      Delivery:
+                      <strong> {order.deliveryStatus}</strong>
+                    </p>
+
+                    <select
+                      value={order.deliveryStatus}
+                      onChange={(e) => updateStatus(order._id, e.target.value)}
+                      style={{
+                        width: "100%",
+                        marginTop: 12,
+                        height: 48,
+                        borderRadius: 12,
+                        padding: "0 12px",
+                      }}
+                    >
+                      <option value="pending">Pending</option>
+
+                      <option value="confirmed">Confirmed</option>
+
+                      <option value="processing">Processing</option>
+
+                      <option value="shipped">Shipped</option>
+
+                      <option value="delivered">Delivered</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
           ))

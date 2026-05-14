@@ -6,24 +6,50 @@ async function calculateShipping({
   state = "",
   shippingClass = "furniture",
 }) {
+  const normalizedState = state.toLowerCase().trim();
+
+  const normalizedCity = city.toLowerCase().trim();
+
   const zone = await ShippingZone.findOne({
-    state: state.toLowerCase(),
+    state: normalizedState,
     active: true,
   });
 
-  const baseFee = zone?.baseFee || 12000;
+  if (!zone) {
+    return {
+      shippingFee: 0,
+      estimatedDays: "Not available",
+    };
+  }
 
-  const multiplier = {
-    light: 1,
-    medium: 1.3,
-    heavy: 1.6,
-    furniture: 2.5,
-    decor: 1.8,
-    installation: 3,
-    custom: 4,
+  let shippingFee = zone.baseFee;
+
+  const sameCity =
+    zone.cities?.some((c) => c.toLowerCase().trim() === normalizedCity) ||
+    false;
+
+  if (sameCity && zone.sameCityFee > 0) {
+    shippingFee = zone.sameCityFee;
+  }
+
+  const classFees = {
+    light: zone.lightFee,
+    medium: zone.mediumFee,
+    heavy: zone.heavyFee,
+    furniture: zone.furnitureFee,
+    decor: zone.decorFee,
+    installation: zone.installationFee,
+    custom: zone.customProjectFee,
   };
 
-  return Math.round(baseFee * (multiplier[shippingClass] || 2));
+  shippingFee += classFees[shippingClass] || 0;
+
+  return {
+    shippingFee,
+    estimatedDays: zone.estimatedDays,
+    pickupEnabled: zone.pickupEnabled,
+    installationAvailable: zone.installationAvailable,
+  };
 }
 
 module.exports = { calculateShipping };
