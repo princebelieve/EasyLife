@@ -13,18 +13,27 @@ import { getToken } from "../utils/auth";
 const emptyForm = {
   state: "",
   cities: "",
-  baseFee: 0,
-  sameCityFee: 0,
-  lightFee: 0,
-  mediumFee: 0,
-  heavyFee: 0,
-  furnitureFee: 0,
-  decorFee: 0,
-  installationFee: 0,
-  customProjectFee: 0,
+
+  baseFee: "",
+
+  decorFee: "",
+
+  chairFee: "",
+
+  tableFee: "",
+
+  sofaFee: "",
+
+  bedFee: "",
+
+  customProjectFee: "",
+
   estimatedDays: "3-7 days",
+
   pickupEnabled: true,
+
   installationAvailable: true,
+
   active: true,
 };
 
@@ -52,12 +61,7 @@ export default function AdminShipping() {
 
     setForm({
       ...form,
-      [name]:
-        type === "checkbox"
-          ? checked
-          : type === "number"
-            ? Number(value)
-            : value,
+      [name]: type === "checkbox" ? checked : value,
     });
   }
 
@@ -65,11 +69,54 @@ export default function AdminShipping() {
     e.preventDefault();
 
     const payload = {
-      ...form,
+      state: form.state,
+
       cities: form.cities
         .split(",")
         .map((c) => c.trim())
         .filter(Boolean),
+
+      baseDeliveryFee: Number(form.baseFee || 0),
+
+      estimatedDays: form.estimatedDays,
+
+      pickupEnabled: form.pickupEnabled,
+
+      installationAvailable: form.installationAvailable,
+
+      active: form.active,
+
+      categoryPricing: [
+        {
+          category: "small-decor",
+          price: Number(form.decorFee || 0),
+        },
+
+        {
+          category: "chair",
+          price: Number(form.chairFee || 0),
+        },
+
+        {
+          category: "table",
+          price: Number(form.tableFee || 0),
+        },
+
+        {
+          category: "sofa",
+          price: Number(form.sofaFee || 0),
+        },
+
+        {
+          category: "bed",
+          price: Number(form.bedFee || 0),
+        },
+
+        {
+          category: "custom-project",
+          price: Number(form.customProjectFee || 0),
+        },
+      ],
     };
 
     if (editing) {
@@ -98,9 +145,39 @@ export default function AdminShipping() {
   function handleEdit(zone) {
     setEditing(zone);
 
+    function getCategoryPrice(zone, category) {
+      return (
+        zone.categoryPricing?.find((item) => item.category === category)
+          ?.price || 0
+      );
+    }
+
     setForm({
-      ...zone,
+      state: zone.state || "",
+
       cities: zone.cities.join(", "),
+
+      baseFee: zone.baseDeliveryFee || 0,
+
+      chairFee: getCategoryPrice(zone, "chair"),
+
+      tableFee: getCategoryPrice(zone, "table"),
+
+      bedFee: getCategoryPrice(zone, "bed"),
+
+      sofaFee: getCategoryPrice(zone, "sofa"),
+
+      decorFee: getCategoryPrice(zone, "small-decor"),
+
+      customProjectFee: getCategoryPrice(zone, "custom-project"),
+
+      estimatedDays: zone.estimatedDays || "3-7 days",
+
+      pickupEnabled: zone.pickupEnabled ?? true,
+
+      installationAvailable: zone.installationAvailable ?? true,
+
+      active: zone.active ?? true,
     });
 
     window.scrollTo({
@@ -175,32 +252,36 @@ export default function AdminShipping() {
               />
               <input
                 type="number"
-                name="lightFee"
-                placeholder="Light Fee"
-                value={form.lightFee}
+                name="chairFee"
+                placeholder="Chair Delivery Fee"
+                value={form.chairFee}
                 onChange={handleChange}
               />
+
               <input
                 type="number"
-                name="mediumFee"
-                placeholder="Medium Fee"
-                value={form.mediumFee}
+                name="tableFee"
+                placeholder="Dining Table Delivery Fee"
+                value={form.tableFee}
                 onChange={handleChange}
               />
+
               <input
                 type="number"
-                name="heavyFee"
-                placeholder="Heavy Fee"
-                value={form.heavyFee}
+                name="sofaFee"
+                placeholder="Sofa Delivery Fee"
+                value={form.sofaFee}
                 onChange={handleChange}
               />
+
               <input
                 type="number"
-                name="furnitureFee"
-                placeholder="Furniture Fee"
-                value={form.furnitureFee}
+                name="bedFee"
+                placeholder="Bedroom Furniture Delivery Fee"
+                value={form.bedFee}
                 onChange={handleChange}
               />
+
               <input
                 type="number"
                 name="decorFee"
@@ -297,7 +378,9 @@ export default function AdminShipping() {
 
             <p>Cities: {zone.cities.join(", ")}</p>
 
-            <p>Base Fee: ₦{Number(zone.baseFee).toLocaleString()}</p>
+            <p>
+              Base Fee: ₦{Number(zone.baseDeliveryFee || 0).toLocaleString()}
+            </p>
 
             <p>Estimated: {zone.estimatedDays}</p>
 

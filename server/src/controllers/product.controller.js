@@ -56,7 +56,6 @@ function generateSKU(name, category) {
   const timePart = Date.now().toString().slice(-5);
 
   const randomPart = Math.floor(100 + Math.random() * 900);
-
   return `${prefix}-${namePart}-${timePart}-${randomPart}`;
 }
 
@@ -70,7 +69,7 @@ async function createProduct(req, res) {
       fullDescription,
       price,
       stock,
-      shippingClass,
+      deliveryCategory,
       featured,
       status,
       weight,
@@ -129,6 +128,7 @@ async function createProduct(req, res) {
     }
 
     const generatedSku = generateSKU(name, category);
+    const categoryMap = require("../config/productCategoryMap");
 
     const product = await Product.create({
       name,
@@ -149,7 +149,7 @@ async function createProduct(req, res) {
 
       stock: Number(stock || 0),
 
-      shippingClass: shippingClass || "furniture",
+      deliveryCategory: categoryMap[category] || "custom-project",
 
       featured: featured === "true" || featured === true,
 
@@ -194,7 +194,7 @@ async function updateProduct(req, res) {
       fullDescription,
       price,
       stock,
-      shippingClass,
+      deliveryCategory,
       featured,
       status,
       sku,
@@ -211,6 +211,11 @@ async function updateProduct(req, res) {
 
     product.category = category || product.category;
 
+    const categoryMap = require("../config/productCategoryMap");
+
+    product.deliveryCategory =
+      categoryMap[product.category] || "custom-project";
+
     product.shortDescription = shortDescription || product.shortDescription;
 
     product.fullDescription = fullDescription || product.fullDescription;
@@ -221,10 +226,6 @@ async function updateProduct(req, res) {
       product.stock = Number(stock || 0);
 
       product.inStock = Number(stock || 0) > 0;
-    }
-
-    if (shippingClass) {
-      product.shippingClass = shippingClass;
     }
 
     if (featured !== undefined) {

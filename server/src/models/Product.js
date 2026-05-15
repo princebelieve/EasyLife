@@ -142,18 +142,21 @@ const productSchema = new mongoose.Schema(
     weight: { type: Number, default: 0 }, // kg
     dimensions: { type: String, default: "" },
 
-    shippingClass: {
+    deliveryCategory: {
       type: String,
       enum: [
-        "light",
-        "medium",
-        "heavy",
-        "furniture",
-        "decor",
-        "installation",
-        "custom",
+        "small-decor",
+        "chair",
+        "table",
+        "bed",
+        "sofa",
+        "wardrobe",
+        "tv-console",
+        "cabinet",
+        "office-furniture",
+        "custom-project",
       ],
-      default: "furniture",
+      default: "sofa",
     },
 
     inventoryTracking: {

@@ -1,6 +1,22 @@
 //server/src/models/ShippingZone.js
 const mongoose = require("mongoose");
 
+const categoryPricingSchema = new mongoose.Schema(
+  {
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    price: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { _id: false },
+);
+
 const shippingZoneSchema = new mongoose.Schema(
   {
     state: {
@@ -16,49 +32,24 @@ const shippingZoneSchema = new mongoose.Schema(
       default: [],
     },
 
-    baseFee: {
+    distanceLabel: {
+      type: String,
+      default: "",
+    },
+
+    baseDeliveryFee: {
       type: Number,
       default: 0,
     },
 
-    sameCityFee: {
-      type: Number,
-      default: 0,
+    categoryPricing: {
+      type: [categoryPricingSchema],
+      default: [],
     },
 
-    lightFee: {
-      type: Number,
-      default: 0,
-    },
-
-    mediumFee: {
-      type: Number,
-      default: 0,
-    },
-
-    heavyFee: {
-      type: Number,
-      default: 0,
-    },
-
-    furnitureFee: {
-      type: Number,
-      default: 0,
-    },
-
-    decorFee: {
-      type: Number,
-      default: 0,
-    },
-
-    installationFee: {
-      type: Number,
-      default: 0,
-    },
-
-    customProjectFee: {
-      type: Number,
-      default: 0,
+    estimatedDays: {
+      type: String,
+      default: "3-7 days",
     },
 
     pickupEnabled: {
@@ -69,11 +60,6 @@ const shippingZoneSchema = new mongoose.Schema(
     installationAvailable: {
       type: Boolean,
       default: true,
-    },
-
-    estimatedDays: {
-      type: String,
-      default: "3-7 days",
     },
 
     active: {

@@ -1,35 +1,7 @@
 //server/src/config/shipping.js
 const ShippingZone = require("../models/ShippingZone");
 
-const SHIPPING_PRIORITY = {
-  light: 1,
-  medium: 2,
-  decor: 3,
-  heavy: 4,
-  furniture: 5,
-  installation: 6,
-  custom: 7,
-};
-
-function getHighestShippingClass(items = []) {
-  let highestClass = "light";
-
-  for (const item of items) {
-    const currentClass = item?.productId?.shippingClass || "furniture";
-
-    if (SHIPPING_PRIORITY[currentClass] > SHIPPING_PRIORITY[highestClass]) {
-      highestClass = currentClass;
-    }
-  }
-
-  return highestClass;
-}
-
-async function calculateShipping({
-  city = "",
-  state = "",
-  shippingClass = "furniture",
-}) {
+async function calculateShipping({ city = "", state = "", items = [] }) {
   const normalizedState = state.toLowerCase().trim();
 
   const normalizedCity = city.toLowerCase().trim();
@@ -52,31 +24,37 @@ async function calculateShipping({
     zone.cities?.some((c) => c.toLowerCase().trim() === normalizedCity) ||
     false;
 
-  const classFees = {
-    light: zone.lightFee,
-    medium: zone.mediumFee,
-    heavy: zone.heavyFee,
-    furniture: zone.furnitureFee,
-    decor: zone.decorFee,
-    installation: zone.installationFee,
-    custom: zone.customProjectFee,
-  };
+  let shippingFee = sameCity
+    ? zone.baseDeliveryFee * 0.5
+    : zone.baseDeliveryFee;
 
-  // SAME CITY REPLACES BASE FEE
-  // OTHERWISE USE NORMAL BASE FEE
-  const locationFee = sameCity ? zone.sameCityFee : zone.baseFee;
+  for (const item of items) {
+    const product = item.productId;
 
-  const shippingFee = locationFee + (classFees[shippingClass] || 0);
+    const category = product.deliveryCategory || "furniture";
+
+    const quantity = Number(item.quantity || 1);
+
+    const categoryRule = zone.categoryPricing.find(
+      (rule) => rule.category === category,
+    );
+
+    const categoryPrice = Number(categoryRule?.price || 0);
+
+    shippingFee += categoryPrice * quantity;
+  }
 
   return {
     shippingFee,
+
     estimatedDays: zone.estimatedDays,
+
     pickupEnabled: zone.pickupEnabled,
+
     installationAvailable: zone.installationAvailable,
   };
 }
 
 module.exports = {
   calculateShipping,
-  getHighestShippingClass,
 };

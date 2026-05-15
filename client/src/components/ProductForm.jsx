@@ -19,6 +19,7 @@ export default function ProductForm({
 
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
+  const [step, setStep] = useState(1);
 
   const [form, setForm] = useState({
     name: "",
@@ -27,7 +28,6 @@ export default function ProductForm({
     category: "",
     price: "",
     stock: 0,
-    shippingClass: "furniture",
     featured: false,
     status: "active",
     weight: 0,
@@ -79,7 +79,6 @@ export default function ProductForm({
         category: "",
         price: "",
         stock: 0,
-        shippingClass: "furniture",
         featured: false,
         status: "active",
         weight: 0,
@@ -107,6 +106,14 @@ export default function ProductForm({
       ...form,
       pieces: updated,
     });
+  }
+
+  function nextStep() {
+    setStep((prev) => Math.min(prev + 1, 5));
+  }
+
+  function prevStep() {
+    setStep((prev) => Math.max(prev - 1, 1));
   }
 
   function addPiece() {
@@ -143,8 +150,6 @@ export default function ProductForm({
 
       formData.append("price", Number(form.price || 0));
       formData.append("stock", Number(form.stock || 0));
-
-      formData.append("shippingClass", form.shippingClass);
 
       formData.append("featured", form.featured);
 
@@ -204,7 +209,6 @@ export default function ProductForm({
           category: "",
           price: "",
           stock: 0,
-          shippingClass: "furniture",
           featured: false,
           status: "active",
           weight: 0,
@@ -243,238 +247,316 @@ export default function ProductForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="form">
-      <h2>{editingProduct ? "Edit Product" : "Add Product"}</h2>
+    <div className="product-wizard-shell">
+      {/* HEADER */}
+      <div className="wizard-header">
+        <div>
+          <span className="wizard-label">
+            {editingProduct ? "UPDATE MODE" : "NEW PRODUCT"}
+          </span>
 
-      <input
-        name="name"
-        placeholder="Product or project name"
-        value={form.name}
-        onChange={handleChange}
-      />
-
-      <textarea
-        name="shortDescription"
-        placeholder="Short description"
-        value={form.shortDescription}
-        onChange={handleChange}
-      />
-
-      <textarea
-        name="fullDescription"
-        placeholder="Full description"
-        value={form.fullDescription}
-        onChange={handleChange}
-      />
-
-      <select name="category" value={form.category} onChange={handleChange}>
-        <option value="">Select Category</option>
-
-        <option value="Sofa Set">Sofa Set</option>
-
-        <option value="Dining Set">Dining Set</option>
-
-        <option value="Kitchen Cabinet">Kitchen Cabinet</option>
-
-        <option value="Wall Panel">Wall Panel</option>
-
-        <option value="TV Console">TV Console</option>
-
-        <option value="Curtains & Bedsheets">Curtains & Bedsheets</option>
-
-        <option value="Lighting & Fittings">Lighting & Fittings</option>
-
-        <option value="Bedroom Furniture">Bedroom Furniture</option>
-
-        <option value="Office Furniture">Office Furniture</option>
-
-        <option value="Interior Design">Interior Design</option>
-
-        <option value="Custom Project">Custom Project</option>
-      </select>
-
-      <input
-        name="price"
-        type="number"
-        placeholder="Base price"
-        value={form.price}
-        onChange={handleChange}
-      />
-
-      <input
-        name="stock"
-        type="number"
-        placeholder="Stock Quantity"
-        value={form.stock}
-        onChange={handleChange}
-      />
-
-      <input
-        name="weight"
-        type="number"
-        placeholder="Weight (kg)"
-        value={form.weight}
-        onChange={handleChange}
-      />
-
-      <input
-        name="deliveryEstimate"
-        placeholder="Delivery Estimate"
-        value={form.deliveryEstimate}
-        onChange={handleChange}
-      />
-
-      <select
-        name="shippingClass"
-        value={form.shippingClass}
-        onChange={handleChange}
-      >
-        <option value="light">Light Decor</option>
-
-        <option value="medium">Medium Item</option>
-
-        <option value="heavy">Heavy Item</option>
-
-        <option value="furniture">Large Furniture</option>
-
-        <option value="decor">Decor & Fittings</option>
-
-        <option value="installation">Installation Service</option>
-
-        <option value="custom">Custom Interior Project</option>
-      </select>
-
-      <select name="status" value={form.status} onChange={handleChange}>
-        <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
-      </select>
-
-      <label
-        style={{
-          display: "flex",
-          gap: 10,
-          alignItems: "center",
-        }}
-      >
-        <input
-          type="checkbox"
-          checked={form.featured}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              featured: e.target.checked,
-            })
-          }
-        />
-        Featured Product
-      </label>
-
-      <div>
-        <p>Main Image</p>
-
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              coverImage: e.target.files[0],
-            })
-          }
-        />
-      </div>
-
-      <div>
-        <p>Gallery Images</p>
-
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={(e) =>
-            setForm({
-              ...form,
-              gallery: Array.from(e.target.files),
-            })
-          }
-        />
-      </div>
-
-      <hr />
-
-      <h3>Included Items / Components</h3>
-
-      {form.pieces.map((piece, index) => (
-        <div key={index} className="piece-card">
-          <input
-            placeholder="Item or component name"
-            value={piece.name}
-            onChange={(e) => handlePieceChange(index, "name", e.target.value)}
-          />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) =>
-              handlePieceChange(index, "imageFile", e.target.files[0])
-            }
-          />
-
-          <input
-            placeholder="Dimensions"
-            value={piece.dimensions}
-            onChange={(e) =>
-              handlePieceChange(index, "dimensions", e.target.value)
-            }
-          />
-
-          <input
-            placeholder="Description"
-            value={piece.description}
-            onChange={(e) =>
-              handlePieceChange(index, "description", e.target.value)
-            }
-          />
-
-          <input
-            type="number"
-            placeholder="Price"
-            value={piece.price}
-            onChange={(e) => handlePieceChange(index, "price", e.target.value)}
-          />
-
-          <button
-            type="button"
-            className="btn-danger"
-            onClick={() => removePiece(index)}
-          >
-            Remove Piece
-          </button>
+          <h1>{editingProduct ? "Edit Product" : "Create Product"}</h1>
         </div>
-      ))}
 
-      <button type="button" onClick={addPiece}>
-        Add Another Piece
-      </button>
-
-      {uploadMessage && <div className="upload-status">{uploadMessage}</div>}
-
-      <div className="form-actions">
-        <button type="submit" className="btn-primary" disabled={isUploading}>
-          {isUploading
-            ? editingProduct
-              ? "Updating..."
-              : "Uploading..."
-            : editingProduct
-              ? "Update Product"
-              : "Add Product"}
-        </button>
-
-        {editingProduct && (
-          <button type="button" onClick={onCancelEdit} className="btn-danger">
-            Cancel
-          </button>
-        )}
+        <div className="wizard-progress">
+          <div className={`wizard-dot ${step >= 1 ? "active" : ""}`} />
+          <div className={`wizard-dot ${step >= 2 ? "active" : ""}`} />
+          <div className={`wizard-dot ${step >= 3 ? "active" : ""}`} />
+          <div className={`wizard-dot ${step >= 4 ? "active" : ""}`} />
+          <div className={`wizard-dot ${step >= 5 ? "active" : ""}`} />
+        </div>
       </div>
-    </form>
+
+      <form onSubmit={handleSubmit} className="wizard-card">
+        {/* STEP 1 */}
+        {step === 1 && (
+          <div className="wizard-step">
+            <div className="wizard-step-header">
+              <h2>Basic Information</h2>
+              <p>Name, descriptions and category.</p>
+            </div>
+
+            <div className="wizard-grid">
+              <input
+                name="name"
+                placeholder="Product or project name"
+                value={form.name}
+                onChange={handleChange}
+              />
+
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+              >
+                <option value="">Select Category</option>
+
+                <option value="Sofa Set">Sofa Set</option>
+                <option value="Dining Set">Dining Set</option>
+                <option value="Kitchen Cabinet">Kitchen Cabinet</option>
+                <option value="Wall Panel">Wall Panel</option>
+                <option value="TV Console">TV Console</option>
+                <option value="Curtains & Bedsheets">
+                  Curtains & Bedsheets
+                </option>
+                <option value="Lighting & Fittings">Lighting & Fittings</option>
+                <option value="Bedroom Furniture">Bedroom Furniture</option>
+                <option value="Office Furniture">Office Furniture</option>
+                <option value="Interior Design">Interior Design</option>
+                <option value="Custom Project">Custom Project</option>
+              </select>
+            </div>
+
+            <textarea
+              name="shortDescription"
+              placeholder="Short description"
+              value={form.shortDescription}
+              onChange={handleChange}
+            />
+
+            <textarea
+              name="fullDescription"
+              placeholder="Full description"
+              value={form.fullDescription}
+              onChange={handleChange}
+            />
+          </div>
+        )}
+
+        {/* STEP 2 */}
+        {step === 2 && (
+          <div className="wizard-step">
+            <div className="wizard-step-header">
+              <h2>Pricing & Inventory</h2>
+              <p>Pricing, stock and delivery settings.</p>
+            </div>
+
+            <div className="wizard-grid">
+              <input
+                name="price"
+                type="number"
+                placeholder="Base Price"
+                value={form.price}
+                onChange={handleChange}
+              />
+
+              <input
+                name="stock"
+                type="number"
+                placeholder="Stock Quantity"
+                value={form.stock}
+                onChange={handleChange}
+              />
+            </div>
+
+            <input
+              name="deliveryEstimate"
+              placeholder="Delivery estimate"
+              value={form.deliveryEstimate}
+              onChange={handleChange}
+            />
+
+            <select name="status" value={form.status} onChange={handleChange}>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+
+            <label className="wizard-checkbox">
+              <input
+                type="checkbox"
+                checked={form.featured}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    featured: e.target.checked,
+                  })
+                }
+              />
+
+              <span>Featured Product</span>
+            </label>
+          </div>
+        )}
+
+        {/* STEP 3 */}
+        {step === 3 && (
+          <div className="wizard-step">
+            <div className="wizard-step-header">
+              <h2>Images & Gallery</h2>
+              <p>Upload your product visuals.</p>
+            </div>
+
+            <div className="upload-box">
+              <p>Main Image</p>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    coverImage: e.target.files[0],
+                  })
+                }
+              />
+            </div>
+
+            <div className="upload-box">
+              <p>Gallery Images</p>
+
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    gallery: Array.from(e.target.files),
+                  })
+                }
+              />
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4 */}
+        {step === 4 && (
+          <div className="wizard-step">
+            <div className="wizard-step-header">
+              <h2>Included Pieces</h2>
+              <p>Configure sofa sets, chairs, tables and components.</p>
+            </div>
+
+            {form.pieces.map((piece, index) => (
+              <div key={index} className="wizard-piece-card">
+                <div className="wizard-grid">
+                  <input
+                    placeholder="Item name"
+                    value={piece.name}
+                    onChange={(e) =>
+                      handlePieceChange(index, "name", e.target.value)
+                    }
+                  />
+
+                  <input
+                    placeholder="Dimensions"
+                    value={piece.dimensions}
+                    onChange={(e) =>
+                      handlePieceChange(index, "dimensions", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="wizard-grid">
+                  <input
+                    type="number"
+                    placeholder="Price"
+                    value={piece.price}
+                    onChange={(e) =>
+                      handlePieceChange(index, "price", e.target.value)
+                    }
+                  />
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      handlePieceChange(index, "imageFile", e.target.files[0])
+                    }
+                  />
+                </div>
+
+                <textarea
+                  placeholder="Description"
+                  value={piece.description}
+                  onChange={(e) =>
+                    handlePieceChange(index, "description", e.target.value)
+                  }
+                />
+
+                <button
+                  type="button"
+                  className="remove-piece-btn"
+                  onClick={() => removePiece(index)}
+                >
+                  Remove Item
+                </button>
+              </div>
+            ))}
+
+            <button type="button" className="add-piece-btn" onClick={addPiece}>
+              + Add Another Item
+            </button>
+          </div>
+        )}
+
+        {/* STEP 5 */}
+        {step === 5 && (
+          <div className="wizard-step">
+            <div className="wizard-step-header">
+              <h2>Review & Publish</h2>
+              <p>Confirm everything before upload.</p>
+            </div>
+
+            <div className="review-card">
+              <h3>{form.name || "Untitled Product"}</h3>
+
+              <p>{form.category || "No category selected"}</p>
+
+              <strong>₦{Number(form.price || 0).toLocaleString()}</strong>
+            </div>
+
+            {uploadMessage && (
+              <div className="upload-status">{uploadMessage}</div>
+            )}
+          </div>
+        )}
+
+        {/* NAVIGATION */}
+        <div className="wizard-actions">
+          {step > 1 && (
+            <button
+              type="button"
+              className="wizard-secondary-btn"
+              onClick={prevStep}
+            >
+              Back
+            </button>
+          )}
+
+          {step < 5 ? (
+            <button
+              type="button"
+              className="wizard-primary-btn"
+              onClick={nextStep}
+            >
+              Continue
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="wizard-primary-btn"
+              disabled={isUploading}
+            >
+              {isUploading
+                ? "Uploading..."
+                : editingProduct
+                  ? "Update Product"
+                  : "Publish Product"}
+            </button>
+          )}
+
+          {editingProduct && (
+            <button
+              type="button"
+              className="wizard-danger-btn"
+              onClick={onCancelEdit}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      </form>
+    </div>
   );
 }
