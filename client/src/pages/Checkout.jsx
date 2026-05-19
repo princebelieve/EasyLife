@@ -2,12 +2,13 @@
 import { useEffect, useState } from "react";
 import { initializeCheckout, previewShipping } from "../services/api";
 import Navbar from "../components/Navbar";
+import useAuth from "../context/AuthContext";
 
 import { useCart } from "../context/CartContext";
 
 export default function Checkout() {
   const { cart, subtotal } = useCart();
-
+  const { token } = useAuth();
   const [shippingFee, setShippingFee] = useState(0);
 
   const totalAmount = subtotal + shippingFee;
@@ -34,12 +35,10 @@ export default function Checkout() {
       try {
         if (!form.state) return;
 
-        const shippingClass = "furniture";
-
         const data = await previewShipping({
           city: form.city,
           state: form.state,
-          shippingClass,
+          items: cart,
         });
 
         setShippingFee(Number(data.shippingFee || 0));
@@ -55,8 +54,6 @@ export default function Checkout() {
     e.preventDefault();
 
     try {
-      const token = localStorage.getItem("token");
-
       const response = await initializeCheckout(
         {
           ...form,

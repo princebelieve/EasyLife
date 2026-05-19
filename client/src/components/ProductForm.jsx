@@ -46,7 +46,6 @@ export default function ProductForm({
         category: editingProduct.category ?? "",
         price: editingProduct.price ?? "",
         stock: editingProduct.stock ?? 0,
-        shippingClass: editingProduct.shippingClass ?? "furniture",
         featured: editingProduct.featured ?? false,
         status: editingProduct.status ?? "active",
         sku: editingProduct.sku ?? "",

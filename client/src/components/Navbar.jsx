@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../context/AuthContext";
 import useClickOutside from "../hooks/useClickOutside";
 import { useCart } from "../context/CartContext";
 

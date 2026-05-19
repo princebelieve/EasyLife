@@ -1,28 +1,28 @@
 //client/src/hooks/useClickOutside.js
 import { useEffect } from "react";
 
-export default function useClickOutside(refs, handler) {
+export default function useClickOutside(refs, handler, enabled = true) {
   useEffect(() => {
-    function listener(event) {
-      const elements = Array.isArray(refs.current)
-        ? refs.current
-        : [refs.current];
+    if (!enabled) return;
 
-      const clickedInside = elements.some(
-        (ref) => ref && ref.contains(event.target),
-      );
+    function listener(event) {
+      const refArray = Array.isArray(refs) ? refs : [refs];
+
+      const clickedInside = refArray.some((ref) => {
+        return ref?.current?.contains(event.target);
+      });
 
       if (clickedInside) return;
 
       handler(event);
     }
 
-    document.addEventListener("mousedown", listener);
+    document.addEventListener("click", listener);
     document.addEventListener("touchstart", listener);
 
     return () => {
-      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("click", listener);
       document.removeEventListener("touchstart", listener);
     };
-  }, [refs, handler]);
+  }, [refs, handler, enabled]);
 }

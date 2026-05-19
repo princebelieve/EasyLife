@@ -1,6 +1,8 @@
 //client/src/components/admin/AdminLayout.jsx
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import useClickOutside from "../../hooks/useClickOutside";
+import useAuth from "../../context/AuthContext";
 
 import {
   Menu,
@@ -18,12 +20,13 @@ import {
   LogOut,
 } from "lucide-react";
 
-import useAuth from "../../hooks/useAuth";
-
 export default function AdminLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024);
 
-  const { logout } = useAuth();
+  const sidebarRef = useRef(null);
+  const menuBtnRef = useRef(null);
+
+  const { logout, user } = useAuth();
 
   const navigate = useNavigate();
 
@@ -34,6 +37,14 @@ export default function AdminLayout({ children }) {
       setSidebarOpen(false);
     }
   }, [location.pathname]);
+
+  useClickOutside(
+    [sidebarRef, menuBtnRef],
+    () => {
+      setSidebarOpen(false);
+    },
+    sidebarOpen,
+  );
 
   function handleLogout() {
     logout();
@@ -108,6 +119,7 @@ export default function AdminLayout({ children }) {
       <header className="admin-topbar">
         <div className="admin-topbar-left">
           <button
+            ref={menuBtnRef}
             className="admin-menu-btn"
             onClick={() => setSidebarOpen((prev) => !prev)}
           >
@@ -135,11 +147,6 @@ export default function AdminLayout({ children }) {
 
           <Link to="/admin/sales">Sales</Link>
         </nav>
-
-        <button onClick={handleLogout} className="admin-logout">
-          <LogOut size={16} />
-          Logout
-        </button>
       </header>
 
       {/* MOBILE OVERLAY */}
@@ -151,11 +158,25 @@ export default function AdminLayout({ children }) {
       )}
 
       {/* SIDEBAR */}
-      <aside className={`admin-sidebar ${sidebarOpen ? "open" : ""}`}>
+      <aside
+        ref={sidebarRef}
+        className={`admin-sidebar ${sidebarOpen ? "open" : ""}`}
+      >
         <div className="admin-sidebar-header">
           <button onClick={() => setSidebarOpen(false)}>
             <X size={22} />
           </button>
+        </div>
+
+        <div className="sidebar-user-card">
+          <div className="sidebar-avatar admin-avatar">
+            {user?.name?.charAt(0)?.toUpperCase() || "A"}
+          </div>
+
+          <div className="sidebar-user-info">
+            <strong>{user?.name || "Admin"}</strong>
+            <span>{user?.email}</span>
+          </div>
         </div>
 
         <div className="admin-sidebar-links">
@@ -168,10 +189,14 @@ export default function AdminLayout({ children }) {
               }
             >
               {link.icon}
-
               <span>{link.label}</span>
             </Link>
           ))}
+
+          <button onClick={handleLogout} className="sidebar-logout-btn">
+            <LogOut size={18} />
+            <span>Logout</span>
+          </button>
         </div>
       </aside>
 

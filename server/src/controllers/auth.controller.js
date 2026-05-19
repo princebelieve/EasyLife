@@ -2,8 +2,12 @@
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const User = require("../models/User");
-const generateToken = require("../utils/generateToken");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../utils/generateToken");
 const { sendResetPasswordEmail } = require("../services/email");
+const RefreshToken = require("../models/RefreshToken");
 
 const adminEmails = (process.env.ADMIN_EMAILS || "")
   .split(",")
@@ -30,15 +34,28 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
       role: adminEmails.includes(normalizedEmail) ? "admin" : "user",
     });
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    await RefreshToken.create({
+      user: user._id,
+      token: refreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
     res.status(201).json({
       id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id, user.role),
+      accessToken,
+      refreshToken,
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+
+    res.status(500).json({
+      message: "Something went wrong. Please try again.",
+    });
   }
 };
 
@@ -47,7 +64,11 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = String(email || "").toLowerCase();
+
+    const user = await User.findOne({
+      email: normalizedEmail,
+    });
 
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
@@ -59,15 +80,28 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    await RefreshToken.create({
+      user: user._id,
+      token: refreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
     res.json({
       id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id, user.role),
+      accessToken,
+      refreshToken,
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+
+    res.status(500).json({
+      message: "Something went wrong. Please try again.",
+    });
   }
 };
 
@@ -101,14 +135,21 @@ const forgotPassword = async (req, res) => {
         resetUrl,
       });
     } catch (emailError) {
-      console.warn("Password reset email could not be sent:", emailError.message);
+      console.warn(
+        "Password reset email could not be sent:",
+        emailError.message,
+      );
     }
 
     return res.json({
       message: "If that email exists, a password reset link has been sent.",
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+
+    res.status(500).json({
+      message: "Something went wrong. Please try again.",
+    });
   }
 };
 
@@ -117,7 +158,9 @@ const resetPassword = async (req, res) => {
     const { token, password } = req.body;
 
     if (!token || !password) {
-      return res.status(400).json({ message: "Invalid password reset request." });
+      return res
+        .status(400)
+        .json({ message: "Invalid password reset request." });
     }
 
     const user = await User.findOne({
@@ -138,13 +181,81 @@ const resetPassword = async (req, res) => {
 
     res.json({ message: "Password has been reset successfully." });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+
+    res.status(500).json({
+      message: "Something went wrong. Please try again.",
+    });
+  }
+};
+
+const jwt = require("jsonwebtoken");
+
+const refreshToken = async (req, res) => {
+  try {
+    const { refreshToken: token } = req.body;
+
+    if (!token) {
+      return res.status(401).json({
+        message: "Refresh token required",
+      });
+    }
+
+    // VERIFY JWT
+    const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+    // CHECK TOKEN EXISTS IN DB
+    const existingToken = await RefreshToken.findOne({
+      token,
+    });
+
+    if (!existingToken) {
+      return res.status(401).json({
+        message: "Refresh token not recognized",
+      });
+    }
+
+    // FIND USER
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Invalid refresh token",
+      });
+    }
+
+    // DELETE OLD TOKEN (ROTATION)
+    await RefreshToken.deleteOne({
+      _id: existingToken._id,
+    });
+
+    // CREATE NEW TOKENS
+    const newAccessToken = generateAccessToken(user);
+
+    const newRefreshToken = generateRefreshToken(user);
+
+    // SAVE NEW REFRESH TOKEN
+    await RefreshToken.create({
+      user: user._id,
+      token: newRefreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    res.json({
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    });
+  } catch (err) {
+    return res.status(401).json({
+      message: "Invalid or expired refresh token",
+    });
   }
 };
 
 module.exports = {
   registerUser,
   loginUser,
+  refreshToken,
   forgotPassword,
   resetPassword,
 };

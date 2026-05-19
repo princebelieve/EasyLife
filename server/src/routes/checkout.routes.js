@@ -26,10 +26,19 @@ router.post("/", protect, async (req, res) => {
     // 2. BUILD ORDER ITEMS
     let subtotal = 0;
 
-    const orderItems = cart.items.map((item) => {
+    const validCartItems = cart.items.filter((item) => item.productId);
+
+    if (validCartItems.length !== cart.items.length) {
+      return res.status(400).json({
+        message:
+          "Some products in your cart no longer exist. Please remove them and try again.",
+      });
+    }
+
+    const orderItems = validCartItems.map((item) => {
       const product = item.productId;
 
-      const itemTotal = product.price * item.quantity;
+      const itemTotal = Number(product.price || 0) * item.quantity;
 
       subtotal += itemTotal;
 
@@ -37,7 +46,7 @@ router.post("/", protect, async (req, res) => {
         productId: product._id.toString(),
         name: product.name,
         image: product.coverImage,
-        price: product.price,
+        price: Number(product.price || 0),
         quantity: item.quantity,
       };
     });

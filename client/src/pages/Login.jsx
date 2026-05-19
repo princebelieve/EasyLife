@@ -3,11 +3,12 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { loginUser } from "../services/api";
-import { setToken } from "../utils/auth";
+import useAuth from "../context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
@@ -18,12 +19,27 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const res = await loginUser(form);
+    try {
+      const res = await loginUser(form);
 
-    if (res.token) {
-      setToken(res.token);
+      if (!res.accessToken || !res.refreshToken) {
+        alert(res.message || "Login failed");
+        return;
+      }
 
-      const payload = JSON.parse(atob(res.token.split(".")[1]));
+      login(res.accessToken);
+
+      localStorage.setItem("accessToken", res.accessToken);
+      localStorage.setItem("refreshToken", res.refreshToken);
+
+      let payload;
+
+      try {
+        payload = JSON.parse(atob(res.accessToken.split(".")[1]));
+      } catch {
+        alert("Invalid authentication token");
+        return;
+      }
 
       const pendingCheckout = localStorage.getItem("pendingCheckout");
 
@@ -36,8 +52,10 @@ export default function Login() {
       } else {
         navigate("/dashboard");
       }
-    } else {
-      alert(res.message || "Login failed");
+    } catch (error) {
+      console.error(error);
+
+      alert("Unable to login. Please try again.");
     }
   }
 

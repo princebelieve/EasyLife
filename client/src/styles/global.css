@@ -2624,3 +2624,28 @@ iframe {
     width: 100%;
   }
 }
+
+/* ================= USER PANEL OVERRIDES ================= */
+
+.user-sidebar {
+  position: fixed;
+  top: 0;
+  left: -320px;
+  width: 280px;
+  height: 100vh;
+  background: #fff;
+  z-index: 3999;
+  transition: left 0.25s ease;
+  border-right: 1px solid #ece6dd;
+  overflow-y: auto;
+}
+
+.user-sidebar.open {
+  left: 0;
+}
+
+.user-topbar {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid #ece6dd;
+}

@@ -1,12 +1,12 @@
 //client/src/pages/AdminInquiries.jsx
 import { useEffect, useState } from "react";
 import { getInquiries } from "../services/api";
+import useAuth from "../context/AuthContext";
 
 export default function AdminInquiries() {
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const token = localStorage.getItem("token");
+  const { token } = useAuth();
 
   useEffect(() => {
     async function loadInquiries() {

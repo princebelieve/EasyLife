@@ -1,10 +1,74 @@
 //client/src/services/api.js
+import { getToken, getRefreshToken, setToken } from "../utils/auth";
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-async function apiRequest(endpoint, options = {}) {
-  const res = await fetch(`${BASE_URL}${endpoint}`, options);
+async function refreshAccessToken() {
+  const refreshToken = getRefreshToken();
+
+  const res = await fetch(`${BASE_URL}/api/auth/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refreshToken }),
+  });
 
   const data = await res.json();
+
+  if (!res.ok) {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+
+    throw new Error("Session expired");
+  }
+
+  setToken(data.accessToken);
+
+  if (data.refreshToken) {
+    localStorage.setItem("refreshToken", data.refreshToken);
+  }
+
+  return data.accessToken;
+}
+
+async function apiRequest(endpoint, options = {}) {
+  const token = getToken();
+
+  const res = await fetch(`${BASE_URL}${endpoint}`, {
+    ...options,
+
+    headers: {
+      ...(options.body instanceof FormData
+        ? {}
+        : { "Content-Type": "application/json" }),
+
+      ...(token
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : {}),
+
+      ...options.headers,
+    },
+  });
+
+  const data = await res.json();
+
+  if (res.status === 401) {
+    const newToken = await refreshAccessToken();
+
+    const retry = await fetch(`${BASE_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        ...options.headers,
+        Authorization: `Bearer ${newToken}`,
+      },
+    });
+
+    const retryData = await retry.json();
+
+    if (!retry.ok) throw new Error(retryData.message || "Request failed");
+
+    return retryData;
+  }
 
   if (!res.ok) {
     throw new Error(data.message || "Request failed");
@@ -18,23 +82,27 @@ async function apiRequest(endpoint, options = {}) {
 // -------------------------
 
 export async function registerUser(data) {
-  const res = await fetch(`${BASE_URL}/api/auth/register`, {
+  return apiRequest("/api/auth/register", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
     body: JSON.stringify(data),
   });
-
-  return res.json();
 }
 
 export async function loginUser(data) {
-  const res = await fetch(`${BASE_URL}/api/auth/login`, {
+  return apiRequest("/api/auth/login", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+
+    headers: {
+      "Content-Type": "application/json",
+    },
+
     body: JSON.stringify(data),
   });
-
-  return res.json();
 }
 
 // -------------------------
@@ -204,6 +272,27 @@ export async function getProfile(token) {
       Authorization: `Bearer ${token}`,
     },
   });
+}
+
+export async function uploadAvatar(file, token) {
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  const res = await fetch(`${BASE_URL}/api/users/avatar`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Upload failed");
+  }
+
+  return data;
 }
 
 // -------------------------

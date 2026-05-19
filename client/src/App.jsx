@@ -31,6 +31,7 @@ import AdminOrderDetails from "./pages/AdminOrderDetails";
 import AdminDeliveryBoard from "./pages/AdminDeliveryBoard";
 import AdminShipping from "./pages/AdminShipping";
 import AdminInquiries from "./pages/AdminInquiries";
+import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -55,6 +56,15 @@ export default function App() {
           element={
             <RequireAuth>
               <Dashboard />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <RequireAuth>
+              <Profile />
             </RequireAuth>
           }
         />

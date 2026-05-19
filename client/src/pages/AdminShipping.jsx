@@ -26,6 +26,12 @@ const emptyForm = {
 
   bedFee: "",
 
+  cabinetFee: "",
+
+  tvConsoleFee: "",
+
+  officeFurnitureFee: "",
+
   customProjectFee: "",
 
   estimatedDays: "3-7 days",
@@ -113,6 +119,21 @@ export default function AdminShipping() {
         },
 
         {
+          category: "cabinet",
+          price: Number(form.cabinetFee || 0),
+        },
+
+        {
+          category: "tv-console",
+          price: Number(form.tvConsoleFee || 0),
+        },
+
+        {
+          category: "office-furniture",
+          price: Number(form.officeFurnitureFee || 0),
+        },
+
+        {
           category: "custom-project",
           price: Number(form.customProjectFee || 0),
         },
@@ -164,6 +185,12 @@ export default function AdminShipping() {
       tableFee: getCategoryPrice(zone, "table"),
 
       bedFee: getCategoryPrice(zone, "bed"),
+
+      cabinetFee: getCategoryPrice(zone, "cabinet"),
+
+      tvConsoleFee: getCategoryPrice(zone, "tv-console"),
+
+      officeFurnitureFee: getCategoryPrice(zone, "office-furniture"),
 
       sofaFee: getCategoryPrice(zone, "sofa"),
 
@@ -243,13 +270,7 @@ export default function AdminShipping() {
                 value={form.baseFee}
                 onChange={handleChange}
               />
-              <input
-                type="number"
-                name="sameCityFee"
-                placeholder="Same City Fee"
-                value={form.sameCityFee}
-                onChange={handleChange}
-              />
+
               <input
                 type="number"
                 name="chairFee"
@@ -284,18 +305,36 @@ export default function AdminShipping() {
 
               <input
                 type="number"
+                name="cabinetFee"
+                placeholder="Cabinet Delivery Fee"
+                value={form.cabinetFee}
+                onChange={handleChange}
+              />
+
+              <input
+                type="number"
+                name="tvConsoleFee"
+                placeholder="TV Console Delivery Fee"
+                value={form.tvConsoleFee}
+                onChange={handleChange}
+              />
+
+              <input
+                type="number"
+                name="officeFurnitureFee"
+                placeholder="Office Furniture Delivery Fee"
+                value={form.officeFurnitureFee}
+                onChange={handleChange}
+              />
+
+              <input
+                type="number"
                 name="decorFee"
                 placeholder="Decor Fee"
                 value={form.decorFee}
                 onChange={handleChange}
               />
-              <input
-                type="number"
-                name="installationFee"
-                placeholder="Installation Fee"
-                value={form.installationFee}
-                onChange={handleChange}
-              />
+
               <input
                 type="number"
                 name="customProjectFee"

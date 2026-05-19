@@ -1,6 +1,6 @@
 //client/src/context/CartContext.jsx
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-
+import useAuth from "./AuthContext";
 import {
   getCart,
   addToCartApi,
@@ -14,7 +14,7 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
+  const { token } = useAuth();
 
   async function loadCart() {
     setLoading(true);
@@ -46,7 +46,7 @@ export function CartProvider({ children }) {
 
   useEffect(() => {
     loadCart();
-  }, []);
+  }, [token]);
 
   async function addToCart(product, quantity = 1) {
     if (!token) {

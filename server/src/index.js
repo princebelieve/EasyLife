@@ -29,7 +29,9 @@ app.use("/api/paystack/webhook", express.json(), paystackWebhookRoutes);
 // middleware
 app.use(
   cors({
-    origin: (process.env.CLIENT_URL || "http://localhost:5173").split(","),
+    origin: (process.env.CLIENT_URL || "http://localhost:5173")
+      .split(",")
+      .map((url) => url.trim()),
     credentials: true,
   }),
 );

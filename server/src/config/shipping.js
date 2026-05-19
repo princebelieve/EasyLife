@@ -31,11 +31,11 @@ async function calculateShipping({ city = "", state = "", items = [] }) {
   for (const item of items) {
     const product = item.productId;
 
-    const category = product.deliveryCategory || "furniture";
+    const category = product?.deliveryCategory || "sofa";
 
     const quantity = Number(item.quantity || 1);
 
-    const categoryRule = zone.categoryPricing.find(
+    const categoryRule = (zone.categoryPricing || []).find(
       (rule) => rule.category === category,
     );
 

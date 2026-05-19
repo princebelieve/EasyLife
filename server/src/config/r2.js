@@ -10,8 +10,10 @@ const s3 = new S3Client({
   },
 });
 
-async function uploadToR2(file) {
-  const key = `products/${Date.now()}-${file.originalname}`;
+async function uploadToR2(file, folder = "general") {
+  const cleanName = file.originalname.replace(/\s+/g, "-");
+
+  const key = `${folder}/${Date.now()}-${cleanName}`;
 
   await s3.send(
     new PutObjectCommand({
