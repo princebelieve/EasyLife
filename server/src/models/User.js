@@ -57,6 +57,27 @@ const userSchema = new mongoose.Schema(
     passwordResetExpires: {
       type: Number,
     },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationToken: {
+      type: String,
+    },
+    emailVerificationExpires: {
+      type: Number,
+    },
+    pendingEmail: {
+      type: String,
+      lowercase: true,
+      default: "",
+    },
+    pendingEmailVerificationToken: {
+      type: String,
+    },
+    pendingEmailVerificationExpires: {
+      type: Number,
+    },
   },
   { timestamps: true },
 );

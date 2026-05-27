@@ -107,6 +107,12 @@ export default function AdminLayout({ children }) {
     },
 
     {
+      to: "/profile",
+      label: "My Profile",
+      icon: <User size={18} />,
+    },
+
+    {
       to: "/",
       label: "Home",
       icon: <Home size={18} />,
@@ -170,7 +176,11 @@ export default function AdminLayout({ children }) {
 
         <div className="sidebar-user-card">
           <div className="sidebar-avatar admin-avatar">
-            {user?.name?.charAt(0)?.toUpperCase() || "A"}
+            {user?.avatar ? (
+              <img src={user.avatar} alt="avatar" />
+            ) : (
+              user?.name?.charAt(0)?.toUpperCase() || "A"
+            )}
           </div>
 
           <div className="sidebar-user-info">

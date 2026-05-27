@@ -11,6 +11,7 @@ export default function Login() {
   const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -20,6 +21,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
+      setSubmitting(true);
       const res = await loginUser(form);
 
       if (!res.accessToken || !res.refreshToken) {
@@ -27,9 +29,8 @@ export default function Login() {
         return;
       }
 
-      login(res.accessToken);
+      await login(res.accessToken);
 
-      localStorage.setItem("accessToken", res.accessToken);
       localStorage.setItem("refreshToken", res.refreshToken);
 
       let payload;
@@ -55,7 +56,9 @@ export default function Login() {
     } catch (error) {
       console.error(error);
 
-      alert("Unable to login. Please try again.");
+      alert(error?.message || "Unable to login. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -97,8 +100,8 @@ export default function Login() {
               </button>
             </div>
 
-            <button type="submit" className="btn-primary">
-              Sign In
+            <button type="submit" className="btn-primary" disabled={submitting}>
+              {submitting ? "Signing in..." : "Sign In"}
             </button>
           </div>
         </form>

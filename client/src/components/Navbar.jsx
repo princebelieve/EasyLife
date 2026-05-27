@@ -70,7 +70,13 @@ export default function Navbar() {
 
           <Link to="/cart">Cart</Link>
 
-          {isLoggedIn && <Link to="/dashboard">My Orders</Link>}
+          {isLoggedIn && (
+            <>
+              <Link to="/dashboard">My Orders</Link>
+
+              <Link to="/profile">Profile</Link>
+            </>
+          )}
 
           {isAdmin && <Link to="/admin/products">Admin</Link>}
 
@@ -141,9 +147,15 @@ export default function Navbar() {
           </Link>
 
           {isLoggedIn && (
-            <Link to="/dashboard" onClick={() => setOpen(false)}>
-              My Orders
-            </Link>
+            <>
+              <Link to="/dashboard" onClick={() => setOpen(false)}>
+                My Orders
+              </Link>
+
+              <Link to="/profile" onClick={() => setOpen(false)}>
+                Profile
+              </Link>
+            </>
           )}
 
           {isAdmin && (

@@ -1,10 +1,12 @@
 //client/src/components/AvatarUpload.jsx
 import { useState } from "react";
-
-import { uploadAvatar } from "../services/userService";
+import useAuth from "../context/AuthContext";
+import { uploadAvatar } from "../services/api";
 
 export default function AvatarUpload({ onUploaded }) {
   const [loading, setLoading] = useState(false);
+
+  const { token } = useAuth();
 
   async function handleChange(e) {
     const file = e.target.files[0];
@@ -14,7 +16,7 @@ export default function AvatarUpload({ onUploaded }) {
     try {
       setLoading(true);
 
-      const data = await uploadAvatar(file);
+      const data = await uploadAvatar(file, token);
 
       onUploaded?.(data.user);
 
@@ -27,7 +29,7 @@ export default function AvatarUpload({ onUploaded }) {
   }
 
   return (
-    <div>
+    <div className="avatar-upload">
       <input type="file" accept="image/*" onChange={handleChange} />
 
       {loading && <p>Uploading...</p>}

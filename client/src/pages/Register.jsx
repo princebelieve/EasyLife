@@ -10,22 +10,38 @@ export default function Register() {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      await registerUser(form);
+    if (form.password !== form.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
 
-      alert("Account created successfully");
+    try {
+      setSubmitting(true);
+      await registerUser({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      });
+
+      alert(
+        "Account created successfully. Please check your email to verify your address.",
+      );
       navigate("/login");
     } catch (err) {
       console.error(err);
       alert(err.message || "Unable to connect to server");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -74,8 +90,18 @@ export default function Register() {
               </button>
             </div>
 
-            <button type="submit" className="btn-primary">
-              Create Account
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Confirm password"
+              value={form.confirmPassword}
+              onChange={(e) =>
+                setForm({ ...form, confirmPassword: e.target.value })
+              }
+              required
+            />
+
+            <button type="submit" className="btn-primary" disabled={submitting}>
+              {submitting ? "Creating account..." : "Create Account"}
             </button>
           </div>
         </form>

@@ -50,7 +50,13 @@ async function apiRequest(endpoint, options = {}) {
     },
   });
 
-  const data = await res.json();
+  let data = {};
+
+  try {
+    data = await res.json();
+  } catch {
+    data = {};
+  }
 
   if (res.status === 401) {
     const newToken = await refreshAccessToken();
@@ -63,7 +69,13 @@ async function apiRequest(endpoint, options = {}) {
       },
     });
 
-    const retryData = await retry.json();
+    let retryData = {};
+
+    try {
+      retryData = await retry.json();
+    } catch {
+      retryData = {};
+    }
 
     if (!retry.ok) throw new Error(retryData.message || "Request failed");
 
@@ -124,6 +136,32 @@ export async function resetPassword(token, password) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token, password }),
+  });
+
+  return res.json();
+}
+
+export async function verifyEmail(token) {
+  const res = await fetch(`${BASE_URL}/api/auth/verify-email`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Verification failed");
+  }
+
+  return data;
+}
+
+export async function resendVerificationEmail(email) {
+  const res = await fetch(`${BASE_URL}/api/auth/resend-verification`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
   });
 
   return res.json();
@@ -271,6 +309,19 @@ export async function getProfile(token) {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  });
+}
+
+export async function updateProfile(data, token) {
+  return apiRequest("/api/users/profile", {
+    method: "PUT",
+
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+
+    body: JSON.stringify(data),
   });
 }
 

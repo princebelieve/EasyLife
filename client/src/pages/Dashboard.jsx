@@ -38,7 +38,11 @@ export default function Dashboard() {
           </div>
 
           <div className="dashboard-avatar">
-            {user?.name?.charAt(0)?.toUpperCase()}
+            {user?.avatar ? (
+              <img src={user.avatar} alt="avatar" />
+            ) : (
+              user?.name?.charAt(0)?.toUpperCase()
+            )}
           </div>
         </div>
 

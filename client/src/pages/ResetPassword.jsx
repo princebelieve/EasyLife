@@ -6,6 +6,8 @@ import Navbar from "../components/Navbar";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [params] = useSearchParams();
   const nav = useNavigate();
 
@@ -14,11 +16,23 @@ export default function ResetPassword() {
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const res = await resetPassword(token, password);
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
 
-    alert(res.message || "Password reset successful");
+    try {
+      setSubmitting(true);
+      const res = await resetPassword(token, password);
 
-    nav("/login");
+      alert(res.message || "Password reset successful");
+      nav("/login");
+    } catch (err) {
+      console.error(err);
+      alert(err?.message || "Unable to reset password.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -41,12 +55,21 @@ export default function ResetPassword() {
             required
           />
 
+          <input
+            type="password"
+            placeholder="Confirm new password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+
           <button
             type="submit"
             className="btn-primary"
             style={{ marginTop: 14 }}
+            disabled={submitting}
           >
-            Reset Password
+            {submitting ? "Resetting..." : "Reset Password"}
           </button>
         </form>
       </div>

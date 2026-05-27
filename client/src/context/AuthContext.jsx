@@ -8,6 +8,8 @@ import {
   useCallback,
 } from "react";
 
+import { getProfile } from "../services/api";
+
 const AuthContext = createContext(null);
 
 function parseToken(token) {
@@ -30,11 +32,24 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("refreshToken");
 
     setTokenState(null);
+
     setUser(null);
   }, []);
 
+  const hydrateUser = useCallback(async () => {
+    try {
+      const profile = await getProfile();
+
+      setUser(profile.user);
+    } catch (error) {
+      console.error(error);
+
+      logout();
+    }
+  }, [logout]);
+
   const updateToken = useCallback(
-    (newToken) => {
+    async (newToken) => {
       localStorage.setItem("accessToken", newToken);
 
       const parsedUser = parseToken(newToken);
@@ -45,23 +60,27 @@ export function AuthProvider({ children }) {
       }
 
       setTokenState(newToken);
-      setUser(parsedUser);
+
+      await hydrateUser();
     },
-    [logout],
+    [logout, hydrateUser],
   );
 
-  function login(newToken) {
-    updateToken(newToken);
+  async function login(newToken) {
+    await updateToken(newToken);
   }
 
   useEffect(() => {
-    function syncAuth() {
+    async function syncAuth() {
       const storedToken = localStorage.getItem("accessToken");
 
       if (!storedToken) {
         setTokenState(null);
+
         setUser(null);
+
         setLoading(false);
+
         return;
       }
 
@@ -69,12 +88,16 @@ export function AuthProvider({ children }) {
 
       if (!parsedUser || parsedUser.exp * 1000 < Date.now()) {
         logout();
+
         setLoading(false);
+
         return;
       }
 
       setTokenState(storedToken);
-      setUser(parsedUser);
+
+      await hydrateUser(storedToken);
+
       setLoading(false);
     }
 
@@ -85,12 +108,14 @@ export function AuthProvider({ children }) {
     return () => {
       window.removeEventListener("storage", syncAuth);
     };
-  }, [logout]);
+  }, [logout, hydrateUser]);
 
   const value = useMemo(() => {
     return {
       token,
+
       user,
+
       loading,
 
       isLoggedIn: !!user,
@@ -102,8 +127,10 @@ export function AuthProvider({ children }) {
       updateToken,
 
       logout,
+
+      setUser,
     };
-  }, [token, user, loading]);
+  }, [token, user, loading, updateToken, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

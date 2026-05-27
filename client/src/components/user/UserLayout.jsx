@@ -51,7 +51,7 @@ export default function UserLayout({ children }) {
 
     {
       to: "/profile",
-      label: "Edit Profile",
+      label: "My Profile",
       icon: <User size={18} />,
     },
 
@@ -98,7 +98,11 @@ export default function UserLayout({ children }) {
 
         <div className="sidebar-user-card">
           <div className="sidebar-avatar">
-            {user?.name?.charAt(0)?.toUpperCase() || "U"}
+            {user?.avatar ? (
+              <img src={user.avatar} alt="avatar" />
+            ) : (
+              user?.name?.charAt(0)?.toUpperCase() || "U"
+            )}
           </div>
 
           <div className="sidebar-user-info">

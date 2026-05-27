@@ -7,16 +7,25 @@ import { forgotPassword } from "../services/api";
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-    const res = await forgotPassword(email);
+    try {
+      setSending(true);
+      const res = await forgotPassword(email);
 
-    if (res.message) {
-      setSent(true);
-    } else {
-      alert("Something went wrong");
+      if (res.message) {
+        setSent(true);
+      } else {
+        alert("Something went wrong");
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err?.message || "Unable to send reset link.");
+    } finally {
+      setSending(false);
     }
   }
 
@@ -40,8 +49,8 @@ export default function ForgotPassword() {
                 required
               />
 
-              <button type="submit" className="btn-primary">
-                Send Reset Link
+              <button type="submit" className="btn-primary" disabled={sending}>
+                {sending ? "Sending..." : "Send Reset Link"}
               </button>
             </div>
           </form>

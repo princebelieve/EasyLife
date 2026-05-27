@@ -13,6 +13,14 @@ const transporter = nodemailer.createTransport({
     : undefined,
 });
 
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("SMTP ERROR:", error);
+  } else {
+    console.log("SMTP READY");
+  }
+});
+
 async function sendResetPasswordEmail({ to, resetUrl }) {
   if (
     !process.env.EMAIL_HOST ||
@@ -37,4 +45,40 @@ async function sendResetPasswordEmail({ to, resetUrl }) {
   await transporter.sendMail(mailOptions);
 }
 
-module.exports = { sendResetPasswordEmail };
+async function sendEmailVerification({ to, verificationUrl }) {
+  if (
+    !process.env.EMAIL_HOST ||
+    !process.env.EMAIL_USER ||
+    !process.env.EMAIL_PASS
+  ) {
+    console.warn(
+      "EMAIL_HOST, EMAIL_USER, or EMAIL_PASS is not configured. Verification link:",
+      verificationUrl,
+    );
+    return;
+  }
+
+  const mailOptions = {
+    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+    to,
+    subject: "Verify your email address",
+    text: `Please verify your email by clicking the link below:\n\n${verificationUrl}\n\nIf you did not create an account, please ignore this email.`,
+    html: `<p>Please verify your email by clicking the link below:</p><p><a href="${verificationUrl}">${verificationUrl}</a></p><p>If you did not create an account, please ignore this email.</p>`,
+  };
+
+  console.log(`Attempting to send verification email to ${to}`);
+  console.log(`Verification URL: ${verificationUrl}`);
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Verification email successfully sent to ${to}`);
+  } catch (err) {
+    console.warn(
+      `Verification email failed to send to ${to}:`,
+      err?.message || err,
+    );
+    throw err;
+  }
+}
+
+module.exports = { sendResetPasswordEmail, sendEmailVerification };
