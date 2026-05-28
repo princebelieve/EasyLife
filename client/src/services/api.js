@@ -32,22 +32,27 @@ async function refreshAccessToken() {
 async function apiRequest(endpoint, options = {}) {
   const token = getToken();
 
+  const headers = {
+    ...(options.body instanceof FormData
+      ? {}
+      : { "Content-Type": "application/json" }),
+
+    ...(token
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : {}),
+
+    ...options.headers,
+  };
+
+  const cleanHeaders = Object.fromEntries(
+    Object.entries(headers).filter(([_, value]) => value !== undefined),
+  );
+
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
-
-    headers: {
-      ...(options.body instanceof FormData
-        ? {}
-        : { "Content-Type": "application/json" }),
-
-      ...(token
-        ? {
-            Authorization: `Bearer ${token}`,
-          }
-        : {}),
-
-      ...options.headers,
-    },
+    headers: cleanHeaders,
   });
 
   let data = {};
@@ -306,9 +311,11 @@ export async function getMyOrders(token) {
 
 export async function getProfile(token) {
   return apiRequest("/api/users/profile", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: token
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : undefined,
   });
 }
 
