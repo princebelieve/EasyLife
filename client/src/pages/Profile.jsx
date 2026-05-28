@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import useAuth from "../context/AuthContext";
 
 import { getProfile } from "../services/api";
+import { formatDate } from "../utils/formatDate";
 
 import UserLayout from "../components/user/UserLayout";
 
@@ -51,6 +52,17 @@ export default function Profile() {
               <p className="profile-role">
                 {authUser?.role === "admin" ? "Administrator" : "Customer"}
               </p>
+              {user?.createdAt && (
+                <p
+                  style={{
+                    fontSize: "0.9rem",
+                    color: "#888",
+                    marginTop: "8px",
+                  }}
+                >
+                  Member since {formatDate(user.createdAt)}
+                </p>
+              )}
             </div>
           </div>
 

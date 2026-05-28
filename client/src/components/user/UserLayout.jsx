@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import useClickOutside from "../../hooks/useClickOutside";
 import { Menu, X, User, ShoppingBag, Home, LogOut } from "lucide-react";
 import useAuth from "../../context/AuthContext";
+import { formatDate } from "../../utils/formatDate";
 
 export default function UserLayout({ children }) {
   const [open, setOpen] = useState(window.innerWidth >= 1024);
@@ -108,6 +109,13 @@ export default function UserLayout({ children }) {
           <div className="sidebar-user-info">
             <strong>{user?.name || "User"}</strong>
             <span>{user?.email}</span>
+            {user?.createdAt && (
+              <small
+                style={{ display: "block", marginTop: "6px", opacity: 0.7 }}
+              >
+                Since {formatDate(user.createdAt)}
+              </small>
+            )}
           </div>
         </div>
 
