@@ -20,6 +20,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import VerifyEmail from "./pages/VerifyEmail";
 import AdminProducts from "./pages/AdminProducts";
+import AdminProductForm from "./pages/AdminProductForm";
 
 import RequireAdmin from "./components/RequireAdmin.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
@@ -110,6 +111,28 @@ export default function App() {
             <RequireAdmin>
               <AdminLayout>
                 <AdminProducts />
+              </AdminLayout>
+            </RequireAdmin>
+          }
+        />
+
+        <Route
+          path="/admin/products/new"
+          element={
+            <RequireAdmin>
+              <AdminLayout>
+                <AdminProductForm />
+              </AdminLayout>
+            </RequireAdmin>
+          }
+        />
+
+        <Route
+          path="/admin/products/edit/:id"
+          element={
+            <RequireAdmin>
+              <AdminLayout>
+                <AdminProductForm />
               </AdminLayout>
             </RequireAdmin>
           }

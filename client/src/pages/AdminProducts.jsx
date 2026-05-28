@@ -1,20 +1,13 @@
 // src/pages/AdminProducts.jsx
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import ProductForm from "../components/ProductForm";
-
-import {
-  getProducts,
-  createProductApi,
-  updateProductApi,
-  deleteProductApi,
-} from "../services/api";
-
+import { getProducts, deleteProductApi } from "../services/api";
 import { getToken } from "../utils/auth";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const navigate = useNavigate();
 
   async function loadProducts() {
     const data = await getProducts();
@@ -25,24 +18,6 @@ export default function AdminProducts() {
   useEffect(() => {
     loadProducts();
   }, []);
-
-  async function handleSubmit(formData) {
-    let data;
-
-    try {
-      data = editingProduct
-        ? await updateProductApi(editingProduct._id, formData, getToken())
-        : await createProductApi(formData, getToken());
-    } catch (err) {
-      alert(err.message || "Unable to save product");
-      throw err;
-    }
-
-    await loadProducts();
-    setEditingProduct(null);
-
-    return data.product || data;
-  }
 
   async function handleDelete(id) {
     const ok = window.confirm("Delete this product?");
@@ -55,23 +30,33 @@ export default function AdminProducts() {
       return;
     }
 
-    if (editingProduct?._id === id) {
-      setEditingProduct(null);
-    }
-
     loadProducts();
   }
 
   return (
     <>
       <div className="page">
-        <h1>Admin Products</h1>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
+          <div>
+            <h1>Admin Products</h1>
+            <p style={{ marginTop: 8, color: "#555" }}>
+              Manage product catalog and edit existing listings from the product
+              grid.
+            </p>
+          </div>
 
-        <ProductForm
-          onSubmit={handleSubmit}
-          editingProduct={editingProduct}
-          onCancelEdit={() => setEditingProduct(null)}
-        />
+          <button type="button" onClick={() => navigate("/admin/products/new")}>
+            Add Product
+          </button>
+        </div>
 
         <div
           style={{
@@ -128,7 +113,9 @@ export default function AdminProducts() {
               <div style={{ display: "flex", gap: 10 }}>
                 <button
                   type="button"
-                  onClick={() => setEditingProduct(product)}
+                  onClick={() =>
+                    navigate(`/admin/products/edit/${product._id}`)
+                  }
                 >
                   Edit
                 </button>

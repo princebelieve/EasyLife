@@ -12,7 +12,7 @@ export default function ProductForm({
     dimensions: "",
     material: "",
     description: "",
-    price: 0,
+    price: "",
   };
 
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ export default function ProductForm({
         fullDescription: editingProduct.fullDescription ?? "",
         category: editingProduct.category ?? "",
         price: editingProduct.price ?? "",
-        stock: editingProduct.stock ?? 0,
+        stock: editingProduct.stock ?? "",
         featured: editingProduct.featured ?? false,
         status: editingProduct.status ?? "active",
         sku: editingProduct.sku ?? "",
@@ -60,7 +60,7 @@ export default function ProductForm({
                 dimensions: p.dimensions ?? "",
                 material: p.material ?? "",
                 description: p.description ?? "",
-                price: p.price ?? 0,
+                price: p.price ?? "",
                 existingImage: p.image ?? "",
               }))
             : [{ ...emptyPiece }],
@@ -77,7 +77,7 @@ export default function ProductForm({
         fullDescription: "",
         category: "",
         price: "",
-        stock: 0,
+        stock: "",
         featured: false,
         status: "active",
         weight: 0,
@@ -334,6 +334,7 @@ export default function ProductForm({
               <input
                 name="price"
                 type="number"
+                min="0"
                 placeholder="Base Price"
                 value={form.price}
                 onChange={handleChange}
@@ -342,6 +343,7 @@ export default function ProductForm({
               <input
                 name="stock"
                 type="number"
+                min="0"
                 placeholder="Stock Quantity"
                 value={form.stock}
                 onChange={handleChange}

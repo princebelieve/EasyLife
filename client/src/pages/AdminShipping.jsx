@@ -262,9 +262,17 @@ export default function AdminShipping() {
           </button>
 
           {openSection === "pricing" && (
-            <div className="accordion-body">
+            <div
+              className="accordion-body"
+              style={{
+                display: "grid",
+                gap: 12,
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              }}
+            >
               <input
                 type="number"
+                min="0"
                 name="baseFee"
                 placeholder="Base Fee"
                 value={form.baseFee}
@@ -273,6 +281,7 @@ export default function AdminShipping() {
 
               <input
                 type="number"
+                min="0"
                 name="chairFee"
                 placeholder="Chair Delivery Fee"
                 value={form.chairFee}
@@ -313,6 +322,7 @@ export default function AdminShipping() {
 
               <input
                 type="number"
+                min="0"
                 name="tvConsoleFee"
                 placeholder="TV Console Delivery Fee"
                 value={form.tvConsoleFee}
@@ -321,6 +331,7 @@ export default function AdminShipping() {
 
               <input
                 type="number"
+                min="0"
                 name="officeFurnitureFee"
                 placeholder="Office Furniture Delivery Fee"
                 value={form.officeFurnitureFee}
@@ -329,6 +340,7 @@ export default function AdminShipping() {
 
               <input
                 type="number"
+                min="0"
                 name="decorFee"
                 placeholder="Decor Fee"
                 value={form.decorFee}
@@ -337,6 +349,7 @@ export default function AdminShipping() {
 
               <input
                 type="number"
+                min="0"
                 name="customProjectFee"
                 placeholder="Custom Project Fee"
                 value={form.customProjectFee}
@@ -409,6 +422,7 @@ export default function AdminShipping() {
           display: "grid",
           gap: 20,
           marginTop: 40,
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
         }}
       >
         {zones.map((zone) => (
