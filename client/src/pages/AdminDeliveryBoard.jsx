@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { getAdminOrders } from "../services/api";
 import { getToken } from "../utils/auth";
+import { formatDate } from "../utils/formatDate";
 
 export default function AdminDeliveryBoard() {
   const [orders, setOrders] = useState([]);
@@ -30,6 +31,10 @@ export default function AdminDeliveryBoard() {
                   <p>{o.customerName}</p>
 
                   <p>₦{Number(o.totalAmount).toLocaleString()}</p>
+                  <p>Placed: {formatDate(o.createdAt)}</p>
+                  {o.estimatedDeliveryDate && (
+                    <p>ETA: {formatDate(o.estimatedDeliveryDate)}</p>
+                  )}
                 </div>
               ))}
           </div>

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 
 import { getAdminOrders, updateOrderStatusApi } from "../services/api";
+import { formatDate } from "../utils/formatDate";
 
 import { getToken } from "../utils/auth";
 
@@ -60,6 +61,8 @@ export default function AdminOrders() {
                     </p>
 
                     <p>Total: ₦{Number(order.totalAmount).toLocaleString()}</p>
+                    <p>Placed: {formatDate(order.createdAt)}</p>
+                    {order.paidAt && <p>Paid: {formatDate(order.paidAt)}</p>}
                   </div>
 
                   <div className="order-card">

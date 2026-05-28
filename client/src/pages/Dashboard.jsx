@@ -1,6 +1,7 @@
 //client/src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import { getMyOrders, getProfile } from "../services/api";
+import { formatDate } from "../utils/formatDate";
 import useAuth from "../context/AuthContext";
 import UserLayout from "../components/user/UserLayout";
 
@@ -23,7 +24,7 @@ export default function Dashboard() {
     }
 
     load();
-  }, []);
+  }, [token]);
 
   return (
     <UserLayout>
@@ -108,6 +109,11 @@ export default function Dashboard() {
 
             <p>Payment: {order.paymentStatus}</p>
             <p>Delivery: {order.deliveryStatus}</p>
+            <p>Placed: {formatDate(order.createdAt)}</p>
+            {order.paidAt && <p>Paid: {formatDate(order.paidAt)}</p>}
+            {order.estimatedDeliveryDate && (
+              <p>ETA: {formatDate(order.estimatedDeliveryDate)}</p>
+            )}
 
             {order.items?.map((item) => (
               <div key={item.productId}>

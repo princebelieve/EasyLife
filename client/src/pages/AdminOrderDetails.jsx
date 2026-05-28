@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getOrderById, updateOrderStatusApi } from "../services/api";
 import { getToken } from "../utils/auth";
+import { formatDate } from "../utils/formatDate";
 
 export default function AdminOrderDetails() {
   const { id } = useParams();
@@ -47,7 +48,7 @@ export default function AdminOrderDetails() {
           <h3>Status Timeline</h3>
           {order.statusHistory?.map((s, i) => (
             <div key={i}>
-              {s.status} — {new Date(s.date).toLocaleString()}
+              {s.status} — {formatDate(s.date)}
             </div>
           ))}
         </div>
@@ -57,6 +58,17 @@ export default function AdminOrderDetails() {
         <div className="order-card">
           <h3>Summary</h3>
           <p>Total: ₦{order.totalAmount}</p>
+          <p>Placed: {formatDate(order.createdAt)}</p>
+          {order.paidAt && <p>Paid: {formatDate(order.paidAt)}</p>}
+          {order.estimatedDeliveryDate && (
+            <p>ETA: {formatDate(order.estimatedDeliveryDate)}</p>
+          )}
+          {order.deliveredAt && (
+            <p>Delivered: {formatDate(order.deliveredAt)}</p>
+          )}
+          {order.cancelledAt && (
+            <p>Cancelled: {formatDate(order.cancelledAt)}</p>
+          )}
         </div>
 
         <div className="order-card">

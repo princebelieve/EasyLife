@@ -1,6 +1,7 @@
 //client/src/pages/AdminInquiries.jsx
 import { useEffect, useState } from "react";
 import { getInquiries } from "../services/api";
+import { formatDate } from "../utils/formatDate";
 import useAuth from "../context/AuthContext";
 
 export default function AdminInquiries() {
@@ -45,33 +46,29 @@ export default function AdminInquiries() {
           {inquiries.map((item) => (
             <div key={item._id} className="admin-card">
               <h3>{item.fullName}</h3>
-
               <p>{item.email}</p>
-
-              <p>{item.phone}</p>
-
+              <p>{item.phone}</p>{" "}
+              <p>
+                <strong>Submitted:</strong> {formatDate(item.createdAt)}
+              </p>
               <p>
                 <strong>Project:</strong> {item.projectType}
               </p>
-
               {item.roomType && (
                 <p>
                   <strong>Room:</strong> {item.roomType}
                 </p>
               )}
-
               {item.budget && (
                 <p>
                   <strong>Budget:</strong> {item.budget}
                 </p>
               )}
-
               {item.timeline && (
                 <p>
                   <strong>Timeline:</strong> {item.timeline}
                 </p>
               )}
-
               {item.message && <p>{item.message}</p>}
             </div>
           ))}
