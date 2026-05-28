@@ -47,17 +47,22 @@ export default function Profile() {
             <div>
               <h1>{user?.name}</h1>
 
-              <p>{user?.email}</p>
+              <p style={{ margin: "4px 0", color: "var(--text)" }}>
+                {user?.email}
+              </p>
 
-              <p className="profile-role">
+              <p className="profile-role" style={{ marginTop: "8px" }}>
                 {authUser?.role === "admin" ? "Administrator" : "Customer"}
               </p>
               {user?.createdAt && (
                 <p
                   style={{
-                    fontSize: "0.9rem",
-                    color: "#888",
-                    marginTop: "8px",
+                    fontSize: "12px",
+                    color: "#999",
+                    marginTop: "12px",
+                    fontWeight: "600",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
                   }}
                 >
                   Member since {formatDate(user.createdAt)}
@@ -66,6 +71,15 @@ export default function Profile() {
             </div>
           </div>
 
+          <h3
+            style={{
+              color: "var(--brown)",
+              marginTop: "28px",
+              marginBottom: "16px",
+            }}
+          >
+            Contact Information
+          </h3>
           <div className="profile-info-grid">
             <div className="profile-info-card">
               <span>Phone</span>

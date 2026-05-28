@@ -26,18 +26,25 @@ export default function Dashboard() {
     load();
   }, [token]);
 
+  const activeOrdersCount = orders.filter(
+    (o) => o.deliveryStatus !== "delivered" && o.deliveryStatus !== "cancelled",
+  ).length;
+
+  const deliveredOrdersCount = orders.filter(
+    (o) => o.deliveryStatus === "delivered",
+  ).length;
+
   return (
     <UserLayout>
       <div className="page">
+        {/* Hero Section */}
         <div className="dashboard-hero">
           <div>
-            <h1>Welcome back, {user?.name}</h1>
-
+            <h1>Welcome back, {user?.name?.split(" ")[0]}!</h1>
             <p className="muted">
-              Manage your orders, profile, and account activity.
+              Manage your orders, profile, and account activity
             </p>
           </div>
-
           <div className="dashboard-avatar">
             {user?.avatar ? (
               <img src={user.avatar} alt="avatar" />
@@ -47,83 +54,200 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Stats Grid */}
         <div className="dashboard-stats">
           <div className="cart-summary">
             <h3>{orders.length}</h3>
             <p>Total Orders</p>
           </div>
 
-          <div className="dashboard-actions">
-            <button onClick={() => (window.location.href = "/cart")}>
-              View Cart
-            </button>
-
-            <button onClick={() => (window.location.href = "/checkout")}>
-              Continue Checkout
-            </button>
-
-            <button onClick={() => (window.location.href = "/profile")}>
-              Edit Profile
-            </button>
-
-            <button onClick={() => (window.location.href = "/collection")}>
-              Shop Furniture
-            </button>
-          </div>
-
           <div className="cart-summary">
-            <h3>
-              {orders.filter((o) => o.deliveryStatus !== "delivered").length}
-            </h3>
-
+            <h3>{activeOrdersCount}</h3>
             <p>Active Orders</p>
           </div>
 
           <div className="cart-summary">
+            <h3>{deliveredOrdersCount}</h3>
+            <p>Delivered</p>
+          </div>
+
+          <div className="cart-summary">
             <h3>{user?.state || "N/A"}</h3>
-            <p>State</p>
+            <p>Location</p>
           </div>
         </div>
 
-        <div className="cart-summary">
-          <h2>Account Information</h2>
-
-          <p>
-            <b>Email:</b> {user?.email}
-          </p>
-
-          <p>
-            <b>Phone:</b> {user?.phone || "Not set"}
-          </p>
-
-          <p>
-            <b>Address:</b> {user?.address || "Not set"}
-          </p>
+        {/* Quick Actions */}
+        <div className="dashboard-actions">
+          <button onClick={() => (window.location.href = "/collection")}>
+            Shop Furniture
+          </button>
+          <button onClick={() => (window.location.href = "/cart")}>
+            View Cart
+          </button>
+          <button onClick={() => (window.location.href = "/checkout")}>
+            Continue Checkout
+          </button>
+          <button onClick={() => (window.location.href = "/profile")}>
+            Edit Profile
+          </button>
         </div>
 
-        <h2 style={{ marginTop: 30 }}>Recent Orders</h2>
+        {/* Account Information */}
+        <div className="profile-info-grid">
+          <div className="profile-info-card">
+            <span>Email</span>
+            <strong>{user?.email}</strong>
+          </div>
+          <div className="profile-info-card">
+            <span>Phone</span>
+            <strong>{user?.phone || "Not set"}</strong>
+          </div>
+          <div className="profile-info-card">
+            <span>Address</span>
+            <strong>{user?.address || "Not set"}</strong>
+          </div>
+          <div className="profile-info-card">
+            <span>Member Since</span>
+            <strong>{formatDate(user?.createdAt)}</strong>
+          </div>
+        </div>
 
-        {orders.map((order) => (
-          <div key={order._id} className="cart-summary">
-            <h3>₦{Number(order.totalAmount || 0).toLocaleString()}</h3>
+        {/* Recent Orders Section */}
+        <h2 style={{ marginTop: 40, color: "var(--brown)" }}>Recent Orders</h2>
 
-            <p>Payment: {order.paymentStatus}</p>
-            <p>Delivery: {order.deliveryStatus}</p>
-            <p>Placed: {formatDate(order.createdAt)}</p>
-            {order.paidAt && <p>Paid: {formatDate(order.paidAt)}</p>}
-            {order.estimatedDeliveryDate && (
-              <p>ETA: {formatDate(order.estimatedDeliveryDate)}</p>
-            )}
+        {orders.length === 0 ? (
+          <div
+            className="cart-summary"
+            style={{
+              textAlign: "center",
+              padding: "40px 20px",
+              background: "var(--bg)",
+            }}
+          >
+            <p style={{ color: "#999", marginTop: 0 }}>
+              No orders yet. Start shopping!
+            </p>
+            <button
+              onClick={() => (window.location.href = "/collection")}
+              style={{
+                marginTop: 15,
+                padding: "12px 24px",
+                background: "var(--brown)",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+              }}
+            >
+              Browse Furniture
+            </button>
+          </div>
+        ) : (
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+          >
+            {orders.map((order) => (
+              <div
+                key={order._id}
+                className="cart-summary"
+                style={{
+                  borderLeft: `4px solid var(--gold)`,
+                  paddingLeft: "20px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr auto",
+                    gap: "20px",
+                    alignItems: "start",
+                    marginBottom: "12px",
+                  }}
+                >
+                  <div>
+                    <h3 style={{ margin: "0 0 8px 0", color: "var(--brown)" }}>
+                      ₦{Number(order.totalAmount || 0).toLocaleString()}
+                    </h3>
+                    <p style={{ margin: "4px 0", fontSize: "13px" }}>
+                      <strong>Placed:</strong> {formatDate(order.createdAt)}
+                    </p>
+                    {order.paidAt && (
+                      <p style={{ margin: "4px 0", fontSize: "13px" }}>
+                        <strong>Paid:</strong> {formatDate(order.paidAt)}
+                      </p>
+                    )}
+                    {order.estimatedDeliveryDate && (
+                      <p style={{ margin: "4px 0", fontSize: "13px" }}>
+                        <strong>ETA:</strong>{" "}
+                        {formatDate(order.estimatedDeliveryDate)}
+                      </p>
+                    )}
+                  </div>
+                  <div style={{ textAlign: "right", whiteSpace: "nowrap" }}>
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "6px 12px",
+                        background:
+                          order.paymentStatus === "paid"
+                            ? "rgba(124, 74, 32, 0.1)"
+                            : "rgba(255, 193, 7, 0.1)",
+                        color:
+                          order.paymentStatus === "paid"
+                            ? "var(--brown)"
+                            : "#f39c12",
+                        borderRadius: "6px",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      {order.paymentStatus}
+                    </span>
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "6px 12px",
+                        marginTop: "6px",
+                        background:
+                          order.deliveryStatus === "delivered"
+                            ? "rgba(76, 175, 80, 0.1)"
+                            : "rgba(201, 162, 74, 0.1)",
+                        color:
+                          order.deliveryStatus === "delivered"
+                            ? "#4caf50"
+                            : "var(--gold)",
+                        borderRadius: "6px",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      {order.deliveryStatus}
+                    </span>
+                  </div>
+                </div>
 
-            {order.items?.map((item) => (
-              <div key={item.productId}>
-                <small>
-                  {item.quantity} × {item.name}
-                </small>
+                {order.items && order.items.length > 0 && (
+                  <div
+                    style={{
+                      paddingTop: "12px",
+                      borderTop: "1px solid #eee",
+                      fontSize: "13px",
+                      color: "#666",
+                    }}
+                  >
+                    <strong>Items:</strong>
+                    {order.items.map((item, idx) => (
+                      <div key={idx} style={{ marginTop: "4px" }}>
+                        {item.quantity} × {item.name}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
-        ))}
+        )}
       </div>
     </UserLayout>
   );

@@ -87,7 +87,9 @@ export default function EditProfile() {
     <UserLayout>
       <div className="profile-page">
         <div className="profile-card">
-          <h1>Edit Profile</h1>
+          <h1 style={{ color: "var(--navy)", marginBottom: "24px" }}>
+            Edit Profile
+          </h1>
 
           <div className="profile-header">
             <div className="profile-avatar">
@@ -99,15 +101,28 @@ export default function EditProfile() {
             </div>
 
             <div>
-              <h2>{user?.name}</h2>
+              <h2 style={{ margin: "0 0 8px 0", color: "var(--navy)" }}>
+                {user?.name}
+              </h2>
 
-              <p>{user?.email}</p>
-              <p style={{ marginTop: 6, fontSize: 14, color: "#666" }}>
+              <p style={{ margin: "4px 0", color: "var(--text)" }}>
+                {user?.email}
+              </p>
+              <p
+                style={{
+                  marginTop: 10,
+                  fontSize: 12,
+                  color: user?.emailVerified ? "#4caf50" : "#f39c12",
+                  fontWeight: "600",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
                 {user?.emailVerified
-                  ? "Email verified"
+                  ? "✓ Email verified"
                   : user?.pendingEmail
                     ? `Change pending: ${user.pendingEmail}`
-                    : "Email not verified"}
+                    : "⚠ Email not verified"}
               </p>
             </div>
           </div>
@@ -121,54 +136,72 @@ export default function EditProfile() {
           />
 
           <form onSubmit={handleSubmit} className="profile-form">
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={form.name}
-              onChange={handleChange}
-            />
+            <label>
+              <span>Full Name</span>
+              <input
+                type="text"
+                name="name"
+                placeholder="Your full name"
+                value={form.name}
+                onChange={handleChange}
+              />
+            </label>
 
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
+            <label>
+              <span>Email Address</span>
+              <input
+                type="email"
+                name="email"
+                placeholder="your@email.com"
+                value={form.email}
+                onChange={handleChange}
+                required
+              />
+            </label>
 
-            <input
-              type="text"
-              name="phone"
-              placeholder="Phone"
-              value={form.phone}
-              onChange={handleChange}
-            />
+            <label>
+              <span>Phone Number</span>
+              <input
+                type="text"
+                name="phone"
+                placeholder="+234 (0) 123 456 7890"
+                value={form.phone}
+                onChange={handleChange}
+              />
+            </label>
 
-            <input
-              type="text"
-              name="address"
-              placeholder="Address"
-              value={form.address}
-              onChange={handleChange}
-            />
+            <label>
+              <span>Address</span>
+              <input
+                type="text"
+                name="address"
+                placeholder="Street address"
+                value={form.address}
+                onChange={handleChange}
+              />
+            </label>
 
-            <input
-              type="text"
-              name="city"
-              placeholder="City"
-              value={form.city}
-              onChange={handleChange}
-            />
+            <label>
+              <span>City</span>
+              <input
+                type="text"
+                name="city"
+                placeholder="City"
+                value={form.city}
+                onChange={handleChange}
+              />
+            </label>
 
-            <input
-              type="text"
-              name="state"
-              placeholder="State"
-              value={form.state}
-              onChange={handleChange}
-            />
+            <label>
+              <span>State</span>
+              <input
+                type="text"
+                name="state"
+                placeholder="State"
+                value={form.state}
+                onChange={handleChange}
+              />
+            </label>
 
             <button type="submit" disabled={saving}>
               {saving ? "Saving..." : "Save Profile"}
