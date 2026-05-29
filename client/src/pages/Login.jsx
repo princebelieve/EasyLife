@@ -29,9 +29,7 @@ export default function Login() {
         return;
       }
 
-      await login(res.accessToken);
-
-      localStorage.setItem("refreshToken", res.refreshToken);
+      await login(res.accessToken, res.refreshToken);
 
       let payload;
 

@@ -28,13 +28,23 @@ export function CartProvider({ children }) {
     try {
       const data = await getCart(token);
 
-      const formatted = (data.items || []).map((item) => ({
-        productId: item.productId._id,
-        name: item.productId.name,
-        image: item.productId.coverImage,
-        price: Number(item.productId.price || 0),
-        quantity: item.quantity,
-      }));
+      const formatted = (data.items || [])
+        .map((item) => {
+          const p = item.productId;
+
+          if (!p) return null;
+
+          const productObj = typeof p === "object" ? p : { _id: p };
+
+          return {
+            productId: productObj._id || productObj,
+            name: productObj.name || "",
+            image: productObj.coverImage || "",
+            price: Number(productObj.price || 0),
+            quantity: item.quantity,
+          };
+        })
+        .filter(Boolean);
 
       setCart(formatted);
     } catch (err) {
@@ -50,15 +60,24 @@ export function CartProvider({ children }) {
 
   async function addToCart(product, quantity = 1) {
     if (!token) {
-      alert("Please login first");
-      return;
+      return {
+        success: false,
+        message: "Please login first.",
+      };
     }
 
     try {
       await addToCartApi(token, product._id, quantity);
-      loadCart();
+      await loadCart();
+      return {
+        success: true,
+      };
     } catch (err) {
       console.error(err);
+      return {
+        success: false,
+        message: err?.message || "Failed to add item to cart.",
+      };
     }
   }
 

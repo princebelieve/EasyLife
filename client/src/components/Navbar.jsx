@@ -17,9 +17,7 @@ export default function Navbar() {
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
 
-  useClickOutside({ current: [menuRef.current, buttonRef.current] }, () =>
-    setOpen(false),
-  );
+  useClickOutside([menuRef, buttonRef], () => setOpen(false));
 
   useEffect(() => {
     const handleScroll = () => {

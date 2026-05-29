@@ -1,7 +1,7 @@
 //client/src/pages/ProductDetails.jsx
 import { useEffect, useState } from "react";
 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 
@@ -11,9 +11,13 @@ import { getProductById } from "../services/api";
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [addLoading, setAddLoading] = useState(false);
+  const [addSuccess, setAddSuccess] = useState(false);
+  const [addError, setAddError] = useState("");
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -98,17 +102,63 @@ export default function ProductDetails() {
 
             <h2>₦{Number(product?.price || 0).toLocaleString()}</h2>
 
-            <button onClick={() => addToCart(product)}>Add To Cart</button>
-
             <button
-              className="primary"
-              onClick={() => {
-                addToCart(product);
-                window.location.href = "/checkout";
+              type="button"
+              disabled={addLoading}
+              onClick={async () => {
+                setAddError("");
+                setAddSuccess(false);
+                setAddLoading(true);
+
+                const result = await addToCart(product);
+
+                setAddLoading(false);
+
+                if (result.success) {
+                  setAddSuccess(true);
+                  setTimeout(() => setAddSuccess(false), 2000);
+                } else {
+                  setAddError(result.message || "Failed to add item to cart.");
+                }
               }}
             >
-              Buy Now
+              {addLoading
+                ? "Adding..."
+                : addSuccess
+                  ? "Added ✔"
+                  : "Add To Cart"}
             </button>
+
+            <button
+              type="button"
+              className="primary"
+              disabled={addLoading}
+              onClick={async () => {
+                setAddError("");
+                setAddSuccess(false);
+                setAddLoading(true);
+
+                const result = await addToCart(product);
+
+                setAddLoading(false);
+
+                if (result.success) {
+                  navigate("/checkout");
+                } else {
+                  setAddError(result.message || "Failed to add item to cart.");
+                }
+              }}
+            >
+              {addLoading ? "Adding..." : "Buy Now"}
+            </button>
+
+            {(addSuccess || addError) && (
+              <div
+                className={`inline-toast ${addSuccess ? "success" : "error"}`}
+              >
+                {addSuccess ? "Added to cart" : addError}
+              </div>
+            )}
           </div>
         </div>
 

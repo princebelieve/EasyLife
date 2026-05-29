@@ -65,8 +65,21 @@ router.post("/", protect, async (req, res) => {
 
     const totalAmount = subtotal + shippingFee;
 
-    // 3. CREATE ORDER (pending)
-    const order = await Order.create({
+    // 3. INIT PAYSTACK
+    const payment = await paystack.post("/transaction/initialize", {
+      email,
+      amount: totalAmount * 100,
+      currency: "NGN",
+      callback_url: `${process.env.CLIENT_URL}/success`,
+      metadata: {
+        userId,
+      },
+    });
+
+    const data = payment.data.data;
+
+    // 4. CREATE ORDER (pending) with valid payment reference
+    await Order.create({
       userId,
       customerName,
       email,
@@ -87,25 +100,8 @@ router.post("/", protect, async (req, res) => {
       deliveryContact: phone,
       totalAmount,
       currency: "NGN",
+      paymentReference: data.reference,
     });
-
-    // 4. INIT PAYSTACK
-    const payment = await paystack.post("/transaction/initialize", {
-      email,
-      amount: totalAmount * 100,
-      currency: "NGN",
-      callback_url: `${process.env.CLIENT_URL}/success`,
-      metadata: {
-        orderId: order._id.toString(),
-        userId,
-      },
-    });
-
-    const data = payment.data.data;
-
-    // 5. SAVE REFERENCE TO ORDER
-    order.paymentReference = data.reference;
-    await order.save();
 
     res.json({
       authorization_url: data.authorization_url,

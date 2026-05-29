@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import { getProfile } from "../services/api";
+import { setRefreshToken } from "../utils/auth";
 
 const AuthContext = createContext(null);
 
@@ -41,6 +42,7 @@ export function AuthProvider({ children }) {
       const profile = await getProfile();
 
       setUser(profile.user);
+      setTokenState(localStorage.getItem("accessToken"));
     } catch (error) {
       console.error(error);
 
@@ -66,7 +68,11 @@ export function AuthProvider({ children }) {
     [logout, hydrateUser],
   );
 
-  async function login(newToken) {
+  async function login(newToken, refreshToken) {
+    if (refreshToken) {
+      setRefreshToken(refreshToken);
+    }
+
     await updateToken(newToken);
   }
 
@@ -83,20 +89,9 @@ export function AuthProvider({ children }) {
 
         return;
       }
-
-      const parsedUser = parseToken(storedToken);
-
-      if (!parsedUser || parsedUser.exp * 1000 < Date.now()) {
-        logout();
-
-        setLoading(false);
-
-        return;
-      }
-
       setTokenState(storedToken);
 
-      await hydrateUser(storedToken);
+      await hydrateUser();
 
       setLoading(false);
     }

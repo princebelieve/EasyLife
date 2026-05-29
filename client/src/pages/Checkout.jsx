@@ -2,14 +2,14 @@
 import { useEffect, useState } from "react";
 import { initializeCheckout, previewShipping } from "../services/api";
 import Navbar from "../components/Navbar";
-import useAuth from "../context/AuthContext";
 
 import { useCart } from "../context/CartContext";
 
 export default function Checkout() {
   const { cart, subtotal } = useCart();
-  const { token } = useAuth();
   const [shippingFee, setShippingFee] = useState(0);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
 
   const totalAmount = subtotal + shippingFee;
 
@@ -33,7 +33,10 @@ export default function Checkout() {
   useEffect(() => {
     async function loadShipping() {
       try {
-        if (!form.state) return;
+        if (!form.state || !form.city) {
+          setShippingFee(0);
+          return;
+        }
 
         const data = await previewShipping({
           city: form.city,
@@ -48,24 +51,25 @@ export default function Checkout() {
     }
 
     loadShipping();
-  }, [form.city, form.state]);
+  }, [form.city, form.state, cart]);
 
   async function handleCheckout(e) {
     e.preventDefault();
+    setCheckoutError("");
+    setCheckoutLoading(true);
 
     try {
-      const response = await initializeCheckout(
-        {
-          ...form,
-        },
-        token,
-      );
+      const response = await initializeCheckout({
+        ...form,
+      });
 
       window.location.href = response.authorization_url;
     } catch (err) {
       console.error(err);
 
-      alert(err.message || "Unable to initialize checkout");
+      setCheckoutError(err.message || "Unable to initialize checkout");
+    } finally {
+      setCheckoutLoading(false);
     }
   }
 
@@ -137,9 +141,18 @@ export default function Checkout() {
                 onChange={handleChange}
               />
 
-              <button type="submit" className="primary">
-                Continue To Payment
+              <button
+                type="submit"
+                className="primary"
+                disabled={checkoutLoading}
+              >
+                {checkoutLoading ? "Processing…" : "Continue To Payment"}
               </button>
+              {checkoutError && (
+                <p className="error-message" style={{ marginTop: 12 }}>
+                  {checkoutError}
+                </p>
+              )}
             </form>
 
             <div className="cart-summary">

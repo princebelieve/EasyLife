@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 self.addEventListener("install", (event) => {
   self.skipWaiting();
 });

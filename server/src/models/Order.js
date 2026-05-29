@@ -100,8 +100,8 @@ const orderSchema = new mongoose.Schema(
 
     paymentReference: {
       type: String,
-      default: "",
       unique: true,
+      sparse: true,
     },
 
     paymentStatus: {
