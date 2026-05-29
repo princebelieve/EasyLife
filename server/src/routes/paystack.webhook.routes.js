@@ -11,9 +11,13 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
+    // When using express.raw for this route, req.body is a Buffer containing
+    // the raw JSON payload. Compute the HMAC on the raw bytes to match Paystack's signature.
+    const rawBody = req.body;
+
     const hash = crypto
       .createHmac("sha512", process.env.PAYSTACK_SECRET_KEY)
-      .update(JSON.stringify(req.body))
+      .update(rawBody)
       .digest("hex");
 
     if (hash !== req.headers["x-paystack-signature"]) {
@@ -22,7 +26,13 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const event = req.body;
+    let event;
+    try {
+      event = JSON.parse(rawBody.toString());
+    } catch (parseErr) {
+      console.error("Failed to parse webhook body", parseErr);
+      return res.status(400).json({ message: "Invalid payload" });
+    }
 
     if (event.event === "charge.success") {
       const reference = event.data.reference;

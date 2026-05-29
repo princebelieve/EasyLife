@@ -23,7 +23,12 @@ const app = express();
 
 connectDB();
 
-app.use("/api/paystack/webhook", express.json(), paystackWebhookRoutes);
+// Paystack requires the raw request body for signature verification
+app.use(
+  "/api/paystack/webhook",
+  express.raw({ type: "application/json" }),
+  paystackWebhookRoutes,
+);
 
 // middleware
 app.use(
