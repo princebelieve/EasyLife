@@ -72,6 +72,8 @@ button {
 
 .hamburger {
   display: none;
+  position: relative;
+  z-index: 1001;
   width: 54px;
   height: 54px;
   border: none;
@@ -2070,7 +2072,7 @@ button:hover {
 .admin-topbar {
   position: sticky;
   top: 0;
-  z-index: 3000;
+  z-index: 4001;
 
   height: 76px;
 
@@ -2167,7 +2169,7 @@ button:hover {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.35);
-  z-index: 3998;
+  z-index: 3999;
 }
 
 .admin-sidebar {
@@ -2181,7 +2183,7 @@ button:hover {
 
   background: #fff;
 
-  z-index: 3999;
+  z-index: 4000;
 
   transition: left 0.25s ease;
 

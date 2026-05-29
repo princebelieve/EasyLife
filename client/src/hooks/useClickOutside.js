@@ -1,7 +1,13 @@
 //client/src/hooks/useClickOutside.js
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function useClickOutside(refs, handler, enabled = true) {
+  const savedHandler = useRef(handler);
+
+  useEffect(() => {
+    savedHandler.current = handler;
+  }, [handler]);
+
   useEffect(() => {
     if (!enabled) return;
 
@@ -11,30 +17,24 @@ export default function useClickOutside(refs, handler, enabled = true) {
       const clickedInside = refArray.some((ref) => {
         if (!ref) return false;
 
-        // Support both ref objects ({ current }) and direct DOM nodes
         const node = ref.current !== undefined ? ref.current : ref;
 
-        if (!node) return false;
+        if (!node || typeof node.contains !== "function") return false;
 
-        // Ensure contains is a function before calling
-        if (typeof node.contains === "function") {
-          return node.contains(event.target);
-        }
-
-        return false;
+        return node.contains(event.target);
       });
 
       if (clickedInside) return;
 
-      handler(event);
+      savedHandler.current(event);
     }
 
-    document.addEventListener("click", listener);
+    document.addEventListener("mousedown", listener);
     document.addEventListener("touchstart", listener);
 
     return () => {
-      document.removeEventListener("click", listener);
+      document.removeEventListener("mousedown", listener);
       document.removeEventListener("touchstart", listener);
     };
-  }, [refs, handler, enabled]);
+  }, [refs, enabled]);
 }
