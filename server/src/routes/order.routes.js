@@ -14,4 +14,28 @@ router.get("/latest", async (req, res) => {
   res.json(order);
 });
 
+// Get order by payment reference (for success/cancel pages)
+router.get("/by-reference/:reference", async (req, res) => {
+  try {
+    const { reference } = req.params;
+
+    const order = await Order.findOne({
+      paymentReference: reference,
+    });
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
+      });
+    }
+
+    res.json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "Error fetching order",
+    });
+  }
+});
+
 module.exports = router;

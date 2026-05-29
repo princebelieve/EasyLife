@@ -172,38 +172,6 @@ export async function resendVerificationEmail(email) {
   return res.json();
 }
 
-export async function initializePayment(payload) {
-  const res = await fetch(`${BASE_URL}/api/payments/initialize`, {
-    method: "POST",
-
-    headers: {
-      "Content-Type": "application/json",
-    },
-
-    body: JSON.stringify(payload),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.message || "Payment initialization failed");
-  }
-
-  return data;
-}
-
-export async function verifyPayment(reference) {
-  const res = await fetch(`${BASE_URL}/api/payments/verify/${reference}`);
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.message || "Verification failed");
-  }
-
-  return data;
-}
-
 export async function initializeCheckout(payload) {
   return apiRequest("/api/checkout", {
     method: "POST",
@@ -533,3 +501,5 @@ export async function submitMeasurement(data) {
     body: JSON.stringify(data),
   });
 }
+
+export { apiRequest };

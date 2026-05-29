@@ -6,7 +6,6 @@ const cors = require("cors");
 
 const connectDB = require("./config/db");
 
-const paymentRoutes = require("./routes/payment.routes");
 const paystackWebhookRoutes = require("./routes/paystack.webhook.routes");
 const productRoutes = require("./routes/product.routes");
 const orderRoutes = require("./routes/order.routes");
@@ -40,7 +39,6 @@ app.use(express.json());
 
 // routes
 app.use("/api/auth", authRoutes); // ✅ ADD THIS
-app.use("/api/payments", paymentRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/measurements", measurementRoutes);
