@@ -176,8 +176,7 @@ const forgotPassword = async (req, res) => {
         emailError?.message || emailError,
       );
       return res.status(500).json({
-        message:
-          "Unable to send password reset email. Please try again later.",
+        message: "Unable to send password reset email. Please try again later.",
       });
     }
 
@@ -391,6 +390,59 @@ const refreshToken = async (req, res) => {
   }
 };
 
+// 🟢 CHANGE PASSWORD (authenticated users)
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user?.id;
+
+    // Validate input
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        message: "Current password and new password are required",
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: "New password must be at least 6 characters",
+      });
+    }
+
+    // Get user with password field
+    const user = await User.findById(userId).select("+password");
+
+    if (!user) {
+      return res.status(401).json({
+        message: "User not found",
+      });
+    }
+
+    // Verify current password
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isValid) {
+      return res.status(400).json({
+        message: "Current password is incorrect",
+      });
+    }
+
+    // Hash and update new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({
+      message: "Password changed successfully",
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "Failed to change password",
+    });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -399,4 +451,5 @@ module.exports = {
   resetPassword,
   verifyEmail,
   resendVerificationEmail,
+  changePassword,
 };

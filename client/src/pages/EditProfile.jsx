@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import useAuth from "../context/AuthContext";
 
-import { getProfile, updateProfile } from "../services/api";
+import { getProfile, updateProfile, changePassword } from "../services/api";
 
 import UserLayout from "../components/user/UserLayout";
 
@@ -20,6 +20,8 @@ export default function EditProfile() {
 
   const [saving, setSaving] = useState(false);
 
+  const [changingPassword, setChangingPassword] = useState(false);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -27,6 +29,12 @@ export default function EditProfile() {
     address: "",
     city: "",
     state: "",
+  });
+
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   useEffect(() => {
@@ -80,6 +88,59 @@ export default function EditProfile() {
       alert(error.message);
     } finally {
       setSaving(false);
+    }
+  }
+
+  function handlePasswordChange(e) {
+    setPasswordForm({
+      ...passwordForm,
+      [e.target.name]: e.target.value,
+    });
+  }
+
+  async function handlePasswordSubmit(e) {
+    e.preventDefault();
+
+    // Validate inputs
+    if (!passwordForm.currentPassword) {
+      alert("Please enter your current password");
+      return;
+    }
+
+    if (!passwordForm.newPassword) {
+      alert("Please enter a new password");
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      alert("New password must be at least 6 characters");
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      setChangingPassword(true);
+
+      await changePassword(
+        passwordForm.currentPassword,
+        passwordForm.newPassword,
+      );
+
+      alert("Password changed successfully");
+
+      setPasswordForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setChangingPassword(false);
     }
   }
 
@@ -207,6 +268,60 @@ export default function EditProfile() {
               {saving ? "Saving..." : "Save Profile"}
             </button>
           </form>
+
+          <div
+            style={{
+              borderTop: "1px solid #e0e0e0",
+              marginTop: "32px",
+              paddingTop: "32px",
+            }}
+          >
+            <h2 style={{ color: "var(--navy)", marginBottom: "20px" }}>
+              Change Password
+            </h2>
+
+            <form onSubmit={handlePasswordSubmit} className="profile-form">
+              <label>
+                <span>Current Password</span>
+                <input
+                  type="password"
+                  name="currentPassword"
+                  placeholder="Enter current password"
+                  value={passwordForm.currentPassword}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </label>
+
+              <label>
+                <span>New Password</span>
+                <input
+                  type="password"
+                  name="newPassword"
+                  placeholder="Enter new password"
+                  value={passwordForm.newPassword}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </label>
+
+              <label>
+                <span>Confirm New Password</span>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Confirm new password"
+                  value={passwordForm.confirmPassword}
+                  onChange={handlePasswordChange}
+                  required
+                />
+              </label>
+
+              <button type="submit" disabled={changingPassword}>
+                {changingPassword ? "Changing..." : "Change Password"}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </UserLayout>

@@ -168,6 +168,14 @@ export async function resendVerificationEmail(email) {
   return res.json();
 }
 
+export async function changePassword(currentPassword, newPassword) {
+  return apiRequest("/api/auth/change-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+}
+
 export async function initializeCheckout(payload) {
   return apiRequest("/api/checkout", {
     method: "POST",
