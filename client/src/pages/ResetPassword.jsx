@@ -1,6 +1,6 @@
 //client/src/pages/ResetPassword.jsx
 import { useState } from "react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "../services/api";
 import Navbar from "../components/Navbar";
 
@@ -45,10 +45,10 @@ export default function ResetPassword() {
       <Navbar />
 
       <div className="form" style={{ marginTop: 50 }}>
-        <h1>Reset Password</h1>
+        <h2>Reset Password</h2>
 
         <p className="muted" style={{ marginBottom: 20 }}>
-          Enter your new password below to complete the recovery process.
+          Enter your new password below.
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -77,12 +77,6 @@ export default function ResetPassword() {
             {submitting ? "Resetting..." : "Reset Password"}
           </button>
         </form>
-
-        <div style={{ marginTop: 18 }}>
-          <Link to="/login" style={{ color: "var(--gold)" }}>
-            Back to Login
-          </Link>
-        </div>
       </div>
     </>
   );

@@ -5,6 +5,11 @@ const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: Number(process.env.EMAIL_PORT) || 587,
   secure: process.env.EMAIL_SECURE === "true",
+
+  connectionTimeout: 15000,
+  greetingTimeout: 15000,
+  socketTimeout: 15000,
+
   auth: process.env.EMAIL_USER
     ? {
         user: process.env.EMAIL_USER,
@@ -13,9 +18,19 @@ const transporter = nodemailer.createTransport({
     : undefined,
 });
 
-transporter.verify((error, success) => {
+console.log("EMAIL CONFIG");
+console.log("EMAIL_HOST =", process.env.EMAIL_HOST);
+console.log("EMAIL_PORT =", process.env.EMAIL_PORT);
+console.log("EMAIL_SECURE =", process.env.EMAIL_SECURE);
+console.log("EMAIL_USER =", process.env.EMAIL_USER);
+console.log("EMAIL_PASS PRESENT =", process.env.EMAIL_PASS ? "YES" : "NO");
+
+transporter.verify((error) => {
   if (error) {
-    console.error("SMTP ERROR:", error);
+    console.error("SMTP VERIFY FAILED");
+    console.error("CODE:", error.code);
+    console.error("COMMAND:", error.command);
+    console.error(error);
   } else {
     console.log("SMTP READY");
   }
