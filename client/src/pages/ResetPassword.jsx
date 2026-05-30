@@ -1,6 +1,6 @@
 //client/src/pages/ResetPassword.jsx
 import { useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "../services/api";
 import Navbar from "../components/Navbar";
 
@@ -15,6 +15,11 @@ export default function ResetPassword() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    if (!token) {
+      alert("Invalid reset link. Please request a new password reset email.");
+      return;
+    }
 
     if (password !== confirmPassword) {
       alert("Passwords do not match.");
@@ -40,10 +45,10 @@ export default function ResetPassword() {
       <Navbar />
 
       <div className="form" style={{ marginTop: 50 }}>
-        <h2>Reset Password</h2>
+        <h1>Reset Password</h1>
 
         <p className="muted" style={{ marginBottom: 20 }}>
-          Enter your new password below.
+          Enter your new password below to complete the recovery process.
         </p>
 
         <form onSubmit={handleSubmit}>
@@ -67,11 +72,17 @@ export default function ResetPassword() {
             type="submit"
             className="btn-primary"
             style={{ marginTop: 14 }}
-            disabled={submitting}
+            disabled={!token || submitting}
           >
             {submitting ? "Resetting..." : "Reset Password"}
           </button>
         </form>
+
+        <div style={{ marginTop: 18 }}>
+          <Link to="/login" style={{ color: "var(--gold)" }}>
+            Back to Login
+          </Link>
+        </div>
       </div>
     </>
   );

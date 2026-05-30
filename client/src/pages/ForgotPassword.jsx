@@ -34,7 +34,7 @@ export default function ForgotPassword() {
       <Navbar />
 
       <div className="form" style={{ marginTop: 50 }}>
-        <h1>Forgot Password</h1>
+        <h1>Reset / Recover Password</h1>
 
         <p>Enter your email and we’ll send you a reset link.</p>
 

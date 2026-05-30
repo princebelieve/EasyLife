@@ -171,10 +171,14 @@ const forgotPassword = async (req, res) => {
         resetUrl,
       });
     } catch (emailError) {
-      console.warn(
+      console.error(
         "Password reset email could not be sent:",
-        emailError.message,
+        emailError?.message || emailError,
       );
+      return res.status(500).json({
+        message:
+          "Unable to send password reset email. Please try again later.",
+      });
     }
 
     return res.json({

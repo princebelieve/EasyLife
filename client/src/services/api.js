@@ -1,6 +1,5 @@
 //client/src/services/api.js
 import { getToken, getRefreshToken, setToken } from "../utils/auth";
-// default to empty string so requests use same origin when VITE_API_URL isn't set
 const BASE_URL = import.meta.env.VITE_API_URL || "";
 
 async function refreshAccessToken() {
