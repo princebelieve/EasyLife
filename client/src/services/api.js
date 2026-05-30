@@ -1,6 +1,7 @@
 //client/src/services/api.js
 import { getToken, getRefreshToken, setToken } from "../utils/auth";
-const BASE_URL = import.meta.env.VITE_API_URL;
+// default to empty string so requests use same origin when VITE_API_URL isn't set
+const BASE_URL = import.meta.env.VITE_API_URL || "";
 
 async function refreshAccessToken() {
   const refreshToken = getRefreshToken();
@@ -127,23 +128,19 @@ export async function loginUser(data) {
 // -------------------------
 
 export async function forgotPassword(email) {
-  const res = await fetch(`${BASE_URL}/api/auth/forgot-password`, {
+  return apiRequest("/api/auth/forgot-password", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
   });
-
-  return res.json();
 }
 
 export async function resetPassword(token, password) {
-  const res = await fetch(`${BASE_URL}/api/auth/reset-password`, {
+  return apiRequest("/api/auth/reset-password", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token, password }),
   });
-
-  return res.json();
 }
 
 export async function verifyEmail(token) {
