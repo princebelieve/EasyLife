@@ -1,99 +1,93 @@
 //server/src/services/email.js
+//server/src/services/email.js
 const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
 
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: Number(process.env.EMAIL_PORT) || 587,
-  secure: process.env.EMAIL_SECURE === "true",
+// OAuth2 setup
+const oauth2Client = new google.auth.OAuth2(
+  process.env.GMAIL_CLIENT_ID,
+  process.env.GMAIL_CLIENT_SECRET,
+  "https://developers.google.com/oauthplayground",
+);
 
-  connectionTimeout: 15000,
-  greetingTimeout: 15000,
-  socketTimeout: 15000,
-
-  auth: process.env.EMAIL_USER
-    ? {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      }
-    : undefined,
+oauth2Client.setCredentials({
+  refresh_token: process.env.GMAIL_REFRESH_TOKEN,
 });
+
+// Create transporter (OAuth2)
+async function createTransporter() {
+  const accessToken = await oauth2Client.getAccessToken();
+
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      type: "OAuth2",
+      user: process.env.EMAIL_USER,
+      clientId: process.env.GMAIL_CLIENT_ID,
+      clientSecret: process.env.GMAIL_CLIENT_SECRET,
+      refreshToken: process.env.GMAIL_REFRESH_TOKEN,
+      accessToken: accessToken.token,
+    },
+  });
+}
 
 console.log("EMAIL CONFIG");
-console.log("EMAIL_HOST =", process.env.EMAIL_HOST);
-console.log("EMAIL_PORT =", process.env.EMAIL_PORT);
-console.log("EMAIL_SECURE =", process.env.EMAIL_SECURE);
 console.log("EMAIL_USER =", process.env.EMAIL_USER);
-console.log("EMAIL_PASS PRESENT =", process.env.EMAIL_PASS ? "YES" : "NO");
+console.log("GMAIL CLIENT ID =", process.env.GMAIL_CLIENT_ID ? "YES" : "NO");
+console.log(
+  "GMAIL REFRESH TOKEN =",
+  process.env.GMAIL_REFRESH_TOKEN ? "YES" : "NO",
+);
 
-transporter.verify((error) => {
-  if (error) {
-    console.error("SMTP VERIFY FAILED");
-    console.error("CODE:", error.code);
-    console.error("COMMAND:", error.command);
-    console.error(error);
-  } else {
-    console.log("SMTP READY");
-  }
-});
-
+// SEND RESET EMAIL
 async function sendResetPasswordEmail({ to, resetUrl }) {
-  if (
-    !process.env.EMAIL_HOST ||
-    !process.env.EMAIL_USER ||
-    !process.env.EMAIL_PASS
-  ) {
-    console.warn(
-      "EMAIL_HOST, EMAIL_USER, or EMAIL_PASS is not configured. Reset link: ",
-      resetUrl,
-    );
+  if (!process.env.GMAIL_REFRESH_TOKEN || !process.env.EMAIL_USER) {
+    console.warn("OAuth2 not configured. Reset link:", resetUrl);
     return;
   }
 
+  const transporter = await createTransporter();
+
   const mailOptions = {
-    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+    from: process.env.EMAIL_USER,
     to,
     subject: "Password reset request",
-    text: `You requested a password reset. Use the link below to set a new password:\n\n${resetUrl}\n\nIf you did not request this, ignore this message.`,
-    html: `<p>You requested a password reset. Click the link below to set a new password:</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>If you did not request this, ignore this message.</p>`,
+    text: `You requested a password reset. Use the link below:\n\n${resetUrl}`,
+    html: `<p>You requested a password reset.</p><p><a href="${resetUrl}">${resetUrl}</a></p>`,
   };
 
   await transporter.sendMail(mailOptions);
 }
 
+// SEND VERIFICATION EMAIL
 async function sendEmailVerification({ to, verificationUrl }) {
-  if (
-    !process.env.EMAIL_HOST ||
-    !process.env.EMAIL_USER ||
-    !process.env.EMAIL_PASS
-  ) {
-    console.warn(
-      "EMAIL_HOST, EMAIL_USER, or EMAIL_PASS is not configured. Verification link:",
-      verificationUrl,
-    );
+  if (!process.env.GMAIL_REFRESH_TOKEN || !process.env.EMAIL_USER) {
+    console.warn("OAuth2 not configured. Verification link:", verificationUrl);
     return;
   }
 
+  const transporter = await createTransporter();
+
   const mailOptions = {
-    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+    from: process.env.EMAIL_USER,
     to,
     subject: "Verify your email address",
-    text: `Please verify your email by clicking the link below:\n\n${verificationUrl}\n\nIf you did not create an account, please ignore this email.`,
-    html: `<p>Please verify your email by clicking the link below:</p><p><a href="${verificationUrl}">${verificationUrl}</a></p><p>If you did not create an account, please ignore this email.</p>`,
+    text: `Please verify your email:\n\n${verificationUrl}`,
+    html: `<p>Please verify your email:</p><p><a href="${verificationUrl}">${verificationUrl}</a></p>`,
   };
 
-  console.log(`Attempting to send verification email to ${to}`);
-  console.log(`Verification URL: ${verificationUrl}`);
+  console.log(`Sending verification email to ${to}`);
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`Verification email successfully sent to ${to}`);
+    console.log(`Verification email sent to ${to}`);
   } catch (err) {
-    console.warn(
-      `Verification email failed to send to ${to}:`,
-      err?.message || err,
-    );
+    console.error("Email send failed:", err?.message || err);
     throw err;
   }
 }
 
-module.exports = { sendResetPasswordEmail, sendEmailVerification };
+module.exports = {
+  sendResetPasswordEmail,
+  sendEmailVerification,
+};
