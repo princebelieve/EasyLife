@@ -1,6 +1,5 @@
 //server/src/services/email.js
 //server/src/services/email.js
-const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 
 // OAuth2 setup
@@ -14,21 +13,53 @@ oauth2Client.setCredentials({
   refresh_token: process.env.GMAIL_REFRESH_TOKEN,
 });
 
-// Create transporter (OAuth2)
-async function createTransporter() {
-  const accessToken = await oauth2Client.getAccessToken();
+// Gmail REST API sender using googleapis
+function createGmailClient() {
+  return google.gmail({ version: "v1", auth: oauth2Client });
+}
 
-  return nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      type: "OAuth2",
-      user: process.env.EMAIL_USER,
-      clientId: process.env.GMAIL_CLIENT_ID,
-      clientSecret: process.env.GMAIL_CLIENT_SECRET,
-      refreshToken: process.env.GMAIL_REFRESH_TOKEN,
-      accessToken: accessToken.token,
-    },
+function base64UrlEncode(str) {
+  return Buffer.from(str)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+async function withTimeout(promise, ms) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error("Gmail API request timed out")),
+      ms,
+    );
   });
+  try {
+    return await Promise.race([promise, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function sendViaGmail({ to, subject, text, html }) {
+  const gmail = createGmailClient();
+
+  const messageLines = [];
+  messageLines.push(`From: ${process.env.EMAIL_USER}`);
+  messageLines.push(`To: ${to}`);
+  messageLines.push(`Subject: ${subject}`);
+  messageLines.push("MIME-Version: 1.0");
+  messageLines.push('Content-Type: text/html; charset="UTF-8"');
+  messageLines.push("");
+  messageLines.push(html || text || "");
+
+  const raw = base64UrlEncode(messageLines.join("\r\n"));
+
+  // Wrap the API call with a timeout so the server won't hang indefinitely
+  return withTimeout(
+    gmail.users.messages.send({ userId: "me", requestBody: { raw } }),
+    10000,
+  );
 }
 
 console.log("EMAIL CONFIG");
@@ -45,18 +76,16 @@ async function sendResetPasswordEmail({ to, resetUrl }) {
     console.warn("OAuth2 not configured. Reset link:", resetUrl);
     return;
   }
+  const subject = "Password reset request";
+  const text = `You requested a password reset. Use the link below:\n\n${resetUrl}`;
+  const html = `<p>You requested a password reset.</p><p><a href="${resetUrl}">${resetUrl}</a></p>`;
 
-  const transporter = await createTransporter();
-
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to,
-    subject: "Password reset request",
-    text: `You requested a password reset. Use the link below:\n\n${resetUrl}`,
-    html: `<p>You requested a password reset.</p><p><a href="${resetUrl}">${resetUrl}</a></p>`,
-  };
-
-  await transporter.sendMail(mailOptions);
+  // fire-and-forget: don't await to avoid blocking the HTTP handler
+  sendViaGmail({ to, subject, text, html })
+    .then(() => console.log(`Password reset email sent to ${to}`))
+    .catch((err) =>
+      console.error("Reset email send failed:", err?.message || err),
+    );
 }
 
 // SEND VERIFICATION EMAIL
@@ -65,21 +94,14 @@ async function sendEmailVerification({ to, verificationUrl }) {
     console.warn("OAuth2 not configured. Verification link:", verificationUrl);
     return;
   }
-
-  const transporter = await createTransporter();
-
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to,
-    subject: "Verify your email address",
-    text: `Please verify your email:\n\n${verificationUrl}`,
-    html: `<p>Please verify your email:</p><p><a href="${verificationUrl}">${verificationUrl}</a></p>`,
-  };
+  const subject = "Verify your email address";
+  const text = `Please verify your email:\n\n${verificationUrl}`;
+  const html = `<p>Please verify your email:</p><p><a href="${verificationUrl}">${verificationUrl}</a></p>`;
 
   console.log(`Sending verification email to ${to}`);
 
   try {
-    await transporter.sendMail(mailOptions);
+    await sendViaGmail({ to, subject, text, html });
     console.log(`Verification email sent to ${to}`);
   } catch (err) {
     console.error("Email send failed:", err?.message || err);
