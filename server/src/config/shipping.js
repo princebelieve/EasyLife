@@ -24,9 +24,9 @@ async function calculateShipping({ city = "", state = "", items = [] }) {
     zone.cities?.some((c) => c.toLowerCase().trim() === normalizedCity) ||
     false;
 
-  let shippingFee = sameCity
-    ? zone.baseDeliveryFee * 0.5
-    : zone.baseDeliveryFee;
+  const baseFee = sameCity ? zone.baseDeliveryFee * 0.5 : zone.baseDeliveryFee;
+
+  let categoryFee = 0;
 
   for (const item of items) {
     const product =
@@ -48,18 +48,18 @@ async function calculateShipping({ city = "", state = "", items = [] }) {
 
     const categoryPrice = Number(categoryRule?.price || 0);
 
-    shippingFee += categoryPrice * quantity;
+    categoryFee += categoryPrice * quantity;
   }
+
+  const shippingFee = baseFee + categoryFee;
 
   return {
     shippingFee,
-
+    baseFee,
+    categoryFee,
     estimatedDays: zone.estimatedDays,
-
     pickupEnabled: zone.pickupEnabled,
-
     installationAvailable: zone.installationAvailable,
-
     shippingAvailable: true,
   };
 }

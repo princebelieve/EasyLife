@@ -2,14 +2,24 @@
 import { useEffect, useState } from "react";
 import { initializeCheckout, previewShipping } from "../services/api";
 import Navbar from "../components/Navbar";
-
 import { useCart } from "../context/CartContext";
+import ngGeo from "../config/ng-geo.json";
+
+// Generate state options from ng-geo.json, with values in lowercase for database matching
+const NIGERIAN_STATES = Object.keys(ngGeo).map((stateName) => ({
+  value: stateName.toLowerCase(),
+  label:
+    stateName === "FCT" ? "Federal Capital Territory" : `${stateName} State`,
+}));
 
 export default function Checkout() {
   const { cart, subtotal } = useCart();
   const [shippingFee, setShippingFee] = useState(0);
+  const [shippingBaseFee, setShippingBaseFee] = useState(0);
+  const [shippingCategoryFee, setShippingCategoryFee] = useState(0);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [availableCities, setAvailableCities] = useState([]);
 
   const totalAmount = subtotal + shippingFee;
 
@@ -24,10 +34,27 @@ export default function Checkout() {
   });
 
   function handleChange(e) {
+    const { name, value } = e.target;
+
     setForm({
       ...form,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
+    // Update available cities when state changes
+    if (name === "state") {
+      // Find the proper state name (key) from the lowercase value
+      const stateKey = Object.keys(ngGeo).find(
+        (key) => key.toLowerCase() === value,
+      );
+      const cities = stateKey ? ngGeo[stateKey] : [];
+      setAvailableCities(cities);
+      // Reset city selection
+      setForm((prev) => ({
+        ...prev,
+        city: "",
+      }));
+    }
   }
 
   useEffect(() => {
@@ -35,6 +62,8 @@ export default function Checkout() {
       try {
         if (!form.state || !form.city) {
           setShippingFee(0);
+          setShippingBaseFee(0);
+          setShippingCategoryFee(0);
           return;
         }
 
@@ -45,8 +74,13 @@ export default function Checkout() {
         });
 
         setShippingFee(Number(data.shippingFee || 0));
+        setShippingBaseFee(Number(data.baseFee || 0));
+        setShippingCategoryFee(Number(data.categoryFee || 0));
       } catch (err) {
         console.error(err);
+        setShippingFee(0);
+        setShippingBaseFee(0);
+        setShippingCategoryFee(0);
       }
     }
 
@@ -118,21 +152,36 @@ export default function Checkout() {
                 required
               />
 
-              <input
+              <select
                 name="city"
-                placeholder="City"
                 value={form.city}
                 onChange={handleChange}
                 required
-              />
+                disabled={!form.state}
+              >
+                <option value="">
+                  {form.state ? "Select a City/LGA" : "Select a State first"}
+                </option>
+                {availableCities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
 
-              <input
+              <select
                 name="state"
-                placeholder="State"
                 value={form.state}
                 onChange={handleChange}
                 required
-              />
+              >
+                <option value="">Select a State</option>
+                {NIGERIAN_STATES.map((state) => (
+                  <option key={state.value} value={state.value}>
+                    {state.label}
+                  </option>
+                ))}
+              </select>
 
               <textarea
                 name="notes"
@@ -181,7 +230,17 @@ export default function Checkout() {
               </p>
 
               <p>
-                Delivery:
+                Shipping base fee:
+                <strong>₦{shippingBaseFee.toLocaleString()}</strong>
+              </p>
+
+              <p>
+                Shipping category fee:
+                <strong>₦{shippingCategoryFee.toLocaleString()}</strong>
+              </p>
+
+              <p>
+                Total shipping:
                 <strong>₦{shippingFee.toLocaleString()}</strong>
               </p>
 

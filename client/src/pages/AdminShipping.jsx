@@ -10,6 +10,15 @@ import {
 
 import { getToken } from "../utils/auth";
 
+import ngGeo from "../config/ng-geo.json";
+
+// Generate state options from ng-geo.json, with values in lowercase for database matching
+const NIGERIAN_STATES = Object.keys(ngGeo).map((stateName) => ({
+  value: stateName.toLowerCase(),
+  label:
+    stateName === "FCT" ? "Federal Capital Territory" : `${stateName} State`,
+}));
+
 const emptyForm = {
   state: "",
   cities: "",
@@ -233,12 +242,19 @@ export default function AdminShipping() {
 
           {openSection === "location" && (
             <div className="accordion-body">
-              <input
+              <select
                 name="state"
-                placeholder="State"
                 value={form.state}
                 onChange={handleChange}
-              />
+                required
+              >
+                <option value="">Select a State</option>
+                {NIGERIAN_STATES.map((state) => (
+                  <option key={state.value} value={state.value}>
+                    {state.label}
+                  </option>
+                ))}
+              </select>
 
               <input
                 name="cities"
