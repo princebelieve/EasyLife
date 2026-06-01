@@ -29,9 +29,16 @@ async function calculateShipping({ city = "", state = "", items = [] }) {
     : zone.baseDeliveryFee;
 
   for (const item of items) {
-    const product = item.productId;
+    const product =
+      item.productId && typeof item.productId === "object"
+        ? item.productId
+        : undefined;
 
-    const category = product?.deliveryCategory || "sofa";
+    const category =
+      product?.deliveryCategory ||
+      item.deliveryCategory ||
+      item.category ||
+      "sofa";
 
     const quantity = Number(item.quantity || 1);
 
@@ -52,6 +59,8 @@ async function calculateShipping({ city = "", state = "", items = [] }) {
     pickupEnabled: zone.pickupEnabled,
 
     installationAvailable: zone.installationAvailable,
+
+    shippingAvailable: true,
   };
 }
 

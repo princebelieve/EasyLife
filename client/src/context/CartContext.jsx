@@ -42,6 +42,8 @@ export function CartProvider({ children }) {
             image: productObj.coverImage || "",
             price: Number(productObj.price || 0),
             quantity: item.quantity,
+            deliveryCategory: productObj.deliveryCategory || "",
+            category: productObj.category || "",
           };
         })
         .filter(Boolean);

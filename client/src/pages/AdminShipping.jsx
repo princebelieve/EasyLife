@@ -435,6 +435,20 @@ export default function AdminShipping() {
               Base Fee: ₦{Number(zone.baseDeliveryFee || 0).toLocaleString()}
             </p>
 
+            {zone.categoryPricing && zone.categoryPricing.length > 0 && (
+              <div style={{ marginTop: 8 }}>
+                <strong>Category Fees</strong>
+                <ul style={{ margin: 8, paddingLeft: 20 }}>
+                  {zone.categoryPricing.map((item) => (
+                    <li key={item.category}>
+                      {item.category}: ₦
+                      {Number(item.price || 0).toLocaleString()}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <p>Estimated: {zone.estimatedDays}</p>
 
             <div

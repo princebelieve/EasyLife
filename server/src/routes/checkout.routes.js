@@ -61,6 +61,14 @@ router.post("/", protect, async (req, res) => {
       items: cart.items,
     });
 
+    if (shippingData.shippingAvailable === false) {
+      return res.status(400).json({
+        message:
+          shippingData.message ||
+          "Shipping is not available for the selected state or city.",
+      });
+    }
+
     const shippingFee = shippingData.shippingFee || 0;
 
     const totalAmount = subtotal + shippingFee;
@@ -73,6 +81,12 @@ router.post("/", protect, async (req, res) => {
       callback_url: `${process.env.CLIENT_URL}/success`,
       metadata: {
         userId,
+        customerName,
+        phone,
+        address,
+        city,
+        state,
+        notes,
       },
     });
 
