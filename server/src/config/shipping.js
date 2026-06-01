@@ -17,13 +17,27 @@ async function calculateShipping({ city = "", state = "", items = [] }) {
       estimatedDays: "Not available",
       pickupEnabled: false,
       installationAvailable: false,
+      shippingAvailable: false,
+      message: "The selected city is not available. Please contact support.",
     };
   }
 
-  const sameCity =
+  const cityMatched =
     zone.cities?.some((c) => c.toLowerCase().trim() === normalizedCity) ||
     false;
 
+  if (zone.cities?.length > 0 && !cityMatched) {
+    return {
+      shippingFee: 0,
+      estimatedDays: "Not available",
+      pickupEnabled: false,
+      installationAvailable: false,
+      shippingAvailable: false,
+      message: "The selected city is not available. Please contact support.",
+    };
+  }
+
+  const sameCity = cityMatched;
   const baseFee = sameCity ? zone.baseDeliveryFee * 0.5 : zone.baseDeliveryFee;
 
   let categoryFee = 0;

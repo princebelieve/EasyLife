@@ -19,6 +19,7 @@ export default function Checkout() {
   const [shippingCategoryFee, setShippingCategoryFee] = useState(0);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [shippingError, setShippingError] = useState("");
   const [availableCities, setAvailableCities] = useState([]);
 
   const totalAmount = subtotal + shippingFee;
@@ -61,6 +62,7 @@ export default function Checkout() {
     async function loadShipping() {
       try {
         if (!form.state || !form.city) {
+          setShippingError("");
           setShippingFee(0);
           setShippingBaseFee(0);
           setShippingCategoryFee(0);
@@ -73,11 +75,25 @@ export default function Checkout() {
           items: cart,
         });
 
-        setShippingFee(Number(data.shippingFee || 0));
-        setShippingBaseFee(Number(data.baseFee || 0));
-        setShippingCategoryFee(Number(data.categoryFee || 0));
+        if (data.shippingAvailable === false) {
+          setShippingError(
+            data.message ||
+              "The selected city is not available. Please contact support.",
+          );
+          setShippingFee(0);
+          setShippingBaseFee(0);
+          setShippingCategoryFee(0);
+        } else {
+          setShippingError("");
+          setShippingFee(Number(data.shippingFee || 0));
+          setShippingBaseFee(Number(data.baseFee || 0));
+          setShippingCategoryFee(Number(data.categoryFee || 0));
+        }
       } catch (err) {
         console.error(err);
+        setShippingError(
+          err.message || "Unable to verify delivery availability.",
+        );
         setShippingFee(0);
         setShippingBaseFee(0);
         setShippingCategoryFee(0);
@@ -193,10 +209,24 @@ export default function Checkout() {
               <button
                 type="submit"
                 className="primary"
-                disabled={checkoutLoading}
+                disabled={checkoutLoading || Boolean(shippingError)}
               >
                 {checkoutLoading ? "Processing…" : "Continue To Payment"}
               </button>
+              {shippingError && (
+                <div className="error-message" style={{ marginTop: 12 }}>
+                  <p>{shippingError}</p>
+                  <a
+                    href="https://wa.me/2348037757718"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="secondary-button"
+                    style={{ marginTop: 12, display: "inline-block" }}
+                  >
+                    Contact Support on WhatsApp
+                  </a>
+                </div>
+              )}
               {checkoutError && (
                 <p className="error-message" style={{ marginTop: 12 }}>
                   {checkoutError}

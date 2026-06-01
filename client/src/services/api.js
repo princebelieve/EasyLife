@@ -387,6 +387,16 @@ export async function updateOrderStatusApi(orderId, deliveryStatus, token) {
   });
 }
 
+export async function archiveOrderApi(orderId, token) {
+  return apiRequest(`/api/admin/orders/${orderId}/archive`, {
+    method: "PUT",
+
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
 // -------------------------
 // ADMIN INQUIRIES
 // -------------------------

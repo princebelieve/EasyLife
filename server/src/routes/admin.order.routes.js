@@ -7,7 +7,9 @@ const { protect, adminOnly } = require("../middleware/auth");
 
 // GET ALL ORDERS
 router.get("/", protect, adminOnly, async (req, res) => {
-  const orders = await Order.find().sort({ createdAt: -1 });
+  const orders = await Order.find({ archived: { $ne: true } }).sort({
+    createdAt: -1,
+  });
   res.json(orders);
 });
 
@@ -31,6 +33,18 @@ router.put("/:id/status", protect, adminOnly, async (req, res) => {
     status: deliveryStatus,
   });
 
+  await order.save();
+
+  res.json(order);
+});
+
+// ARCHIVE ORDER
+router.put("/:id/archive", protect, adminOnly, async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) return res.status(404).json({ message: "Order not found" });
+
+  order.archived = true;
   await order.save();
 
   res.json(order);

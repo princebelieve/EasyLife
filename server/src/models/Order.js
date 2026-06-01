@@ -177,6 +177,11 @@ const orderSchema = new mongoose.Schema(
       default: "",
     },
 
+    archived: {
+      type: Boolean,
+      default: false,
+    },
+
     refundStatus: {
       type: String,
       default: "none",
