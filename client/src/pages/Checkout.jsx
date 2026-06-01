@@ -44,13 +44,11 @@ export default function Checkout() {
 
     // Update available cities when state changes
     if (name === "state") {
-      // Find the proper state name (key) from the lowercase value
       const stateKey = Object.keys(ngGeo).find(
-        (key) => key.toLowerCase() === value,
+        (key) => key.toLowerCase() === value.toLowerCase(),
       );
       const cities = stateKey ? ngGeo[stateKey] : [];
       setAvailableCities(cities);
-      // Reset city selection
       setForm((prev) => ({
         ...prev,
         city: "",

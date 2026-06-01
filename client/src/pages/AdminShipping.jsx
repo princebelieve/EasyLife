@@ -59,6 +59,10 @@ export default function AdminShipping() {
 
   const [editing, setEditing] = useState(null);
 
+  const [selectedCity, setSelectedCity] = useState("");
+
+  const [availableCities, setAvailableCities] = useState([]);
+
   const [form, setForm] = useState(emptyForm);
 
   async function loadZones() {
@@ -74,10 +78,49 @@ export default function AdminShipping() {
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
 
+    const nextValue = type === "checkbox" ? checked : value;
+
     setForm({
       ...form,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: nextValue,
     });
+
+    if (name === "state") {
+      const stateKey = Object.keys(ngGeo).find(
+        (key) => key.toLowerCase() === value.toLowerCase(),
+      );
+
+      setAvailableCities(stateKey ? ngGeo[stateKey] : []);
+      setSelectedCity("");
+      setForm((prev) => ({
+        ...prev,
+        cities: "",
+      }));
+    }
+  }
+
+  function handleCitySelect(e) {
+    const value = e.target.value;
+
+    if (!value) {
+      setSelectedCity("");
+      return;
+    }
+
+    const currentCities = form.cities
+      .split(",")
+      .map((city) => city.trim())
+      .filter(Boolean);
+
+    if (!currentCities.includes(value)) {
+      const nextCities = [...currentCities, value];
+      setForm((prev) => ({
+        ...prev,
+        cities: nextCities.join(", ") + ", ",
+      }));
+    }
+
+    setSelectedCity("");
   }
 
   async function handleSubmit(e) {
@@ -256,11 +299,29 @@ export default function AdminShipping() {
                 ))}
               </select>
 
+              <select
+                name="city"
+                value={selectedCity}
+                onChange={handleCitySelect}
+                disabled={!availableCities.length}
+              >
+                <option value="">
+                  {availableCities.length
+                    ? "Select a City to add"
+                    : "Select a state first"}
+                </option>
+                {availableCities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
+
               <input
                 name="cities"
-                placeholder="Cities (comma separated)"
+                placeholder="Selected cities (comma separated)"
                 value={form.cities}
-                onChange={handleChange}
+                readOnly
               />
             </div>
           )}
