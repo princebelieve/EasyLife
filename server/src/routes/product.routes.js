@@ -8,6 +8,7 @@ const upload = require("../middleware/upload");
 const {
   getProducts,
   getProduct,
+  getProductCategories,
   createProduct,
   updateProduct,
   deleteProduct,
@@ -17,6 +18,8 @@ const { protect, adminOnly } = require("../middleware/auth");
 
 // PUBLIC
 router.get("/", getProducts);
+
+router.get("/categories", getProductCategories);
 
 router.get("/:id", getProduct);
 

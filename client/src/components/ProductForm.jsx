@@ -1,20 +1,21 @@
 // src/components/ProductForm.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PRODUCT_CATEGORY_OPTIONS from "../config/productCategoryOptions";
+
+const emptyPiece = {
+  name: "",
+  dimensions: "",
+  material: "",
+  description: "",
+  price: "",
+};
 
 export default function ProductForm({
   onSubmit,
   editingProduct,
   onCancelEdit,
 }) {
-  const emptyPiece = {
-    name: "",
-    dimensions: "",
-    material: "",
-    description: "",
-    price: "",
-  };
-
   const navigate = useNavigate();
 
   const [isUploading, setIsUploading] = useState(false);
@@ -40,6 +41,10 @@ export default function ProductForm({
 
   useEffect(() => {
     if (editingProduct) {
+      const isCustomCategory =
+        editingProduct.category &&
+        !PRODUCT_CATEGORY_OPTIONS.includes(editingProduct.category);
+
       setForm({
         name: editingProduct.name ?? "",
         shortDescription: editingProduct.shortDescription ?? "",
@@ -66,6 +71,8 @@ export default function ProductForm({
               }))
             : [{ ...emptyPiece }],
       });
+
+      setAllowNewCategory(Boolean(isCustomCategory));
 
       window.scrollTo({
         top: 0,
@@ -194,6 +201,16 @@ export default function ProductForm({
       });
 
       const savedProduct = await onSubmit(formData);
+
+      // notify other parts of the app that product categories may have changed
+      try {
+        const event = new CustomEvent("products:changed", {
+          detail: { product: savedProduct },
+        });
+        window.dispatchEvent(event);
+      } catch {
+        // ignore in non-browser contexts
+      }
 
       setUploadMessage(
         editingProduct
@@ -330,6 +347,17 @@ export default function ProductForm({
                   Create new product category
                 </label>
               </div>
+
+              <p
+                style={{
+                  margin: "0 0 12px",
+                  color: "#555",
+                  fontSize: "0.95rem",
+                }}
+              >
+                Choose an existing category from the list, or enable the custom
+                category option to type a new one.
+              </p>
             </div>
 
             <textarea

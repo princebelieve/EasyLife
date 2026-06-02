@@ -1,5 +1,6 @@
 //server/src/config/shipping.js
 const ShippingZone = require("../models/ShippingZone");
+const { normalizeDeliveryCategory } = require("../utils/category");
 
 async function calculateShipping({ city = "", state = "", items = [] }) {
   const normalizedState = state.toLowerCase().trim();
@@ -48,16 +49,17 @@ async function calculateShipping({ city = "", state = "", items = [] }) {
         ? item.productId
         : undefined;
 
-    const category =
+    const category = normalizeDeliveryCategory(
       product?.deliveryCategory ||
-      item.deliveryCategory ||
-      item.category ||
-      "sofa";
+        item.deliveryCategory ||
+        item.category ||
+        "sofa",
+    );
 
     const quantity = Number(item.quantity || 1);
 
     const categoryRule = (zone.categoryPricing || []).find(
-      (rule) => rule.category === category,
+      (rule) => normalizeDeliveryCategory(rule.category) === category,
     );
 
     const categoryPrice = Number(categoryRule?.price || 0);

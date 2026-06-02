@@ -2,6 +2,7 @@
 const Product = require("../models/Product");
 
 const { uploadToR2 } = require("../config/r2");
+const { normalizeDeliveryCategory } = require("../utils/category");
 
 function safeJsonParse(value, fallback = []) {
   try {
@@ -45,6 +46,53 @@ async function getProduct(req, res) {
   }
 }
 
+async function getProductCategories(req, res) {
+  try {
+    const products = await Product.find({}, "category deliveryCategory").lean();
+
+    const configMap = require("../config/productCategoryMap");
+
+    const map = new Map();
+
+    for (const p of products) {
+      const categoryName = (p.category || "").toString().trim();
+      const delivery =
+        p.deliveryCategory || normalizeDeliveryCategory(categoryName);
+
+      if (!map.has(delivery)) {
+        const label =
+          Object.keys(configMap).find((k) => configMap[k] === delivery) ||
+          categoryName ||
+          delivery;
+
+        map.set(delivery, {
+          deliveryCategory: delivery,
+          label,
+          sampleCategory: categoryName,
+        });
+      }
+    }
+
+    // Ensure all configured categories are present
+    for (const [label, slug] of Object.entries(configMap)) {
+      if (!map.has(slug)) {
+        map.set(slug, { deliveryCategory: slug, label, sampleCategory: "" });
+      }
+    }
+
+    const list = Array.from(map.values()).sort((a, b) =>
+      a.label.localeCompare(b.label),
+    );
+
+    res.json(list);
+  } catch (err) {
+    console.error("Error in getProductCategories:", err);
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+}
+
 function generateSKU(name, category) {
   const prefix = (category || "GEN").slice(0, 3).toUpperCase();
 
@@ -57,27 +105,6 @@ function generateSKU(name, category) {
 
   const randomPart = Math.floor(100 + Math.random() * 900);
   return `${prefix}-${namePart}-${timePart}-${randomPart}`;
-}
-
-function slugifyCategory(category) {
-  return (category || "")
-    .toString()
-    .trim()
-    .toLowerCase()
-    .replace(/&/g, " and ")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-function normalizeDeliveryCategory(category) {
-  const categoryMap = require("../config/productCategoryMap");
-
-  if (categoryMap[category]) {
-    return categoryMap[category];
-  }
-
-  const normalized = slugifyCategory(category);
-  return normalized || "custom-project";
 }
 
 async function createProduct(req, res) {
@@ -351,6 +378,7 @@ async function deleteProduct(req, res) {
 module.exports = {
   getProducts,
   getProduct,
+  getProductCategories,
   createProduct,
   updateProduct,
   deleteProduct,

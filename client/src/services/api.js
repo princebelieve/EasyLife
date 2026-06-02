@@ -220,6 +220,10 @@ export async function getShippingZones(token) {
   });
 }
 
+export async function getProductCategories() {
+  return apiRequest("/api/products/categories");
+}
+
 export async function createShippingZone(data, token) {
   return apiRequest("/api/admin/shipping", {
     method: "POST",

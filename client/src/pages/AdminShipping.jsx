@@ -6,6 +6,7 @@ import {
   createShippingZone,
   updateShippingZone,
   deleteShippingZone,
+  getProductCategories,
 } from "../services/api";
 
 import { getToken } from "../utils/auth";
@@ -32,6 +33,10 @@ const SHIPPING_CATEGORY_LABELS = {
 };
 
 const SHIPPING_CATEGORY_OPTIONS = Object.keys(SHIPPING_CATEGORY_LABELS);
+const SHIPPING_CATEGORY_SUGGESTIONS = [
+  ...Object.keys(SHIPPING_CATEGORY_LABELS),
+  ...Object.values(SHIPPING_CATEGORY_LABELS),
+];
 
 const emptyForm = {
   state: "",
@@ -57,6 +62,8 @@ export default function AdminShipping() {
 
   const [editing, setEditing] = useState(null);
 
+  const [productCategories, setProductCategories] = useState([]);
+
   const [selectedCity, setSelectedCity] = useState("");
 
   const [selectedCities, setSelectedCities] = useState([]);
@@ -65,15 +72,68 @@ export default function AdminShipping() {
 
   const [form, setForm] = useState(emptyForm);
 
+  // Normalize categories returned from the API (objects or strings) into human labels
+  const productCategoryLabels = productCategories.map((c) =>
+    typeof c === "string"
+      ? c
+      : c.label || c.sampleCategory || c.deliveryCategory,
+  );
+
+  const categorySuggestions = Array.from(
+    new Set([...SHIPPING_CATEGORY_SUGGESTIONS, ...productCategoryLabels]),
+  );
+
   async function loadZones() {
     const data = await getShippingZones(getToken());
 
     setZones(data);
   }
 
+  async function loadProductCategories() {
+    try {
+      const categories = await getProductCategories();
+
+      setProductCategories(Array.isArray(categories) ? categories : []);
+    } catch (error) {
+      console.error("Unable to load product categories:", error);
+      setProductCategories([]);
+    }
+  }
+
   useEffect(() => {
     loadZones();
+    loadProductCategories();
+
+    const handler = () => loadProductCategories();
+
+    window.addEventListener("products:changed", handler);
+
+    return () => window.removeEventListener("products:changed", handler);
   }, []);
+
+  useEffect(() => {
+    // auto-populate categoryPricing with suggestions when creating a new zone
+    if (!editing) {
+      const suggestions = categorySuggestions;
+      if (
+        suggestions.length &&
+        form.categoryPricing?.length === 1 &&
+        !form.categoryPricing[0].category
+      ) {
+        setForm((prev) => ({
+          ...prev,
+          categoryPricing: suggestions.map((c) => ({ category: c, price: "" })),
+        }));
+      }
+    }
+  }, [categorySuggestions, editing, form.categoryPricing]);
+
+  useEffect(() => {
+    // refresh categories when the pricing accordion is opened
+    if (openSection === "pricing") {
+      loadProductCategories();
+    }
+  }, [openSection]);
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
@@ -376,8 +436,9 @@ export default function AdminShipping() {
               <div style={{ marginTop: 16 }}>
                 <strong>Category fees</strong>
                 <p style={{ margin: "8px 0 12px", color: "#555" }}>
-                  Add a delivery category and fee. This allows new products to
-                  use custom categories without touching code.
+                  Add a delivery category slug or label and fee. You can type a
+                  new category here or choose an existing one from the
+                  suggestions.
                 </p>
 
                 {form.categoryPricing.map((item, index) => (
@@ -393,7 +454,8 @@ export default function AdminShipping() {
                   >
                     <input
                       value={item.category}
-                      placeholder="Category slug or label"
+                      list="shipping-category-suggestions"
+                      placeholder="Category slug or label (e.g. sofa / Sofa Set)"
                       onChange={(e) =>
                         handleCategoryPricingChange(
                           index,
@@ -432,6 +494,49 @@ export default function AdminShipping() {
                     </button>
                   </div>
                 ))}
+
+                <datalist id="shipping-category-suggestions">
+                  {SHIPPING_CATEGORY_SUGGESTIONS.map((category) => (
+                    <option key={category} value={category} />
+                  ))}
+                  {productCategories.map((category) => (
+                    <option key={`product-${category}`} value={category} />
+                  ))}
+                </datalist>
+
+                {productCategories.length > 0 && (
+                  <div
+                    style={{
+                      marginTop: 16,
+                      fontSize: "0.94rem",
+                      color: "#444",
+                    }}
+                  >
+                    <strong>Existing product categories</strong>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 8,
+                        marginTop: 8,
+                      }}
+                    >
+                      {productCategories.map((category) => (
+                        <span
+                          key={category}
+                          style={{
+                            padding: "6px 10px",
+                            borderRadius: 9999,
+                            background: "#f3f4f6",
+                            border: "1px solid #d1d5db",
+                          }}
+                        >
+                          {category}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <button
                   type="button"
