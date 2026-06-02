@@ -370,12 +370,19 @@ export async function deleteProductApi(id, token) {
 // ADMIN ORDERS
 // -------------------------
 
-export async function getAdminOrders(token) {
-  return apiRequest("/api/admin/orders", {
+export async function getAdminOrders(token, query = {}) {
+  const queryString = new URLSearchParams(query).toString();
+  const endpoint = `/api/admin/orders${queryString ? `?${queryString}` : ""}`;
+
+  return apiRequest(endpoint, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+}
+
+export async function getAdminArchivedOrders(token, filters = {}) {
+  return getAdminOrders(token, { archived: true, ...filters });
 }
 
 export async function updateOrderStatusApi(orderId, deliveryStatus, token) {
@@ -393,6 +400,16 @@ export async function updateOrderStatusApi(orderId, deliveryStatus, token) {
 
 export async function archiveOrderApi(orderId, token) {
   return apiRequest(`/api/admin/orders/${orderId}/archive`, {
+    method: "PUT",
+
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function archiveAllOrders(token) {
+  return apiRequest("/api/admin/orders/archive-all", {
     method: "PUT",
 
     headers: {

@@ -73,11 +73,14 @@ export default function AdminShipping() {
   const [form, setForm] = useState(emptyForm);
 
   // Normalize categories returned from the API (objects or strings) into human labels
-  const productCategoryLabels = productCategories.map((c) =>
-    typeof c === "string"
-      ? c
-      : c.label || c.sampleCategory || c.deliveryCategory,
-  );
+  const productCategoryLabels = (productCategories || [])
+    .filter(Boolean)
+    .map((c) =>
+      typeof c === "string"
+        ? c
+        : c.label || c.sampleCategory || c.deliveryCategory || "",
+    )
+    .filter(Boolean);
 
   const categorySuggestions = Array.from(
     new Set([...SHIPPING_CATEGORY_SUGGESTIONS, ...productCategoryLabels]),
@@ -114,15 +117,20 @@ export default function AdminShipping() {
   useEffect(() => {
     // auto-populate categoryPricing with suggestions when creating a new zone
     if (!editing) {
-      const suggestions = categorySuggestions;
+      const pricing = Array.isArray(form.categoryPricing)
+        ? form.categoryPricing
+        : [{ category: "", price: "" }];
       if (
-        suggestions.length &&
-        form.categoryPricing?.length === 1 &&
-        !form.categoryPricing[0].category
+        categorySuggestions.length &&
+        pricing.length === 1 &&
+        !pricing[0].category
       ) {
         setForm((prev) => ({
           ...prev,
-          categoryPricing: suggestions.map((c) => ({ category: c, price: "" })),
+          categoryPricing: categorySuggestions.map((c) => ({
+            category: c,
+            price: "",
+          })),
         }));
       }
     }
@@ -190,7 +198,11 @@ export default function AdminShipping() {
   }
 
   function handleCategoryPricingChange(index, field, value) {
-    const nextPricing = [...form.categoryPricing];
+    const currentPricing = Array.isArray(form.categoryPricing)
+      ? form.categoryPricing
+      : [{ category: "", price: "" }];
+
+    const nextPricing = [...currentPricing];
     nextPricing[index] = {
       ...nextPricing[index],
       [field]: value,
