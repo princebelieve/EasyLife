@@ -511,12 +511,12 @@ export default function AdminShipping() {
                   {SHIPPING_CATEGORY_SUGGESTIONS.map((category) => (
                     <option key={category} value={category} />
                   ))}
-                  {productCategories.map((category) => (
+                  {productCategoryLabels.map((category) => (
                     <option key={`product-${category}`} value={category} />
                   ))}
                 </datalist>
 
-                {productCategories.length > 0 && (
+                {productCategoryLabels.length > 0 && (
                   <div
                     style={{
                       marginTop: 16,
@@ -533,7 +533,7 @@ export default function AdminShipping() {
                         marginTop: 8,
                       }}
                     >
-                      {productCategories.map((category) => (
+                      {productCategoryLabels.map((category) => (
                         <span
                           key={category}
                           style={{
