@@ -20,6 +20,7 @@ export default function ProductForm({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState("");
   const [step, setStep] = useState(1);
+  const [allowNewCategory, setAllowNewCategory] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -283,27 +284,52 @@ export default function ProductForm({
                 onChange={handleChange}
               />
 
-              <select
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-              >
-                <option value="">Select Category</option>
+              {allowNewCategory ? (
+                <input
+                  name="category"
+                  placeholder="Enter custom category"
+                  value={form.category}
+                  onChange={handleChange}
+                  autoFocus
+                />
+              ) : (
+                <select
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Category</option>
+                  {PRODUCT_CATEGORY_OPTIONS.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              )}
 
-                <option value="Sofa Set">Sofa Set</option>
-                <option value="Dining Set">Dining Set</option>
-                <option value="Kitchen Cabinet">Kitchen Cabinet</option>
-                <option value="Wall Panel">Wall Panel</option>
-                <option value="TV Console">TV Console</option>
-                <option value="Curtains & Bedsheets">
-                  Curtains & Bedsheets
-                </option>
-                <option value="Lighting & Fittings">Lighting & Fittings</option>
-                <option value="Bedroom Furniture">Bedroom Furniture</option>
-                <option value="Office Furniture">Office Furniture</option>
-                <option value="Interior Design">Interior Design</option>
-                <option value="Custom Project">Custom Project</option>
-              </select>
+              <div
+                style={{
+                  gridColumn: "1 / -1",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <input
+                  type="checkbox"
+                  id="allow-new-category"
+                  checked={allowNewCategory}
+                  onChange={(e) => {
+                    setAllowNewCategory(e.target.checked);
+                    if (!e.target.checked) {
+                      setForm((prev) => ({ ...prev, category: "" }));
+                    }
+                  }}
+                />
+                <label htmlFor="allow-new-category" style={{ margin: 0 }}>
+                  Create new product category
+                </label>
+              </div>
             </div>
 
             <textarea

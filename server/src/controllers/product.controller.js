@@ -59,6 +59,27 @@ function generateSKU(name, category) {
   return `${prefix}-${namePart}-${timePart}-${randomPart}`;
 }
 
+function slugifyCategory(category) {
+  return (category || "")
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function normalizeDeliveryCategory(category) {
+  const categoryMap = require("../config/productCategoryMap");
+
+  if (categoryMap[category]) {
+    return categoryMap[category];
+  }
+
+  const normalized = slugifyCategory(category);
+  return normalized || "custom-project";
+}
+
 async function createProduct(req, res) {
   try {
     const {
@@ -128,7 +149,6 @@ async function createProduct(req, res) {
     }
 
     const generatedSku = generateSKU(name, category);
-    const categoryMap = require("../config/productCategoryMap");
 
     const product = await Product.create({
       name,
@@ -149,7 +169,7 @@ async function createProduct(req, res) {
 
       stock: Number(stock || 0),
 
-      deliveryCategory: categoryMap[category] || "custom-project",
+      deliveryCategory: normalizeDeliveryCategory(category),
 
       featured: featured === "true" || featured === true,
 
@@ -211,10 +231,7 @@ async function updateProduct(req, res) {
 
     product.category = category || product.category;
 
-    const categoryMap = require("../config/productCategoryMap");
-
-    product.deliveryCategory =
-      categoryMap[product.category] || "custom-project";
+    product.deliveryCategory = normalizeDeliveryCategory(product.category);
 
     product.shortDescription = shortDescription || product.shortDescription;
 

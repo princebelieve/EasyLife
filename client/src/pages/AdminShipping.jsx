@@ -19,29 +19,27 @@ const NIGERIAN_STATES = Object.keys(ngGeo).map((stateName) => ({
     stateName === "FCT" ? "Federal Capital Territory" : `${stateName} State`,
 }));
 
+const SHIPPING_CATEGORY_LABELS = {
+  sofa: "Sofa Set",
+  table: "Dining Set",
+  chair: "Single Chair Replacement",
+  bed: "Bedroom Furniture",
+  cabinet: "Kitchen Cabinet",
+  "tv-console": "TV Console",
+  "office-furniture": "Office Furniture",
+  "small-decor": "Curtains & Bedsheets / Lighting & Fittings",
+  "custom-project": "Wall Panel / Interior Design / Custom Project",
+};
+
+const SHIPPING_CATEGORY_OPTIONS = Object.keys(SHIPPING_CATEGORY_LABELS);
+
 const emptyForm = {
   state: "",
   cities: "",
 
   baseFee: "",
 
-  decorFee: "",
-
-  chairFee: "",
-
-  tableFee: "",
-
-  sofaFee: "",
-
-  bedFee: "",
-
-  cabinetFee: "",
-
-  tvConsoleFee: "",
-
-  officeFurnitureFee: "",
-
-  customProjectFee: "",
+  categoryPricing: [{ category: "", price: "" }],
 
   estimatedDays: "3-7 days",
 
@@ -60,6 +58,8 @@ export default function AdminShipping() {
   const [editing, setEditing] = useState(null);
 
   const [selectedCity, setSelectedCity] = useState("");
+
+  const [selectedCities, setSelectedCities] = useState([]);
 
   const [availableCities, setAvailableCities] = useState([]);
 
@@ -92,6 +92,7 @@ export default function AdminShipping() {
 
       setAvailableCities(stateKey ? ngGeo[stateKey] : []);
       setSelectedCity("");
+      setSelectedCities([]);
       setForm((prev) => ({
         ...prev,
         cities: "",
@@ -107,13 +108,9 @@ export default function AdminShipping() {
       return;
     }
 
-    const currentCities = form.cities
-      .split(",")
-      .map((city) => city.trim())
-      .filter(Boolean);
-
-    if (!currentCities.includes(value)) {
-      const nextCities = [...currentCities, value];
+    if (!selectedCities.includes(value)) {
+      const nextCities = [...selectedCities, value];
+      setSelectedCities(nextCities);
       setForm((prev) => ({
         ...prev,
         cities: nextCities.join(", ") + ", ",
@@ -123,16 +120,56 @@ export default function AdminShipping() {
     setSelectedCity("");
   }
 
+  function removeSelectedCity(cityToRemove) {
+    const nextCities = selectedCities.filter((city) => city !== cityToRemove);
+    setSelectedCities(nextCities);
+    setForm((prev) => ({
+      ...prev,
+      cities: nextCities.length ? nextCities.join(", ") + ", " : "",
+    }));
+  }
+
+  function handleCategoryPricingChange(index, field, value) {
+    const nextPricing = [...form.categoryPricing];
+    nextPricing[index] = {
+      ...nextPricing[index],
+      [field]: value,
+    };
+    setForm({
+      ...form,
+      categoryPricing: nextPricing,
+    });
+  }
+
+  function addCategoryPricingRule() {
+    setForm((prev) => ({
+      ...prev,
+      categoryPricing: [...prev.categoryPricing, { category: "", price: "" }],
+    }));
+  }
+
+  function removeCategoryPricingRule(indexToRemove) {
+    setForm((prev) => ({
+      ...prev,
+      categoryPricing: prev.categoryPricing.filter(
+        (_item, index) => index !== indexToRemove,
+      ),
+    }));
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
 
     const payload = {
       state: form.state,
 
-      cities: form.cities
-        .split(",")
-        .map((c) => c.trim())
-        .filter(Boolean),
+      cities:
+        selectedCities.length > 0
+          ? selectedCities
+          : form.cities
+              .split(",")
+              .map((c) => c.trim())
+              .filter(Boolean),
 
       baseDeliveryFee: Number(form.baseFee || 0),
 
@@ -144,52 +181,12 @@ export default function AdminShipping() {
 
       active: form.active,
 
-      categoryPricing: [
-        {
-          category: "small-decor",
-          price: Number(form.decorFee || 0),
-        },
-
-        {
-          category: "chair",
-          price: Number(form.chairFee || 0),
-        },
-
-        {
-          category: "table",
-          price: Number(form.tableFee || 0),
-        },
-
-        {
-          category: "sofa",
-          price: Number(form.sofaFee || 0),
-        },
-
-        {
-          category: "bed",
-          price: Number(form.bedFee || 0),
-        },
-
-        {
-          category: "cabinet",
-          price: Number(form.cabinetFee || 0),
-        },
-
-        {
-          category: "tv-console",
-          price: Number(form.tvConsoleFee || 0),
-        },
-
-        {
-          category: "office-furniture",
-          price: Number(form.officeFurnitureFee || 0),
-        },
-
-        {
-          category: "custom-project",
-          price: Number(form.customProjectFee || 0),
-        },
-      ],
+      categoryPricing: (form.categoryPricing || [])
+        .filter((item) => item.category?.trim())
+        .map((item) => ({
+          category: item.category.trim(),
+          price: Number(item.price || 0),
+        })),
     };
 
     if (editing) {
@@ -218,37 +215,20 @@ export default function AdminShipping() {
   function handleEdit(zone) {
     setEditing(zone);
 
-    function getCategoryPrice(zone, category) {
-      return (
-        zone.categoryPricing?.find((item) => item.category === category)
-          ?.price || 0
-      );
-    }
-
     setForm({
       state: zone.state || "",
 
-      cities: zone.cities.join(", "),
+      cities: zone.cities.length > 0 ? zone.cities.join(", ") + ", " : "",
 
       baseFee: zone.baseDeliveryFee || 0,
 
-      chairFee: getCategoryPrice(zone, "chair"),
-
-      tableFee: getCategoryPrice(zone, "table"),
-
-      bedFee: getCategoryPrice(zone, "bed"),
-
-      cabinetFee: getCategoryPrice(zone, "cabinet"),
-
-      tvConsoleFee: getCategoryPrice(zone, "tv-console"),
-
-      officeFurnitureFee: getCategoryPrice(zone, "office-furniture"),
-
-      sofaFee: getCategoryPrice(zone, "sofa"),
-
-      decorFee: getCategoryPrice(zone, "small-decor"),
-
-      customProjectFee: getCategoryPrice(zone, "custom-project"),
+      categoryPricing:
+        zone.categoryPricing?.length > 0
+          ? zone.categoryPricing.map((item) => ({
+              category: item.category || "",
+              price: item.price || 0,
+            }))
+          : [{ category: "", price: "" }],
 
       estimatedDays: zone.estimatedDays || "3-7 days",
 
@@ -258,6 +238,13 @@ export default function AdminShipping() {
 
       active: zone.active ?? true,
     });
+
+    setSelectedCities(zone.cities || []);
+
+    const stateKey = Object.keys(ngGeo).find(
+      (key) => key.toLowerCase() === (zone.state || "").toLowerCase(),
+    );
+    setAvailableCities(stateKey ? ngGeo[stateKey] : []);
 
     window.scrollTo({
       top: 0,
@@ -317,6 +304,35 @@ export default function AdminShipping() {
                 ))}
               </select>
 
+              <div
+                className="selected-cities-list"
+                style={{ margin: "12px 0" }}
+              >
+                {selectedCities.length > 0 ? (
+                  selectedCities.map((city) => (
+                    <button
+                      key={city}
+                      type="button"
+                      className="city-chip"
+                      onClick={() => removeSelectedCity(city)}
+                      style={{
+                        margin: "4px 6px 4px 0",
+                        padding: "8px 12px",
+                        borderRadius: 9999,
+                        border: "1px solid #d7dce2",
+                        background: "#f8fafc",
+                        color: "#111",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {city} ×
+                    </button>
+                  ))
+                ) : (
+                  <p className="muted">Selected cities will appear here.</p>
+                )}
+              </div>
+
               <input
                 name="cities"
                 placeholder="Selected cities (comma separated)"
@@ -339,99 +355,100 @@ export default function AdminShipping() {
           </button>
 
           {openSection === "pricing" && (
-            <div
-              className="accordion-body"
-              style={{
-                display: "grid",
-                gap: 12,
-                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              }}
-            >
-              <input
-                type="number"
-                min="0"
-                name="baseFee"
-                placeholder="Base Fee"
-                value={form.baseFee}
-                onChange={handleChange}
-              />
+            <div className="accordion-body">
+              <div
+                style={{
+                  display: "grid",
+                  gap: 12,
+                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                }}
+              >
+                <input
+                  type="number"
+                  min="0"
+                  name="baseFee"
+                  placeholder="Base Fee"
+                  value={form.baseFee}
+                  onChange={handleChange}
+                />
+              </div>
 
-              <input
-                type="number"
-                min="0"
-                name="chairFee"
-                placeholder="Chair Delivery Fee"
-                value={form.chairFee}
-                onChange={handleChange}
-              />
+              <div style={{ marginTop: 16 }}>
+                <strong>Category fees</strong>
+                <p style={{ margin: "8px 0 12px", color: "#555" }}>
+                  Add a delivery category and fee. This allows new products to
+                  use custom categories without touching code.
+                </p>
 
-              <input
-                type="number"
-                name="tableFee"
-                placeholder="Dining Table Delivery Fee"
-                value={form.tableFee}
-                onChange={handleChange}
-              />
+                {form.categoryPricing.map((item, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: "grid",
+                      gap: 8,
+                      gridTemplateColumns: "1fr 140px 40px",
+                      alignItems: "center",
+                      marginBottom: 8,
+                    }}
+                  >
+                    <input
+                      value={item.category}
+                      placeholder="Category slug or label"
+                      onChange={(e) =>
+                        handleCategoryPricingChange(
+                          index,
+                          "category",
+                          e.target.value,
+                        )
+                      }
+                    />
+                    <input
+                      type="number"
+                      min="0"
+                      value={item.price}
+                      placeholder="Price"
+                      onChange={(e) =>
+                        handleCategoryPricingChange(
+                          index,
+                          "price",
+                          e.target.value,
+                        )
+                      }
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeCategoryPricingRule(index)}
+                      style={{
+                        padding: "0 12px",
+                        minHeight: 40,
+                        background: "#ef4444",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 6,
+                        cursor: "pointer",
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
 
-              <input
-                type="number"
-                name="sofaFee"
-                placeholder="Sofa Delivery Fee"
-                value={form.sofaFee}
-                onChange={handleChange}
-              />
-
-              <input
-                type="number"
-                name="bedFee"
-                placeholder="Bedroom Furniture Delivery Fee"
-                value={form.bedFee}
-                onChange={handleChange}
-              />
-
-              <input
-                type="number"
-                name="cabinetFee"
-                placeholder="Cabinet Delivery Fee"
-                value={form.cabinetFee}
-                onChange={handleChange}
-              />
-
-              <input
-                type="number"
-                min="0"
-                name="tvConsoleFee"
-                placeholder="TV Console Delivery Fee"
-                value={form.tvConsoleFee}
-                onChange={handleChange}
-              />
-
-              <input
-                type="number"
-                min="0"
-                name="officeFurnitureFee"
-                placeholder="Office Furniture Delivery Fee"
-                value={form.officeFurnitureFee}
-                onChange={handleChange}
-              />
-
-              <input
-                type="number"
-                min="0"
-                name="decorFee"
-                placeholder="Decor Fee"
-                value={form.decorFee}
-                onChange={handleChange}
-              />
-
-              <input
-                type="number"
-                min="0"
-                name="customProjectFee"
-                placeholder="Custom Project Fee"
-                value={form.customProjectFee}
-                onChange={handleChange}
-              />
+                <button
+                  type="button"
+                  onClick={addCategoryPricingRule}
+                  style={{
+                    marginTop: 8,
+                    padding: "10px 16px",
+                    background: "#2563eb",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 6,
+                    cursor: "pointer",
+                  }}
+                >
+                  Add category fee
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -518,8 +535,8 @@ export default function AdminShipping() {
                 <ul style={{ margin: 8, paddingLeft: 20 }}>
                   {zone.categoryPricing.map((item) => (
                     <li key={item.category}>
-                      {item.category}: ₦
-                      {Number(item.price || 0).toLocaleString()}
+                      {SHIPPING_CATEGORY_LABELS[item.category] || item.category}
+                      : ₦{Number(item.price || 0).toLocaleString()}
                     </li>
                   ))}
                 </ul>

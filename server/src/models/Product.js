@@ -144,18 +144,7 @@ const productSchema = new mongoose.Schema(
 
     deliveryCategory: {
       type: String,
-      enum: [
-        "small-decor",
-        "chair",
-        "table",
-        "bed",
-        "sofa",
-        "wardrobe",
-        "tv-console",
-        "cabinet",
-        "office-furniture",
-        "custom-project",
-      ],
+      trim: true,
       default: "sofa",
     },
 
