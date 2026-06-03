@@ -70,3 +70,5 @@ coverage
 # =====================
 uploads
 **/uploads
+
+/NOTIFICATION_SYSTEM_PLAN.md

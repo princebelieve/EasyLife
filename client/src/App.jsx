@@ -37,11 +37,13 @@ import AdminInquiries from "./pages/AdminInquiries";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import Notifications from "./pages/Notifications";
+import PwaNotificationBanner from "./components/PwaNotificationBanner";
 
 export default function App() {
   return (
     <CartProvider>
       <NotificationProvider>
+        <PwaNotificationBanner />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/collection" element={<Collection />} />
