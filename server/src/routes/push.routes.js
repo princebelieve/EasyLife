@@ -1,5 +1,6 @@
 const express = require("express");
 const { protect } = require("../middleware/auth");
+const PushSubscription = require("../models/PushSubscription");
 
 const router = express.Router();
 
@@ -18,11 +19,10 @@ router.get("/vapid-public-key", (req, res) => {
 });
 
 // Subscribe to push notifications
-// In a production setup, you would store this subscription in the database
-// and use it to send push notifications to the user
 router.post("/subscribe", protect, async (req, res) => {
   try {
     const { subscription } = req.body;
+    const userId = req.user.id;
 
     if (!subscription || !subscription.endpoint) {
       return res.status(400).json({
@@ -30,16 +30,22 @@ router.post("/subscribe", protect, async (req, res) => {
       });
     }
 
-    // Here you would typically save the subscription to the database
-    // associated with the user:
-    // await UserPushSubscription.create({
-    //   userId: req.user.id,
-    //   subscription: JSON.stringify(subscription),
-    // });
+    // Save or update subscription in database
+    const savedSubscription = await PushSubscription.findOneAndUpdate(
+      { userId, endpoint: subscription.endpoint },
+      {
+        userId,
+        endpoint: subscription.endpoint,
+        keys: subscription.keys,
+        userAgent: req.headers["user-agent"],
+      },
+      { upsert: true, new: true },
+    );
 
     res.json({
       success: true,
       message: "Successfully subscribed to push notifications",
+      subscription: savedSubscription,
     });
   } catch (error) {
     console.error(error);
@@ -52,11 +58,20 @@ router.post("/subscribe", protect, async (req, res) => {
 // Unsubscribe from push notifications
 router.post("/unsubscribe", protect, async (req, res) => {
   try {
-    // Here you would typically remove the subscription from the database:
-    // await UserPushSubscription.deleteOne({
-    //   userId: req.user.id,
-    //   subscription: JSON.stringify(req.body.subscription),
-    // });
+    const { subscription } = req.body;
+    const userId = req.user.id;
+
+    if (!subscription || !subscription.endpoint) {
+      return res.status(400).json({
+        message: "Invalid subscription object",
+      });
+    }
+
+    // Remove subscription from database
+    await PushSubscription.deleteOne({
+      userId,
+      endpoint: subscription.endpoint,
+    });
 
     res.json({
       success: true,

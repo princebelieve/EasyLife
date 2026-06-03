@@ -7,6 +7,7 @@ import useClickOutside from "../hooks/useClickOutside";
 import { useCart } from "../context/CartContext";
 import { useNotifications } from "../context/NotificationContext";
 import NotificationDropdown from "./NotificationDropdown";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -112,6 +113,15 @@ export default function Navbar() {
             Order Now
           </button>
         </div>
+      </div>
+
+      <div className="mobile-nav-actions">
+        {isLoggedIn && (
+          <NotificationBell
+            count={unreadCount}
+            onClick={() => navigate("/notifications")}
+          />
+        )}
       </div>
 
       <button

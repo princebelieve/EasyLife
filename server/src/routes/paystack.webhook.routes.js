@@ -5,7 +5,16 @@ const crypto = require("crypto");
 
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const User = require("../models/User");
 const Cart = require("../models/Cart");
+const {
+  createNotification,
+  notifyAdmins,
+} = require("../services/notification.service");
+const {
+  sendPushToUser,
+  sendPushToAdmins,
+} = require("../services/push.service");
 
 const router = express.Router();
 
@@ -65,6 +74,7 @@ router.post("/", async (req, res) => {
       });
 
       // update stock for every ordered item
+      const LOW_STOCK_THRESHOLD = 5;
       for (const item of order.items) {
         const product = await Product.findById(item.productId);
 
@@ -75,11 +85,52 @@ router.post("/", async (req, res) => {
         product.soldCount = (product.soldCount || 0) + item.quantity;
 
         await product.save();
+
+        // Check for low stock alert
+        if (product.stock <= LOW_STOCK_THRESHOLD && product.stock > 0) {
+          const admins = await User.find({ role: "admin" }).select("_id");
+          const adminIds = admins.map((admin) => admin._id);
+
+          if (adminIds.length > 0) {
+            await notifyAdmins(
+              {
+                type: "stock.alert",
+                title: "Low Stock Alert",
+                body: `Product "${product.name}" has low stock: ${product.stock} unit(s) remaining.`,
+                link: `/admin/products/${product._id}`,
+                data: { productId: product._id, stock: product.stock },
+              },
+              adminIds,
+            );
+          }
+        }
       }
 
       await order.save();
 
       await Cart.findOneAndUpdate({ userId: order.userId }, { items: [] });
+
+      // Create notification for user
+      const paymentNotif = await createNotification({
+        userId: order.userId,
+        type: "payment.confirmed",
+        title: "Payment Confirmed",
+        body: `Payment for order #${order._id.toString().slice(-6).toUpperCase()} has been confirmed. Your order is now being processed.`,
+        link: `/dashboard`,
+        data: { orderId: order._id },
+      });
+
+      // Send push notification for payment confirmation
+      if (paymentNotif) {
+        await sendPushToUser(order.userId, {
+          title: "Payment Confirmed",
+          body: `Payment for order #${order._id.toString().slice(-6).toUpperCase()} confirmed. Processing order.`,
+          link: `/dashboard`,
+          data: { orderId: order._id },
+        }).catch((err) => {
+          console.warn("Push notification failed (non-critical):", err);
+        });
+      }
 
       console.log("✅ PAYMENT CONFIRMED:", reference);
     }

@@ -37,6 +37,7 @@ import AdminInquiries from "./pages/AdminInquiries";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import Notifications from "./pages/Notifications";
+import AdminNotifications from "./pages/AdminNotifications";
 import PwaNotificationBanner from "./components/PwaNotificationBanner";
 
 export default function App() {
@@ -222,6 +223,16 @@ export default function App() {
               <RequireAdmin>
                 <AdminLayout>
                   <AdminInquiries />
+                </AdminLayout>
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="/admin/send-notification"
+            element={
+              <RequireAdmin>
+                <AdminLayout>
+                  <AdminNotifications />
                 </AdminLayout>
               </RequireAdmin>
             }

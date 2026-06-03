@@ -1,3 +1,91 @@
+/**
+ * Subscribe user to push notifications
+ * Called after service worker registration
+ */
+async function subscribeToPush(registration) {
+  try {
+    // Check if push messaging is supported
+    if (!("pushManager" in registration)) {
+      console.log("Push notifications not supported on this browser");
+      return;
+    }
+
+    // Check if already subscribed
+    const existingSubscription =
+      await registration.pushManager.getSubscription();
+    if (existingSubscription) {
+      console.log("Already subscribed to push notifications");
+      return;
+    }
+
+    // Fetch VAPID public key from backend
+    const apiUrl = import.meta.env.VITE_API_URL || "";
+    const vapidResponse = await fetch(`${apiUrl}/api/push/vapid-public-key`);
+
+    if (!vapidResponse.ok) {
+      console.log("VAPID key not available on server");
+      return;
+    }
+
+    const { publicKey } = await vapidResponse.json();
+
+    if (!publicKey) {
+      console.log("No VAPID public key received");
+      return;
+    }
+
+    // Convert public key to Uint8Array
+    const convertedVapidKey = urlBase64ToUint8Array(publicKey);
+
+    // Subscribe to push
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: convertedVapidKey,
+    });
+
+    // Send subscription to backend
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      console.log("User not authenticated, skipping push subscription");
+      return;
+    }
+
+    const subscribeResponse = await fetch(`${apiUrl}/api/push/subscribe`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ subscription }),
+    });
+
+    if (subscribeResponse.ok) {
+      console.log("✅ Subscribed to push notifications");
+    } else {
+      console.warn("Failed to save subscription to server");
+    }
+  } catch (error) {
+    console.warn("Failed to subscribe to push notifications:", error);
+  }
+}
+
+/**
+ * Convert VAPID public key from base64 to Uint8Array
+ */
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+
+  return outputArray;
+}
+
 export function registerServiceWorker() {
   if (import.meta.env.PROD && "serviceWorker" in navigator) {
     window.addEventListener("load", () => {
@@ -5,6 +93,8 @@ export function registerServiceWorker() {
         .register("/sw.js")
         .then((registration) => {
           console.log("Service worker registered:", registration.scope);
+          // Attempt to subscribe to push notifications
+          subscribeToPush(registration);
         })
         .catch((error) => {
           console.warn("Service worker registration failed:", error);

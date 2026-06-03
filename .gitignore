@@ -71,4 +71,11 @@ coverage
 uploads
 **/uploads
 
-/NOTIFICATION_SYSTEM_PLAN.md
+# =====================
+# DOCUMENTATION & PLANNING (Local Reference Only)
+# =====================
+NOTIFICATION_SYSTEM_PLAN.md
+**/PLAN.md
+**/TODO.md
+NOTIFICATION_SYSTEM_COMPLETE.md
+PUSH_NOTIFICATIONS_SETUP.md

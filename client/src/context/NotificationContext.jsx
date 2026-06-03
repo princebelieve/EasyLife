@@ -47,6 +47,18 @@ export function NotificationProvider({ children }) {
     fetchNotifications();
   }, [fetchNotifications]);
 
+  // Update PWA app badge with unread count
+  useEffect(() => {
+    if ("setAppBadge" in navigator) {
+      const count = notifications.filter((n) => !n.read).length;
+      if (count > 0) {
+        navigator.setAppBadge(count);
+      } else {
+        navigator.clearAppBadge();
+      }
+    }
+  }, [notifications]);
+
   const unreadCount = useMemo(() => {
     return notifications.filter((notification) => !notification.read).length;
   }, [notifications]);

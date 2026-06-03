@@ -1,8 +1,9 @@
 // server/src/controllers/product.controller.js
 const Product = require("../models/Product");
-
+const User = require("../models/User");
 const { uploadToR2 } = require("../config/r2");
 const { normalizeDeliveryCategory } = require("../utils/category");
+const { notifyAdmins } = require("../services/notification.service");
 
 function safeJsonParse(value, fallback = []) {
   try {
@@ -342,6 +343,26 @@ async function updateProduct(req, res) {
     }
 
     await product.save();
+
+    // Check for low stock alert
+    const LOW_STOCK_THRESHOLD = 5;
+    if (product.stock <= LOW_STOCK_THRESHOLD && product.stock > 0) {
+      const admins = await User.find({ role: "admin" }).select("_id");
+      const adminIds = admins.map((admin) => admin._id);
+
+      if (adminIds.length > 0) {
+        await notifyAdmins(
+          {
+            type: "stock.alert",
+            title: "Low Stock Alert",
+            body: `Product "${product.name}" has low stock: ${product.stock} unit(s) remaining.`,
+            link: `/admin/products/${product._id}`,
+            data: { productId: product._id, stock: product.stock },
+          },
+          adminIds,
+        );
+      }
+    }
 
     res.json(product);
   } catch (err) {

@@ -8,6 +8,8 @@ const Product = require("../models/Product");
 const paystack = require("../services/paystack");
 const { protect } = require("../middleware/auth");
 const { calculateShipping } = require("../config/shipping");
+const { createNotification } = require("../services/notification.service");
+const { sendPushToUser } = require("../services/push.service");
 
 router.post("/", protect, async (req, res) => {
   try {
@@ -93,7 +95,7 @@ router.post("/", protect, async (req, res) => {
     const data = payment.data.data;
 
     // 4. CREATE ORDER (pending) with valid payment reference
-    await Order.create({
+    const order = await Order.create({
       userId,
       customerName,
       email,
@@ -116,6 +118,28 @@ router.post("/", protect, async (req, res) => {
       currency: "NGN",
       paymentReference: data.reference,
     });
+
+    // Create notification for user
+    const orderNotif = await createNotification({
+      userId,
+      type: "order.created",
+      title: "Order Placed",
+      body: `Your order #${order._id.toString().slice(-6).toUpperCase()} has been placed. Awaiting payment confirmation.`,
+      link: `/dashboard`,
+      data: { orderId: order._id },
+    });
+
+    // Send push notification if subscribed
+    if (orderNotif) {
+      await sendPushToUser(userId, {
+        title: "Order Placed",
+        body: `Your order #${order._id.toString().slice(-6).toUpperCase()} has been placed.`,
+        link: `/dashboard`,
+        data: { orderId: order._id },
+      }).catch((err) => {
+        console.warn("Push notification failed (non-critical):", err);
+      });
+    }
 
     res.json({
       authorization_url: data.authorization_url,

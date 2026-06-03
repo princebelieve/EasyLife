@@ -4,6 +4,8 @@ const router = express.Router();
 
 const Order = require("../models/Order");
 const { protect, adminOnly } = require("../middleware/auth");
+const { createNotification } = require("../services/notification.service");
+const { sendPushToUser } = require("../services/push.service");
 
 // GET ALL ORDERS OR ARCHIVED ORDERS
 router.get("/", protect, adminOnly, async (req, res) => {
@@ -58,6 +60,7 @@ router.put("/:id/status", protect, adminOnly, async (req, res) => {
 
   if (!order) return res.status(404).json({ message: "Order not found" });
 
+  const oldStatus = order.deliveryStatus;
   order.deliveryStatus = deliveryStatus;
 
   order.statusHistory.push({
@@ -65,6 +68,40 @@ router.put("/:id/status", protect, adminOnly, async (req, res) => {
   });
 
   await order.save();
+
+  // Create notification based on delivery status
+  const statusMessages = {
+    pending: "Your order is being processed.",
+    confirmed: "Payment confirmed. Your order is being prepared.",
+    shipped: "Your order has been shipped! Track your delivery.",
+    in_transit: "Your order is on the way to you.",
+    delivered: "Your order has been delivered. Thank you for your purchase!",
+    cancelled: "Your order has been cancelled.",
+    failed: "There was an issue with your order. Please contact support.",
+  };
+
+  if (oldStatus !== deliveryStatus && statusMessages[deliveryStatus]) {
+    const orderNotif = await createNotification({
+      userId: order.userId,
+      type: `order.${deliveryStatus}`,
+      title: `Order ${deliveryStatus.charAt(0).toUpperCase() + deliveryStatus.slice(1)}`,
+      body: `Order #${order._id.toString().slice(-6).toUpperCase()}: ${statusMessages[deliveryStatus]}`,
+      link: `/dashboard`,
+      data: { orderId: order._id },
+    });
+
+    // Send push notification for delivery status update
+    if (orderNotif) {
+      await sendPushToUser(order.userId, {
+        title: `Order ${deliveryStatus.charAt(0).toUpperCase() + deliveryStatus.slice(1)}`,
+        body: statusMessages[deliveryStatus],
+        link: `/dashboard`,
+        data: { orderId: order._id },
+      }).catch((err) => {
+        console.warn("Push notification failed (non-critical):", err);
+      });
+    }
+  }
 
   res.json(order);
 });
@@ -77,6 +114,28 @@ router.put("/:id/archive", protect, adminOnly, async (req, res) => {
 
   order.archived = true;
   await order.save();
+
+  // Notify user that order has been archived/cancelled
+  const archiveNotif = await createNotification({
+    userId: order.userId,
+    type: "order.archived",
+    title: "Order Archived",
+    body: `Order #${order._id.toString().slice(-6).toUpperCase()} has been archived.`,
+    link: `/dashboard`,
+    data: { orderId: order._id },
+  });
+
+  // Send push notification for order archival
+  if (archiveNotif) {
+    await sendPushToUser(order.userId, {
+      title: "Order Archived",
+      body: `Order #${order._id.toString().slice(-6).toUpperCase()} has been archived.`,
+      link: `/dashboard`,
+      data: { orderId: order._id },
+    }).catch((err) => {
+      console.warn("Push notification failed (non-critical):", err);
+    });
+  }
 
   res.json(order);
 });
