@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import useClickOutside from "../../hooks/useClickOutside";
 import { Menu, X, User, ShoppingBag, Home, LogOut } from "lucide-react";
 import useAuth from "../../context/AuthContext";
+import NotificationDropdown from "../NotificationDropdown";
 import { formatDate } from "../../utils/formatDate";
 
 export default function UserLayout({ children }) {
@@ -86,6 +87,9 @@ export default function UserLayout({ children }) {
             <strong>{user?.name || "User"}</strong>
             <span>Customer Panel</span>
           </div>
+        </div>
+        <div className="admin-topbar-right">
+          <NotificationDropdown />
         </div>
       </header>
 

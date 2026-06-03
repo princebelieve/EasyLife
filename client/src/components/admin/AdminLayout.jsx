@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import useClickOutside from "../../hooks/useClickOutside";
 import useAuth from "../../context/AuthContext";
+import NotificationDropdown from "../NotificationDropdown";
 
 import {
   Menu,
@@ -141,6 +142,10 @@ export default function AdminLayout({ children }) {
               <span>Admin Panel</span>
             </div>
           </Link>
+        </div>
+
+        <div className="admin-topbar-right">
+          <NotificationDropdown />
         </div>
 
         {/* DESKTOP QUICK NAV */}

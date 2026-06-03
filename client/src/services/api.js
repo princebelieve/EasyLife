@@ -224,6 +224,25 @@ export async function getProductCategories() {
   return apiRequest("/api/products/categories");
 }
 
+export async function getNotifications(query = "") {
+  const url = query ? `/api/notifications?${query}` : "/api/notifications";
+  return apiRequest(url);
+}
+
+export async function markNotificationRead(id) {
+  return apiRequest(`/api/notifications/${id}/read`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ read: true }),
+  });
+}
+
+export async function markAllNotificationsRead() {
+  return apiRequest("/api/notifications/mark-all-read", {
+    method: "PUT",
+  });
+}
+
 export async function createShippingZone(data, token) {
   return apiRequest("/api/admin/shipping", {
     method: "POST",

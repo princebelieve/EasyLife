@@ -5,6 +5,8 @@ import { Menu, X } from "lucide-react";
 import useAuth from "../context/AuthContext";
 import useClickOutside from "../hooks/useClickOutside";
 import { useCart } from "../context/CartContext";
+import { useNotifications } from "../context/NotificationContext";
+import NotificationDropdown from "./NotificationDropdown";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -13,6 +15,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { isLoggedIn, isAdmin, logout } = useAuth();
   const { cartCount } = useCart();
+  const { unreadCount } = useNotifications();
 
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
@@ -91,6 +94,8 @@ export default function Navbar() {
         </div>
 
         <div className="nav-actions">
+          <NotificationDropdown />
+
           <button
             type="button"
             className="cart-btn"
@@ -142,6 +147,10 @@ export default function Navbar() {
 
           <Link to="/cart" onClick={() => setOpen(false)}>
             Cart ({cartCount})
+          </Link>
+
+          <Link to="/notifications" onClick={() => setOpen(false)}>
+            Notifications {unreadCount > 0 ? `(${unreadCount})` : ""}
           </Link>
 
           {isLoggedIn && (
