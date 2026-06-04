@@ -353,7 +353,7 @@ button {
   padding: 0 20px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
@@ -377,13 +377,22 @@ button {
   font-size: 18px;
   font-weight: 700;
   color: var(--text);
-  white-space: nowrap;
+  line-height: 1.05;
+  max-width: 180px;
+  word-wrap: break-word;
 }
 
 .desktop-nav {
   display: flex;
   align-items: center;
   gap: 28px;
+  margin-left: auto;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .hamburger {
@@ -433,7 +442,7 @@ button {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .mobile-break {
     display: block;
   }
@@ -478,7 +487,7 @@ button {
   padding: 6px 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .navbar {
     height: 76px;
     padding: 0 16px;
@@ -502,6 +511,7 @@ button {
 
   .hamburger {
     display: flex;
+    order: 3;
   }
 }
 
@@ -512,11 +522,13 @@ button {
   z-index: 1000;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .mobile-nav-actions {
     display: flex;
     align-items: center;
-    margin-right: 12px;
+    order: 2;
+    margin-left: auto;
+    margin-right: 8px;
   }
 }
 
@@ -2502,9 +2514,23 @@ button:hover {
   gap: 24px;
 }
 
-.admin-desktop-nav a {
+.admin-desktop-nav a,
+.user-topbar-links a {
   font-weight: 600;
   color: var(--text);
+}
+
+.user-topbar-links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: 18px;
+}
+
+.user-topbar-links a {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(201, 162, 74, 0.1);
 }
 
 .admin-logout {

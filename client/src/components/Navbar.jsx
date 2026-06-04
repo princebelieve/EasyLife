@@ -59,7 +59,7 @@ export default function Navbar() {
         />
         <span className="brand-name">
           NewBrend Furniture
-          <br className="mobile-break" />& Interior
+          <br />& Interior
         </span>
       </Link>
 
@@ -72,15 +72,9 @@ export default function Navbar() {
 
           <Link to="/cart">Cart</Link>
 
-          {isLoggedIn && (
-            <>
-              <Link to="/dashboard">My Orders</Link>
+          {isLoggedIn && <Link to="/dashboard">Dashboard</Link>}
 
-              <Link to="/profile">Profile</Link>
-            </>
-          )}
-
-          {isAdmin && <Link to="/admin/products">Admin</Link>}
+          {isAdmin && <Link to="/admin">Admin</Link>}
 
           {!isLoggedIn ? (
             <>

@@ -18,6 +18,7 @@ import {
   MessageSquare,
   Home,
   User,
+  Bell,
   LogOut,
 } from "lucide-react";
 

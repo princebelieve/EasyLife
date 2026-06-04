@@ -87,6 +87,12 @@ export default function UserLayout({ children }) {
             <strong>{user?.name || "User"}</strong>
             <span>Customer Panel</span>
           </div>
+
+          <nav className="user-topbar-links">
+            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/profile">Profile</Link>
+            <Link to="/cart">Cart</Link>
+          </nav>
         </div>
         <div className="admin-topbar-right">
           <NotificationDropdown />
