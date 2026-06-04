@@ -428,13 +428,7 @@ export default function AdminShipping() {
 
           {openSection === "pricing" && (
             <div className="accordion-body">
-              <div
-                style={{
-                  display: "grid",
-                  gap: 12,
-                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                }}
-              >
+              <div className="pricing-input-grid">
                 <input
                   type="number"
                   min="0"
@@ -445,7 +439,7 @@ export default function AdminShipping() {
                 />
               </div>
 
-              <div style={{ marginTop: 16 }}>
+              <div className="pricing-section">
                 <strong>Category fees</strong>
                 <p style={{ margin: "8px 0 12px", color: "#555" }}>
                   Add a delivery category slug or label and fee. You can type a
@@ -454,16 +448,7 @@ export default function AdminShipping() {
                 </p>
 
                 {form.categoryPricing.map((item, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      display: "grid",
-                      gap: 8,
-                      gridTemplateColumns: "1fr 140px 40px",
-                      alignItems: "center",
-                      marginBottom: 8,
-                    }}
-                  >
+                  <div key={index} className="pricing-rule-row">
                     <input
                       value={item.category}
                       list="shipping-category-suggestions"
@@ -492,15 +477,7 @@ export default function AdminShipping() {
                     <button
                       type="button"
                       onClick={() => removeCategoryPricingRule(index)}
-                      style={{
-                        padding: "0 12px",
-                        minHeight: 40,
-                        background: "#ef4444",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: 6,
-                        cursor: "pointer",
-                      }}
+                      className="pricing-remove-btn"
                     >
                       ×
                     </button>

@@ -151,10 +151,6 @@ export default function AdminLayout({ children }) {
           </Link>
         </div>
 
-        <div className="admin-topbar-right">
-          <NotificationDropdown />
-        </div>
-
         {/* DESKTOP QUICK NAV */}
         <nav className="admin-desktop-nav">
           <Link to="/admin">Dashboard</Link>
@@ -165,6 +161,10 @@ export default function AdminLayout({ children }) {
 
           <Link to="/admin/sales">Sales</Link>
         </nav>
+
+        <div className="admin-topbar-right">
+          <NotificationDropdown />
+        </div>
       </header>
 
       {/* MOBILE OVERLAY */}
