@@ -1,5 +1,12 @@
 //client/src/components/Footer.jsx
 import { Link } from "react-router-dom";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaTwitter,
+  FaTiktok,
+  FaYoutube,
+} from "react-icons/fa";
 
 export default function Footer() {
   return (
@@ -32,6 +39,53 @@ export default function Footer() {
           <Link to="/dashboard">My Orders</Link>
           <Link to="/login">Login</Link>
           <Link to="/register">Register</Link>
+        </div>
+
+        <div>
+          <h4>Follow Us</h4>
+
+          <div className="footer-social">
+            <a
+              href="https://twitter.com/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Twitter"
+            >
+              <FaTwitter size={18} />
+            </a>
+            <a
+              href="https://facebook.com/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook"
+            >
+              <FaFacebook size={18} />
+            </a>
+            <a
+              href="https://instagram.com/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+            >
+              <FaInstagram size={18} />
+            </a>
+            <a
+              href="https://www.tiktok.com/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="TikTok"
+            >
+              <FaTiktok size={18} />
+            </a>
+            <a
+              href="https://www.youtube.com/"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="YouTube"
+            >
+              <FaYoutube size={18} />
+            </a>
+          </div>
         </div>
       </div>
 

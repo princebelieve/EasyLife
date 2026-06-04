@@ -1,5 +1,19 @@
 // client/src/pages/Contact.jsx
-import { MessageCircle, Mail, Phone, MapPin, Clock } from "lucide-react";
+import {
+  MessageCircle,
+  Mail as LucideMail,
+  Phone,
+  MapPin,
+  Clock,
+} from "lucide-react";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaTwitter,
+  FaTiktok,
+  FaYoutube,
+} from "react-icons/fa";
+import { SiGmail } from "react-icons/si";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -22,8 +36,9 @@ export default function Contact() {
               <h1>Get In Touch For Your Perfect Interior</h1>
 
               <p>
-                Ready to transform your space? Contact us for custom furniture design,
-                interior consultations, or to discuss your next furniture project.
+                Ready to transform your space? Contact us for custom furniture
+                design, interior consultations, or to discuss your next
+                furniture project.
               </p>
 
               <div className="contact-strip">
@@ -41,13 +56,67 @@ export default function Contact() {
                   </div>
                 </a>
 
-                <a href="mailto:info@newbrendfurniture.com" className="strip-card">
-                  <Mail size={22} />
+                <a
+                  href="mailto:info@newbrendfurniture.com"
+                  className="strip-card"
+                >
+                  <LucideMail size={22} />
 
                   <div>
                     <strong>Email</strong>
                     <span>info@newbrendfurniture.com</span>
                   </div>
+                </a>
+              </div>
+
+              <div className="social-links">
+                <a
+                  href="https://twitter.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Twitter"
+                >
+                  <FaTwitter size={18} />
+                </a>
+
+                <a
+                  href="https://facebook.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Facebook"
+                >
+                  <FaFacebook size={18} />
+                </a>
+
+                <a
+                  href="https://www.tiktok.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="TikTok"
+                >
+                  <FaTiktok size={18} />
+                </a>
+
+                <a
+                  href="https://www.youtube.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="YouTube"
+                >
+                  <FaYoutube size={18} />
+                </a>
+
+                <a href="mailto:info@newbrendfurniture.com" aria-label="Email">
+                  <SiGmail size={18} />
+                </a>
+
+                <a
+                  href="https://instagram.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Instagram"
+                >
+                  <FaInstagram size={18} />
                 </a>
               </div>
             </div>
@@ -62,7 +131,9 @@ export default function Contact() {
               <div className="info-list">
                 <div>
                   <MapPin size={20} />
-                  <span>From Abraka, Delta State, to anywhere around the Nation</span>
+                  <span>
+                    Km 15, Abraka-Agbor Road, Abraka, Delta State, Nigeria
+                  </span>
                 </div>
 
                 <div>
@@ -71,7 +142,12 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <Mail size={20} />
+                  <LucideMail size={20} />
+                  <span>Delivery nationwide across Nigeria</span>
+                </div>
+
+                <div>
+                  <LucideMail size={20} />
                   <span>info@newbrendfurniture.com</span>
                 </div>
 
@@ -82,8 +158,9 @@ export default function Contact() {
               </div>
 
               <p>
-                Whether you're looking for ready-to-ship furniture or bespoke custom pieces,
-                our team is here to help bring your interior vision to life.
+                Whether you're looking for ready-to-ship furniture or bespoke
+                custom pieces, our team is here to help bring your interior
+                vision to life.
               </p>
             </div>
 
@@ -113,8 +190,8 @@ export default function Contact() {
               </div>
 
               <p>
-                Every project starts with understanding your needs. Share your ideas
-                and let's create something beautiful together.
+                Every project starts with understanding your needs. Share your
+                ideas and let's create something beautiful together.
               </p>
             </div>
           </div>
@@ -149,8 +226,9 @@ export default function Contact() {
             </div>
 
             <p>
-              Every inquiry is reviewed personally, and we will contact you within 24 hours
-              to discuss your project details, timeline, and next steps.
+              Every inquiry is reviewed personally, and we will contact you
+              within 24 hours to discuss your project details, timeline, and
+              next steps.
             </p>
           </div>
         </section>
@@ -174,16 +252,16 @@ export default function Contact() {
               <div className="service-card hover-lift">
                 <h3>2. Design & Planning</h3>
                 <p>
-                  Our designers create detailed plans, material selections,
-                  and 3D visualizations for your approval.
+                  Our designers create detailed plans, material selections, and
+                  3D visualizations for your approval.
                 </p>
               </div>
 
               <div className="service-card hover-lift">
                 <h3>3. Manufacturing</h3>
                 <p>
-                  Premium materials are carefully crafted in our workshops
-                  with attention to every detail.
+                  Premium materials are carefully crafted in our workshops with
+                  attention to every detail.
                 </p>
               </div>
 
@@ -203,4 +281,3 @@ export default function Contact() {
     </>
   );
 }
-
