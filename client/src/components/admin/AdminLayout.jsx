@@ -103,6 +103,12 @@ export default function AdminLayout({ children }) {
     },
 
     {
+      to: "/admin/users",
+      label: "Users",
+      icon: <User size={18} />,
+    },
+
+    {
       to: "/admin/send-notification",
       label: "Send Notification",
       icon: <Bell size={18} />,

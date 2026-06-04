@@ -400,6 +400,29 @@ export async function getAdminOrders(token, query = {}) {
   });
 }
 
+// -------------------------
+// ADMIN USERS
+// -------------------------
+
+export async function getAdminUsers(token) {
+  return apiRequest("/api/admin/users", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function updateAdminUser(id, data, token) {
+  return apiRequest(`/api/admin/users/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
 export async function getAdminArchivedOrders(token, filters = {}) {
   return getAdminOrders(token, { archived: true, ...filters });
 }

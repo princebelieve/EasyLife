@@ -34,6 +34,7 @@ import AdminOrderDetails from "./pages/AdminOrderDetails";
 import AdminDeliveryBoard from "./pages/AdminDeliveryBoard";
 import AdminShipping from "./pages/AdminShipping";
 import AdminInquiries from "./pages/AdminInquiries";
+import AdminUsers from "./pages/AdminUsers";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import Notifications from "./pages/Notifications";
@@ -223,6 +224,26 @@ export default function App() {
               <RequireAdmin>
                 <AdminLayout>
                   <AdminInquiries />
+                </AdminLayout>
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <RequireAdmin>
+                <AdminLayout>
+                  <AdminUsers />
+                </AdminLayout>
+              </RequireAdmin>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <RequireAdmin>
+                <AdminLayout>
+                  <AdminUsers />
                 </AdminLayout>
               </RequireAdmin>
             }

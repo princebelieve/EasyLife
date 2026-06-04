@@ -78,6 +78,18 @@ const userSchema = new mongoose.Schema(
     pendingEmailVerificationExpires: {
       type: Number,
     },
+    // Admin controls
+    isSuspended: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+    },
   },
   { timestamps: true },
 );
