@@ -1,17 +1,12 @@
 // client/src/pages/Contact.jsx
-import {
-  MessageCircle,
-  Mail as LucideMail,
-  Phone,
-  MapPin,
-  Clock,
-} from "lucide-react";
+import { Mail as LucideMail, Phone, MapPin, Clock } from "lucide-react";
 import {
   FaFacebook,
   FaInstagram,
   FaTwitter,
   FaTiktok,
   FaYoutube,
+  FaWhatsapp,
 } from "react-icons/fa";
 import { SiGmail } from "react-icons/si";
 
@@ -46,25 +41,23 @@ export default function Contact() {
                   href="https://wa.me/2348037757718"
                   target="_blank"
                   rel="noreferrer"
-                  className="strip-card"
+                  className="strip-card whatsapp-card"
                 >
-                  <MessageCircle size={22} />
-
+                  <FaWhatsapp size={28} />
                   <div>
-                    <strong>WhatsApp</strong>
-                    <span>Fastest response</span>
+                    <strong>Chat on WhatsApp</strong>
+                    <span>Fastest response and order support</span>
                   </div>
                 </a>
 
                 <a
                   href="mailto:info@newbrendfurniture.com"
-                  className="strip-card"
+                  className="strip-card email-card"
                 >
-                  <LucideMail size={22} />
-
+                  <SiGmail size={28} />
                   <div>
-                    <strong>Email</strong>
-                    <span>info@newbrendfurniture.com</span>
+                    <strong>Email Us</strong>
+                    <span>Send your inquiry to info@newbrendfurniture.com</span>
                   </div>
                 </a>
               </div>
@@ -74,49 +67,50 @@ export default function Contact() {
                   href="https://twitter.com/"
                   target="_blank"
                   rel="noreferrer"
+                  className="social-twitter"
                   aria-label="Twitter"
                 >
-                  <FaTwitter size={18} />
+                  <FaTwitter size={24} />
                 </a>
 
                 <a
                   href="https://facebook.com/"
                   target="_blank"
                   rel="noreferrer"
+                  className="social-facebook"
                   aria-label="Facebook"
                 >
-                  <FaFacebook size={18} />
-                </a>
-
-                <a
-                  href="https://www.tiktok.com/"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="TikTok"
-                >
-                  <FaTiktok size={18} />
-                </a>
-
-                <a
-                  href="https://www.youtube.com/"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="YouTube"
-                >
-                  <FaYoutube size={18} />
-                </a>
-
-                <a href="mailto:info@newbrendfurniture.com" aria-label="Email">
-                  <SiGmail size={18} />
+                  <FaFacebook size={24} />
                 </a>
 
                 <a
                   href="https://instagram.com/"
                   target="_blank"
                   rel="noreferrer"
+                  className="social-instagram"
                   aria-label="Instagram"
                 >
-                  <FaInstagram size={18} />
+                  <FaInstagram size={24} />
+                </a>
+
+                <a
+                  href="https://www.tiktok.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="social-tiktok"
+                  aria-label="TikTok"
+                >
+                  <FaTiktok size={24} />
+                </a>
+
+                <a
+                  href="https://www.youtube.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="social-youtube"
+                  aria-label="YouTube"
+                >
+                  <FaYoutube size={24} />
                 </a>
               </div>
             </div>
@@ -139,11 +133,6 @@ export default function Contact() {
                 <div>
                   <Phone size={20} />
                   <span>+2348037757718</span>
-                </div>
-
-                <div>
-                  <LucideMail size={20} />
-                  <span>Delivery nationwide across Nigeria</span>
                 </div>
 
                 <div>

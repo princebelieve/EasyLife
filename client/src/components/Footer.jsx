@@ -51,7 +51,7 @@ export default function Footer() {
               rel="noreferrer"
               aria-label="Twitter"
             >
-              <FaTwitter size={18} />
+              <FaTwitter size={24} />
             </a>
             <a
               href="https://facebook.com/"
@@ -59,7 +59,7 @@ export default function Footer() {
               rel="noreferrer"
               aria-label="Facebook"
             >
-              <FaFacebook size={18} />
+              <FaFacebook size={24} />
             </a>
             <a
               href="https://instagram.com/"
@@ -67,7 +67,7 @@ export default function Footer() {
               rel="noreferrer"
               aria-label="Instagram"
             >
-              <FaInstagram size={18} />
+              <FaInstagram size={24} />
             </a>
             <a
               href="https://www.tiktok.com/"
@@ -75,7 +75,7 @@ export default function Footer() {
               rel="noreferrer"
               aria-label="TikTok"
             >
-              <FaTiktok size={18} />
+              <FaTiktok size={24} />
             </a>
             <a
               href="https://www.youtube.com/"
@@ -83,7 +83,7 @@ export default function Footer() {
               rel="noreferrer"
               aria-label="YouTube"
             >
-              <FaYoutube size={18} />
+              <FaYoutube size={24} />
             </a>
           </div>
         </div>

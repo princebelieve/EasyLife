@@ -1340,13 +1340,13 @@ button:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #888;
-  font-size: 20px;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  opacity: 0.8;
 }
 
 .footer-social a:hover {
-  transform: scale(1.12);
+  transform: scale(1.15);
+  opacity: 1;
 }
 
 .footer-logo {
@@ -1693,20 +1693,62 @@ button:hover {
 }
 
 .contact-strip {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
   gap: 16px;
   margin-top: 24px;
-  flex-wrap: wrap;
 }
 
 .strip-card {
-  flex: 1;
-  min-width: 220px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 260px;
+  padding: 24px;
+  border-radius: 20px;
+  color: white;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.strip-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.12);
+}
+
+.strip-card svg {
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.strip-card strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.strip-card span {
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.4;
+}
+
+.whatsapp-card {
+  background: #25d366;
+}
+
+.email-card {
+  background: #EA4335;
+  /* Gmail brand red */
+}
+
+/* Ensure CTA icons are visible (white) */
+.strip-card svg {
+  color: white;
 }
 
 .social-links {
   display: flex;
-  gap: 16px;
+  gap: 18px;
   flex-wrap: wrap;
   margin-top: 20px;
   align-items: center;
@@ -1716,13 +1758,41 @@ button:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #666;
-  font-size: 24px;
-  transition: transform 0.2s ease, color 0.2s ease;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  opacity: 0.9;
 }
 
 .social-links a:hover {
   transform: scale(1.1);
+  opacity: 1;
+}
+
+.social-links a.social-twitter {
+  background: #1da1f2;
+  color: white;
+}
+
+.social-links a.social-facebook {
+  background: #1877f2;
+  color: white;
+}
+
+.social-links a.social-instagram {
+  background: radial-gradient(circle at 30% 30%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+  color: white;
+}
+
+.social-links a.social-tiktok {
+  background: black;
+  color: white;
+}
+
+.social-links a.social-youtube {
+  background: #ff0000;
+  color: white;
 }
 
 /* MAP */
@@ -2071,24 +2141,6 @@ button:hover {
   align-items: center;
   gap: 12px;
   padding: 14px;
-  border-radius: 14px;
-  color: white;
-  font-size: 14px;
-}
-
-/* WhatsApp */
-.strip-card:nth-child(1) {
-  background: #25D366;
-}
-
-/* Email */
-.strip-card:nth-child(2) {
-  background: var(--brown);
-}
-
-/* Call (if you add later) */
-.strip-card.call {
-  background: linear-gradient(135deg, #ff7b00, #ff5500);
 }
 
 /* ================= PIECES ================= */
