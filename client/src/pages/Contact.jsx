@@ -44,20 +44,20 @@ export default function Contact() {
                 </a>
 
                 <a
-                  href="mailto:info@newbrendfurniture.com"
+                  href="newbrend001@gmail.com"
                   className="strip-card email-card"
                 >
                   <SiGmail size={28} />
                   <div>
                     <strong>Email Us</strong>
-                    <span>Send your inquiry to info@newbrendfurniture.com</span>
+                    <span>mailto:newbrend001@gmail.com</span>
                   </div>
                 </a>
               </div>
 
               <div className="social-links">
                 <a
-                  href="https://x.com/newbrendfurniture"
+                  href="https://x.com/NewtonMM"
                   target="_blank"
                   rel="noreferrer"
                   className="social-x"
@@ -67,7 +67,7 @@ export default function Contact() {
                 </a>
 
                 <a
-                  href="https://www.instagram.com/newbrendfurniture"
+                  href="https://www.instagram.com/newbrend101?igsh=MWpuN2tlbG41cG5r"
                   target="_blank"
                   rel="noreferrer"
                   className="social-instagram"
@@ -77,7 +77,7 @@ export default function Contact() {
                 </a>
 
                 <a
-                  href="https://www.tiktok.com/@newbrendfurniture"
+                  href="https://www.tiktok.com/@centnewton2?_r=1&_t=ZN-96wE1C2UMBb"
                   target="_blank"
                   rel="noreferrer"
                   className="social-tiktok"
@@ -110,7 +110,7 @@ export default function Contact() {
 
                 <div>
                   <LucideMail size={20} />
-                  <span>info@newbrendfurniture.com</span>
+                  <span>mailto:newbrend001@gmail.com</span>
                 </div>
 
                 <div>
