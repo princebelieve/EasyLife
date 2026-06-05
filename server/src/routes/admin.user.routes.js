@@ -20,10 +20,10 @@ router.get("/", protect, adminOnly, async (req, res) => {
   }
 });
 
-// PUT /api/admin/users/:id - update suspend / soft-delete flags
+// PUT /api/admin/users/:id - update suspend / soft-delete flags and role
 router.put("/:id", protect, adminOnly, async (req, res) => {
   try {
-    const { isSuspended, isDeleted } = req.body;
+    const { isSuspended, isDeleted, role } = req.body;
 
     const user = await User.findById(req.params.id);
 
@@ -40,6 +40,14 @@ router.put("/:id", protect, adminOnly, async (req, res) => {
       user.deletedAt = isDeleted ? Date.now() : null;
     }
 
+    if (role) {
+      const validRoles = ["user", "admin", "subadmin"];
+      if (!validRoles.includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
+      }
+      user.role = role;
+    }
+
     await user.save();
 
     res.json({
@@ -48,6 +56,7 @@ router.put("/:id", protect, adminOnly, async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
         isSuspended: user.isSuspended,
         isDeleted: user.isDeleted,
       },

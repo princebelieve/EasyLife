@@ -54,6 +54,17 @@ export default function AdminUsers() {
     }
   }
 
+  async function changeRole(user, newRole) {
+    try {
+      await updateAdminUser(user._id, { role: newRole }, token);
+      setUsers((prev) =>
+        prev.map((u) => (u._id === user._id ? { ...u, role: newRole } : u)),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   if (loading) return <div className="admin-card">Loading users...</div>;
 
   return (
@@ -71,9 +82,23 @@ export default function AdminUsers() {
                 <strong>ID:</strong> {u._id}
               </p>
               <p>{u.email}</p>
-              <p>
-                <strong>Role:</strong> {u.role}
-              </p>
+              <div style={{ marginBottom: 12 }}>
+                <strong>Role:</strong>{" "}
+                <select
+                  value={u.role}
+                  onChange={(e) => changeRole(u, e.target.value)}
+                  style={{
+                    marginLeft: 8,
+                    padding: 4,
+                    borderRadius: 4,
+                    border: "1px solid #ccc",
+                  }}
+                >
+                  <option value="user">User</option>
+                  <option value="subadmin">Subadmin</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
               <p>
                 <strong>Joined:</strong> {formatDate(u.createdAt)}
               </p>

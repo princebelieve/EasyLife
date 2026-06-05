@@ -46,7 +46,7 @@ export default function Footer() {
               rel="noreferrer"
               aria-label="X"
             >
-              <FaX size={24} />
+              <SiX size={24} />
             </a>
             <a
               href="https://www.instagram.com/newbrendfurniture"
