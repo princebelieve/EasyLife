@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import ProductForm from "../components/ProductForm";
+import useAuth from "../context/AuthContext";
 import {
   createProductApi,
   getProductById,
@@ -15,6 +16,7 @@ export default function AdminProductForm() {
   const [loading, setLoading] = useState(Boolean(id));
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const { isSubadmin } = useAuth();
 
   useEffect(() => {
     if (!id) return;
@@ -67,6 +69,12 @@ export default function AdminProductForm() {
               ? "Update product details and pricing."
               : "Fill in product details, pricing, inventory, and images."}
           </p>
+          {!editingProduct && isSubadmin && (
+            <p style={{ marginTop: 8, color: "#8c6a00" }}>
+              As a subadmin, new product submissions will be sent for admin
+              review and kept hidden until approved.
+            </p>
+          )}
         </div>
 
         <button type="button" onClick={() => navigate("/admin/products")}>

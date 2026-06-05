@@ -1,14 +1,7 @@
 // client/src/pages/Contact.jsx
 import { Mail as LucideMail, Phone, MapPin, Clock } from "lucide-react";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaTwitter,
-  FaTiktok,
-  FaYoutube,
-  FaWhatsapp,
-} from "react-icons/fa";
-import { SiGmail } from "react-icons/si";
+import { FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa";
+import { SiGmail, SiX } from "react-icons/si";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -64,27 +57,17 @@ export default function Contact() {
 
               <div className="social-links">
                 <a
-                  href="https://twitter.com/"
+                  href="https://x.com/newbrendfurniture"
                   target="_blank"
                   rel="noreferrer"
-                  className="social-twitter"
-                  aria-label="Twitter"
+                  className="social-x"
+                  aria-label="X"
                 >
-                  <FaTwitter size={24} />
+                  <SiX size={24} />
                 </a>
 
                 <a
-                  href="https://facebook.com/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="social-facebook"
-                  aria-label="Facebook"
-                >
-                  <FaFacebook size={24} />
-                </a>
-
-                <a
-                  href="https://instagram.com/"
+                  href="https://www.instagram.com/newbrendfurniture"
                   target="_blank"
                   rel="noreferrer"
                   className="social-instagram"
@@ -94,23 +77,13 @@ export default function Contact() {
                 </a>
 
                 <a
-                  href="https://www.tiktok.com/"
+                  href="https://www.tiktok.com/@newbrendfurniture"
                   target="_blank"
                   rel="noreferrer"
                   className="social-tiktok"
                   aria-label="TikTok"
                 >
                   <FaTiktok size={24} />
-                </a>
-
-                <a
-                  href="https://www.youtube.com/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="social-youtube"
-                  aria-label="YouTube"
-                >
-                  <FaYoutube size={24} />
                 </a>
               </div>
             </div>

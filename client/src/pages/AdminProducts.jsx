@@ -37,7 +37,8 @@ export default function AdminProducts() {
 
   useEffect(() => {
     loadProducts();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdminOrSubadmin]);
 
   async function handleDelete(id) {
     const ok = window.confirm("Delete this product?");

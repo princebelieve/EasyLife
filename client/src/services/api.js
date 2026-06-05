@@ -427,6 +427,21 @@ export async function getNotificationRequests(token) {
   });
 }
 
+export async function getMyNotificationRequests(token) {
+  return apiRequest("/api/notifications/requests", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function createNotification(data) {
+  return apiRequest("/api/notifications", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
 export async function approveNotificationRequest(id, token) {
   return apiRequest(`/api/admin/notifications/${id}/approve`, {
     method: "PUT",

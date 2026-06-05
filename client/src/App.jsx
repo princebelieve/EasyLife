@@ -252,11 +252,11 @@ export default function App() {
           <Route
             path="/admin/send-notification"
             element={
-              <RequireAdmin>
+              <RequireAdminOrSubadmin>
                 <AdminLayout>
                   <AdminNotifications />
                 </AdminLayout>
-              </RequireAdmin>
+              </RequireAdminOrSubadmin>
             }
           />
         </Routes>

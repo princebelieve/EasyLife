@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
 import {
+  createNotification,
   getNotificationRequests,
+  getMyNotificationRequests,
   approveNotificationRequest,
   rejectNotificationRequest,
 } from "../services/api";
 import { getToken } from "../utils/auth";
 
 export default function AdminNotifications() {
-  const navigate = useNavigate();
-  const { isAdmin } = useAuth();
+  const { isAdmin, isSubadmin, isAdminOrSubadmin, loading } = useAuth();
   const [formData, setFormData] = useState({
     userId: "",
     type: "announcement",
@@ -18,19 +19,22 @@ export default function AdminNotifications() {
     body: "",
     link: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null);
   const [requests, setRequests] = useState([]);
   const [requestsLoading, setRequestsLoading] = useState(false);
 
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!isAdminOrSubadmin) return;
 
     async function loadRequests() {
       setRequestsLoading(true);
       try {
-        const res = await getNotificationRequests(getToken());
+        const res = isAdmin
+          ? await getNotificationRequests(getToken())
+          : await getMyNotificationRequests(getToken());
+
         setRequests(Array.isArray(res.requests) ? res.requests : []);
       } catch (err) {
         console.error("Unable to load notification requests", err);
@@ -40,11 +44,12 @@ export default function AdminNotifications() {
     }
 
     loadRequests();
-  }, [isAdmin]);
+  }, [isAdminOrSubadmin, isAdmin]);
 
-  if (!isAdmin) {
-    navigate("/login");
-    return null;
+  if (loading) return null;
+
+  if (!isAdminOrSubadmin) {
+    return <Navigate to="/login" replace />;
   }
 
   const handleInputChange = (e) => {
@@ -57,32 +62,18 @@ export default function AdminNotifications() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
     setMessage(null);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || ""}/api/notifications`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
-          body: JSON.stringify(formData),
-        },
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setMessageType("error");
-        setMessage(data.message || "Failed to send notification");
-        return;
-      }
+      await createNotification(formData);
 
       setMessageType("success");
-      setMessage("Notification sent successfully!");
+      setMessage(
+        isAdmin
+          ? "Notification sent successfully!"
+          : "Notification request submitted for admin approval.",
+      );
       setFormData({
         userId: "",
         type: "announcement",
@@ -94,7 +85,7 @@ export default function AdminNotifications() {
       setMessageType("error");
       setMessage(error.message || "Failed to send notification");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -121,7 +112,7 @@ export default function AdminNotifications() {
               name="userId"
               value={formData.userId}
               onChange={handleInputChange}
-              placeholder="Leave empty to send to specific user later"
+              placeholder="Enter recipient user ID"
               required
             />
             <small>User ID who will receive this notification</small>
@@ -183,43 +174,62 @@ export default function AdminNotifications() {
             </small>
           </div>
 
-          <button type="submit" disabled={loading} className="submit-btn">
-            {loading ? "Sending..." : "Send Notification"}
+          <button type="submit" disabled={submitting} className="submit-btn">
+            {submitting ? "Sending..." : "Send Notification"}
           </button>
         </form>
       </div>
 
-      {isAdmin && (
-        <div style={{ marginTop: 24 }}>
-          <h2>Pending Notification Requests</h2>
+      <div style={{ marginTop: 24 }}>
+        <h2>
+          {isAdmin
+            ? "Pending Notification Requests"
+            : "Your Notification Requests"}
+        </h2>
 
-          {requestsLoading ? (
-            <p>Loading requests...</p>
-          ) : requests.length === 0 ? (
-            <p>No pending requests.</p>
-          ) : (
-            <div style={{ display: "grid", gap: 12 }}>
-              {requests.map((r) => (
-                <div
-                  key={r._id}
-                  style={{ border: "1px solid #ddd", padding: 12 }}
-                >
+        {isSubadmin && (
+          <p style={{ color: "#555", marginTop: 8 }}>
+            Notification submissions are reviewed by admins before they are
+            sent.
+          </p>
+        )}
+
+        {requestsLoading ? (
+          <p>Loading requests...</p>
+        ) : requests.length === 0 ? (
+          <p>
+            {isAdmin
+              ? "No pending requests."
+              : "You have not submitted any notification requests yet."}
+          </p>
+        ) : (
+          <div style={{ display: "grid", gap: 12 }}>
+            {requests.map((r) => (
+              <div
+                key={r._id}
+                style={{ border: "1px solid #ddd", padding: 12 }}
+              >
+                <p>
+                  <strong>From:</strong> {r.senderName} ({r.senderRole})
+                </p>
+                <p>
+                  <strong>To:</strong> {r.userId || "(broadcast)"}
+                </p>
+                {r.status && (
                   <p>
-                    <strong>From:</strong> {r.senderName} ({r.senderRole})
+                    <strong>Status:</strong> {r.status}
                   </p>
-                  <p>
-                    <strong>To:</strong> {r.userId || "(broadcast)"}
-                  </p>
-                  <p>
-                    <strong>Title:</strong> {r.title}
-                  </p>
-                  <p>{r.body}</p>
+                )}
+                <p>
+                  <strong>Title:</strong> {r.title}
+                </p>
+                <p>{r.body}</p>
+                {isAdmin && (
                   <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
                     <button
                       onClick={async () => {
                         try {
                           await approveNotificationRequest(r._id, getToken());
-                          // reload
                           const res = await getNotificationRequests(getToken());
                           setRequests(
                             Array.isArray(res.requests) ? res.requests : [],
@@ -250,12 +260,12 @@ export default function AdminNotifications() {
                       Reject
                     </button>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="admin-notifications-info">
         <h3>Guidelines</h3>

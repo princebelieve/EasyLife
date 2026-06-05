@@ -68,13 +68,16 @@ export function AuthProvider({ children }) {
     [logout, hydrateUser],
   );
 
-  async function login(newToken, refreshToken) {
-    if (refreshToken) {
-      setRefreshToken(refreshToken);
-    }
+  const login = useCallback(
+    async (newToken, refreshToken) => {
+      if (refreshToken) {
+        setRefreshToken(refreshToken);
+      }
 
-    await updateToken(newToken);
-  }
+      await updateToken(newToken);
+    },
+    [updateToken],
+  );
 
   useEffect(() => {
     async function syncAuth() {
@@ -129,7 +132,7 @@ export function AuthProvider({ children }) {
 
       setUser,
     };
-  }, [token, user, loading, updateToken, logout]);
+  }, [token, user, loading, updateToken, logout, login]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
