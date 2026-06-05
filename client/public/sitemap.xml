@@ -16,4 +16,9 @@
     <loc>https://newbrend.vercel.app/about</loc>
     <priority>0.70</priority>
   </url>
-</urlset>
+  <url>
+    <loc>https://newbrend.vercel.app/login</loc>
+    <priority>0.40</priority>
+  </url>
+  <url>
+    <loc>https://newbrend.vercel.app/register</lo</urlset>
