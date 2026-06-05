@@ -386,6 +386,66 @@ export async function deleteProductApi(id, token) {
 }
 
 // -------------------------
+// ADMIN PRODUCTS
+// -------------------------
+
+export async function getAdminProducts(token) {
+  return apiRequest("/api/admin/products", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function approveProductApi(id, token) {
+  return apiRequest(`/api/admin/products/${id}/approve`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function rejectProductApi(id, token) {
+  return apiRequest(`/api/admin/products/${id}/reject`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+// -------------------------
+// ADMIN NOTIFICATIONS
+// -------------------------
+
+export async function getNotificationRequests(token) {
+  return apiRequest("/api/admin/notifications/pending", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function approveNotificationRequest(id, token) {
+  return apiRequest(`/api/admin/notifications/${id}/approve`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+export async function rejectNotificationRequest(id, token) {
+  return apiRequest(`/api/admin/notifications/${id}/reject`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+// -------------------------
 // ADMIN ORDERS
 // -------------------------
 

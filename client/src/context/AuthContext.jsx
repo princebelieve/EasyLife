@@ -117,6 +117,10 @@ export function AuthProvider({ children }) {
 
       isAdmin: user?.role === "admin",
 
+      isSubadmin: user?.role === "subadmin",
+
+      isAdminOrSubadmin: user?.role === "admin" || user?.role === "subadmin",
+
       login,
 
       updateToken,

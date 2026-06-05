@@ -14,7 +14,11 @@ const {
   deleteProduct,
 } = require("../controllers/product.controller");
 
-const { protect, adminOnly } = require("../middleware/auth");
+const {
+  protect,
+  adminOnly,
+  adminOrSubadminOnly,
+} = require("../middleware/auth");
 
 // PUBLIC
 router.get("/", getProducts);
@@ -27,7 +31,7 @@ router.get("/:id", getProduct);
 router.post(
   "/",
   protect,
-  adminOnly,
+  adminOrSubadminOnly,
   upload.fields([
     { name: "coverImage", maxCount: 1 },
     { name: "gallery", maxCount: 20 },
@@ -48,6 +52,6 @@ router.put(
   updateProduct,
 );
 
-router.delete("/:id", protect, adminOnly, deleteProduct);
+router.delete("/:id", protect, adminOrSubadminOnly, deleteProduct);
 
 module.exports = router;

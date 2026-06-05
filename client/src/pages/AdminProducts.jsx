@@ -1,18 +1,38 @@
 // src/pages/AdminProducts.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../context/AuthContext";
 
-import { getProducts, deleteProductApi } from "../services/api";
+import {
+  getProducts,
+  deleteProductApi,
+  getAdminProducts,
+  approveProductApi,
+  rejectProductApi,
+} from "../services/api";
 import { getToken } from "../utils/auth";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  const { isAdminOrSubadmin } = useAuth();
+  const { isAdmin } = useAuth();
 
   async function loadProducts() {
-    const data = await getProducts();
+    try {
+      let data;
 
-    setProducts(data);
+      if (isAdminOrSubadmin) {
+        data = await getAdminProducts(getToken());
+      } else {
+        data = await getProducts();
+      }
+
+      setProducts(Array.isArray(data) ? data : data || []);
+    } catch (err) {
+      console.error("Unable to load products", err);
+      setProducts([]);
+    }
   }
 
   useEffect(() => {
@@ -31,6 +51,26 @@ export default function AdminProducts() {
     }
 
     loadProducts();
+  }
+
+  async function handleApprove(id) {
+    try {
+      await approveProductApi(id, getToken());
+      loadProducts();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Unable to approve");
+    }
+  }
+
+  async function handleReject(id) {
+    try {
+      await rejectProductApi(id, getToken());
+      loadProducts();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Unable to reject");
+    }
   }
 
   return (
@@ -110,7 +150,7 @@ export default function AdminProducts() {
               <h3>{product.name}</h3>
               <p>₦{Number(product.price || 0).toLocaleString()}</p>
 
-              <div style={{ display: "flex", gap: 10 }}>
+              <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                 <button
                   type="button"
                   onClick={() =>
@@ -119,6 +159,29 @@ export default function AdminProducts() {
                 >
                   Edit
                 </button>
+
+                {product.pendingApproval && (
+                  <span style={{ color: "#b36", fontWeight: 600 }}>
+                    Pending Approval
+                  </span>
+                )}
+
+                {product.pendingDeletion && (
+                  <span style={{ color: "#b36", fontWeight: 600 }}>
+                    Pending Deletion
+                  </span>
+                )}
+
+                {isAdmin && product.pendingApproval && (
+                  <>
+                    <button onClick={() => handleApprove(product._id)}>
+                      Approve
+                    </button>
+                    <button onClick={() => handleReject(product._id)}>
+                      Reject
+                    </button>
+                  </>
+                )}
 
                 <button type="button" onClick={() => handleDelete(product._id)}>
                   Delete

@@ -165,6 +165,37 @@ const productSchema = new mongoose.Schema(
       enum: ["active", "inactive"],
       default: "active",
     },
+    approved: {
+      type: Boolean,
+      default: true,
+    },
+    pendingApproval: {
+      type: Boolean,
+      default: false,
+    },
+    pendingDeletion: {
+      type: Boolean,
+      default: false,
+    },
+    hidden: {
+      type: Boolean,
+      default: false,
+    },
+    submittedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    approvalRequestedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    deletionRequestedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    deletionRequestedAt: {
+      type: Date,
+    },
 
     mainCategory: { type: String, default: "" },
     subCategory: { type: String, default: "" },

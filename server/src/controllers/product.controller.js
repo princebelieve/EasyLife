@@ -15,7 +15,13 @@ function safeJsonParse(value, fallback = []) {
 
 async function getProducts(req, res) {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const products = await Product.find({
+      hidden: { $ne: true },
+      pendingApproval: { $ne: true },
+      pendingDeletion: { $ne: true },
+      status: "active",
+      approved: true,
+    }).sort({ createdAt: -1 });
 
     res.json(products);
   } catch (err) {
@@ -29,7 +35,14 @@ async function getProducts(req, res) {
 
 async function getProduct(req, res) {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({
+      _id: req.params.id,
+      hidden: { $ne: true },
+      pendingApproval: { $ne: true },
+      pendingDeletion: { $ne: true },
+      status: "active",
+      approved: true,
+    });
 
     if (!product) {
       return res.status(404).json({
@@ -178,6 +191,8 @@ async function createProduct(req, res) {
 
     const generatedSku = generateSKU(name, category);
 
+    const isSubadmin = req.user?.role === "subadmin";
+
     const product = await Product.create({
       name,
 
@@ -201,7 +216,7 @@ async function createProduct(req, res) {
 
       featured: featured === "true" || featured === true,
 
-      status: status || "active",
+      status: isSubadmin ? "inactive" : status || "active",
 
       sku: generatedSku,
 
@@ -212,6 +227,11 @@ async function createProduct(req, res) {
       inStock: Number(stock || 0) > 0,
 
       pieces,
+      approved: !isSubadmin,
+      pendingApproval: isSubadmin,
+      hidden: isSubadmin,
+      submittedBy: isSubadmin ? req.user._id : undefined,
+      approvalRequestedBy: isSubadmin ? req.user._id : undefined,
     });
 
     res.status(201).json(product);
@@ -376,13 +396,28 @@ async function updateProduct(req, res) {
 
 async function deleteProduct(req, res) {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
+    const product = await Product.findById(req.params.id);
 
     if (!product) {
       return res.status(404).json({
         message: "Product not found",
       });
     }
+
+    if (req.user.role === "subadmin") {
+      product.pendingDeletion = true;
+      product.hidden = true;
+      product.deletionRequestedBy = req.user._id;
+      product.deletionRequestedAt = Date.now();
+      await product.save();
+
+      return res.json({
+        message:
+          "Delete request submitted. Product is hidden until an admin approves or rejects it.",
+      });
+    }
+
+    await Product.findByIdAndDelete(req.params.id);
 
     res.json({
       message: "Product deleted successfully",
@@ -396,6 +431,86 @@ async function deleteProduct(req, res) {
   }
 }
 
+async function getAdminProducts(req, res) {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+
+    res.json(products);
+  } catch (err) {
+    console.error("Error in getAdminProducts:", err);
+
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+}
+
+async function approveProduct(req, res) {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    if (product.pendingApproval) {
+      product.pendingApproval = false;
+      product.approved = true;
+      product.hidden = false;
+      product.status = "active";
+      await product.save();
+
+      return res.json({ message: "Product approved", product });
+    }
+
+    if (product.pendingDeletion) {
+      await Product.findByIdAndDelete(req.params.id);
+      return res.json({ message: "Product deletion approved and executed" });
+    }
+
+    return res
+      .status(400)
+      .json({ message: "No pending approval or deletion request found" });
+  } catch (err) {
+    console.error("Error in approveProduct:", err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
+async function rejectProduct(req, res) {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    if (product.pendingApproval) {
+      product.pendingApproval = false;
+      product.hidden = true;
+      product.status = "inactive";
+      await product.save();
+
+      return res.json({ message: "Product approval rejected" });
+    }
+
+    if (product.pendingDeletion) {
+      product.pendingDeletion = false;
+      product.hidden = false;
+      await product.save();
+
+      return res.json({ message: "Product deletion request rejected" });
+    }
+
+    return res
+      .status(400)
+      .json({ message: "No pending approval or deletion request found" });
+  } catch (err) {
+    console.error("Error in rejectProduct:", err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
 module.exports = {
   getProducts,
   getProduct,
@@ -403,4 +518,7 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  getAdminProducts,
+  approveProduct,
+  rejectProduct,
 };

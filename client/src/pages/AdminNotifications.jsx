@@ -1,6 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
+import {
+  getNotificationRequests,
+  approveNotificationRequest,
+  rejectNotificationRequest,
+} from "../services/api";
+import { getToken } from "../utils/auth";
 
 export default function AdminNotifications() {
   const navigate = useNavigate();
@@ -15,6 +21,26 @@ export default function AdminNotifications() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null);
+  const [requests, setRequests] = useState([]);
+  const [requestsLoading, setRequestsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    async function loadRequests() {
+      setRequestsLoading(true);
+      try {
+        const res = await getNotificationRequests(getToken());
+        setRequests(Array.isArray(res.requests) ? res.requests : []);
+      } catch (err) {
+        console.error("Unable to load notification requests", err);
+      } finally {
+        setRequestsLoading(false);
+      }
+    }
+
+    loadRequests();
+  }, [isAdmin]);
 
   if (!isAdmin) {
     navigate("/login");
@@ -162,6 +188,74 @@ export default function AdminNotifications() {
           </button>
         </form>
       </div>
+
+      {isAdmin && (
+        <div style={{ marginTop: 24 }}>
+          <h2>Pending Notification Requests</h2>
+
+          {requestsLoading ? (
+            <p>Loading requests...</p>
+          ) : requests.length === 0 ? (
+            <p>No pending requests.</p>
+          ) : (
+            <div style={{ display: "grid", gap: 12 }}>
+              {requests.map((r) => (
+                <div
+                  key={r._id}
+                  style={{ border: "1px solid #ddd", padding: 12 }}
+                >
+                  <p>
+                    <strong>From:</strong> {r.senderName} ({r.senderRole})
+                  </p>
+                  <p>
+                    <strong>To:</strong> {r.userId || "(broadcast)"}
+                  </p>
+                  <p>
+                    <strong>Title:</strong> {r.title}
+                  </p>
+                  <p>{r.body}</p>
+                  <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                    <button
+                      onClick={async () => {
+                        try {
+                          await approveNotificationRequest(r._id, getToken());
+                          // reload
+                          const res = await getNotificationRequests(getToken());
+                          setRequests(
+                            Array.isArray(res.requests) ? res.requests : [],
+                          );
+                        } catch (err) {
+                          console.error(err);
+                          alert(err.message || "Unable to approve request");
+                        }
+                      }}
+                    >
+                      Approve
+                    </button>
+
+                    <button
+                      onClick={async () => {
+                        try {
+                          await rejectNotificationRequest(r._id, getToken());
+                          const res = await getNotificationRequests(getToken());
+                          setRequests(
+                            Array.isArray(res.requests) ? res.requests : [],
+                          );
+                        } catch (err) {
+                          console.error(err);
+                          alert(err.message || "Unable to reject request");
+                        }
+                      }}
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="admin-notifications-info">
         <h3>Guidelines</h3>

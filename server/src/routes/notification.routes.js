@@ -6,7 +6,10 @@ const router = express.Router();
 
 router.get("/", protect, async (req, res) => {
   try {
-    const filter = { userId: req.user.id };
+    const filter = {
+      userId: req.user.id,
+      status: "approved",
+    };
 
     if (typeof req.query.archived !== "undefined") {
       filter.archived = req.query.archived === "true";
@@ -27,9 +30,34 @@ router.get("/", protect, async (req, res) => {
   }
 });
 
-router.post("/", protect, adminOnly, async (req, res) => {
+router.get("/requests", protect, async (req, res) => {
+  try {
+    const filter = { status: "pending" };
+
+    if (req.user.role === "subadmin") {
+      filter.senderId = req.user.id;
+    }
+
+    const requests = await Notification.find(filter).sort({
+      createdAt: -1,
+    });
+
+    res.json({ requests });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch notification requests" });
+  }
+});
+
+router.post("/", protect, async (req, res) => {
   try {
     const { userId, type, title, body, link, data } = req.body;
+
+    if (req.user.role !== "admin" && req.user.role !== "subadmin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    const isSubadmin = req.user.role === "subadmin";
 
     const notification = await Notification.create({
       userId,
@@ -38,9 +66,16 @@ router.post("/", protect, adminOnly, async (req, res) => {
       body,
       link,
       data,
+      senderId: req.user._id,
+      senderName: req.user.name,
+      senderRole: req.user.role,
+      status: isSubadmin ? "pending" : "approved",
+      requestedAt: isSubadmin ? Date.now() : undefined,
+      reviewedAt: isSubadmin ? undefined : Date.now(),
+      reviewedBy: isSubadmin ? undefined : req.user._id,
     });
 
-    res.status(201).json(notification);
+    res.status(isSubadmin ? 202 : 201).json(notification);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to create notification" });
@@ -50,7 +85,7 @@ router.post("/", protect, adminOnly, async (req, res) => {
 router.put("/:id/read", protect, async (req, res) => {
   try {
     const notification = await Notification.findOneAndUpdate(
-      { _id: req.params.id, userId: req.user.id },
+      { _id: req.params.id, userId: req.user.id, status: "approved" },
       { read: req.body.read !== undefined ? req.body.read : true },
       { new: true },
     );
@@ -69,7 +104,7 @@ router.put("/:id/read", protect, async (req, res) => {
 router.put("/mark-all-read", protect, async (req, res) => {
   try {
     await Notification.updateMany(
-      { userId: req.user.id, read: false },
+      { userId: req.user.id, read: false, status: "approved" },
       { read: true },
     );
 

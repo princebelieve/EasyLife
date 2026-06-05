@@ -24,6 +24,7 @@ import AdminProducts from "./pages/AdminProducts";
 import AdminProductForm from "./pages/AdminProductForm";
 
 import RequireAdmin from "./components/RequireAdmin.jsx";
+import RequireAdminOrSubadmin from "./components/RequireAdminOrSubadmin.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
 import AdminOrders from "./pages/AdminOrders";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -124,22 +125,22 @@ export default function App() {
           <Route
             path="/admin/products"
             element={
-              <RequireAdmin>
+              <RequireAdminOrSubadmin>
                 <AdminLayout>
                   <AdminProducts />
                 </AdminLayout>
-              </RequireAdmin>
+              </RequireAdminOrSubadmin>
             }
           />
 
           <Route
             path="/admin/products/new"
             element={
-              <RequireAdmin>
+              <RequireAdminOrSubadmin>
                 <AdminLayout>
                   <AdminProductForm />
                 </AdminLayout>
-              </RequireAdmin>
+              </RequireAdminOrSubadmin>
             }
           />
 

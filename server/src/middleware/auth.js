@@ -41,4 +41,15 @@ const adminOnly = (req, res, next) => {
   }
 };
 
-module.exports = { protect, adminOnly };
+// 👷 Admin or sub-admin
+const adminOrSubadminOnly = (req, res, next) => {
+  if (req.user && (req.user.role === "admin" || req.user.role === "subadmin")) {
+    next();
+  } else {
+    return res
+      .status(403)
+      .json({ message: "Admin or sub-admin access required" });
+  }
+};
+
+module.exports = { protect, adminOnly, adminOrSubadminOnly };
