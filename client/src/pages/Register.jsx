@@ -15,6 +15,8 @@ export default function Register() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -100,9 +102,78 @@ export default function Register() {
               required
             />
 
-            <button type="submit" className="btn-primary" disabled={submitting}>
+            {/* Policy Checkboxes */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+                marginTop: 10,
+                fontSize: 14,
+              }}
+            >
+              <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <input
+                  type="checkbox"
+                  checked={acceptedPrivacy}
+                  onChange={(e) => setAcceptedPrivacy(e.target.checked)}
+                  style={{ cursor: "pointer" }}
+                />
+                I agree to the{" "}
+                <Link
+                  to="/privacy-policy"
+                  target="_blank"
+                  style={{ color: "var(--gold)", textDecoration: "underline" }}
+                >
+                  Privacy Policy
+                </Link>
+              </label>
+
+              <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <input
+                  type="checkbox"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  style={{ cursor: "pointer" }}
+                />
+                I agree to the{" "}
+                <Link
+                  to="/terms-conditions"
+                  target="_blank"
+                  style={{ color: "var(--gold)", textDecoration: "underline" }}
+                >
+                  Terms & Conditions
+                </Link>
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={submitting || !acceptedPrivacy || !acceptedTerms}
+              style={{
+                marginTop: 16,
+                opacity:
+                  submitting || !acceptedPrivacy || !acceptedTerms ? 0.5 : 1,
+                cursor:
+                  submitting || !acceptedPrivacy || !acceptedTerms
+                    ? "not-allowed"
+                    : "pointer",
+              }}
+            >
               {submitting ? "Creating account..." : "Create Account"}
             </button>
+            <p style={{ marginTop: 12, fontSize: 14, color: "#666" }}>
+              By creating an account, you agree to our{" "}
+              <Link to="/privacy-policy" style={{ color: "var(--gold)" }}>
+                Privacy Policy
+              </Link>{" "}
+              and{" "}
+              <Link to="/terms-conditions" style={{ color: "var(--gold)" }}>
+                Terms & Conditions
+              </Link>
+              .
+            </p>
           </div>
         </form>
 

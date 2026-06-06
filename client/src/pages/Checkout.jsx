@@ -211,6 +211,17 @@ export default function Checkout() {
               >
                 {checkoutLoading ? "Processing…" : "Continue To Payment"}
               </button>
+              <p style={{ marginTop: 12, fontSize: 14, color: "#666" }}>
+                By clicking Continue To Payment, you accept our{" "}
+                <a href="/refund-policy" style={{ color: "var(--gold)" }}>
+                  Refund & Returns Policy
+                </a>{" "}
+                and{" "}
+                <a href="/terms-conditions" style={{ color: "var(--gold)" }}>
+                  Terms & Conditions
+                </a>
+                .
+              </p>
               {shippingError && (
                 <div className="error-message" style={{ marginTop: 12 }}>
                   <p>{shippingError}</p>

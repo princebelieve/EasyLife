@@ -41,6 +41,9 @@ import EditProfile from "./pages/EditProfile";
 import Notifications from "./pages/Notifications";
 import AdminNotifications from "./pages/AdminNotifications";
 import PwaNotificationBanner from "./components/PwaNotificationBanner";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
+import TermsConditions from "./pages/TermsConditions";
 
 export default function App() {
   return (
@@ -259,6 +262,11 @@ export default function App() {
               </RequireAdminOrSubadmin>
             }
           />
+
+          {/* POLICIES */}
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/terms-conditions" element={<TermsConditions />} />
         </Routes>
       </NotificationProvider>
     </CartProvider>

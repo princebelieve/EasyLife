@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://newbrend.onrender.com/sitemap.xml
-Host: https://newbrend.vercel.app
+Sitemap: https://newbrend.vercel.app/sitemap.xml
