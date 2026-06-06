@@ -5,7 +5,7 @@ import ProductForm from "../components/ProductForm";
 import useAuth from "../context/AuthContext";
 import {
   createProductApi,
-  getProductById,
+  getAdminProductById,
   updateProductApi,
 } from "../services/api";
 import { getToken } from "../utils/auth";
@@ -24,7 +24,7 @@ export default function AdminProductForm() {
     async function loadProduct() {
       setLoading(true);
       try {
-        const product = await getProductById(id);
+        const product = await getAdminProductById(id, getToken());
         setEditingProduct(product);
       } catch (err) {
         console.error(err);
@@ -38,17 +38,13 @@ export default function AdminProductForm() {
   }, [id]);
 
   async function handleSubmit(formData) {
-    try {
-      if (editingProduct) {
-        await updateProductApi(editingProduct._id, formData, getToken());
-      } else {
-        await createProductApi(formData, getToken());
-      }
-
-      navigate("/admin/products");
-    } catch (err) {
-      throw err;
+    if (editingProduct) {
+      await updateProductApi(editingProduct._id, formData, getToken());
+    } else {
+      await createProductApi(formData, getToken());
     }
+
+    navigate("/admin/products");
   }
 
   return (

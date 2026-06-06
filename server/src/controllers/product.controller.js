@@ -19,8 +19,8 @@ async function getProducts(req, res) {
       hidden: { $ne: true },
       pendingApproval: { $ne: true },
       pendingDeletion: { $ne: true },
-      status: "active",
-      approved: true,
+      status: { $ne: "inactive" },
+      approved: { $ne: false },
     }).sort({ createdAt: -1 });
 
     res.json(products);
@@ -40,8 +40,8 @@ async function getProduct(req, res) {
       hidden: { $ne: true },
       pendingApproval: { $ne: true },
       pendingDeletion: { $ne: true },
-      status: "active",
-      approved: true,
+      status: { $ne: "inactive" },
+      approved: { $ne: false },
     });
 
     if (!product) {
@@ -431,6 +431,21 @@ async function deleteProduct(req, res) {
   }
 }
 
+async function getAdminProduct(req, res) {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.json(product);
+  } catch (err) {
+    console.error("Error in getAdminProduct:", err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
 async function getAdminProducts(req, res) {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
@@ -518,6 +533,7 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  getAdminProduct,
   getAdminProducts,
   approveProduct,
   rejectProduct,

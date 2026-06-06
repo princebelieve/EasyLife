@@ -351,6 +351,14 @@ export async function getProductById(id) {
   return apiRequest(`/api/products/${id}`);
 }
 
+export async function getAdminProductById(id, token) {
+  return apiRequest(`/api/admin/products/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
 export async function createProductApi(formData, token) {
   return apiRequest("/api/products", {
     method: "POST",
