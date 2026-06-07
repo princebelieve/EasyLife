@@ -9,7 +9,8 @@ router.get("/products", async (req, res) => {
   try {
     const products = await Product.find({ active: true });
 
-    const baseUrl = "https://newbrend.vercel.app";
+    const baseUrl =
+      process.env.CLIENT_URL || process.env.BASE_URL || "http://localhost:5173";
 
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml +=

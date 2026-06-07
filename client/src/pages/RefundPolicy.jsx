@@ -41,7 +41,7 @@ export default function RefundPolicy() {
         <h2>How to Request a Return</h2>
         <ol>
           <li>
-            Contact support via email at support@newbrend.example or call our
+            Contact support via email at newbrend001@gmail.com or call our
             support line with your order reference and photos of the issue.
           </li>
           <li>
@@ -78,7 +78,7 @@ export default function RefundPolicy() {
         <h2>Contact</h2>
         <p>
           Questions about refunds or returns should be directed to
-          support@newbrend.example or via the contact form on the site.
+          newbrend001@gmail.com or via the contact form on the site.
         </p>
       </div>
     </>

@@ -32,7 +32,9 @@ export default function ProductDetails() {
         setProduct(data);
 
         if (data) {
-          const productUrl = `https://newbrend.vercel.app/product/${id}`;
+          const productUrl =
+            (import.meta.env.VITE_CLIENT_URL || window.location.origin) +
+            `/product/${id}`;
 
           // Set meta tags for social sharing and SEO
           setMetaTags({

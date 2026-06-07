@@ -57,7 +57,8 @@ app.get("/sitemap.xml", async (req, res) => {
       "_id updatedAt",
     );
 
-    const baseUrl = "https://newbrend.vercel.app";
+    const baseUrl =
+      process.env.CLIENT_URL || process.env.BASE_URL || "http://localhost:5173";
 
     // Determine a default shipping price (lowest active baseDeliveryFee) to include in the feed.
     // Merchant Center accepts product-level <g:shipping> entries; providing a conservative
@@ -126,7 +127,8 @@ app.get("/feed.xml", async (req, res) => {
   try {
     const products = await Product.find({ active: true });
 
-    const baseUrl = "https://newbrend.vercel.app";
+    const baseUrl =
+      process.env.CLIENT_URL || process.env.BASE_URL || "http://localhost:5173";
 
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml +=

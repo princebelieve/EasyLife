@@ -34,7 +34,8 @@ router.get("/sitemap/xml", async (req, res) => {
       "_id updatedAt",
     );
 
-    const baseUrl = "https://newbrend.vercel.app";
+    const baseUrl =
+      process.env.CLIENT_URL || process.env.BASE_URL || "http://localhost:5173";
     const staticPages = [
       { loc: baseUrl, priority: "1.00" },
       { loc: `${baseUrl}/collection`, priority: "0.90" },

@@ -45,11 +45,11 @@ export default function PrivacyPolicy() {
         <h2>Your Rights</h2>
         <p>
           You may request access, corrections, or deletion of your personal data
-          by contacting support@newbrend.example.
+          by contacting newbrend001@gmail.com.
         </p>
 
         <h2>Contact</h2>
-        <p>For privacy concerns, contact support@newbrend.example.</p>
+        <p>For privacy concerns, contact newbred001@gmail.com.</p>
       </div>
     </>
   );

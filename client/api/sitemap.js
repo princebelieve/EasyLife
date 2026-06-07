@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const backendUrl = process.env.BACKEND_URL || "https://newbrend.onrender.com";
+  const backendUrl = process.env.VITE_API_URL || "http://localhost:4000";
   const apiUrl = `${backendUrl}/api/products`;
 
   try {
@@ -9,7 +9,8 @@ export default async function handler(req, res) {
     }
 
     const products = await response.json();
-    const baseUrl = "https://newbrend.vercel.app";
+    const baseUrl =
+      process.env.VITE_CLIENT_URL || "https://newbrend.vercel.app";
     const staticPages = [
       { loc: baseUrl, priority: "1.00" },
       { loc: `${baseUrl}/collection`, priority: "0.90" },
