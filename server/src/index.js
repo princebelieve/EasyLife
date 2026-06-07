@@ -130,6 +130,56 @@ app.get("/feed.xml", async (req, res) => {
     const baseUrl =
       process.env.CLIENT_URL || process.env.BASE_URL || "http://localhost:5173";
 
+    let defaultShippingPrice = 0;
+    let defaultHandlingMinDays = 0;
+    let defaultHandlingMaxDays = 1;
+    let defaultTransitMinDays = 0;
+    let defaultTransitMaxDays = 1;
+
+    try {
+      const zones = await ShippingZone.find({ active: true }).select(
+        "baseDeliveryFee handlingTimeMinDays handlingTimeMaxDays transitTimeMinDays transitTimeMaxDays",
+      );
+
+      if (zones && zones.length > 0) {
+        defaultShippingPrice = zones.reduce((min, z) => {
+          const v = Number(z.baseDeliveryFee || 0);
+          return min === null || v < min ? v : min;
+        }, null);
+
+        if (defaultShippingPrice === null) {
+          defaultShippingPrice = Number(
+            process.env.DEFAULT_SHIPPING_PRICE || 0,
+          );
+        }
+
+        defaultHandlingMinDays = Math.min(
+          ...zones.map((z) => Number(z.handlingTimeMinDays || 0)),
+          0,
+        );
+        defaultHandlingMaxDays = Math.max(
+          ...zones.map((z) => Number(z.handlingTimeMaxDays || 0)),
+          1,
+        );
+        defaultTransitMinDays = Math.min(
+          ...zones.map((z) => Number(z.transitTimeMinDays || 0)),
+          0,
+        );
+        defaultTransitMaxDays = Math.max(
+          ...zones.map((z) => Number(z.transitTimeMaxDays || 0)),
+          1,
+        );
+      } else {
+        defaultShippingPrice = Number(process.env.DEFAULT_SHIPPING_PRICE || 0);
+      }
+    } catch (err) {
+      console.warn(
+        "Unable to compute default shipping values for feed:",
+        err.message || err,
+      );
+      defaultShippingPrice = Number(process.env.DEFAULT_SHIPPING_PRICE || 0);
+    }
+
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml +=
       '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:g="http://base.google.com/ns/1.0">\n';
@@ -139,23 +189,35 @@ app.get("/feed.xml", async (req, res) => {
     xml += `  <author><name>Newbrend Furniture</name></author>\n`;
 
     products.forEach((product) => {
+      const availability =
+        product.inStock === false || Number(product.stock || 0) <= 0
+          ? "out of stock"
+          : "in stock";
+      const itemId = product.sku || product._id;
+      const description =
+        product.fullDescription || product.shortDescription || product.name;
+
       xml += "  <entry>\n";
       xml += `    <id>${baseUrl}/product/${product._id}</id>\n`;
+      xml += `    <g:id>${escapeXml(String(itemId))}</g:id>\n`;
       xml += `    <title>${escapeXml(product.name)}</title>\n`;
-      xml += `    <description>${escapeXml(product.description || product.name)}</description>\n`;
+      xml += `    <description>${escapeXml(description)}</description>\n`;
       xml += `    <link rel="alternate" type="text/html" href="${baseUrl}/product/${product._id}"/>\n`;
       xml += `    <g:image_link>${product.coverImage}</g:image_link>\n`;
-      xml += `    <g:price>${product.price} NGN</g:price>\n`;
-      // Include a conservative shipping estimate for Google Merchant
+      xml += `    <g:price>${Number(product.price || 0).toFixed(2)} NGN</g:price>\n`;
+      xml += `    <g:availability>${availability}</g:availability>\n`;
+      xml += `    <g:brand>${escapeXml(product.brand || "Newbrend Furniture")}</g:brand>\n`;
+      xml += `    <g:condition>new</g:condition>\n`;
+      xml += `    <g:product_type>${escapeXml(product.category || "Furniture")}</g:product_type>\n`;
       xml += `    <g:shipping>\n`;
       xml += `      <g:country>NG</g:country>\n`;
       xml += `      <g:service>Standard</g:service>\n`;
       xml += `      <g:price>${Number(defaultShippingPrice).toFixed(2)} NGN</g:price>\n`;
+      xml += `      <g:min_handling_time>${defaultHandlingMinDays}</g:min_handling_time>\n`;
+      xml += `      <g:max_handling_time>${defaultHandlingMaxDays}</g:max_handling_time>\n`;
+      xml += `      <g:min_transit_time>${defaultTransitMinDays}</g:min_transit_time>\n`;
+      xml += `      <g:max_transit_time>${defaultTransitMaxDays}</g:max_transit_time>\n`;
       xml += `    </g:shipping>\n`;
-      xml += `    <g:availability>in_stock</g:availability>\n`;
-      xml += `    <g:brand>Newbrend Furniture</g:brand>\n`;
-      xml += `    <g:condition>new</g:condition>\n`;
-      xml += `    <g:product_type>${product.category || "Furniture"}</g:product_type>\n`;
       xml += "  </entry>\n";
     });
 

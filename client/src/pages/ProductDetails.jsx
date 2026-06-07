@@ -34,7 +34,7 @@ export default function ProductDetails() {
 
         if (data) {
           const productUrl =
-            (import.meta.env.VITE_CLIENT_URL || window.location.origin) +
+            window.location.origin +
             `/product/${id}`;
 
           // Set meta tags for social sharing and SEO

@@ -47,6 +47,12 @@ const emptyForm = {
   categoryPricing: [{ category: "", price: "" }],
 
   estimatedDays: "3-7 days",
+  orderCutoffTime: "",
+  handlingTimeMinDays: 0,
+  handlingTimeMaxDays: 0,
+  transitTimeMinDays: 0,
+  transitTimeMaxDays: 1,
+  fulfillmentDays: "Mon – Sat",
 
   pickupEnabled: true,
 
@@ -246,6 +252,12 @@ export default function AdminShipping() {
       baseDeliveryFee: Number(form.baseFee || 0),
 
       estimatedDays: form.estimatedDays,
+      orderCutoffTime: form.orderCutoffTime,
+      handlingTimeMinDays: Number(form.handlingTimeMinDays || 0),
+      handlingTimeMaxDays: Number(form.handlingTimeMaxDays || 0),
+      transitTimeMinDays: Number(form.transitTimeMinDays || 0),
+      transitTimeMaxDays: Number(form.transitTimeMaxDays || 1),
+      fulfillmentDays: form.fulfillmentDays,
 
       pickupEnabled: form.pickupEnabled,
 
@@ -303,6 +315,12 @@ export default function AdminShipping() {
           : [{ category: "", price: "" }],
 
       estimatedDays: zone.estimatedDays || "3-7 days",
+      orderCutoffTime: zone.orderCutoffTime || "",
+      handlingTimeMinDays: zone.handlingTimeMinDays ?? 0,
+      handlingTimeMaxDays: zone.handlingTimeMaxDays ?? 0,
+      transitTimeMinDays: zone.transitTimeMinDays ?? 0,
+      transitTimeMaxDays: zone.transitTimeMaxDays ?? 1,
+      fulfillmentDays: zone.fulfillmentDays || "Mon – Sat",
 
       pickupEnabled: zone.pickupEnabled ?? true,
 
@@ -560,6 +578,59 @@ export default function AdminShipping() {
 
           {openSection === "delivery" && (
             <div className="accordion-body">
+              <div className="shipping-timing-grid">
+                <input
+                  name="orderCutoffTime"
+                  placeholder="Order cutoff time (e.g. 2:00 PM)"
+                  value={form.orderCutoffTime}
+                  onChange={handleChange}
+                />
+                <input
+                  name="fulfillmentDays"
+                  placeholder="Fulfillment days (e.g. Mon – Sat)"
+                  value={form.fulfillmentDays}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="shipping-timing-grid">
+                <input
+                  type="number"
+                  min="0"
+                  name="handlingTimeMinDays"
+                  placeholder="Handling min days"
+                  value={form.handlingTimeMinDays}
+                  onChange={handleChange}
+                />
+                <input
+                  type="number"
+                  min="0"
+                  name="handlingTimeMaxDays"
+                  placeholder="Handling max days"
+                  value={form.handlingTimeMaxDays}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="shipping-timing-grid">
+                <input
+                  type="number"
+                  min="0"
+                  name="transitTimeMinDays"
+                  placeholder="Transit min days"
+                  value={form.transitTimeMinDays}
+                  onChange={handleChange}
+                />
+                <input
+                  type="number"
+                  min="0"
+                  name="transitTimeMaxDays"
+                  placeholder="Transit max days"
+                  value={form.transitTimeMaxDays}
+                  onChange={handleChange}
+                />
+              </div>
+
               <input
                 name="estimatedDays"
                 placeholder="Estimated Days"
@@ -637,6 +708,15 @@ export default function AdminShipping() {
               </div>
             )}
 
+            <p>Cutoff: {zone.orderCutoffTime || "—"}</p>
+            <p>Fulfillment: {zone.fulfillmentDays}</p>
+            <p>
+              Handling: {zone.handlingTimeMinDays}-{zone.handlingTimeMaxDays}{" "}
+              days
+            </p>
+            <p>
+              Transit: {zone.transitTimeMinDays}-{zone.transitTimeMaxDays} days
+            </p>
             <p>Estimated: {zone.estimatedDays}</p>
 
             <div

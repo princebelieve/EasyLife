@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/products-feed.csv",
+      "destination": "/api/products-feed"
+    },
+    {
       "source": "/sitemap.xml",
       "destination": "/api/sitemap"
     },
