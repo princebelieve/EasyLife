@@ -20,6 +20,7 @@ export default function ProductDetails() {
   const [addLoading, setAddLoading] = useState(false);
   const [addSuccess, setAddSuccess] = useState(false);
   const [addError, setAddError] = useState("");
+  const [expandedDescription, setExpandedDescription] = useState(false);
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -40,7 +41,8 @@ export default function ProductDetails() {
           setMetaTags({
             title: `${data.name} | Newbrend Furniture`,
             description:
-              data.description ||
+              data.fullDescription ||
+              data.shortDescription ||
               `Shop ${data.name} from Newbrend Furniture. Premium quality furniture and decorative accents.`,
             image: data.coverImage,
             url: productUrl,
@@ -123,6 +125,32 @@ export default function ProductDetails() {
             <h1>{product.name}</h1>
 
             <h2>₦{Number(product?.price || 0).toLocaleString()}</h2>
+
+            {(product.fullDescription || product.shortDescription) && (
+              <div className="product-description">
+                <p>
+                  {expandedDescription
+                    ? product.fullDescription || product.shortDescription
+                    : (
+                        product.fullDescription || product.shortDescription
+                      ).substring(0, 150)}
+                  {!expandedDescription &&
+                    (product.fullDescription || product.shortDescription)
+                      .length > 150 &&
+                    "..."}
+                </p>
+                {(product.fullDescription || product.shortDescription).length >
+                  150 && (
+                  <button
+                    type="button"
+                    className="view-more-btn"
+                    onClick={() => setExpandedDescription(!expandedDescription)}
+                  >
+                    {expandedDescription ? "Show Less" : "View More"}
+                  </button>
+                )}
+              </div>
+            )}
 
             <button
               type="button"

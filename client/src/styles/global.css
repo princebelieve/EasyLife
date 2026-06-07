@@ -1031,6 +1031,39 @@ button:hover {
   font-size: 30px;
 }
 
+.product-description {
+  margin: 0 0 28px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-left: 4px solid var(--gold);
+  border-radius: 4px;
+}
+
+.product-description p {
+  margin: 0;
+  color: #555;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.view-more-btn {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background-color: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.view-more-btn:hover {
+  background-color: var(--gold);
+  color: white;
+}
+
 @media (max-width: 900px) {
   .product-detail {
     grid-template-columns: 1fr;

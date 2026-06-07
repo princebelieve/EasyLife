@@ -59,24 +59,57 @@ export function setProductSchema(product, url) {
     existingSchema.remove();
   }
 
+  // Build image array - include cover image and gallery
+  const images = [product.coverImage];
+  if (product.gallery && Array.isArray(product.gallery)) {
+    images.push(...product.gallery.slice(0, 5)); // Limit to 5 images for Merchant Center
+  }
+
+  // Use fullDescription if available, fallback to shortDescription or name
+  const description =
+    product.fullDescription || product.shortDescription || product.name;
+
+  // Determine availability status
+  const availability =
+    product.inStock && product.stock > 0
+      ? "https://schema.org/InStock"
+      : "https://schema.org/OutOfStock";
+
   const schema = {
     "@context": "https://schema.org/",
     "@type": "Product",
     name: product.name,
-    description: product.description || product.name,
-    image: product.coverImage,
+    description: description,
+    image: images, // Changed from single image to array
+    sku: product.sku || product._id,
     brand: {
       "@type": "Brand",
-      name: "Newbrend Furniture",
+      name: product.brand || "Newbrend Furniture",
     },
     offers: {
       "@type": "Offer",
       url: url,
       priceCurrency: "NGN",
       price: product.price?.toString() || "0",
-      availability: "https://schema.org/InStock",
+      availability: availability,
+      seller: {
+        "@type": "Organization",
+        name: "Newbrend Furniture",
+      },
     },
+    aggregateRating: product.rating
+      ? {
+          "@type": "AggregateRating",
+          ratingValue: product.rating.average?.toString() || "0",
+          reviewCount: product.rating.count?.toString() || "0",
+        }
+      : undefined,
   };
+
+  // Remove undefined fields
+  Object.keys(schema).forEach(
+    (key) => schema[key] === undefined && delete schema[key],
+  );
 
   const scriptTag = document.createElement("script");
   scriptTag.type = "application/ld+json";

@@ -7,7 +7,13 @@ const Product = require("../models/Product");
 // GOOGLE SHOPPING FEED (XML)
 router.get("/products", async (req, res) => {
   try {
-    const products = await Product.find({ active: true });
+    const products = await Product.find({
+      hidden: { $ne: true },
+      pendingApproval: { $ne: true },
+      pendingDeletion: { $ne: true },
+      status: { $ne: "inactive" },
+      approved: { $ne: false },
+    });
 
     const baseUrl =
       process.env.CLIENT_URL || process.env.BASE_URL || "http://localhost:5173";
@@ -24,14 +30,15 @@ router.get("/products", async (req, res) => {
       xml += "  <entry>\n";
       xml += `    <id>${baseUrl}/product/${product._id}</id>\n`;
       xml += `    <title>${escapeXml(product.name)}</title>\n`;
-      xml += `    <description>${escapeXml(product.description || product.name)}</description>\n`;
+      xml += `    <description>${escapeXml(product.fullDescription || product.shortDescription || product.name)}</description>\n`;
       xml += `    <link rel="alternate" type="text/html" href="${baseUrl}/product/${product._id}"/>\n`;
       xml += `    <g:image_link>${product.coverImage}</g:image_link>\n`;
       xml += `    <g:price>${product.price} NGN</g:price>\n`;
-      xml += `    <g:availability>in_stock</g:availability>\n`;
-      xml += `    <g:brand>Newbrend Furniture</g:brand>\n`;
+      xml += `    <g:availability>${product.inStock && product.stock > 0 ? "in_stock" : "out_of_stock"}</g:availability>\n`;
+      xml += `    <g:brand>${product.brand || "Newbrend Furniture"}</g:brand>\n`;
       xml += `    <g:condition>new</g:condition>\n`;
       xml += `    <g:product_type>${product.category || "Furniture"}</g:product_type>\n`;
+      xml += `    <g:sku>${product.sku || product._id}</g:sku>\n`;
       xml += "  </entry>\n";
     });
 
