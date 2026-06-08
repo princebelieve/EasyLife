@@ -70,15 +70,11 @@ export default function Footer() {
         <div>
           <h4>Address</h4>
           <p>
-            No. 58, New Sapele Agbor Road
+            Km 15, Agbor-Eku Road
             <br />
-            Opposite Matrix Filling Station
+            Adjacent Matrix Filling Station
             <br />
-            Abraka, Ethiope East LGA
-            <br />
-            Delta State, Nigeria
-            <br />
-            Postal Code: 330106
+            Abraka, Delta State Nigeria
           </p>
         </div>
       </div>

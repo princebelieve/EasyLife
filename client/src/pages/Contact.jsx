@@ -99,8 +99,8 @@ export default function Contact() {
                 <div>
                   <MapPin size={20} />
                   <span>
-                    No. 58, NEW SAPELE AGBOR ROAD, OPPOSITE MATRIX FILLING
-                    STATION, ABRAKA, DELTA STATE, NIGERIA
+                    Km 15, Agbor-Eku Road, Adjacent Matrix Filling Station,
+                    Abraka, Delta State Nigeria
                   </span>
                 </div>
 

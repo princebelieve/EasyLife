@@ -112,8 +112,8 @@ export default function Home() {
             <div className="service-card hover-lift">
               <h3>Fast Delivery</h3>
               <p>
-                Km 15, Abraka-Agbor Road, Abraka, Delta State, Nigeria. We
-                deliver nationwide across Nigeria within 3-5 business days.
+                Km 15, Agbor-Eku Road, Abraka, Delta State, Nigeria. We deliver
+                nationwide across Nigeria within 3-5 business days.
               </p>
             </div>
           </div>
