@@ -66,6 +66,21 @@ export default function Footer() {
             </a>
           </div>
         </div>
+
+        <div>
+          <h4>Address</h4>
+          <p>
+            No. 58, New Sapele Agbor Road
+            <br />
+            Opposite Matrix Filling Station
+            <br />
+            Abraka, Ethiope East LGA
+            <br />
+            Delta State, Nigeria
+            <br />
+            Postal Code: 330106
+          </p>
+        </div>
       </div>
 
       <div className="footer-bottom">

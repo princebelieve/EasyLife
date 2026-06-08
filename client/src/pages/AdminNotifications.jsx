@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
 import {
   createNotification,
+  broadcastNotification,
   getNotificationRequests,
   getMyNotificationRequests,
   approveNotificationRequest,
@@ -19,6 +20,7 @@ export default function AdminNotifications() {
     body: "",
     link: "",
   });
+  const [sendToAll, setSendToAll] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState(null);
@@ -60,20 +62,60 @@ export default function AdminNotifications() {
     }));
   };
 
+  const handleSendToAllChange = (e) => {
+    setSendToAll(e.target.checked);
+    if (e.target.checked) {
+      // Clear userId when sending to all
+      setFormData((prev) => ({
+        ...prev,
+        userId: "",
+      }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setMessage(null);
 
     try {
-      await createNotification(formData);
+      let response;
 
-      setMessageType("success");
-      setMessage(
-        isAdmin
-          ? "Notification sent successfully!"
-          : "Notification request submitted for admin approval.",
-      );
+      if (sendToAll) {
+        // Broadcast to all users
+        const broadcastData = {
+          type: formData.type,
+          title: formData.title,
+          body: formData.body,
+          link: formData.link,
+        };
+        response = await broadcastNotification(broadcastData);
+
+        setMessageType("success");
+        setMessage(
+          isAdmin
+            ? `Notification sent to ${response.notificationCount || "all"} users successfully!`
+            : "Broadcast notification request submitted for admin approval.",
+        );
+      } else {
+        // Send to specific user
+        if (!formData.userId) {
+          setMessageType("error");
+          setMessage("Please enter a user ID or select 'Send to All Users'");
+          setSubmitting(false);
+          return;
+        }
+
+        response = await createNotification(formData);
+
+        setMessageType("success");
+        setMessage(
+          isAdmin
+            ? "Notification sent successfully!"
+            : "Notification request submitted for admin approval.",
+        );
+      }
+
       setFormData({
         userId: "",
         type: "announcement",
@@ -81,6 +123,7 @@ export default function AdminNotifications() {
         body: "",
         link: "",
       });
+      setSendToAll(false);
     } catch (error) {
       setMessageType("error");
       setMessage(error.message || "Failed to send notification");
@@ -105,18 +148,33 @@ export default function AdminNotifications() {
           )}
 
           <div className="form-group">
-            <label htmlFor="userId">Recipient User ID</label>
-            <input
-              id="userId"
-              type="text"
-              name="userId"
-              value={formData.userId}
-              onChange={handleInputChange}
-              placeholder="Enter recipient user ID"
-              required
-            />
-            <small>User ID who will receive this notification</small>
+            <label>
+              <input
+                type="checkbox"
+                checked={sendToAll}
+                onChange={handleSendToAllChange}
+                style={{ marginRight: 8 }}
+              />
+              Send to All Users
+            </label>
+            <small>Check this to send notification to all active users</small>
           </div>
+
+          {!sendToAll && (
+            <div className="form-group">
+              <label htmlFor="userId">Recipient User ID</label>
+              <input
+                id="userId"
+                type="text"
+                name="userId"
+                value={formData.userId}
+                onChange={handleInputChange}
+                placeholder="Enter recipient user ID"
+                required={!sendToAll}
+              />
+              <small>User ID who will receive this notification</small>
+            </div>
+          )}
 
           <div className="form-group">
             <label htmlFor="type">Notification Type</label>
@@ -175,7 +233,13 @@ export default function AdminNotifications() {
           </div>
 
           <button type="submit" disabled={submitting} className="submit-btn">
-            {submitting ? "Sending..." : "Send Notification"}
+            {submitting
+              ? sendToAll
+                ? "Broadcasting..."
+                : "Sending..."
+              : sendToAll
+                ? "Broadcast to All Users"
+                : "Send Notification"}
           </button>
         </form>
       </div>

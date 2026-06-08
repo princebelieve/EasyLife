@@ -60,7 +60,7 @@ router.post("/", protect, async (req, res) => {
     const isSubadmin = req.user.role === "subadmin";
 
     const notification = await Notification.create({
-      userId,
+      userId: userId || undefined,
       type,
       title,
       body,
@@ -79,6 +79,61 @@ router.post("/", protect, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to create notification" });
+  }
+});
+
+// Broadcast notification to all users
+router.post("/broadcast/all", protect, async (req, res) => {
+  try {
+    const { type, title, body, link, data } = req.body;
+
+    if (req.user.role !== "admin" && req.user.role !== "subadmin") {
+      return res.status(403).json({ message: "Admin access required" });
+    }
+
+    const User = require("../models/User");
+    const isSubadmin = req.user.role === "subadmin";
+
+    // Get all active (non-deleted, non-suspended) users
+    const users = await User.find({
+      isDeleted: false,
+      isSuspended: false,
+    }).select("_id");
+
+    if (users.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "No active users to send notifications to" });
+    }
+
+    // Create individual notifications for each user
+    const notificationData = users.map((user) => ({
+      userId: user._id,
+      type,
+      title,
+      body,
+      link,
+      data,
+      senderId: req.user._id,
+      senderName: req.user.name,
+      senderRole: req.user.role,
+      status: isSubadmin ? "pending" : "approved",
+      requestedAt: isSubadmin ? Date.now() : undefined,
+      reviewedAt: isSubadmin ? undefined : Date.now(),
+      reviewedBy: isSubadmin ? undefined : req.user._id,
+      isGlobal: true,
+    }));
+
+    const notifications = await Notification.insertMany(notificationData);
+
+    res.status(isSubadmin ? 202 : 201).json({
+      message: `Notification sent to ${notifications.length} users`,
+      notificationCount: notifications.length,
+      notifications: notifications,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to broadcast notification" });
   }
 });
 

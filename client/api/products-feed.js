@@ -34,6 +34,10 @@ export default async function handler(req, res) {
       "max_handling_time",
       "min_transit_time",
       "max_transit_time",
+      "shipping_country",
+      "shipping_region",
+      "shipping_city",
+      "shipping_postal_code",
     ];
 
     let csv = csvHeaders.join(",") + "\n";
@@ -83,6 +87,10 @@ export default async function handler(req, res) {
         1,
         transitMin,
         transitMax,
+        "NG",
+        "Delta",
+        "Abraka",
+        "330106",
       ]
         .map(escapeCsvField)
         .join(",");

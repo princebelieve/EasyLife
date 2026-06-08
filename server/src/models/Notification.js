@@ -5,7 +5,7 @@ const notificationSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
     type: {
       type: String,
@@ -60,6 +60,10 @@ const notificationSchema = new mongoose.Schema(
       default: false,
     },
     archived: {
+      type: Boolean,
+      default: false,
+    },
+    isGlobal: {
       type: Boolean,
       default: false,
     },

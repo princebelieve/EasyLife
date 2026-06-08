@@ -450,6 +450,13 @@ export async function createNotification(data) {
   });
 }
 
+export async function broadcastNotification(data) {
+  return apiRequest("/api/notifications/broadcast/all", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
 export async function approveNotificationRequest(id, token) {
   return apiRequest(`/api/admin/notifications/${id}/approve`, {
     method: "PUT",

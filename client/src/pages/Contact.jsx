@@ -99,7 +99,8 @@ export default function Contact() {
                 <div>
                   <MapPin size={20} />
                   <span>
-                    Km 15, Abraka-Agbor Road, Abraka, Delta State, Nigeria
+                    No. 58, NEW SAPELE AGBOR ROAD, OPPOSITE MATRIX FILLING
+                    STATION, ABRAKA, DELTA STATE, NIGERIA
                   </span>
                 </div>
 

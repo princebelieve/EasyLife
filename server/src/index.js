@@ -232,6 +232,7 @@ app.get("/feed.xml", async (req, res) => {
       xml += `    <g:product_type>${escapeXml(product.category || "Furniture")}</g:product_type>\n`;
       xml += `    <g:shipping>\n`;
       xml += `      <g:country>NG</g:country>\n`;
+      xml += `      <g:region>Delta</g:region>\n`;
       xml += `      <g:service>Standard</g:service>\n`;
       xml += `      <g:price>${Number(defaultShippingPrice).toFixed(2)} NGN</g:price>\n`;
       xml += `      <g:min_handling_time>${defaultHandlingMinDays}</g:min_handling_time>\n`;

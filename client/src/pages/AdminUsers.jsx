@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import useAuth from "../context/AuthContext";
-import { getAdminUsers, updateAdminUser } from "../services/api";
+import {
+  getAdminUsers,
+  updateAdminUser,
+  createNotification,
+} from "../services/api";
 import { formatDate } from "../utils/formatDate";
 
 export default function AdminUsers() {
@@ -8,6 +12,11 @@ export default function AdminUsers() {
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notificationState, setNotificationState] = useState({
+    userId: null,
+    showForm: false,
+    isLoading: false,
+  });
 
   useEffect(() => {
     async function load() {
@@ -62,6 +71,53 @@ export default function AdminUsers() {
       );
     } catch (err) {
       console.error(err);
+    }
+  }
+
+  function handleSendNotification(userId) {
+    setNotificationState({
+      userId: userId,
+      showForm: true,
+      isLoading: false,
+    });
+  }
+
+  function closeSendNotification() {
+    setNotificationState({
+      userId: null,
+      showForm: false,
+      isLoading: false,
+    });
+  }
+
+  async function sendQuickNotification(e) {
+    e.preventDefault();
+    setNotificationState((prev) => ({ ...prev, isLoading: true }));
+
+    try {
+      const title = document.getElementById("notification-title")?.value;
+      const body = document.getElementById("notification-body")?.value;
+
+      if (!title || !body) {
+        alert("Please enter both title and message");
+        setNotificationState((prev) => ({ ...prev, isLoading: false }));
+        return;
+      }
+
+      await createNotification({
+        userId: notificationState.userId,
+        type: "general",
+        title,
+        body,
+        link: "",
+      });
+
+      alert("Notification sent successfully!");
+      closeSendNotification();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to send notification: " + (err.message || "Unknown error"));
+      setNotificationState((prev) => ({ ...prev, isLoading: false }));
     }
   }
 
@@ -121,9 +177,117 @@ export default function AdminUsers() {
                 >
                   {u.isDeleted ? "Restore" : "Soft Delete"}
                 </button>
+
+                <button
+                  onClick={() => handleSendNotification(u._id)}
+                  className="btn"
+                  style={{ backgroundColor: "#4CAF50" }}
+                >
+                  Send Notification
+                </button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {notificationState.showForm && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: 24,
+              borderRadius: 8,
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              width: "90%",
+              maxWidth: 400,
+            }}
+          >
+            <h2>Send Notification to User</h2>
+            <form onSubmit={sendQuickNotification}>
+              <div style={{ marginBottom: 12 }}>
+                <label htmlFor="notification-title">Title</label>
+                <input
+                  id="notification-title"
+                  type="text"
+                  placeholder="Notification title"
+                  required
+                  style={{
+                    width: "100%",
+                    padding: 8,
+                    marginTop: 4,
+                    borderRadius: 4,
+                    border: "1px solid #ccc",
+                    boxSizing: "border-box",
+                  }}
+                />
+              </div>
+              <div style={{ marginBottom: 12 }}>
+                <label htmlFor="notification-body">Message</label>
+                <textarea
+                  id="notification-body"
+                  placeholder="Notification message"
+                  required
+                  rows={4}
+                  style={{
+                    width: "100%",
+                    padding: 8,
+                    marginTop: 4,
+                    borderRadius: 4,
+                    border: "1px solid #ccc",
+                    boxSizing: "border-box",
+                    fontFamily: "inherit",
+                  }}
+                />
+              </div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  type="submit"
+                  disabled={notificationState.isLoading}
+                  style={{
+                    flex: 1,
+                    padding: 8,
+                    backgroundColor: "#4CAF50",
+                    color: "white",
+                    border: "none",
+                    borderRadius: 4,
+                    cursor: notificationState.isLoading
+                      ? "not-allowed"
+                      : "pointer",
+                  }}
+                >
+                  {notificationState.isLoading ? "Sending..." : "Send"}
+                </button>
+                <button
+                  type="button"
+                  onClick={closeSendNotification}
+                  style={{
+                    flex: 1,
+                    padding: 8,
+                    backgroundColor: "#ccc",
+                    border: "none",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
