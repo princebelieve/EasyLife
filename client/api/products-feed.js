@@ -1,8 +1,11 @@
 export default async function handler(req, res) {
   const backendUrl =
     process.env.VITE_API_URL || process.env.BASE_URL || "http://localhost:4000";
+  const host = req.headers.host;
+  const protocol = req.headers["x-forwarded-proto"] || "https";
   const clientUrl =
-    process.env.CLIENT_URL || "http://localhost:5173";
+    process.env.CLIENT_URL ||
+    (host ? `${protocol}://${host}` : "http://localhost:5173");
   const apiUrl = `${backendUrl}/api/products`;
 
   try {
@@ -27,6 +30,10 @@ export default async function handler(req, res) {
       "brand",
       "sku",
       "condition",
+      "min_handling_time",
+      "max_handling_time",
+      "min_transit_time",
+      "max_transit_time",
     ];
 
     let csv = csvHeaders.join(",") + "\n";
@@ -45,6 +52,20 @@ export default async function handler(req, res) {
         return stringField;
       };
 
+      // derive transit times from product.deliveryEstimate (e.g. "7-14 days")
+      let transitMin = 0;
+      let transitMax = 1;
+      try {
+        const de = (product.deliveryEstimate || "").toString();
+        const m = de.match(/(\d+)\s*-\s*(\d+)/);
+        if (m) {
+          transitMin = Number(m[1]);
+          transitMax = Number(m[2]);
+        }
+      } catch {
+        // ignore
+      }
+
       const row = [
         product._id || product.sku,
         product.name,
@@ -54,10 +75,14 @@ export default async function handler(req, res) {
         product.price,
         "", // sale_price (optional)
         "NGN",
-        product.inStock && product.stock > 0 ? "in stock" : "out of stock",
+        product.inStock && product.stock > 0 ? "in_stock" : "out_of_stock",
         product.brand || "Newbrend Furniture",
         product.sku,
         "new",
+        0,
+        1,
+        transitMin,
+        transitMax,
       ]
         .map(escapeCsvField)
         .join(",");

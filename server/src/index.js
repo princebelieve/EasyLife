@@ -57,8 +57,12 @@ app.get("/sitemap.xml", async (req, res) => {
       "_id updatedAt",
     );
 
+    const host = req.headers.host;
+    const protocol = req.headers["x-forwarded-proto"] || "https";
     const baseUrl =
-      process.env.CLIENT_URL || process.env.BASE_URL || "http://localhost:5173";
+      process.env.CLIENT_URL ||
+      process.env.BASE_URL ||
+      (host ? `${protocol}://${host}` : "http://localhost:5173");
 
     // Determine a default shipping price (lowest active baseDeliveryFee) to include in the feed.
     // Merchant Center accepts product-level <g:shipping> entries; providing a conservative
@@ -189,13 +193,30 @@ app.get("/feed.xml", async (req, res) => {
     xml += `  <author><name>Newbrend Furniture</name></author>\n`;
 
     products.forEach((product) => {
+      // Availability: use Google canonical values
       const availability =
         product.inStock === false || Number(product.stock || 0) <= 0
-          ? "out of stock"
-          : "in stock";
+          ? "out_of_stock"
+          : "in_stock";
+
       const itemId = product.sku || product._id;
       const description =
         product.fullDescription || product.shortDescription || product.name;
+
+      // Derive per-product transit times from `deliveryEstimate` when available
+      // Expect formats like "7-14 days" or "3 - 5 days"
+      let productTransitMin = defaultTransitMinDays;
+      let productTransitMax = defaultTransitMaxDays;
+      try {
+        const de = (product.deliveryEstimate || "").toString();
+        const m = de.match(/(\d+)\s*-\s*(\d+)/);
+        if (m) {
+          productTransitMin = Number(m[1]);
+          productTransitMax = Number(m[2]);
+        }
+      } catch (e) {
+        // fallback to defaults
+      }
 
       xml += "  <entry>\n";
       xml += `    <id>${baseUrl}/product/${product._id}</id>\n`;
@@ -215,8 +236,8 @@ app.get("/feed.xml", async (req, res) => {
       xml += `      <g:price>${Number(defaultShippingPrice).toFixed(2)} NGN</g:price>\n`;
       xml += `      <g:min_handling_time>${defaultHandlingMinDays}</g:min_handling_time>\n`;
       xml += `      <g:max_handling_time>${defaultHandlingMaxDays}</g:max_handling_time>\n`;
-      xml += `      <g:min_transit_time>${defaultTransitMinDays}</g:min_transit_time>\n`;
-      xml += `      <g:max_transit_time>${defaultTransitMaxDays}</g:max_transit_time>\n`;
+      xml += `      <g:min_transit_time>${productTransitMin}</g:min_transit_time>\n`;
+      xml += `      <g:max_transit_time>${productTransitMax}</g:max_transit_time>\n`;
       xml += `    </g:shipping>\n`;
       xml += "  </entry>\n";
     });
