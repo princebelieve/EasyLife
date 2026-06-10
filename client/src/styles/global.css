@@ -1,6 +1,6 @@
 :root {
-  --navy: #1f3556;
-  --navy-light: #2d4a73;
+  --navy: #7c4a20;
+  --navy-light: #b07a4f;
   --brown: #7c4a20;
   --brown-light: #b07a4f;
   --gold: #c9a24a;
@@ -228,7 +228,7 @@ button {
   left: 20px;
   right: 20px;
   z-index: 1100;
-  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  background: linear-gradient(135deg, var(--brown) 0%, var(--brown-light) 100%);
   border-radius: 16px;
   padding: 16px 20px;
   display: flex;
@@ -286,7 +286,7 @@ button {
 
 .pwa-btn-enable {
   background: var(--gold);
-  color: var(--navy);
+  color: var(--brown);
   border: none;
   border-radius: 12px;
   padding: 8px 16px;

@@ -4,8 +4,8 @@
 
 body {
   margin: 0;
-  background: #edf2f7;
-  color: #1b2a41;
+  background: #f4ead4;
+  color: var(--text);
 }
 
 #root {
