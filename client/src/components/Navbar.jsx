@@ -23,6 +23,7 @@ export default function Navbar() {
   const buttonRef = useRef(null);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [isMobileScreen, setIsMobileScreen] = useState(false);
 
   // Detect PWA installability and iOS state
   useEffect(() => {
@@ -50,6 +51,19 @@ export default function Navbar() {
       window.removeEventListener("beforeinstallprompt", handler);
       window.removeEventListener("appinstalled", installedHandler);
     };
+  }, []);
+
+  useEffect(() => {
+    const updateMobile = () => {
+      if (window.matchMedia) {
+        setIsMobileScreen(window.matchMedia("(max-width: 900px)").matches);
+      }
+    };
+
+    updateMobile();
+    window.addEventListener("resize", updateMobile);
+
+    return () => window.removeEventListener("resize", updateMobile);
   }, []);
 
   useClickOutside([menuRef, buttonRef], () => setOpen(false), open);

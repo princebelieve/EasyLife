@@ -49,7 +49,7 @@ export default function FurnitureInquiryForm() {
         <h2>Start Your Furniture Project</h2>
         <p>
           Tell us about your vision and we'll help bring it to life with premium
-          furniture and custom design solutions.
+          furniture and custom design solutions for Nigerian homes.
         </p>
       </div>
 
@@ -118,11 +118,11 @@ export default function FurnitureInquiryForm() {
           <div className="two-col">
             <select name="budget" value={form.budget} onChange={handleChange}>
               <option value="">Budget Range (Optional)</option>
-              <option value="under-1000">Under £1,000</option>
-              <option value="1000-5000">£1,000 - £5,000</option>
-              <option value="5000-15000">£5,000 - £15,000</option>
-              <option value="15000-30000">£15,000 - £30,000</option>
-              <option value="over-30000">Over £30,000</option>
+              <option value="under-100000">Under ₦100,000</option>
+              <option value="100000-500000">₦100,000 - ₦500,000</option>
+              <option value="500000-1500000">₦500,000 - ₦1,500,000</option>
+              <option value="1500000-3000000">₦1,500,000 - ₦3,000,000</option>
+              <option value="over-3000000">Over ₦3,000,000</option>
             </select>
 
             <select

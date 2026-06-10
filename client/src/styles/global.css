@@ -320,6 +320,21 @@ button {
   opacity: 1;
 }
 
+.install-btn {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.install-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
 @media (max-width: 480px) {
   .pwa-notification-banner {
     bottom: 16px;
@@ -338,59 +353,44 @@ button {
     flex-direction: row-reverse;
   }
 
-
-  /* PWA install banner styles */
-  .pwa-install-banner {
-    position: fixed;
-    left: 20px;
-    right: 20px;
-    bottom: 20px;
-    z-index: 1200;
-    background: linear-gradient(135deg, var(--brown) 0%, var(--brown-light) 100%);
-    color: white;
-    border-radius: 16px;
-    padding: 12px 16px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-
-  .pwa-install-banner .pwa-banner-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1
-  }
-
-  .pwa-install-banner .pwa-banner-icon {
-    color: var(--gold);
-  }
-
-  .pwa-install-banner .pwa-banner-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center
-  }
-
-  .install-btn {
-    background: transparent;
-    border: none;
-    color: var(--text);
-    display: inline-flex;
-    align-items: center;
-    padding: 8px;
-    border-radius: 8px
-  }
-
-  .install-btn:hover {
-    background: rgba(0, 0, 0, 0.04)
-  }
-
   .pwa-btn-enable {
     flex: 1;
   }
+}
+
+/* PWA install banner styles */
+.pwa-install-banner {
+  position: fixed;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1200;
+  background: linear-gradient(135deg, var(--brown) 0%, var(--brown-light) 100%);
+  color: white;
+  border-radius: 16px;
+  padding: 12px 16px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pwa-install-banner .pwa-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1
+}
+
+.pwa-install-banner .pwa-banner-icon {
+  color: var(--gold);
+}
+
+.pwa-install-banner .pwa-banner-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center
 }
 
 /* ================= NAVBAR ================= */
