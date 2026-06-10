@@ -122,6 +122,16 @@ export async function loginUser(data) {
   });
 }
 
+export async function signInWithGoogle(idToken) {
+  return apiRequest("/api/auth/google", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ idToken }),
+  });
+}
+
 // -------------------------
 // PASSWORD RESET
 // -------------------------

@@ -1,6 +1,7 @@
 //server/src/controllers/auth.controller.js
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+const { google } = require("googleapis");
 const User = require("../models/User");
 const {
   generateAccessToken,
@@ -137,6 +138,75 @@ const loginUser = async (req, res) => {
 
     res.status(500).json({
       message: "Something went wrong. Please try again.",
+    });
+  }
+};
+
+const googleSignIn = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+
+    if (!idToken) {
+      return res.status(400).json({ message: "Google token is required." });
+    }
+
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      return res
+        .status(500)
+        .json({ message: "Google sign-in is not configured on the server." });
+    }
+
+    const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID);
+    const ticket = await oauth2Client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+
+    if (!payload?.email_verified) {
+      return res
+        .status(400)
+        .json({ message: "Please use a verified Google account." });
+    }
+
+    const normalizedEmail = String(payload.email || "").toLowerCase();
+    let user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      const password = crypto.randomBytes(32).toString("hex");
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      user = await User.create({
+        name: payload.name || normalizedEmail,
+        email: normalizedEmail,
+        password: hashedPassword,
+        role: adminEmails.includes(normalizedEmail) ? "admin" : "user",
+        emailVerified: true,
+      });
+    }
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    await RefreshToken.create({
+      user: user._id,
+      token: refreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    res.json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      accessToken,
+      refreshToken,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: err?.message || "Google sign-in failed. Please try again.",
     });
   }
 };
@@ -446,6 +516,7 @@ const changePassword = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  googleSignIn,
   refreshToken,
   forgotPassword,
   resetPassword,

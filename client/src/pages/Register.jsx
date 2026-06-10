@@ -3,7 +3,9 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { registerUser } from "../services/api";
+import GoogleSignInButton from "../components/GoogleSignInButton";
+import { registerUser, signInWithGoogle } from "../services/api";
+import useAuth from "../context/AuthContext";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -12,6 +14,7 @@ export default function Register() {
     password: "",
     confirmPassword: "",
   });
+  const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -45,6 +48,40 @@ export default function Register() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleGoogleSuccess = async (idToken) => {
+    try {
+      setSubmitting(true);
+      const res = await signInWithGoogle(idToken);
+
+      if (!res.accessToken || !res.refreshToken) {
+        alert(res.message || "Google sign-in failed.");
+        return;
+      }
+
+      await login(res.accessToken, res.refreshToken);
+      const payload = JSON.parse(atob(res.accessToken.split(".")[1]));
+
+      if (payload.role === "admin") {
+        navigate("/admin/products");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (err) {
+      console.error(err);
+      alert(
+        err?.message ||
+          "Unable to create account with Google. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleGoogleError = (message) => {
+    console.error(message);
+    alert(message || "Google sign-in is unavailable.");
   };
 
   return (
@@ -163,6 +200,23 @@ export default function Register() {
             >
               {submitting ? "Creating account..." : "Create Account"}
             </button>
+
+            <div
+              style={{
+                width: "100%",
+                marginTop: 8,
+                textAlign: "center",
+                color: "#555",
+              }}
+            >
+              or
+            </div>
+
+            <GoogleSignInButton
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+            />
+
             <p style={{ marginTop: 12, fontSize: 14, color: "#666" }}>
               By creating an account, you agree to our{" "}
               <Link to="/privacy-policy" style={{ color: "var(--gold)" }}>

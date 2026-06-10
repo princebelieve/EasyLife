@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { loginUser } from "../services/api";
+import GoogleSignInButton from "../components/GoogleSignInButton";
+import { loginUser, signInWithGoogle } from "../services/api";
 import useAuth from "../context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -60,6 +61,37 @@ export default function Login() {
     }
   }
 
+  const handleGoogleSuccess = async (idToken) => {
+    try {
+      setSubmitting(true);
+      const res = await signInWithGoogle(idToken);
+
+      if (!res.accessToken || !res.refreshToken) {
+        alert(res.message || "Google sign-in failed.");
+        return;
+      }
+
+      await login(res.accessToken, res.refreshToken);
+      const payload = JSON.parse(atob(res.accessToken.split(".")[1]));
+
+      if (payload.role === "admin") {
+        navigate("/admin/products");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error(error);
+      alert(error?.message || "Unable to login with Google. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleGoogleError = (message) => {
+    console.error(message);
+    alert(message || "Google sign-in is unavailable.");
+  };
+
   return (
     <>
       <Navbar />
@@ -101,6 +133,22 @@ export default function Login() {
             <button type="submit" className="btn-primary" disabled={submitting}>
               {submitting ? "Signing in..." : "Sign In"}
             </button>
+
+            <div
+              style={{
+                width: "100%",
+                marginTop: 8,
+                textAlign: "center",
+                color: "#555",
+              }}
+            >
+              or
+            </div>
+
+            <GoogleSignInButton
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+            />
           </div>
         </form>
 

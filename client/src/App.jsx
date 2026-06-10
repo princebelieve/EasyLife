@@ -1,5 +1,6 @@
 //client/src/App.jsx
 import { Routes, Route } from "react-router-dom";
+import { Suspense, lazy } from "react";
 
 import { CartProvider } from "./context/CartContext";
 import { NotificationProvider } from "./context/NotificationContext";
@@ -42,10 +43,12 @@ import Notifications from "./pages/Notifications";
 import AdminNotifications from "./pages/AdminNotifications";
 import PwaNotificationBanner from "./components/PwaNotificationBanner";
 import PwaInstallBanner from "./components/PwaInstallBanner";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import RefundPolicy from "./pages/RefundPolicy";
-import TermsConditions from "./pages/TermsConditions";
-import PwaInstallInstructions from "./pages/PwaInstallInstructions";
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
+const TermsConditions = lazy(() => import("./pages/TermsConditions"));
+const PwaInstallInstructions = lazy(
+  () => import("./pages/PwaInstallInstructions"),
+);
 
 export default function App() {
   return (
@@ -53,228 +56,230 @@ export default function App() {
       <NotificationProvider>
         <PwaNotificationBanner />
         <PwaInstallBanner />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/collection" element={<Collection />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/collection" element={<Collection />} />
+            <Route path="/product/:id" element={<ProductDetails />} />
 
-          <Route path="/cart" element={<Cart />} />
-          <Route
-            path="/checkout"
-            element={
-              <RequireAuth>
-                <Checkout />
-              </RequireAuth>
-            }
-          />
+            <Route path="/cart" element={<Cart />} />
+            <Route
+              path="/checkout"
+              element={
+                <RequireAuth>
+                  <Checkout />
+                </RequireAuth>
+              }
+            />
 
-          <Route
-            path="/dashboard"
-            element={
-              <RequireAuth>
-                <Dashboard />
-              </RequireAuth>
-            }
-          />
+            <Route
+              path="/dashboard"
+              element={
+                <RequireAuth>
+                  <Dashboard />
+                </RequireAuth>
+              }
+            />
 
-          <Route
-            path="/profile"
-            element={
-              <RequireAuth>
-                <Profile />
-              </RequireAuth>
-            }
-          />
+            <Route
+              path="/profile"
+              element={
+                <RequireAuth>
+                  <Profile />
+                </RequireAuth>
+              }
+            />
 
-          <Route
-            path="/profile/edit"
-            element={
-              <RequireAuth>
-                <EditProfile />
-              </RequireAuth>
-            }
-          />
+            <Route
+              path="/profile/edit"
+              element={
+                <RequireAuth>
+                  <EditProfile />
+                </RequireAuth>
+              }
+            />
 
-          <Route
-            path="/notifications"
-            element={
-              <RequireAuth>
-                <Notifications />
-              </RequireAuth>
-            }
-          />
+            <Route
+              path="/notifications"
+              element={
+                <RequireAuth>
+                  <Notifications />
+                </RequireAuth>
+              }
+            />
 
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/success" element={<Success />} />
-          <Route path="/cancel" element={<Cancel />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/success" element={<Success />} />
+            <Route path="/cancel" element={<Cancel />} />
 
-          {/* AUTH */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/verify-email" element={<VerifyEmail />} />
+            {/* AUTH */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
 
-          {/* ADMIN */}
-          <Route
-            path="/admin"
-            element={
-              <RequireAdmin>
-                <AdminLayout>
-                  <AdminDashboard />
-                </AdminLayout>
-              </RequireAdmin>
-            }
-          />
+            {/* ADMIN */}
+            <Route
+              path="/admin"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminDashboard />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
 
-          <Route
-            path="/admin/products"
-            element={
-              <RequireAdminOrSubadmin>
-                <AdminLayout>
-                  <AdminProducts />
-                </AdminLayout>
-              </RequireAdminOrSubadmin>
-            }
-          />
+            <Route
+              path="/admin/products"
+              element={
+                <RequireAdminOrSubadmin>
+                  <AdminLayout>
+                    <AdminProducts />
+                  </AdminLayout>
+                </RequireAdminOrSubadmin>
+              }
+            />
 
-          <Route
-            path="/admin/products/new"
-            element={
-              <RequireAdminOrSubadmin>
-                <AdminLayout>
-                  <AdminProductForm />
-                </AdminLayout>
-              </RequireAdminOrSubadmin>
-            }
-          />
+            <Route
+              path="/admin/products/new"
+              element={
+                <RequireAdminOrSubadmin>
+                  <AdminLayout>
+                    <AdminProductForm />
+                  </AdminLayout>
+                </RequireAdminOrSubadmin>
+              }
+            />
 
-          <Route
-            path="/admin/products/edit/:id"
-            element={
-              <RequireAdmin>
-                <AdminLayout>
-                  <AdminProductForm />
-                </AdminLayout>
-              </RequireAdmin>
-            }
-          />
+            <Route
+              path="/admin/products/edit/:id"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminProductForm />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
 
-          <Route
-            path="/admin/orders"
-            element={
-              <RequireAdmin>
-                <AdminLayout>
-                  <AdminOrders />
-                </AdminLayout>
-              </RequireAdmin>
-            }
-          />
+            <Route
+              path="/admin/orders"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminOrders />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
 
-          <Route
-            path="/admin/orders/:id"
-            element={
-              <RequireAdmin>
-                <AdminLayout>
-                  <AdminOrderDetails />
-                </AdminLayout>
-              </RequireAdmin>
-            }
-          />
+            <Route
+              path="/admin/orders/:id"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminOrderDetails />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
 
-          <Route
-            path="/admin/sales"
-            element={
-              <RequireAdmin>
-                <AdminLayout>
-                  <AdminSales />
-                </AdminLayout>
-              </RequireAdmin>
-            }
-          />
+            <Route
+              path="/admin/sales"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminSales />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
 
-          <Route
-            path="/admin/stock"
-            element={
-              <RequireAdmin>
-                <AdminLayout>
-                  <AdminStockAlerts />
-                </AdminLayout>
-              </RequireAdmin>
-            }
-          />
+            <Route
+              path="/admin/stock"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminStockAlerts />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
 
-          <Route
-            path="/admin/delivery"
-            element={
-              <RequireAdmin>
-                <AdminLayout>
-                  <AdminDeliveryBoard />
-                </AdminLayout>
-              </RequireAdmin>
-            }
-          />
-          <Route
-            path="/admin/shipping"
-            element={
-              <RequireAdmin>
-                <AdminLayout>
-                  <AdminShipping />
-                </AdminLayout>
-              </RequireAdmin>
-            }
-          />
-          <Route
-            path="/admin/inquiries"
-            element={
-              <RequireAdmin>
-                <AdminLayout>
-                  <AdminInquiries />
-                </AdminLayout>
-              </RequireAdmin>
-            }
-          />
-          <Route
-            path="/admin/users"
-            element={
-              <RequireAdmin>
-                <AdminLayout>
-                  <AdminUsers />
-                </AdminLayout>
-              </RequireAdmin>
-            }
-          />
-          <Route
-            path="/admin/users"
-            element={
-              <RequireAdmin>
-                <AdminLayout>
-                  <AdminUsers />
-                </AdminLayout>
-              </RequireAdmin>
-            }
-          />
-          <Route
-            path="/admin/send-notification"
-            element={
-              <RequireAdminOrSubadmin>
-                <AdminLayout>
-                  <AdminNotifications />
-                </AdminLayout>
-              </RequireAdminOrSubadmin>
-            }
-          />
+            <Route
+              path="/admin/delivery"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminDeliveryBoard />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/shipping"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminShipping />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/inquiries"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminInquiries />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminUsers />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminUsers />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
+            <Route
+              path="/admin/send-notification"
+              element={
+                <RequireAdminOrSubadmin>
+                  <AdminLayout>
+                    <AdminNotifications />
+                  </AdminLayout>
+                </RequireAdminOrSubadmin>
+              }
+            />
 
-          {/* POLICIES */}
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/refund-policy" element={<RefundPolicy />} />
-          <Route path="/terms-conditions" element={<TermsConditions />} />
-          <Route
-            path="/install-instructions"
-            element={<PwaInstallInstructions />}
-          />
-        </Routes>
+            {/* POLICIES */}
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
+            <Route path="/terms-conditions" element={<TermsConditions />} />
+            <Route
+              path="/install-instructions"
+              element={<PwaInstallInstructions />}
+            />
+          </Routes>
+        </Suspense>
       </NotificationProvider>
     </CartProvider>
   );

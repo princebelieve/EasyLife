@@ -162,39 +162,37 @@ export default function Navbar() {
           />
         )}
         {/* PWA install icon (mobile only, only when not installed) */}
-        {typeof window !== "undefined" &&
-          window.matchMedia &&
-          window.matchMedia("(max-width:900px)").matches &&
-          !isInstalled && (
-            <button
-              type="button"
-              className="install-btn"
-              onClick={async () => {
-                // iOS fallback
-                const isiOS =
-                  /iphone|ipad|ipod/i.test(navigator.userAgent) &&
-                  !window.navigator.standalone;
-                if (isiOS) {
-                  navigate("/install-instructions");
-                  return;
-                }
+        {isMobileScreen && !isInstalled && (
+          <button
+            type="button"
+            className="install-btn"
+            onClick={async () => {
+              const isiOS =
+                /iphone|ipad|ipod/i.test(navigator.userAgent) &&
+                !window.navigator.standalone;
+              if (isiOS) {
+                navigate("/install-instructions");
+                return;
+              }
 
-                if (deferredPrompt) {
-                  deferredPrompt.prompt();
-                  const choice = await deferredPrompt.userChoice;
-                  if (choice && choice.outcome === "accepted") {
-                    setDeferredPrompt(null);
-                    window.__deferredPrompt = null;
-                    setIsInstalled(true);
-                  }
+              if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const choice = await deferredPrompt.userChoice;
+                if (choice && choice.outcome === "accepted") {
+                  setDeferredPrompt(null);
+                  window.__deferredPrompt = null;
+                  setIsInstalled(true);
                 }
-              }}
-              aria-label="Install app"
-              title="Install NewBrend App"
-            >
-              <Download size={20} />
-            </button>
-          )}
+              } else {
+                navigate("/install-instructions");
+              }
+            }}
+            aria-label="Install app"
+            title="Install NewBrend App"
+          >
+            <Download size={20} />
+          </button>
+        )}
       </div>
 
       <button

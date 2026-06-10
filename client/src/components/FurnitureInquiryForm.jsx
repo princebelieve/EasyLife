@@ -49,7 +49,7 @@ export default function FurnitureInquiryForm() {
         <h2>Start Your Furniture Project</h2>
         <p>
           Tell us about your vision and we'll help bring it to life with premium
-          furniture and custom design solutions for Nigerian homes.
+          furniture and custom design solutions for every home.
         </p>
       </div>
 
