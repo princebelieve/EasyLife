@@ -41,15 +41,18 @@ import EditProfile from "./pages/EditProfile";
 import Notifications from "./pages/Notifications";
 import AdminNotifications from "./pages/AdminNotifications";
 import PwaNotificationBanner from "./components/PwaNotificationBanner";
+import PwaInstallBanner from "./components/PwaInstallBanner";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import TermsConditions from "./pages/TermsConditions";
+import PwaInstallInstructions from "./pages/PwaInstallInstructions";
 
 export default function App() {
   return (
     <CartProvider>
       <NotificationProvider>
         <PwaNotificationBanner />
+        <PwaInstallBanner />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/collection" element={<Collection />} />
@@ -267,6 +270,10 @@ export default function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/refund-policy" element={<RefundPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
+          <Route
+            path="/install-instructions"
+            element={<PwaInstallInstructions />}
+          />
         </Routes>
       </NotificationProvider>
     </CartProvider>

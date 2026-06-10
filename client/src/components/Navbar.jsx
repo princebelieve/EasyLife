@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { Download } from "lucide-react";
 import useAuth from "../context/AuthContext";
 import useClickOutside from "../hooks/useClickOutside";
 import { useCart } from "../context/CartContext";
@@ -20,6 +21,36 @@ export default function Navbar() {
 
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isInstalled, setIsInstalled] = useState(false);
+
+  // Detect PWA installability and iOS state
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      // store globally so other components can read it
+      window.__deferredPrompt = e;
+    };
+
+    const installedHandler = () => setIsInstalled(true);
+
+    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", installedHandler);
+
+    // detect standalone (iOS added to home screen)
+    if (
+      window.matchMedia &&
+      window.matchMedia("(display-mode: standalone)").matches
+    ) {
+      setIsInstalled(true);
+    }
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+      window.removeEventListener("appinstalled", installedHandler);
+    };
+  }, []);
 
   useClickOutside([menuRef, buttonRef], () => setOpen(false), open);
 
@@ -116,6 +147,40 @@ export default function Navbar() {
             onClick={() => navigate("/notifications")}
           />
         )}
+        {/* PWA install icon (mobile only, only when not installed) */}
+        {typeof window !== "undefined" &&
+          window.matchMedia &&
+          window.matchMedia("(max-width:900px)").matches &&
+          !isInstalled && (
+            <button
+              type="button"
+              className="install-btn"
+              onClick={async () => {
+                // iOS fallback
+                const isiOS =
+                  /iphone|ipad|ipod/i.test(navigator.userAgent) &&
+                  !window.navigator.standalone;
+                if (isiOS) {
+                  navigate("/install-instructions");
+                  return;
+                }
+
+                if (deferredPrompt) {
+                  deferredPrompt.prompt();
+                  const choice = await deferredPrompt.userChoice;
+                  if (choice && choice.outcome === "accepted") {
+                    setDeferredPrompt(null);
+                    window.__deferredPrompt = null;
+                    setIsInstalled(true);
+                  }
+                }
+              }}
+              aria-label="Install app"
+              title="Install NewBrend App"
+            >
+              <Download size={20} />
+            </button>
+          )}
       </div>
 
       <button
