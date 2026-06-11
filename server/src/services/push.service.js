@@ -35,6 +35,7 @@ if (isVapidConfigured()) {
  * @param {string} payload.body - Notification body
  * @param {string} [payload.icon] - Icon URL
  * @param {string} [payload.badge] - Badge URL
+ * @param {number} [payload.badgeCount] - Unread badge count for the app icon
  * @param {string} [payload.link] - Link to navigate to
  * @param {Object} [payload.data] - Additional data
  * @returns {Promise<Object>} Result with success/failure counts
@@ -58,6 +59,7 @@ async function sendPushToUser(userId, payload) {
       badge: payload.badge || "/logo.jpeg",
       data: {
         link: payload.link || "/notifications",
+        badgeCount: payload.badgeCount,
         ...payload.data,
       },
     };

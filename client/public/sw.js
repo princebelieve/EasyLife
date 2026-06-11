@@ -42,6 +42,20 @@ self.addEventListener("push", (event) => {
         options,
       ),
     );
+
+    if (typeof data.data?.badgeCount === "number") {
+      event.waitUntil(
+        (async () => {
+          if (self.registration && "setAppBadge" in self.registration) {
+            if (data.data.badgeCount > 0) {
+              await self.registration.setAppBadge(data.data.badgeCount);
+            } else if ("clearAppBadge" in self.registration) {
+              await self.registration.clearAppBadge();
+            }
+          }
+        })(),
+      );
+    }
   } catch (error) {
     console.error("Error handling push event:", error);
   }

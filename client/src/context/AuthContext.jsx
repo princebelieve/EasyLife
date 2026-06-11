@@ -1,4 +1,5 @@
 //client/src/context/AuthContext.jsx
+/* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
   useContext,
@@ -10,6 +11,7 @@ import {
 
 import { getProfile } from "../services/api";
 import { setRefreshToken } from "../utils/auth";
+import { ensurePushSubscription } from "../registerServiceWorker";
 
 const AuthContext = createContext(null);
 
@@ -38,6 +40,8 @@ export function AuthProvider({ children }) {
   }, []);
 
   const hydrateUser = useCallback(async () => {
+    const fallbackToken = localStorage.getItem("accessToken");
+
     try {
       const profile = await getProfile();
 
@@ -46,7 +50,19 @@ export function AuthProvider({ children }) {
     } catch (error) {
       console.error(error);
 
-      logout();
+      if (!localStorage.getItem("accessToken")) {
+        logout();
+        return;
+      }
+
+      const parsedUser = fallbackToken ? parseToken(fallbackToken) : null;
+
+      if (parsedUser) {
+        setUser(parsedUser);
+        setTokenState(fallbackToken);
+      } else {
+        logout();
+      }
     }
   }, [logout]);
 
@@ -62,8 +78,11 @@ export function AuthProvider({ children }) {
       }
 
       setTokenState(newToken);
+      setUser(parsedUser);
 
       await hydrateUser();
+
+      ensurePushSubscription();
     },
     [logout, hydrateUser],
   );
@@ -94,6 +113,16 @@ export function AuthProvider({ children }) {
       }
       setTokenState(storedToken);
 
+      const parsedUser = parseToken(storedToken);
+
+      if (parsedUser) {
+        setUser(parsedUser);
+      } else {
+        logout();
+        setLoading(false);
+        return;
+      }
+
       await hydrateUser();
 
       setLoading(false);
@@ -116,7 +145,7 @@ export function AuthProvider({ children }) {
 
       loading,
 
-      isLoggedIn: !!user,
+      isLoggedIn: !!token,
 
       isAdmin: user?.role === "admin",
 

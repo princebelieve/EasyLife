@@ -69,6 +69,19 @@ async function subscribeToPush(registration) {
   }
 }
 
+export async function ensurePushSubscription() {
+  if (!("serviceWorker" in navigator)) {
+    return;
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    await subscribeToPush(registration);
+  } catch (error) {
+    console.warn("Failed to ensure push subscription:", error);
+  }
+}
+
 /**
  * Convert VAPID public key from base64 to Uint8Array
  */

@@ -9,6 +9,7 @@ const User = require("../models/User");
 const Cart = require("../models/Cart");
 const {
   createNotification,
+  countUnreadNotifications,
   notifyAdmins,
 } = require("../services/notification.service");
 const {
@@ -122,10 +123,13 @@ router.post("/", async (req, res) => {
 
       // Send push notification for payment confirmation
       if (paymentNotif) {
+        const unreadCount = await countUnreadNotifications(order.userId);
+
         await sendPushToUser(order.userId, {
           title: "Payment Confirmed",
           body: `Payment for order #${order._id.toString().slice(-6).toUpperCase()} confirmed. Processing order.`,
           link: `/dashboard`,
+          badgeCount: unreadCount,
           data: { orderId: order._id },
         }).catch((err) => {
           console.warn("Push notification failed (non-critical):", err);

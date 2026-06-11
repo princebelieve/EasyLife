@@ -4,7 +4,10 @@ const router = express.Router();
 
 const Order = require("../models/Order");
 const { protect, adminOnly } = require("../middleware/auth");
-const { createNotification } = require("../services/notification.service");
+const {
+  createNotification,
+  countUnreadNotifications,
+} = require("../services/notification.service");
 const { sendPushToUser } = require("../services/push.service");
 
 // GET ALL ORDERS OR ARCHIVED ORDERS
@@ -92,10 +95,13 @@ router.put("/:id/status", protect, adminOnly, async (req, res) => {
 
     // Send push notification for delivery status update
     if (orderNotif) {
+      const unreadCount = await countUnreadNotifications(order.userId);
+
       await sendPushToUser(order.userId, {
         title: `Order ${deliveryStatus.charAt(0).toUpperCase() + deliveryStatus.slice(1)}`,
         body: statusMessages[deliveryStatus],
         link: `/dashboard`,
+        badgeCount: unreadCount,
         data: { orderId: order._id },
       }).catch((err) => {
         console.warn("Push notification failed (non-critical):", err);
@@ -127,10 +133,13 @@ router.put("/:id/archive", protect, adminOnly, async (req, res) => {
 
   // Send push notification for order archival
   if (archiveNotif) {
+    const unreadCount = await countUnreadNotifications(order.userId);
+
     await sendPushToUser(order.userId, {
       title: "Order Archived",
       body: `Order #${order._id.toString().slice(-6).toUpperCase()} has been archived.`,
       link: `/dashboard`,
+      badgeCount: unreadCount,
       data: { orderId: order._id },
     }).catch((err) => {
       console.warn("Push notification failed (non-critical):", err);

@@ -8,7 +8,10 @@ const Product = require("../models/Product");
 const paystack = require("../services/paystack");
 const { protect } = require("../middleware/auth");
 const { calculateShipping } = require("../config/shipping");
-const { createNotification } = require("../services/notification.service");
+const {
+  createNotification,
+  countUnreadNotifications,
+} = require("../services/notification.service");
 const { sendPushToUser } = require("../services/push.service");
 
 router.post("/", protect, async (req, res) => {
@@ -131,10 +134,13 @@ router.post("/", protect, async (req, res) => {
 
     // Send push notification if subscribed
     if (orderNotif) {
+      const unreadCount = await countUnreadNotifications(userId);
+
       await sendPushToUser(userId, {
         title: "Order Placed",
         body: `Your order #${order._id.toString().slice(-6).toUpperCase()} has been placed.`,
         link: `/dashboard`,
+        badgeCount: unreadCount,
         data: { orderId: order._id },
       }).catch((err) => {
         console.warn("Push notification failed (non-critical):", err);

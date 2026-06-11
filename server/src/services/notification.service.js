@@ -44,6 +44,28 @@ async function createNotification(payload) {
 }
 
 /**
+ * Count unread approved notifications for a user
+ * @param {string} userId - User ID
+ * @returns {Promise<number>} Unread notification count
+ */
+async function countUnreadNotifications(userId) {
+  try {
+    if (!userId) {
+      return 0;
+    }
+
+    return await Notification.countDocuments({
+      userId,
+      status: "approved",
+      read: false,
+    });
+  } catch (error) {
+    console.error("Error counting unread notifications:", error);
+    return 0;
+  }
+}
+
+/**
  * Create notifications for multiple users
  * @param {Array<string>} userIds - Array of user IDs
  * @param {Object} notificationPayload - Notification data (without userId)
@@ -84,6 +106,7 @@ async function notifyAdmins(notificationPayload, adminIds) {
 
 module.exports = {
   createNotification,
+  countUnreadNotifications,
   createNotificationsForUsers,
   notifyAdmins,
 };
