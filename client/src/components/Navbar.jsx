@@ -170,6 +170,7 @@ export default function Navbar() {
               const isiOS =
                 /iphone|ipad|ipod/i.test(navigator.userAgent) &&
                 !window.navigator.standalone;
+
               if (isiOS) {
                 navigate("/install-instructions");
                 return;
@@ -183,8 +184,13 @@ export default function Navbar() {
                   window.__deferredPrompt = null;
                   setIsInstalled(true);
                 }
-              } else {
-                navigate("/install-instructions");
+                return;
+              }
+
+              if (typeof window !== "undefined") {
+                window.alert(
+                  "Open this page in Chrome and tap the menu (⋮) → Add to Home screen to install the app.",
+                );
               }
             }}
             aria-label="Install app"

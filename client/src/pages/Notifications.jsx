@@ -20,6 +20,16 @@ export default function Notifications() {
     }
   }, [isLoggedIn, navigate]);
 
+  const handleOpenNotification = async (notification) => {
+    if (notification.link) {
+      navigate(notification.link);
+    }
+
+    if (!notification.read) {
+      await markNotificationRead(notification._id);
+    }
+  };
+
   return (
     <div className="notifications-page">
       <header className="page-header">
@@ -45,6 +55,8 @@ export default function Notifications() {
           <article
             key={notification._id}
             className={`notification-item ${notification.read ? "read" : "unread"}`}
+            onClick={() => handleOpenNotification(notification)}
+            style={{ cursor: notification.link ? "pointer" : "default" }}
           >
             <div className="notification-content">
               <strong>{notification.title || "Notification"}</strong>
@@ -55,7 +67,10 @@ export default function Notifications() {
             {!notification.read ? (
               <button
                 type="button"
-                onClick={() => markNotificationRead(notification._id)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  markNotificationRead(notification._id);
+                }}
               >
                 Mark read
               </button>

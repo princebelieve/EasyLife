@@ -283,7 +283,11 @@ export default function Checkout() {
                 <strong>₦{shippingFee.toLocaleString()}</strong>
               </p>
 
-              <h2>Total: ₦{totalAmount.toLocaleString()}</h2>
+              <h2>Total to pay: ₦{totalAmount.toLocaleString()}</h2>
+              <p className="muted" style={{ marginTop: 6 }}>
+                This amount becomes sales revenue only after payment is
+                confirmed.
+              </p>
             </div>
           </div>
         )}

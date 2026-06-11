@@ -85,9 +85,15 @@ export default function AdminSales() {
   }, []);
 
   const activeOrders = Array.isArray(orders) ? orders : [];
-  const archivedOrdersArray = Array.isArray(archivedOrders) ? archivedOrders : [];
+  const archivedOrdersArray = Array.isArray(archivedOrders)
+    ? archivedOrders
+    : [];
 
-  const totalSales = activeOrders.reduce(
+  const isPaidOrder = (order) => order?.paymentStatus === "paid";
+  const paidActiveOrders = activeOrders.filter(isPaidOrder);
+  const paidArchivedOrders = archivedOrdersArray.filter(isPaidOrder);
+
+  const totalSales = paidActiveOrders.reduce(
     (sum, o) => sum + Number(o.totalAmount || 0),
     0,
   );
@@ -102,22 +108,22 @@ export default function AdminSales() {
 
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  const dailySales = activeOrders.reduce((sum, order) => {
+  const dailySales = paidActiveOrders.reduce((sum, order) => {
     const created = new Date(order.createdAt);
     return created >= startOfDay ? sum + Number(order.totalAmount || 0) : sum;
   }, 0);
 
-  const weeklySales = activeOrders.reduce((sum, order) => {
+  const weeklySales = paidActiveOrders.reduce((sum, order) => {
     const created = new Date(order.createdAt);
     return created >= startOfWeek ? sum + Number(order.totalAmount || 0) : sum;
   }, 0);
 
-  const monthlySales = activeOrders.reduce((sum, order) => {
+  const monthlySales = paidActiveOrders.reduce((sum, order) => {
     const created = new Date(order.createdAt);
     return created >= startOfMonth ? sum + Number(order.totalAmount || 0) : sum;
   }, 0);
 
-  const archivedTotal = archivedOrdersArray.reduce(
+  const archivedTotal = paidArchivedOrders.reduce(
     (sum, o) => sum + Number(o.totalAmount || 0),
     0,
   );
@@ -154,8 +160,12 @@ export default function AdminSales() {
           )}
         </div>
 
-          <div className="admin-sales-actions">
-          <button type="button" onClick={handleResetActiveSales} disabled={loading}>
+        <div className="admin-sales-actions">
+          <button
+            type="button"
+            onClick={handleResetActiveSales}
+            disabled={loading}
+          >
             {loading ? "Resetting…" : "Reset active sales"}
           </button>
 
@@ -184,6 +194,7 @@ export default function AdminSales() {
         <div className="kpi-card">
           <h4>Total Revenue</h4>
           <div className="kpi-value">₦{totalSales.toLocaleString()}</div>
+          <small className="muted">Only paid orders are included.</small>
         </div>
 
         <div className="kpi-card">
@@ -263,31 +274,61 @@ export default function AdminSales() {
 
       {showArchived && (
         <div style={{ marginTop: 40 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, marginBottom: 16 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: 12,
+              marginBottom: 16,
+            }}
+          >
             <div>
               <h2>Archived Sales</h2>
               <p className="muted" style={{ margin: 0 }}>
-                Archived records are kept separately from the current active sales window.
+                Archived records are kept separately from the current active
+                sales window.
               </p>
             </div>
 
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <button type="button" className="btn-secondary" onClick={handleSearchArchived}>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={handleSearchArchived}
+              >
                 Search archived
               </button>
-              <button type="button" className="btn-secondary" onClick={handleClearArchiveFilter}>
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={handleClearArchiveFilter}
+              >
                 Clear search
               </button>
             </div>
           </div>
 
-          <div style={{ display: "grid", gap: 12, marginBottom: 20, gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" }}>
+          <div
+            style={{
+              display: "grid",
+              gap: 12,
+              marginBottom: 20,
+              gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+            }}
+          >
             <div>
               <label>Start date</label>
               <input
                 type="date"
                 value={archiveFilter.startDate}
-                onChange={(e) => setArchiveFilter((prev) => ({ ...prev, startDate: e.target.value }))}
+                onChange={(e) =>
+                  setArchiveFilter((prev) => ({
+                    ...prev,
+                    startDate: e.target.value,
+                  }))
+                }
               />
             </div>
             <div>
@@ -295,7 +336,12 @@ export default function AdminSales() {
               <input
                 type="date"
                 value={archiveFilter.endDate}
-                onChange={(e) => setArchiveFilter((prev) => ({ ...prev, endDate: e.target.value }))}
+                onChange={(e) =>
+                  setArchiveFilter((prev) => ({
+                    ...prev,
+                    endDate: e.target.value,
+                  }))
+                }
               />
             </div>
           </div>
@@ -338,7 +384,9 @@ export default function AdminSales() {
 
                   <div className="order-card-row">
                     <span>Amount</span>
-                    <span>₦{Number(order.totalAmount || 0).toLocaleString()}</span>
+                    <span>
+                      ₦{Number(order.totalAmount || 0).toLocaleString()}
+                    </span>
                   </div>
 
                   <div className="order-card-row">

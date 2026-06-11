@@ -30,7 +30,9 @@ export default function AdminDashboard() {
     loadData();
   }, []);
 
-  const totalRevenue = orders.reduce(
+  const paidOrders = orders.filter((order) => order?.paymentStatus === "paid");
+
+  const totalRevenue = paidOrders.reduce(
     (sum, order) => sum + Number(order.totalAmount || 0),
     0,
   );

@@ -39,7 +39,10 @@ export default function PwaInstallBanner() {
   if (!visible || dismissed || isInstalled) return null;
 
   const handleInstall = async () => {
-    // Android / Chrome flow
+    const isiOS =
+      /iphone|ipad|ipod/i.test(navigator.userAgent) &&
+      !window.navigator.standalone;
+
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
@@ -48,10 +51,17 @@ export default function PwaInstallBanner() {
         localStorage.setItem("pwaInstallDismissed", "true");
         window.__deferredPrompt = null;
       }
-    } else {
-      // likely iOS - open the instructions page
-      navigate("/install-instructions");
+      return;
     }
+
+    if (isiOS) {
+      navigate("/install-instructions");
+      return;
+    }
+
+    window.alert(
+      "Open this page in Chrome and tap the menu (⋮) → Add to Home screen to install the app.",
+    );
   };
 
   const handleDismiss = () => {
