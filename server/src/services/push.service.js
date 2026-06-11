@@ -6,6 +6,7 @@
 
 const { isVapidConfigured, vapid } = require("../config/vapid");
 const PushSubscription = require("../models/PushSubscription");
+const { countUnreadNotifications } = require("./notification.service");
 
 let webpush;
 
@@ -52,15 +53,20 @@ async function sendPushToUser(userId, payload) {
       return { sent: 0, failed: 0, reason: "No subscriptions found" };
     }
 
+    const badgeCount =
+      typeof payload.badgeCount === "number"
+        ? payload.badgeCount
+        : await countUnreadNotifications(userId);
+
     const notificationPayload = {
       title: payload.title,
       body: payload.body,
-      icon: payload.icon || "/logo.jpeg",
-      badge: payload.badge || "/logo.jpeg",
+      icon: payload.icon || "/icon-192.png",
+      badge: payload.badge || "/icon-192.png",
       data: {
         link: payload.link || "/notifications",
-        badgeCount: payload.badgeCount,
         ...payload.data,
+        badgeCount: Number.isFinite(badgeCount) ? badgeCount : 0,
       },
     };
 
