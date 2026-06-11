@@ -4,6 +4,13 @@
  */
 async function subscribeToPush(registration) {
   try {
+    if (Notification.permission !== "granted") {
+      console.log(
+        "Notification permission not granted; skipping push subscription",
+      );
+      return;
+    }
+
     // Check if push messaging is supported
     if (!("pushManager" in registration)) {
       console.log("Push notifications not supported on this browser");
@@ -100,18 +107,19 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 export function registerServiceWorker() {
-  if (import.meta.env.PROD && "serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((registration) => {
-          console.log("Service worker registered:", registration.scope);
-          // Attempt to subscribe to push notifications
-          subscribeToPush(registration);
-        })
-        .catch((error) => {
-          console.warn("Service worker registration failed:", error);
-        });
-    });
+  if (!("serviceWorker" in navigator)) {
+    return;
   }
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js", { scope: "/" })
+      .then((registration) => {
+        console.log("Service worker registered:", registration.scope);
+        subscribeToPush(registration);
+      })
+      .catch((error) => {
+        console.warn("Service worker registration failed:", error);
+      });
+  });
 }

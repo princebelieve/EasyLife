@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { X, Bell } from "lucide-react";
+import { ensurePushSubscription } from "../registerServiceWorker";
 
 export default function PwaNotificationBanner() {
   const [showBanner, setShowBanner] = useState(false);
@@ -38,8 +39,7 @@ export default function PwaNotificationBanner() {
       const permission = await Notification.requestPermission();
 
       if (permission === "granted") {
-        // Optionally: subscribe to push service here
-        // This would involve getting the service worker and subscribing to PushManager
+        await ensurePushSubscription();
         setShowBanner(false);
         console.log("Push notifications enabled");
       } else if (permission === "denied") {
