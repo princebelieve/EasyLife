@@ -44,7 +44,7 @@ export default function Contact() {
                 </a>
 
                 <a
-                  href="newbrend001@gmail.com"
+                  href="mailto:newbrend001@gmail.com"
                   className="strip-card email-card"
                 >
                   <SiGmail size={28} />
@@ -106,12 +106,19 @@ export default function Contact() {
 
                 <div>
                   <Phone size={20} />
-                  <span>+2348037757718</span>
+                  <a href="tel:+2348037757718" style={{ color: "inherit" }}>
+                    +2348037757718
+                  </a>
                 </div>
 
                 <div>
                   <LucideMail size={20} />
-                  <span>mailto:newbrend001@gmail.com</span>
+                  <a
+                    href="mailto:newbrend001@gmail.com"
+                    style={{ color: "inherit" }}
+                  >
+                    newbrend001@gmail.com
+                  </a>
                 </div>
 
                 <div>
