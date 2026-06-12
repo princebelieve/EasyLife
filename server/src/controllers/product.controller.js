@@ -3,7 +3,11 @@ const Product = require("../models/Product");
 const User = require("../models/User");
 const { uploadToR2 } = require("../config/r2");
 const { normalizeDeliveryCategory } = require("../utils/category");
-const { notifyAdmins } = require("../services/notification.service");
+const {
+  createNotification,
+  notifyAdmins,
+} = require("../services/notification.service");
+const { sendPushToAdmins } = require("../services/push.service");
 
 function safeJsonParse(value, fallback = []) {
   try {
@@ -193,6 +197,9 @@ async function createProduct(req, res) {
 
     const isSubadmin = req.user?.role === "subadmin";
 
+    const adminUsers = await User.find({ role: "admin" }).select("_id");
+    const adminIds = adminUsers.map((admin) => admin._id);
+
     const product = await Product.create({
       name,
 
@@ -234,9 +241,55 @@ async function createProduct(req, res) {
       approvalRequestedBy: isSubadmin ? req.user._id : undefined,
     });
 
+    if (adminIds.length > 0) {
+      await notifyAdmins(
+        {
+          type: "product.upload",
+          title: "Product upload submitted",
+          body: `"${product.name}" has been submitted for review.`,
+          link: `/admin/products/${product._id}`,
+          data: {
+            productId: product._id,
+            status: isSubadmin ? "pending" : "published",
+          },
+        },
+        adminIds,
+      );
+
+      await sendPushToAdmins(adminIds, {
+        title: "Product upload submitted",
+        body: `"${product.name}" has been submitted for review.`,
+        link: `/admin/products/${product._id}`,
+        data: { productId: product._id, type: "product.upload" },
+      }).catch((pushErr) => console.warn("Push to admins failed:", pushErr));
+    }
+
     res.status(201).json(product);
   } catch (err) {
     console.error("Error in createProduct:", err);
+
+    try {
+      const admins = await User.find({ role: "admin" }).select("_id");
+      const adminIds = admins.map((admin) => admin._id);
+
+      if (adminIds.length > 0) {
+        await notifyAdmins(
+          {
+            type: "product.upload.failed",
+            title: "Product upload failed",
+            body: `A product upload failed: ${err.message}`,
+            link: "/admin/products",
+            data: { error: err.message },
+          },
+          adminIds,
+        );
+      }
+    } catch (notifyErr) {
+      console.warn(
+        "Failed to notify admins about product upload error:",
+        notifyErr,
+      );
+    }
 
     res.status(500).json({
       error: err.message,
@@ -364,6 +417,22 @@ async function updateProduct(req, res) {
 
     await product.save();
 
+    const admins = await User.find({ role: "admin" }).select("_id");
+    const adminIds = admins.map((admin) => admin._id);
+
+    if (adminIds.length > 0) {
+      await notifyAdmins(
+        {
+          type: "product.updated",
+          title: "Product updated",
+          body: `"${product.name}" was updated successfully.`,
+          link: `/admin/products/${product._id}`,
+          data: { productId: product._id },
+        },
+        adminIds,
+      );
+    }
+
     // Check for low stock alert
     const LOW_STOCK_THRESHOLD = 5;
     if (product.stock <= LOW_STOCK_THRESHOLD && product.stock > 0) {
@@ -387,6 +456,29 @@ async function updateProduct(req, res) {
     res.json(product);
   } catch (err) {
     console.error("Error in updateProduct:", err);
+
+    try {
+      const admins = await User.find({ role: "admin" }).select("_id");
+      const adminIds = admins.map((admin) => admin._id);
+
+      if (adminIds.length > 0) {
+        await notifyAdmins(
+          {
+            type: "product.update.failed",
+            title: "Product update failed",
+            body: `Product update failed: ${err.message}`,
+            link: "/admin/products",
+            data: { error: err.message },
+          },
+          adminIds,
+        );
+      }
+    } catch (notifyErr) {
+      console.warn(
+        "Failed to notify admins about product update error:",
+        notifyErr,
+      );
+    }
 
     res.status(500).json({
       error: err.message,

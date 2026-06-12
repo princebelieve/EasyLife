@@ -1,3 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /profile/
+Disallow: /notifications/
 Sitemap: https://newbrend.vercel.app/sitemap.xml

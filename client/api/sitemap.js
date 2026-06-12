@@ -17,9 +17,12 @@ export default async function handler(req, res) {
       (host ? `${protocol}://${host}` : "http://localhost:5173");
     const staticPages = [
       { loc: baseUrl, priority: "1.00" },
-      { loc: `${baseUrl}/collection`, priority: "0.90" },
-      { loc: `${baseUrl}/contact`, priority: "0.80" },
-      { loc: `${baseUrl}/about`, priority: "0.70" },
+      { loc: `${baseUrl}/collection`, priority: "0.95" },
+      { loc: `${baseUrl}/contact`, priority: "0.85" },
+      { loc: `${baseUrl}/about`, priority: "0.75" },
+      { loc: `${baseUrl}/privacy-policy`, priority: "0.70" },
+      { loc: `${baseUrl}/refund-policy`, priority: "0.70" },
+      { loc: `${baseUrl}/terms-conditions`, priority: "0.70" },
     ];
 
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';

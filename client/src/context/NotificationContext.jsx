@@ -1,9 +1,12 @@
+/* eslint-disable react-refresh/only-export-components */
+
 import {
   createContext,
   useCallback,
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
@@ -12,15 +15,16 @@ import {
   markAllNotificationsRead as markAllNotificationsReadApi,
 } from "../services/api";
 import useAuth from "./AuthContext";
+import { playNotificationTone } from "../utils/notificationTone";
 
 const NotificationContext = createContext(null);
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function NotificationProvider({ children }) {
   const { token, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const prevUnreadCountRef = useRef(0);
 
   const fetchNotifications = useCallback(async () => {
     if (!token || !isLoggedIn) {
@@ -48,14 +52,17 @@ export function NotificationProvider({ children }) {
     fetchNotifications();
   }, [fetchNotifications]);
 
-  // Update PWA app badge with unread count
-  useEffect(() => {
-    updateAppBadge();
-  }, [updateAppBadge]);
-
   const unreadCount = useMemo(() => {
     return notifications.filter((notification) => !notification.read).length;
   }, [notifications]);
+
+  useEffect(() => {
+    if (unreadCount > prevUnreadCountRef.current && unreadCount > 0) {
+      playNotificationTone();
+    }
+
+    prevUnreadCountRef.current = unreadCount;
+  }, [unreadCount]);
 
   const updateAppBadge = useCallback(async () => {
     const count = unreadCount;
@@ -83,6 +90,11 @@ export function NotificationProvider({ children }) {
       console.warn("Unable to update app badge", error);
     }
   }, [unreadCount]);
+
+  // Update PWA app badge with unread count
+  useEffect(() => {
+    updateAppBadge();
+  }, [updateAppBadge]);
 
   const markNotificationRead = useCallback(async (id) => {
     try {

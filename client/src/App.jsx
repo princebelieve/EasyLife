@@ -43,6 +43,7 @@ import Notifications from "./pages/Notifications";
 import AdminNotifications from "./pages/AdminNotifications";
 import PwaNotificationBanner from "./components/PwaNotificationBanner";
 import PwaInstallBanner from "./components/PwaInstallBanner";
+import ChatbaseWidget from "./components/ChatbaseWidget";
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
@@ -79,6 +80,7 @@ export default function App() {
     <CartProvider>
       <NotificationProvider>
         <CanonicalUpdater />
+        <ChatbaseWidget />
         <PwaNotificationBanner />
         <PwaInstallBanner />
         <Suspense fallback={<div>Loading...</div>}>
