@@ -79,6 +79,14 @@ export default function PrivacyPolicy() {
 
         <h2>Your Rights</h2>
         <p>
+          Please also read our{" "}
+          <a href="/terms-conditions">Terms & Conditions</a>
+          and <a href="/refund-policy">Refund & Returns Policy</a> for the
+          rules that apply to orders, delivery, and claims. NewBrend
+          Furniture & Interior is the business name used for these policies and
+          related customer support.
+        </p>
+        <p>
           You may ask for access, correction, deletion, or restriction of
           certain personal data, and you may object to direct marketing or
           unnecessary processing, subject to applicable law. To exercise these

@@ -1,6 +1,6 @@
 //client/src/App.jsx
-import { Routes, Route } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { Suspense, lazy, useEffect } from "react";
 
 import { CartProvider } from "./context/CartContext";
 import { NotificationProvider } from "./context/NotificationContext";
@@ -50,10 +50,35 @@ const PwaInstallInstructions = lazy(
   () => import("./pages/PwaInstallInstructions"),
 );
 
+function CanonicalUpdater() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const canonicalUrl = `https://newbrend.vercel.app${location.pathname}${location.search}`;
+    let canonical = document.querySelector('link[rel="canonical"]');
+
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+
+    canonical.setAttribute("href", canonicalUrl);
+
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute("content", canonicalUrl);
+    }
+  }, [location]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <CartProvider>
       <NotificationProvider>
+        <CanonicalUpdater />
         <PwaNotificationBanner />
         <PwaInstallBanner />
         <Suspense fallback={<div>Loading...</div>}>

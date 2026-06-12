@@ -21,6 +21,7 @@ export function setMetaTags(config) {
     "og:image": image,
     "og:url": url,
     "og:type": type,
+    canonical: url,
     "twitter:title": title,
     "twitter:description": description,
     "twitter:image": image,
@@ -34,6 +35,17 @@ export function setMetaTags(config) {
     let element = document.querySelector(`meta[property="${name}"]`);
     if (!element) {
       element = document.querySelector(`meta[name="${name}"]`);
+    }
+
+    if (name === "canonical") {
+      element = document.querySelector('link[rel="canonical"]');
+      if (!element) {
+        element = document.createElement("link");
+        element.setAttribute("rel", "canonical");
+        document.head.appendChild(element);
+      }
+      element.setAttribute("href", content);
+      return;
     }
 
     if (!element) {
