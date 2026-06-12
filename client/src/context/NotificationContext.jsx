@@ -15,6 +15,7 @@ import useAuth from "./AuthContext";
 
 const NotificationContext = createContext(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function NotificationProvider({ children }) {
   const { token, isLoggedIn } = useAuth();
   const [notifications, setNotifications] = useState([]);
@@ -49,19 +50,39 @@ export function NotificationProvider({ children }) {
 
   // Update PWA app badge with unread count
   useEffect(() => {
-    if ("setAppBadge" in navigator) {
-      const count = notifications.filter((n) => !n.read).length;
-      if (count > 0) {
-        navigator.setAppBadge(count);
-      } else {
-        navigator.clearAppBadge();
-      }
-    }
-  }, [notifications]);
+    updateAppBadge();
+  }, [updateAppBadge]);
 
   const unreadCount = useMemo(() => {
     return notifications.filter((notification) => !notification.read).length;
   }, [notifications]);
+
+  const updateAppBadge = useCallback(async () => {
+    const count = unreadCount;
+
+    try {
+      if (typeof navigator.setAppBadge === "function") {
+        if (count > 0) {
+          await navigator.setAppBadge(count);
+        } else {
+          await navigator.clearAppBadge();
+        }
+        return;
+      }
+
+      if ("serviceWorker" in navigator) {
+        const registration = await navigator.serviceWorker.ready;
+
+        if (count > 0 && typeof registration.setAppBadge === "function") {
+          await registration.setAppBadge(count);
+        } else if (typeof registration.clearAppBadge === "function") {
+          await registration.clearAppBadge();
+        }
+      }
+    } catch (error) {
+      console.warn("Unable to update app badge", error);
+    }
+  }, [unreadCount]);
 
   const markNotificationRead = useCallback(async (id) => {
     try {
