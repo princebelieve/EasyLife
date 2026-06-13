@@ -8,31 +8,54 @@ export default function ChatbaseWidget() {
       return;
     }
 
-    if (document.getElementById("chatbase-widget-script")) {
+    if (document.getElementById("chatbase-init-script")) {
       return;
     }
 
-    const configScript = document.createElement("script");
-    configScript.textContent = `
-      window.chatbaseConfig = {
-        chatbotId: "${chatbotId}",
-        domain: "https://newbrend.vercel.app"
-      };
+    const snippet = `
+      (function(){
+        if(!window.chatbase || window.chatbase("getState") !== "initialized"){
+          window.chatbase = (...arguments) => {
+            if(!window.chatbase.q){
+              window.chatbase.q = [];
+            }
+            window.chatbase.q.push(arguments);
+          };
+          window.chatbase = new Proxy(window.chatbase, {
+            get(target, prop) {
+              if(prop === "q") return target.q;
+              return (...args) => target(prop, ...args);
+            }
+          });
+        }
+
+        const onLoad = function(){
+          const script = document.createElement("script");
+          script.src = "https://www.chatbase.co/embed.min.js";
+          script.id = "${chatbotId}";
+          script.domain = "www.chatbase.co";
+          document.body.appendChild(script);
+        };
+
+        if(document.readyState === "complete"){
+          onLoad();
+        } else {
+          window.addEventListener("load", onLoad, { once: true });
+        }
+      })();
     `;
 
-    const widgetScript = document.createElement("script");
-    widgetScript.id = "chatbase-widget-script";
-    widgetScript.src = "https://www.chatbase.co/widget/Widget.js";
-    widgetScript.defer = true;
-
-    document.head.appendChild(configScript);
-    document.head.appendChild(widgetScript);
+    const initScript = document.createElement("script");
+    initScript.id = "chatbase-init-script";
+    initScript.textContent = snippet;
+    document.body.appendChild(initScript);
 
     return () => {
-      const existing = document.getElementById("chatbase-widget-script");
-      if (existing) existing.remove();
-      const cfg = document.querySelector("script[data-chatbase-config]");
-      if (cfg) cfg.remove();
+      const init = document.getElementById("chatbase-init-script");
+      if (init) init.remove();
+
+      const widget = document.getElementById(chatbotId);
+      if (widget) widget.remove();
     };
   }, []);
 
