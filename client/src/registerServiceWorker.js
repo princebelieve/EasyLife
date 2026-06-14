@@ -51,7 +51,7 @@ async function subscribeToPush(registration) {
     });
 
     // Send subscription to backend
-    const token = localStorage.getItem("accessToken");
+    const token = sessionStorage.getItem("accessToken");
     if (!token) {
       console.log("User not authenticated, skipping push subscription");
       return;
