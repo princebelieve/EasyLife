@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import NotificationBell from "./NotificationBell";
 import useClickOutside from "../hooks/useClickOutside";
 import { useNotifications } from "../context/NotificationContext";
+import { normalizeNotificationLink, openNotificationLink } from "../utils/notificationLinks";
 
 export default function NotificationDropdown() {
   const [open, setOpen] = useState(false);
@@ -34,8 +35,12 @@ export default function NotificationDropdown() {
 
     setOpen(false);
 
-    if (notification.link) {
-      navigate(notification.link);
+    const target = openNotificationLink(notification.link);
+
+    if (typeof target === "string" && /^(https?:|mailto:)/i.test(target)) {
+      window.open(target, "_blank", "noopener,noreferrer");
+    } else if (typeof target === "string") {
+      navigate(normalizeNotificationLink(target));
     }
   };
 

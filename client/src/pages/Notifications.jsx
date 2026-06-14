@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
 import { useNotifications } from "../context/NotificationContext";
+import { normalizeNotificationLink, openNotificationLink } from "../utils/notificationLinks";
 
 export default function Notifications() {
   const { isLoggedIn } = useAuth();
@@ -21,8 +22,12 @@ export default function Notifications() {
   }, [isLoggedIn, navigate]);
 
   const handleOpenNotification = async (notification) => {
-    if (notification.link) {
-      navigate(notification.link);
+    const target = openNotificationLink(notification.link);
+
+    if (typeof target === "string" && /^https?:|^mailto:/i.test(target)) {
+      window.open(target, "_blank", "noopener,noreferrer");
+    } else if (typeof target === "string") {
+      navigate(normalizeNotificationLink(target));
     }
 
     if (!notification.read) {
