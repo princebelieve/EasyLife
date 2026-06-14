@@ -1,5 +1,11 @@
 //client/src/services/api.js
-import { getToken, getRefreshToken, setToken } from "../utils/auth";
+import {
+  getToken,
+  getRefreshToken,
+  setToken,
+  setRefreshToken,
+  logout,
+} from "../utils/auth";
 const BASE_URL = import.meta.env.VITE_API_URL || "";
 
 async function refreshAccessToken() {
@@ -14,16 +20,14 @@ async function refreshAccessToken() {
   const data = await res.json();
 
   if (!res.ok) {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-
+    logout();
     throw new Error("Session expired");
   }
 
   setToken(data.accessToken);
 
   if (data.refreshToken) {
-    localStorage.setItem("refreshToken", data.refreshToken);
+    setRefreshToken(data.refreshToken);
   }
 
   return data.accessToken;

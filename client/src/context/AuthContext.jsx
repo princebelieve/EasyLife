@@ -31,8 +31,8 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
 
     setTokenState(null);
 
@@ -40,17 +40,17 @@ export function AuthProvider({ children }) {
   }, []);
 
   const hydrateUser = useCallback(async () => {
-    const fallbackToken = localStorage.getItem("accessToken");
+    const fallbackToken = sessionStorage.getItem("accessToken");
 
     try {
       const profile = await getProfile();
 
       setUser(profile.user);
-      setTokenState(localStorage.getItem("accessToken"));
+      setTokenState(sessionStorage.getItem("accessToken"));
     } catch (error) {
       console.error(error);
 
-      if (!localStorage.getItem("accessToken")) {
+      if (!sessionStorage.getItem("accessToken")) {
         logout();
         return;
       }
@@ -68,7 +68,7 @@ export function AuthProvider({ children }) {
 
   const updateToken = useCallback(
     async (newToken) => {
-      localStorage.setItem("accessToken", newToken);
+      sessionStorage.setItem("accessToken", newToken);
 
       const parsedUser = parseToken(newToken);
 
@@ -100,7 +100,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     async function syncAuth() {
-      const storedToken = localStorage.getItem("accessToken");
+      const storedToken = sessionStorage.getItem("accessToken");
 
       if (!storedToken) {
         setTokenState(null);

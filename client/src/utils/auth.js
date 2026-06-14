@@ -1,21 +1,30 @@
 //client/src/utils/auth.js
+function storage() {
+  return typeof window !== "undefined" ? window.sessionStorage : null;
+}
+
 export function setToken(token) {
-  localStorage.setItem("accessToken", token);
+  const store = storage();
+  if (store) store.setItem("accessToken", token);
 }
 
 export function getToken() {
-  return localStorage.getItem("accessToken");
+  return storage()?.getItem("accessToken") || null;
 }
 
 export function setRefreshToken(token) {
-  localStorage.setItem("refreshToken", token);
+  const store = storage();
+  if (store) store.setItem("refreshToken", token);
 }
 
 export function getRefreshToken() {
-  return localStorage.getItem("refreshToken");
+  return storage()?.getItem("refreshToken") || null;
 }
 
 export function logout() {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
+  const store = storage();
+  if (store) {
+    store.removeItem("accessToken");
+    store.removeItem("refreshToken");
+  }
 }
