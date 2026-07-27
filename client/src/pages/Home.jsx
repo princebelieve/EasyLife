@@ -1,5 +1,6 @@
 //client/src/pages/Home.jsx
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
@@ -10,10 +11,36 @@ import useScrollReveal from "../hooks/useScrollReveal";
 
 import { getProducts } from "../services/api";
 
+const STORAGE_KEY = "newbrend-home-media";
+const fallbackMedia = [
+  {
+    id: "fallback-1",
+    type: "image",
+    title: "Luxury Interiors",
+    caption: "Elegant rooms shaped with premium finishes and timeless design.",
+    src: "/hero1.jpeg",
+  },
+  {
+    id: "fallback-2",
+    type: "image",
+    title: "Modern Comfort",
+    caption: "Relaxed, refined pieces that bring warmth and detail to any space.",
+    src: "/hero2.jpeg",
+  },
+  {
+    id: "fallback-3",
+    type: "image",
+    title: "Crafted Living",
+    caption: "Thoughtful collections designed for everyday luxury and comfort.",
+    src: "/hero3.jpeg",
+  },
+];
+
 export default function Home() {
   useScrollReveal();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mediaItems, setMediaItems] = useState(fallbackMedia);
 
   useEffect(() => {
     async function loadProducts() {
@@ -29,6 +56,18 @@ export default function Home() {
     }
 
     loadProducts();
+
+    try {
+      const saved = window.localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMediaItems(parsed);
+        }
+      }
+    } catch {
+      setMediaItems(fallbackMedia);
+    }
   }, []);
 
   return (
@@ -62,8 +101,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURED COLLECTION */}
+      {/* MEDIA SHOWCASE */}
       <section className="section-alt reveal">
+        <div className="container">
+          <div className="home-media-header">
+            <div>
+              <h2 className="title">Inspiration Gallery</h2>
+              <p className="muted">
+                Discover beautifully styled interiors, premium finishes, and timeless furniture for every space.
+              </p>
+            </div>
+            <Link className="primary home-media-cta" to="/collection">
+              Explore Collection
+            </Link>
+          </div>
+
+          <div className="home-media-grid">
+            {mediaItems.map((item) => (
+              <div key={item.id} className="home-media-card hover-lift">
+                {item.type === "video" ? (
+                  <video src={item.src} controls playsInline muted loop />
+                ) : (
+                  <img src={item.src} alt={item.title} />
+                )}
+
+                <div className="home-media-card-content">
+                  <h3>{item.title}</h3>
+                  <p>{item.caption}</p>
+                  <Link className="secondary home-media-button" to="/collection">
+                    Shop Collection
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURED COLLECTION */}
+      <section className="section reveal">
         <div className="container">
           <h2 className="title">Featured Collection</h2>
           <p className="muted">
