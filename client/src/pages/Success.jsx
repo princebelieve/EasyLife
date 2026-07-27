@@ -12,6 +12,19 @@ export default function Success() {
   const [error, setError] = useState(null);
 
   const reference = searchParams.get("reference");
+  const isPaid = Boolean(order?.paymentStatus === "paid");
+  const isError = Boolean(error || !order);
+  const pageTitle = isError
+    ? "⚠️ Verification Pending"
+    : isPaid
+    ? "✅ Payment Received!"
+    : "⏳ Payment Processing...";
+  const pageMessage = isError
+    ? error ||
+      "We're processing your payment. Order details will appear here shortly."
+    : isPaid
+    ? "Your order has been confirmed and is being prepared."
+    : "We're processing your payment. Check back soon for updates.";
 
   useEffect(() => {
     if (!reference) {
@@ -72,10 +85,11 @@ export default function Success() {
           }}
         >
           <div className="cart-summary">
-            <h1>⚠️ Verification Pending</h1>
+            <h1 style={{ fontSize: "2.5em", margin: "0 0 10px 0" }}>
+              {pageTitle}
+            </h1>
             <p style={{ marginTop: 14, color: "#666" }}>
-              {error ||
-                "We're processing your payment. Order details will appear here shortly."}
+              {pageMessage}
             </p>
             <p
               style={{
@@ -111,7 +125,6 @@ export default function Success() {
     );
   }
 
-  const isPaid = order.paymentStatus === "paid";
   const estimatedDelivery = new Date(
     new Date(order.createdAt).getTime() + 5 * 24 * 60 * 60 * 1000,
   );
@@ -135,7 +148,7 @@ export default function Success() {
           }}
         >
           <h1 style={{ fontSize: "2.5em", margin: "0 0 10px 0" }}>
-            {isPaid ? "✅ Payment Received!" : "⏳ Payment Processing..."}
+            {pageTitle}
           </h1>
           <p
             style={{
@@ -144,9 +157,7 @@ export default function Success() {
               margin: "10px 0",
             }}
           >
-            {isPaid
-              ? "Your order has been confirmed and is being prepared."
-              : "We're processing your payment. Check back soon for updates."}
+            {pageMessage}
           </p>
         </div>
 

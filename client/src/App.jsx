@@ -55,7 +55,7 @@ function CanonicalUpdater() {
   const location = useLocation();
 
   useEffect(() => {
-    const canonicalUrl = `https://newbrend.vercel.app${location.pathname}${location.search}`;
+    const canonicalUrl = `https://newbrend.com${location.pathname}${location.search}`;
     let canonical = document.querySelector('link[rel="canonical"]');
 
     if (!canonical) {

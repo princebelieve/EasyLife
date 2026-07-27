@@ -57,9 +57,9 @@ export default function Contact() {
 
               <div className="social-links">
                 <a
-                  href="https://x.com/NewtonMM"
+                  href="https://x.com/NewtonMM3"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="social-x"
                   aria-label="X"
                 >

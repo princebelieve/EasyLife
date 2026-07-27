@@ -1,6 +1,6 @@
 //client/src/components/Footer.jsx
 import { Link } from "react-router-dom";
-import { FaInstagram, FaTiktok } from "react-icons/fa";
+import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { SiX } from "react-icons/si";
 
 export default function Footer() {
@@ -50,28 +50,36 @@ export default function Footer() {
 
           <div className="footer-social">
             <a
-              href="https://x.com/newbrendfurniture"
+              href="https://x.com/NewtonMM3"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               aria-label="X"
             >
               <SiX size={24} />
             </a>
             <a
-              href="https://www.instagram.com/newbrendfurniture"
+              href="https://www.instagram.com/newbrend101?igsh=MWpuN2tlbG41cG5r"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               aria-label="Instagram"
             >
               <FaInstagram size={24} />
             </a>
             <a
-              href="https://www.tiktok.com/@newbrendfurniture"
+              href="https://www.tiktok.com/@centnewton2?_r=1&_t=ZN-96wE1C2UMBb"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               aria-label="TikTok"
             >
               <FaTiktok size={24} />
+            </a>
+            <a
+              href="https://youtube.com/@newbrendfurnitureandinterior?si=FEgV3Y9AqdmDWuXs"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+            >
+              <FaYoutube size={24} />
             </a>
           </div>
         </div>
