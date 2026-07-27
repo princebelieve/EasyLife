@@ -1606,6 +1606,123 @@ button:hover {
   will-change: transform;
 }
 
+.chatbase-fallback {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.chatbase-fallback-toggle {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, var(--gold), #b4882a);
+  color: #111;
+  font-size: 22px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.chatbase-fallback-panel {
+  width: min(92vw, 340px);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fffdf9;
+  border: 1px solid #ece6d8;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+}
+
+.chatbase-fallback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #1d1d1d, #333);
+  color: white;
+}
+
+.chatbase-fallback-header span {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.chatbase-fallback-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  overflow-y: auto;
+  background: #fffdf9;
+}
+
+.chatbase-fallback-message {
+  max-width: 90%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.chatbase-fallback-message.assistant {
+  align-self: flex-start;
+  background: #f3ebd8;
+  color: #3d2f10;
+}
+
+.chatbase-fallback-message.user {
+  align-self: flex-end;
+  background: var(--gold);
+  color: #111;
+}
+
+.chatbase-fallback-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 14px 12px;
+}
+
+.chatbase-fallback-chip {
+  border: 1px solid #e4ddcb;
+  background: white;
+  color: #4f3f1d;
+  padding: 8px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+}
+
+.chatbase-fallback-input-row {
+  display: flex;
+  gap: 8px;
+  padding: 0 14px 14px;
+}
+
+.chatbase-fallback-input-row input {
+  flex: 1;
+  border: 1px solid #e3dccf;
+  border-radius: 999px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.chatbase-fallback-input-row button {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 12px;
+  background: var(--gold);
+  color: #111;
+  font-weight: 700;
+}
+
 .hover-lift:hover {
   transform: translateY(-8px) scale(1.01);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
