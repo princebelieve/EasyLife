@@ -282,7 +282,7 @@ app.use("/api/push", pushRoutes);
 app.use("/api/admin/users", adminUserRoutes);
 
 app.get("/", (req, res) => {
-  res.send("NewBrend Furniture API is running");
+  res.send("Newbrend Furniture API is running");
 });
 
 const PORT = process.env.PORT || 4000;

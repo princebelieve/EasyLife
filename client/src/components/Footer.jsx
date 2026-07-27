@@ -10,11 +10,11 @@ export default function Footer() {
         <div>
           <img
             src="/logo.jpeg"
-            alt="NewBrend Furniture"
+            alt="Newbrend Furniture"
             className="footer-logo"
           />
 
-          <h3>NewBrend Furniture</h3>
+          <h3>Newbrend Furniture</h3>
 
           <p>Premium furniture and bespoke interior design.</p>
         </div>
@@ -97,7 +97,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom">
-        © {new Date().getFullYear()} NewBrend Furniture. All rights reserved.
+        © {new Date().getFullYear()} Newbrend Furniture. All rights reserved.
       </div>
     </footer>
   );

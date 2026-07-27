@@ -34,7 +34,7 @@ export default function RefundPolicy() {
 
         <h2>Overview</h2>
         <p>
-          At NewBrend Furniture & Interior, we want you to be satisfied with
+          At Newbrend Furniture & Interior, we want you to be satisfied with
           your purchase. This policy applies to all products sold by NewBrend,
           including furniture, decor, ready-to-ship goods, made-to-order
           products, and custom design or installation-related items, unless a

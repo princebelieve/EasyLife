@@ -23,7 +23,7 @@ export default function About() {
             </h1>
 
             <p>
-              NewBrend Furniture is a premium furniture and interior brand
+              Newbrend Furniture is a premium furniture and interior brand
               dedicated to creating beautiful, functional living spaces. From
               bespoke sofas and dining tables to custom shelving and interior
               decor, every piece is crafted with luxury materials and attention
@@ -32,7 +32,7 @@ export default function About() {
           </div>
 
           <div className="about-image-wrap hover-lift">
-            <img src="/about.jpeg" alt="NewBrend Furniture interior" />
+            <img src="/about.jpeg" alt="Newbrend Furniture interior" />
           </div>
         </div>
       </section>
@@ -43,7 +43,7 @@ export default function About() {
           <div className="story-card hover-lift">
             <h2 className="title">Our Story</h2>
             <p className="muted">
-              NewBrend Furniture was built from a passion for timeless design and
+              Newbrend Furniture was built from a passion for timeless design and
               quality craftsmanship. We believe furniture should do more than
               look beautiful — it should create comfort, elevate your interior,
               and make every home feel exceptional.

@@ -171,7 +171,7 @@ export default function Contact() {
           <FurnitureInquiryForm />
 
           <div className="contact-info-panel hover-lift">
-            <h2>Why Choose NewBrend Furniture?</h2>
+            <h2>Why Choose Newbrend Furniture?</h2>
 
             <div className="info-list">
               <div>

@@ -34,12 +34,12 @@ export default function TermsConditions() {
 
         <h2>Agreement and Definitions</h2>
         <p>
-          By using the NewBrend Furniture & Interior platform (the “Platform”),
+          By using the Newbrend Furniture & Interior platform (the “Platform”),
           you agree to these Terms of Use and any product-specific information
           shown on the product page, checkout, or delivery confirmation. “We”,
-          “our”, and “NewBrend Furniture & Interior” mean the business operating
+          “our”, and “Newbrend Furniture & Interior” mean the business operating
           this Platform and its authorised representatives. These terms apply to
-          all products and services offered by NewBrend Furniture & Interior,
+          all products and services offered by Newbrend Furniture & Interior,
           including ready-to-ship items, custom orders, made-to-order products,
           and delivery or installation-related services.
         </p>

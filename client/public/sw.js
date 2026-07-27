@@ -38,7 +38,7 @@ self.addEventListener("push", (event) => {
 
     event.waitUntil(
       self.registration.showNotification(
-        data.title || "NewBrend Furniture",
+        data.title || "Newbrend Furniture",
         options,
       ),
     );

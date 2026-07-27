@@ -99,11 +99,11 @@ export default function Navbar() {
       <Link to="/" className="navbar-brand" onClick={() => setOpen(false)}>
         <img
           src="/logo.jpeg"
-          alt="NewBrend Furniture"
+          alt="Newbrend Furniture"
           className={`logo ${scrolled ? "hide-logo" : ""}`}
         />
         <span className="brand-name">
-          NewBrend Furniture
+          Newbrend Furniture
           <br />& Interior
         </span>
       </Link>
