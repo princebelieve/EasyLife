@@ -2,20 +2,11 @@
 const Product = require("../models/Product");
 const User = require("../models/User");
 const { uploadToR2 } = require("../config/r2");
-const { normalizeDeliveryCategory } = require("../utils/category");
 const {
   createNotification,
   notifyAdmins,
 } = require("../services/notification.service");
 const { sendPushToAdmins } = require("../services/push.service");
-
-function safeJsonParse(value, fallback = []) {
-  try {
-    return JSON.parse(value);
-  } catch {
-    return fallback;
-  }
-}
 
 async function getProducts(req, res) {
   try {
@@ -66,43 +57,11 @@ async function getProduct(req, res) {
 
 async function getProductCategories(req, res) {
   try {
-    const products = await Product.find({}, "category deliveryCategory").lean();
-
-    const configMap = require("../config/productCategoryMap");
-
-    const map = new Map();
-
-    for (const p of products) {
-      const categoryName = (p.category || "").toString().trim();
-      const delivery =
-        p.deliveryCategory || normalizeDeliveryCategory(categoryName);
-
-      if (!map.has(delivery)) {
-        const label =
-          Object.keys(configMap).find((k) => configMap[k] === delivery) ||
-          categoryName ||
-          delivery;
-
-        map.set(delivery, {
-          deliveryCategory: delivery,
-          label,
-          sampleCategory: categoryName,
-        });
-      }
-    }
-
-    // Ensure all configured categories are present
-    for (const [label, slug] of Object.entries(configMap)) {
-      if (!map.has(slug)) {
-        map.set(slug, { deliveryCategory: slug, label, sampleCategory: "" });
-      }
-    }
-
-    const list = Array.from(map.values()).sort((a, b) =>
-      a.label.localeCompare(b.label),
-    );
-
-    res.json(list);
+    const products = await Product.find({}, "category").lean();
+    const categories = [...new Set(products.map((p) => p.category?.trim()).filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b))
+      .map((label) => ({ label, value: label }));
+    res.json(categories);
   } catch (err) {
     console.error("Error in getProductCategories:", err);
     res.status(500).json({
@@ -135,11 +94,12 @@ async function createProduct(req, res) {
       fullDescription,
       price,
       stock,
-      deliveryCategory,
       featured,
       status,
-      weight,
-      deliveryEstimate,
+      salePrice, currency, brand, vendor, gtin, googleProductCategory,
+      condition, ingredients, directions, warnings, netContent, countryOfOrigin,
+      shippingWeight, shippingLength, shippingWidth, shippingHeight,
+      shippingClass, shipsInternationally,
     } = req.body;
 
     const files = req.files || {};
@@ -160,37 +120,6 @@ async function createProduct(req, res) {
 
         gallery.push(uploaded);
       }
-    }
-
-    // PIECES
-    const piecesInput = safeJsonParse(req.body.pieces, []);
-
-    const pieceImages = files.pieceImages || [];
-
-    const pieces = [];
-
-    for (let i = 0; i < piecesInput.length; i++) {
-      const piece = piecesInput[i];
-
-      let image = "";
-
-      if (pieceImages[i]) {
-        image = await uploadToR2(pieceImages[i]);
-      }
-
-      pieces.push({
-        name: piece.name || "",
-
-        image,
-
-        dimensions: piece.dimensions || "",
-
-        material: piece.material || "",
-
-        description: piece.description || "",
-
-        price: Number(piece.price || 0),
-      });
     }
 
     const generatedSku = generateSKU(name, category);
@@ -219,21 +148,33 @@ async function createProduct(req, res) {
 
       stock: Number(stock || 0),
 
-      deliveryCategory: normalizeDeliveryCategory(category),
-
       featured: featured === "true" || featured === true,
 
       status: isSubadmin ? "inactive" : status || "active",
 
       sku: generatedSku,
 
-      weight: Number(weight || 0),
-
-      deliveryEstimate: deliveryEstimate || "7-14 days",
-
       inStock: Number(stock || 0) > 0,
 
-      pieces,
+      salePrice: salePrice === "" || salePrice === undefined ? null : Number(salePrice),
+      currency: currency || "NGN",
+      brand: brand || "",
+      vendor: vendor || "",
+      gtin: gtin || "",
+      googleProductCategory: googleProductCategory || "",
+      condition: condition || "new",
+      ingredients: ingredients || "",
+      directions: directions || "",
+      warnings: warnings || "",
+      netContent: netContent || "",
+      countryOfOrigin: countryOfOrigin || "",
+      shippingWeight: Number(shippingWeight || 0),
+      shippingLength: Number(shippingLength || 0),
+      shippingWidth: Number(shippingWidth || 0),
+      shippingHeight: Number(shippingHeight || 0),
+      shippingClass: shippingClass || "standard",
+      shipsInternationally: shipsInternationally !== "false" && shipsInternationally !== false,
+
       approved: !isSubadmin,
       pendingApproval: isSubadmin,
       hidden: isSubadmin,
@@ -315,12 +256,13 @@ async function updateProduct(req, res) {
       fullDescription,
       price,
       stock,
-      deliveryCategory,
       featured,
       status,
       sku,
-      weight,
-      deliveryEstimate,
+      salePrice, currency, brand, vendor, gtin, googleProductCategory,
+      condition, ingredients, directions, warnings, netContent, countryOfOrigin,
+      shippingWeight, shippingLength, shippingWidth, shippingHeight,
+      shippingClass, shipsInternationally,
     } = req.body;
 
     const files = req.files || {};
@@ -331,8 +273,6 @@ async function updateProduct(req, res) {
     product.slug = slug || product.slug;
 
     product.category = category || product.category;
-
-    product.deliveryCategory = normalizeDeliveryCategory(product.category);
 
     product.shortDescription = shortDescription || product.shortDescription;
 
@@ -354,13 +294,24 @@ async function updateProduct(req, res) {
       product.status = status;
     }
 
-    if (weight !== undefined) {
-      product.weight = Number(weight || 0);
-    }
-
-    if (deliveryEstimate) {
-      product.deliveryEstimate = deliveryEstimate;
-    }
+    if (salePrice !== undefined) product.salePrice = salePrice === "" ? null : Number(salePrice);
+    if (currency) product.currency = currency;
+    if (brand !== undefined) product.brand = brand;
+    if (vendor !== undefined) product.vendor = vendor;
+    if (gtin !== undefined) product.gtin = gtin;
+    if (googleProductCategory !== undefined) product.googleProductCategory = googleProductCategory;
+    if (condition) product.condition = condition;
+    if (ingredients !== undefined) product.ingredients = ingredients;
+    if (directions !== undefined) product.directions = directions;
+    if (warnings !== undefined) product.warnings = warnings;
+    if (netContent !== undefined) product.netContent = netContent;
+    if (countryOfOrigin !== undefined) product.countryOfOrigin = countryOfOrigin;
+    if (shippingWeight !== undefined) product.shippingWeight = Number(shippingWeight || 0);
+    if (shippingLength !== undefined) product.shippingLength = Number(shippingLength || 0);
+    if (shippingWidth !== undefined) product.shippingWidth = Number(shippingWidth || 0);
+    if (shippingHeight !== undefined) product.shippingHeight = Number(shippingHeight || 0);
+    if (shippingClass !== undefined) product.shippingClass = shippingClass;
+    if (shipsInternationally !== undefined) product.shipsInternationally = shipsInternationally !== "false" && shipsInternationally !== false;
 
     // COVER IMAGE
     if (files.coverImage?.[0]) {
@@ -378,41 +329,6 @@ async function updateProduct(req, res) {
       }
 
       product.gallery = gallery;
-    }
-
-    // PIECES
-    const piecesInput = safeJsonParse(req.body.pieces, []);
-
-    if (piecesInput.length) {
-      const pieceImages = files.pieceImages || [];
-
-      const pieces = [];
-
-      for (let i = 0; i < piecesInput.length; i++) {
-        const piece = piecesInput[i];
-
-        let image = product.pieces[i]?.image || "";
-
-        if (pieceImages[i]) {
-          image = await uploadToR2(pieceImages[i]);
-        }
-
-        pieces.push({
-          name: piece.name || "",
-
-          image,
-
-          dimensions: piece.dimensions || "",
-
-          material: piece.material || "",
-
-          description: piece.description || "",
-
-          price: Number(piece.price || 0),
-        });
-      }
-
-      product.pieces = pieces;
     }
 
     await product.save();

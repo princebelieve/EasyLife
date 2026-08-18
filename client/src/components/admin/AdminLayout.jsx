@@ -147,7 +147,7 @@ export default function AdminLayout({ children }) {
           </button>
 
           <Link to="/admin" className="admin-brand">
-            <img src="/logo.jpeg" alt="logo" className="admin-logo" />
+            <img src="/logo.png" alt="logo" className="admin-logo" />
 
             <div>
               <strong>NewBrend</strong>

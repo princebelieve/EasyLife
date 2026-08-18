@@ -37,10 +37,9 @@ export default function Collection() {
       <section className="section-alt reveal">
         <div className="container">
           <div className="reveal">
-            <h1 className="title">All Products</h1>
+            <h1 className="title">Wellness Shop</h1>
             <p className="muted">
-              Explore luxury furniture, decorative accents, and custom interior
-              pieces.
+              Explore Easy Life wellness products for your everyday wellness journey.
             </p>
           </div>
 

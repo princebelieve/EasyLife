@@ -98,20 +98,19 @@ export default function Navbar() {
     <nav className="navbar">
       <Link to="/" className="navbar-brand" onClick={() => setOpen(false)}>
         <img
-          src="/logo.jpeg"
-          alt="Newbrend Furniture"
+          src="/logo.png"
+          alt="Easy Life Wellness Hub"
           className={`logo ${scrolled ? "hide-logo" : ""}`}
         />
         <span className="brand-name">
-          Newbrend Furniture
-          <br />& Interior
+          Easy Life Wellness Hub
         </span>
       </Link>
 
       <div className="desktop-nav">
         <div className="nav-links">
           <Link to="/">Home</Link>
-          <Link to="/collection">Show Room</Link>
+          <Link to="/collection">Shop</Link>
           <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>
 
@@ -221,7 +220,7 @@ export default function Navbar() {
           </Link>
 
           <Link to="/collection" onClick={() => setOpen(false)}>
-            Show Room
+            Shop
           </Link>
 
           <Link to="/about" onClick={() => setOpen(false)}>

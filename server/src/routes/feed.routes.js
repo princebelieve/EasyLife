@@ -21,10 +21,10 @@ router.get("/products", async (req, res) => {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml +=
       '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:g="http://base.google.com/ns/1.0">\n';
-    xml += `  <title>Newbrend Furniture Products</title>\n`;
+    xml += `  <title>Easy Life Wellness Hub Products</title>\n`;
     xml += `  <link rel="alternate" type="text/html" href="${baseUrl}"/>\n`;
     xml += `  <updated>${new Date().toISOString()}</updated>\n`;
-    xml += `  <author><name>Newbrend Furniture</name></author>\n`;
+    xml += `  <author><name>Easy Life Wellness Hub</name></author>\n`;
 
     products.forEach((product) => {
       xml += "  <entry>\n";
@@ -35,7 +35,7 @@ router.get("/products", async (req, res) => {
       xml += `    <g:image_link>${product.coverImage}</g:image_link>\n`;
       xml += `    <g:price>${product.price} NGN</g:price>\n`;
       xml += `    <g:availability>${product.inStock && product.stock > 0 ? "in_stock" : "out_of_stock"}</g:availability>\n`;
-      xml += `    <g:brand>${product.brand || "Newbrend Furniture"}</g:brand>\n`;
+      xml += `    <g:brand>${product.brand || "Easy Life Wellness Hub"}</g:brand>\n`;
       xml += `    <g:condition>new</g:condition>\n`;
       xml += `    <g:product_type>${product.category || "Furniture"}</g:product_type>\n`;
       xml += `    <g:sku>${product.sku || product._id}</g:sku>\n`;

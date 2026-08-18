@@ -39,11 +39,11 @@ export default function ProductDetails() {
 
           // Set meta tags for social sharing and SEO
           setMetaTags({
-            title: `${data.name} | Newbrend Furniture`,
+            title: `${data.name} | Easy Life Wellness Hub`,
             description:
               data.fullDescription ||
               data.shortDescription ||
-              `Shop ${data.name} from Newbrend Furniture. Premium quality furniture and decorative accents.`,
+              `Shop ${data.name} from Easy Life Wellness Hub.`,
             image: data.coverImage,
             url: productUrl,
             type: "product",
@@ -256,7 +256,7 @@ export default function ProductDetails() {
                   onClick={() => {
                     const shareUrl = getShareUrl(product._id, product.name);
                     window.open(
-                      `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=Check out ${encodeURIComponent(product.name)} from Newbrend Furniture`,
+                      `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=Check out ${encodeURIComponent(product.name)} from Easy Life Wellness Hub`,
                       "_blank",
                       "width=600,height=400",
                     );

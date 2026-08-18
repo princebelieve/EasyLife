@@ -1,50 +1,6 @@
 //server/src/models/Product.js
 const mongoose = require("mongoose");
 
-const pieceSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    image: {
-      type: String,
-      default: "",
-    },
-
-    dimensions: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    material: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    description: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    price: {
-      type: Number,
-      default: 0,
-    },
-
-    stock: {
-      type: Number,
-      default: 0,
-    },
-  },
-  { _id: false },
-);
-
 const productSchema = new mongoose.Schema(
   {
     // COLLECTION NAME
@@ -99,6 +55,8 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    salePrice: { type: Number, default: null },
+    currency: { type: String, default: "NGN", trim: true, uppercase: true },
 
     stock: {
       type: Number,
@@ -120,17 +78,6 @@ const productSchema = new mongoose.Schema(
       default: false,
     },
 
-    deliveryEstimate: {
-      type: String,
-      default: "7-14 days",
-    },
-
-    // FURNITURE PIECES INSIDE THE COLLECTION
-    pieces: {
-      type: [pieceSchema],
-      default: [],
-    },
-
     sku: {
       type: String,
       required: true,
@@ -138,15 +85,21 @@ const productSchema = new mongoose.Schema(
       index: true,
     },
     brand: { type: String, default: "" },
-
-    weight: { type: Number, default: 0 }, // kg
-    dimensions: { type: String, default: "" },
-
-    deliveryCategory: {
-      type: String,
-      trim: true,
-      default: "sofa",
-    },
+    vendor: { type: String, default: "" },
+    gtin: { type: String, default: "", trim: true },
+    googleProductCategory: { type: String, default: "", trim: true },
+    condition: { type: String, enum: ["new", "refurbished", "used"], default: "new" },
+    ingredients: { type: String, default: "" },
+    directions: { type: String, default: "" },
+    warnings: { type: String, default: "" },
+    netContent: { type: String, default: "" },
+    countryOfOrigin: { type: String, default: "" },
+    shippingWeight: { type: Number, default: 0 },
+    shippingLength: { type: Number, default: 0 },
+    shippingWidth: { type: Number, default: 0 },
+    shippingHeight: { type: Number, default: 0 },
+    shippingClass: { type: String, default: "standard", trim: true },
+    shipsInternationally: { type: Boolean, default: true },
 
     inventoryTracking: {
       type: Boolean,

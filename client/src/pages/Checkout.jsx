@@ -3,14 +3,12 @@ import { useEffect, useState } from "react";
 import { initializeCheckout, previewShipping } from "../services/api";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
-import ngGeo from "../config/ng-geo.json";
-
-// Generate state options from ng-geo.json, with values in lowercase for database matching
-const NIGERIAN_STATES = Object.keys(ngGeo).map((stateName) => ({
-  value: stateName.toLowerCase(),
-  label:
-    stateName === "FCT" ? "Federal Capital Territory" : `${stateName} State`,
-}));
+const SHIPPING_DESTINATIONS = [
+  { value: "NG", label: "Nigeria" },
+  { value: "GH", label: "Ghana" },
+  { value: "GB", label: "United Kingdom" },
+  { value: "US", label: "United States" },
+];
 
 export default function Checkout() {
   const { cart, subtotal } = useCart();
@@ -20,7 +18,6 @@ export default function Checkout() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [shippingError, setShippingError] = useState("");
-  const [availableCities, setAvailableCities] = useState([]);
 
   const totalAmount = subtotal + shippingFee;
 
@@ -31,6 +28,7 @@ export default function Checkout() {
     address: "",
     city: "",
     state: "",
+    country: "NG",
     notes: "",
   });
 
@@ -42,24 +40,12 @@ export default function Checkout() {
       [name]: value,
     });
 
-    // Update available cities when state changes
-    if (name === "state") {
-      const stateKey = Object.keys(ngGeo).find(
-        (key) => key.toLowerCase() === value.toLowerCase(),
-      );
-      const cities = stateKey ? ngGeo[stateKey] : [];
-      setAvailableCities(cities);
-      setForm((prev) => ({
-        ...prev,
-        city: "",
-      }));
-    }
   }
 
   useEffect(() => {
     async function loadShipping() {
       try {
-        if (!form.state || !form.city) {
+        if (!form.country) {
           setShippingError("");
           setShippingFee(0);
           setShippingBaseFee(0);
@@ -68,15 +54,14 @@ export default function Checkout() {
         }
 
         const data = await previewShipping({
-          city: form.city,
-          state: form.state,
+          country: form.country,
           items: cart,
         });
 
         if (data.shippingAvailable === false) {
           setShippingError(
             data.message ||
-              "The selected city is not available. Please contact support.",
+              "Shipping is not available for the selected destination.",
           );
           setShippingFee(0);
           setShippingBaseFee(0);
@@ -99,7 +84,7 @@ export default function Checkout() {
     }
 
     loadShipping();
-  }, [form.city, form.state, cart]);
+  }, [form.country, cart]);
 
   async function handleCheckout(e) {
     e.preventDefault();
@@ -166,36 +151,13 @@ export default function Checkout() {
                 required
               />
 
-              <select
-                name="city"
-                value={form.city}
-                onChange={handleChange}
-                required
-                disabled={!form.state}
-              >
-                <option value="">
-                  {form.state ? "Select a City/LGA" : "Select a State first"}
-                </option>
-                {availableCities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
+              <select name="country" value={form.country} onChange={handleChange} required>
+                {SHIPPING_DESTINATIONS.map((destination) => <option key={destination.value} value={destination.value}>{destination.label}</option>)}
               </select>
 
-              <select
-                name="state"
-                value={form.state}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select a State</option>
-                {NIGERIAN_STATES.map((state) => (
-                  <option key={state.value} value={state.value}>
-                    {state.label}
-                  </option>
-                ))}
-              </select>
+              <input name="city" placeholder="City" value={form.city} onChange={handleChange} required />
+
+              <input name="state" placeholder="State / Region" value={form.state} onChange={handleChange} />
 
               <textarea
                 name="notes"

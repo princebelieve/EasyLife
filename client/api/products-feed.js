@@ -80,7 +80,7 @@ export default async function handler(req, res) {
         "", // sale_price (optional)
         "NGN",
         product.inStock && product.stock > 0 ? "in_stock" : "out_of_stock",
-        product.brand || "Newbrend Furniture",
+        product.brand || "Easy Life Wellness Hub",
         product.sku,
         "new",
         0,

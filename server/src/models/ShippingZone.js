@@ -24,7 +24,7 @@ const shippingZoneSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
-      lowercase: true,
+      uppercase: true,
     },
 
     cities: {
@@ -87,9 +87,12 @@ const shippingZoneSchema = new mongoose.Schema(
       default: true,
     },
 
-    installationAvailable: {
-      type: Boolean,
-      default: true,
+    serviceName: { type: String, default: "Standard Shipping" },
+    currency: { type: String, default: "NGN", uppercase: true },
+    dutiesAndTaxes: {
+      type: String,
+      enum: ["customer", "included"],
+      default: "customer",
     },
 
     active: {

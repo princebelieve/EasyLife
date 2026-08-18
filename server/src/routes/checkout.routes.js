@@ -18,7 +18,7 @@ router.post("/", protect, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const { customerName, email, phone, address, city, state, notes } =
+    const { customerName, email, phone, address, city, state, country, notes } =
       req.body;
 
     // 1. GET CART
@@ -56,13 +56,8 @@ router.post("/", protect, async (req, res) => {
       };
     });
 
-    const deliveryMethod = req.body.deliveryMethod || "home";
-
-    const installationNeeded = req.body.installationNeeded || "no";
-
     const shippingData = await calculateShipping({
-      city,
-      state,
+      country,
       items: cart.items,
     });
 
@@ -70,7 +65,7 @@ router.post("/", protect, async (req, res) => {
       return res.status(400).json({
         message:
           shippingData.message ||
-          "Shipping is not available for the selected state or city.",
+          "Shipping is not available for the selected destination.",
       });
     }
 
@@ -91,6 +86,7 @@ router.post("/", protect, async (req, res) => {
         address,
         city,
         state,
+        country,
         notes,
       },
     });
@@ -110,12 +106,10 @@ router.post("/", protect, async (req, res) => {
       items: orderItems,
       subtotal,
       shippingFee,
-      deliveryMethod,
-      installationNeeded,
       paymentStatus: "pending",
       deliveryStatus: "pending",
       deliveryFee: shippingFee,
-      deliveryZone: state,
+      deliveryZone: country,
       deliveryContact: phone,
       totalAmount,
       currency: "NGN",

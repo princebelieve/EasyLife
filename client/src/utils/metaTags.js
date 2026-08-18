@@ -4,7 +4,7 @@
 
 export function setMetaTags(config) {
   const {
-    title = "Newbrend Furniture",
+    title = "Easy Life Wellness Hub",
     description = "Luxury furniture and decorative accents",
     image = "",
     url = window.location.href,
@@ -96,7 +96,7 @@ export function setProductSchema(product, url) {
     sku: product.sku || product._id,
     brand: {
       "@type": "Brand",
-      name: product.brand || "Newbrend Furniture",
+      name: product.brand || "Easy Life Wellness Hub",
     },
     offers: {
       "@type": "Offer",
@@ -106,7 +106,7 @@ export function setProductSchema(product, url) {
       availability: availability,
       seller: {
         "@type": "Organization",
-        name: "Newbrend Furniture",
+        name: "Easy Life Wellness Hub",
       },
     },
     aggregateRating: product.rating

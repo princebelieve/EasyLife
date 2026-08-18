@@ -9,21 +9,21 @@ export default function Footer() {
       <div className="container footer-grid">
         <div>
           <img
-            src="/logo.jpeg"
-            alt="Newbrend Furniture"
+            src="/logo.png"
+            alt="Easy Life Wellness Hub"
             className="footer-logo"
           />
 
-          <h3>Newbrend Furniture</h3>
+          <h3>Easy Life Wellness Hub (EWH)</h3>
 
-          <p>Premium furniture and bespoke interior design.</p>
+          <p>Nature Cares & Healthy Living.</p>
         </div>
 
         <div>
           <h4>Quick Links</h4>
 
           <Link to="/">Home</Link>
-          <Link to="/collection">Show Room</Link>
+          <Link to="/collection">Shop Wellness Products</Link>
           <Link to="/cart">Cart</Link>
           <Link to="/contact">Contact</Link>
         </div>
@@ -50,15 +50,15 @@ export default function Footer() {
 
           <div className="footer-social">
             <a
-              href="https://x.com/NewtonMM3"
+            href="https://wa.me/2348089938820"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="X"
+              aria-label="WhatsApp"
             >
               <SiX size={24} />
             </a>
             <a
-              href="https://www.instagram.com/newbrend101?igsh=MWpuN2tlbG41cG5r"
+            href="#"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram"
@@ -66,7 +66,7 @@ export default function Footer() {
               <FaInstagram size={24} />
             </a>
             <a
-              href="https://www.tiktok.com/@centnewton2?_r=1&_t=ZN-96wE1C2UMBb"
+            href="#"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok"
@@ -74,7 +74,7 @@ export default function Footer() {
               <FaTiktok size={24} />
             </a>
             <a
-              href="https://youtube.com/@newbrendfurnitureandinterior?si=FEgV3Y9AqdmDWuXs"
+            href="#"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube"
@@ -87,17 +87,17 @@ export default function Footer() {
         <div>
           <h4>Address</h4>
           <p>
-            Km 15, Agbor-Eku Road
+            Easylife Supermarket
             <br />
-            Adjacent Matrix Filling Station
+            Along Lucky Way Road
             <br />
-            Abraka, Delta State Nigeria
+            Benin City, Nigeria
           </p>
         </div>
       </div>
 
       <div className="footer-bottom">
-        © {new Date().getFullYear()} Newbrend Furniture. All rights reserved.
+        © {new Date().getFullYear()} Easy Life Wellness Hub. All rights reserved.
       </div>
     </footer>
   );

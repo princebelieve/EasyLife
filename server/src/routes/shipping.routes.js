@@ -7,11 +7,10 @@ const { calculateShipping } = require("../config/shipping");
 
 router.post("/preview", async (req, res) => {
   try {
-    const { city, state, items } = req.body;
+    const { country, items } = req.body;
 
     const shippingData = await calculateShipping({
-      city,
-      state,
+      country,
       items,
     });
 

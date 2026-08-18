@@ -29,8 +29,8 @@ self.addEventListener("push", (event) => {
 
     const options = {
       body: data.body || "You have a new notification",
-      icon: data.icon || "/logo.jpeg",
-      badge: data.badge || "/logo.jpeg",
+      icon: data.icon || "/logo.png",
+      badge: data.badge || "/logo.png",
       tag: data.tag || "notification",
       requireInteraction: data.requireInteraction || false,
       data: data.data || {},
@@ -38,7 +38,7 @@ self.addEventListener("push", (event) => {
 
     event.waitUntil(
       self.registration.showNotification(
-        data.title || "Newbrend Furniture",
+        data.title || "Easy Life Wellness Hub",
         options,
       ),
     );

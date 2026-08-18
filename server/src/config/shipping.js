@@ -1,85 +1,47 @@
 //server/src/config/shipping.js
 const ShippingZone = require("../models/ShippingZone");
-const { normalizeDeliveryCategory } = require("../utils/category");
 
-async function calculateShipping({ city = "", state = "", items = [] }) {
-  const normalizedState = state.toLowerCase().trim();
-
-  const normalizedCity = city.toLowerCase().trim();
-
-  const zone = await ShippingZone.findOne({
-    state: normalizedState,
-    active: true,
-  });
+// `state` remains the persisted field name for a safe migration from Newbrend.
+// It now contains an ISO destination country code (for example NG or GB).
+// Every active destination has one honest flat rate and delivery estimate.
+async function calculateShipping({ country = "", items = [] }) {
+  const destination = country.toUpperCase().trim();
+  const zone = await ShippingZone.findOne({ state: destination, active: true });
 
   if (!zone) {
     return {
       shippingFee: 0,
       estimatedDays: "Not available",
-      pickupEnabled: false,
-      installationAvailable: false,
       shippingAvailable: false,
-      message: "The selected city is not available. Please contact support.",
+      message: "Shipping is not yet available for this destination.",
     };
   }
 
-  const cityMatched =
-    zone.cities?.some((c) => c.toLowerCase().trim() === normalizedCity) ||
-    false;
+  const hasDomesticOnlyItem = items.some((item) => {
+    const product = item.productId && typeof item.productId === "object" ? item.productId : item;
+    return product?.shipsInternationally === false && destination !== "NG";
+  });
 
-  if (zone.cities?.length > 0 && !cityMatched) {
+  if (hasDomesticOnlyItem) {
     return {
       shippingFee: 0,
       estimatedDays: "Not available",
-      pickupEnabled: false,
-      installationAvailable: false,
       shippingAvailable: false,
-      message: "The selected city is not available. Please contact support.",
+      message: "One or more items in your cart are available only within Nigeria.",
     };
   }
 
-  const sameCity = cityMatched;
-  const baseFee = sameCity ? zone.baseDeliveryFee * 0.5 : zone.baseDeliveryFee;
-
-  let categoryFee = 0;
-
-  for (const item of items) {
-    const product =
-      item.productId && typeof item.productId === "object"
-        ? item.productId
-        : undefined;
-
-    const category = normalizeDeliveryCategory(
-      product?.deliveryCategory ||
-        item.deliveryCategory ||
-        item.category ||
-        "sofa",
-    );
-
-    const quantity = Number(item.quantity || 1);
-
-    const categoryRule = (zone.categoryPricing || []).find(
-      (rule) => normalizeDeliveryCategory(rule.category) === category,
-    );
-
-    const categoryPrice = Number(categoryRule?.price || 0);
-
-    categoryFee += categoryPrice * quantity;
-  }
-
-  const shippingFee = baseFee + categoryFee;
-
+  const shippingFee = Number(zone.baseDeliveryFee || 0);
   return {
     shippingFee,
-    baseFee,
-    categoryFee,
+    baseFee: shippingFee,
+    categoryFee: 0,
     estimatedDays: zone.estimatedDays,
-    pickupEnabled: zone.pickupEnabled,
-    installationAvailable: zone.installationAvailable,
+    serviceName: zone.serviceName,
+    currency: zone.currency,
+    dutiesAndTaxes: zone.dutiesAndTaxes,
     shippingAvailable: true,
   };
 }
 
-module.exports = {
-  calculateShipping,
-};
+module.exports = { calculateShipping };
