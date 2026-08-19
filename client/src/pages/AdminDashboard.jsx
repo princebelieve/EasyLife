@@ -6,7 +6,7 @@ import { getProducts, getAdminOrders } from "../services/api";
 
 import { getToken } from "../utils/auth";
 
-const STORAGE_KEY = "newbrend-home-media";
+const STORAGE_KEY = "easylife-home-media";
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState([]);

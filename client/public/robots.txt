@@ -4,4 +4,4 @@ Disallow: /admin/
 Disallow: /dashboard/
 Disallow: /profile/
 Disallow: /notifications/
-Sitemap: https://newbrend.com/sitemap.xml
+Sitemap: https://easylifewellnesshub.com/sitemap.xml

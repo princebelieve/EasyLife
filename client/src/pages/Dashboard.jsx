@@ -80,7 +80,7 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <div className="dashboard-actions">
           <button onClick={() => (window.location.href = "/collection")}>
-            Shop Furniture
+            Shop Wellness Products
           </button>
           <button onClick={() => (window.location.href = "/cart")}>
             View Cart
@@ -140,7 +140,7 @@ export default function Dashboard() {
                 cursor: "pointer",
               }}
             >
-              Browse Furniture
+              Browse Wellness Products
             </button>
           </div>
         ) : (

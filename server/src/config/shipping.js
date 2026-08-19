@@ -1,7 +1,7 @@
 //server/src/config/shipping.js
 const ShippingZone = require("../models/ShippingZone");
 
-// `state` remains the persisted field name for a safe migration from Newbrend.
+// `state` remains the persisted field name for backward-compatible data migration.
 // It now contains an ISO destination country code (for example NG or GB).
 // Every active destination has one honest flat rate and delivery estimate.
 async function calculateShipping({ country = "", items = [] }) {

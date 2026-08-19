@@ -35,9 +35,8 @@ export default function RefundPolicy() {
         <h2>Overview</h2>
         <p>
           At Easy Life Wellness Hub, we want you to be satisfied with
-          your purchase. This policy applies to all products sold by NewBrend,
-          including furniture, decor, ready-to-ship goods, made-to-order
-          products, and custom design or installation-related items, unless a
+          your purchase. This policy applies to products and paid services
+          offered through Easy Life Wellness Hub, unless a
           specific product page states a different return or warranty term. If a
           product is defective, damaged on arrival, or materially different from
           the description, you may be eligible for a refund, replacement, or

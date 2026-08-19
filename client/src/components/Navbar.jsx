@@ -193,7 +193,7 @@ export default function Navbar() {
               }
             }}
             aria-label="Install app"
-            title="Install NewBrend App"
+            title="Install Easy Life App"
           >
             <Download size={20} />
           </button>

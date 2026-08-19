@@ -150,7 +150,7 @@ export default function AdminLayout({ children }) {
             <img src="/logo.png" alt="logo" className="admin-logo" />
 
             <div>
-              <strong>NewBrend</strong>
+              <strong>Easy Life</strong>
 
               <span>Admin Panel</span>
             </div>

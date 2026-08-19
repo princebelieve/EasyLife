@@ -59,7 +59,7 @@ export default function UserLayout({ children }) {
 
     {
       to: "/collection",
-      label: "Browse Furniture",
+      label: "Browse Wellness Products",
       icon: <Home size={18} />,
     },
 

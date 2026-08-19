@@ -75,8 +75,8 @@ export default function PwaInstallBanner() {
       <div className="pwa-banner-content">
         <Download size={20} className="pwa-banner-icon" />
         <div>
-          <strong>Install NewBrend App</strong>
-          <p>Get faster access — add NewBrend to your home screen</p>
+          <strong>Install Easy Life App</strong>
+          <p>Get faster access — add Easy Life to your home screen</p>
         </div>
       </div>
 
