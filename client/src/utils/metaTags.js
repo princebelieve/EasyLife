@@ -5,7 +5,7 @@
 export function setMetaTags(config) {
   const {
     title = "Easy Life Wellness Hub",
-    description = "Wellness education, natural wellness products, entrepreneurship training, leadership development, and community support.",
+    description = "Easy Life Wellness Hub is a naturopathic network marketing platform dedicated to natural health, wellness, and financial freedom. We empower people to live healthy, earn income, and build generational wealth.",
     image = "",
     url = window.location.href,
     type = "website",

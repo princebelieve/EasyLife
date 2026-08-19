@@ -11,6 +11,10 @@ import "./index.css";
 import "./styles/global.css";
 import { registerServiceWorker } from "./registerServiceWorker";
 
+if ("scrollRestoration" in window.history) {
+  window.history.scrollRestoration = "manual";
+}
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
