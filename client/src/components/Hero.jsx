@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const heroImages = ["/hero1.jpeg", "/hero2.jpeg", "/hero3.jpeg", "/hero4.jpeg"];
 const heroBodyText =
-  "High-end furniture, custom interiors, and luxury living spaces for every room.";
+  "Wellness education, natural wellness products, practical training, and community support for healthier, stronger lives.";
 
 export default function Hero() {
   const navigate = useNavigate();
@@ -62,14 +62,14 @@ export default function Hero() {
 
       <div className="hero-content">
         <h1 className={`hero-title slide-in-${slideDirection}`}>
-          Design Your Perfect Home.
+          Build a healthier, stronger life.
         </h1>
 
         <p className="hero-copy">{typedText || "\u00A0"}</p>
 
         <div>
           <button className="primary" onClick={() => navigate("/collection")}>
-            Show Room
+            Explore Easy Life
           </button>
 
           <button

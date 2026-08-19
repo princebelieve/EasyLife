@@ -1,6 +1,6 @@
 //client/src/components/Footer.jsx
 import { Link } from "react-router-dom";
-import { FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
 import { SiX } from "react-icons/si";
 
 export default function Footer() {
@@ -50,7 +50,15 @@ export default function Footer() {
 
           <div className="footer-social">
             <a
-            href="https://wa.me/2348089938820"
+              href="https://www.facebook.com/share/19KyBKsDzg/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+            >
+              <FaFacebook size={24} />
+            </a>
+            <a
+              href="https://wa.me/2348089938820"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="WhatsApp"

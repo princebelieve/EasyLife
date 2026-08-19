@@ -77,7 +77,7 @@ export default function RefundPolicy() {
         <h2>How to Request a Return</h2>
         <ol>
           <li>
-            Contact support via email at newbrend001@gmail.com or call our
+            Contact support via email at support@easylifewellnesshub.com or call our
             support line with your order reference and photos of the issue.
           </li>
           <li>
@@ -143,7 +143,7 @@ export default function RefundPolicy() {
         <p>
           Questions about refunds or returns should be directed to the{" "}
           <a href="/contact">Contact Support</a> page, WhatsApp, or email
-          newbrend001@gmail.com.
+          support@easylifewellnesshub.com.
         </p>
       </div>
     </>

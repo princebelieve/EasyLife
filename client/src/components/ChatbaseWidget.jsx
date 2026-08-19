@@ -3,31 +3,31 @@ import { useEffect, useState } from "react";
 function getFallbackReply(input) {
   const value = input.toLowerCase();
 
-  if (/custom|design|interior|bespoke|consult/i.test(value)) {
-    return "Yes — we offer bespoke furniture and interior design consultations. We can help with furniture selection, layout ideas, and finishing touches for your space.";
+  if (/wellness|health|natural|product|consult/i.test(value)) {
+    return "We can help with wellness products, healthy-living education, and available wellness-service consultations. Please share what you would like to learn about.";
   }
 
   if (/delivery|shipping|nationwide|order/i.test(value)) {
-    return "We deliver nationwide across Nigeria within 3–5 business days. For urgent questions, you can also reach our support team on WhatsApp at +2348037757718.";
+    return "For product delivery or service availability, please contact Easy Life support on WhatsApp at +2348037757718 or use the Contact page.";
   }
 
   if (/return|refund|policy|exchange/i.test(value)) {
-    return "You can review our returns and refund policy on the website, or contact us directly for order-specific help. Our support email is newbrend001@gmail.com.";
+    return "You can review our returns and refund policy on the website, or contact us directly for order-specific help. Our support email is support@easylifewellnesshub.com.";
   }
 
   if (/price|cost|quote|estimate/i.test(value)) {
-    return "We can help with pricing and project recommendations depending on the furniture type and custom requirements. Please share the item or room you are interested in.";
+    return "Pricing and availability depend on the product, service, or program. Please share what you are interested in and Easy Life support will guide you.";
   }
 
   if (/contact|support|whatsapp|email|call/i.test(value)) {
-    return "You can contact us through WhatsApp at +2348037757718, email us at newbrend001@gmail.com, or visit our contact page for more options.";
+    return "You can contact us through WhatsApp at +2348037757718, email us at support@easylifewellnesshub.com, or visit our contact page for more options.";
   }
 
-  if (/sofa|chair|table|cabinet|decor|collection/i.test(value)) {
-    return "Our collection includes sofas, tables, chairs, cabinets, and decorative accents designed for elegant living and modern interiors.";
+  if (/collection|training|membership|leadership|business/i.test(value)) {
+    return "Easy Life offers wellness products, practical training, leadership development, mentorship, and community opportunities.";
   }
 
-  return "I can help with our furniture collections, custom interiors, delivery, returns, and contact options. Try asking about delivery, custom design, or how to reach support.";
+  return "I can help with wellness products, training, membership, services, delivery, returns, and support. Try asking about wellness, training, or how to contact us.";
 }
 
 export default function ChatbaseWidget() {
@@ -37,7 +37,7 @@ export default function ChatbaseWidget() {
     {
       id: 1,
       role: "assistant",
-      text: "Hi! I’m NewBrend’s support assistant. I can help with furniture collections, custom interiors, delivery, returns, and contact options.",
+      text: "Hi! I’m Easy Life’s support assistant. I can help with wellness products, training, services, delivery, returns, and contact options.",
     },
   ]);
   const [draft, setDraft] = useState("");
@@ -147,7 +147,7 @@ export default function ChatbaseWidget() {
       {isOpen && (
         <div className="chatbase-fallback-panel">
           <div className="chatbase-fallback-header">
-            <strong>NewBrend Support</strong>
+            <strong>Easy Life Support</strong>
             <span>Online help</span>
           </div>
 
@@ -164,9 +164,9 @@ export default function ChatbaseWidget() {
 
           <div className="chatbase-fallback-suggestions">
             {[
-              "What furniture do you sell?",
-              "Do you deliver nationwide?",
-              "Can I order custom furniture?",
+              "What wellness products do you offer?",
+              "What training is available?",
+              "How can I join the community?",
               "How do I contact support?",
             ].map((suggestion) => (
               <button

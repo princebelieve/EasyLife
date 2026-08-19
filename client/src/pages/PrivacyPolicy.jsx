@@ -105,14 +105,14 @@ export default function PrivacyPolicy() {
           certain personal data, and you may object to direct marketing or
           unnecessary processing, subject to applicable law. To exercise these
           rights, contact us through the Support page or email us at
-          newbrend001@gmail.com.
+          support@easylifewellnesshub.com.
         </p>
 
         <h2>Contact</h2>
         <p>
           For privacy concerns, please use the{" "}
           <a href="/contact">Contact Support</a> page or email
-          newbrend001@gmail.com.
+          support@easylifewellnesshub.com.
         </p>
       </div>
     </>

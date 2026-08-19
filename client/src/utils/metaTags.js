@@ -5,7 +5,7 @@
 export function setMetaTags(config) {
   const {
     title = "Easy Life Wellness Hub",
-    description = "Luxury furniture and decorative accents",
+    description = "Wellness education, natural wellness products, entrepreneurship training, leadership development, and community support.",
     image = "",
     url = window.location.href,
     type = "website",

@@ -1,7 +1,7 @@
 {
   "name": "Easy Life Wellness Hub",
-  "short_name": "NewBrend",
-  "description": "Premium furniture and interior styling from Abraka, Nigeria, with nationwide delivery.",
+  "short_name": "Easy Life",
+  "description": "Wellness education, natural wellness products, entrepreneurship training, leadership development, and community support.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
