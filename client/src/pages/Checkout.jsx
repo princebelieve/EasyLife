@@ -13,8 +13,6 @@ const SHIPPING_DESTINATIONS = [
 export default function Checkout() {
   const { cart, subtotal } = useCart();
   const [shippingFee, setShippingFee] = useState(0);
-  const [shippingBaseFee, setShippingBaseFee] = useState(0);
-  const [shippingCategoryFee, setShippingCategoryFee] = useState(0);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [shippingError, setShippingError] = useState("");
@@ -48,8 +46,6 @@ export default function Checkout() {
         if (!form.country) {
           setShippingError("");
           setShippingFee(0);
-          setShippingBaseFee(0);
-          setShippingCategoryFee(0);
           return;
         }
 
@@ -58,28 +54,14 @@ export default function Checkout() {
           items: cart,
         });
 
-        if (data.shippingAvailable === false) {
-          setShippingError(
-            data.message ||
-              "Shipping is not available for the selected destination.",
-          );
-          setShippingFee(0);
-          setShippingBaseFee(0);
-          setShippingCategoryFee(0);
-        } else {
-          setShippingError("");
-          setShippingFee(Number(data.shippingFee || 0));
-          setShippingBaseFee(Number(data.baseFee || 0));
-          setShippingCategoryFee(Number(data.categoryFee || 0));
-        }
+        setShippingError("");
+        setShippingFee(Number(data.shippingFee || 0));
       } catch (err) {
         console.error(err);
         setShippingError(
           err.message || "Unable to verify delivery availability.",
         );
         setShippingFee(0);
-        setShippingBaseFee(0);
-        setShippingCategoryFee(0);
       }
     }
 
@@ -231,13 +213,8 @@ export default function Checkout() {
               </p>
 
               <p>
-                Shipping base fee:
-                <strong>₦{shippingBaseFee.toLocaleString()}</strong>
-              </p>
-
-              <p>
-                Shipping category fee:
-                <strong>₦{shippingCategoryFee.toLocaleString()}</strong>
+                Flat delivery fee:
+                <strong>₦{shippingFee.toLocaleString()}</strong>
               </p>
 
               <p>

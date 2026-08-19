@@ -9,33 +9,22 @@ async function calculateShipping({ country = "", items = [] }) {
   const zone = await ShippingZone.findOne({ state: destination, active: true });
 
   if (!zone) {
+    const shippingFee = Number(process.env.DEFAULT_SHIPPING_PRICE || 0);
     return {
-      shippingFee: 0,
-      estimatedDays: "Not available",
-      shippingAvailable: false,
-      message: "Shipping is not yet available for this destination.",
-    };
-  }
-
-  const hasDomesticOnlyItem = items.some((item) => {
-    const product = item.productId && typeof item.productId === "object" ? item.productId : item;
-    return product?.shipsInternationally === false && destination !== "NG";
-  });
-
-  if (hasDomesticOnlyItem) {
-    return {
-      shippingFee: 0,
-      estimatedDays: "Not available",
-      shippingAvailable: false,
-      message: "One or more items in your cart are available only within Nigeria.",
+      shippingFee,
+      flatRate: shippingFee,
+      estimatedDays: process.env.DEFAULT_DELIVERY_ESTIMATE || "3-7 business days",
+      serviceName: "Standard delivery",
+      currency: "NGN",
+      dutiesAndTaxes: "customer",
+      shippingAvailable: true,
     };
   }
 
   const shippingFee = Number(zone.baseDeliveryFee || 0);
   return {
     shippingFee,
-    baseFee: shippingFee,
-    categoryFee: 0,
+    flatRate: shippingFee,
     estimatedDays: zone.estimatedDays,
     serviceName: zone.serviceName,
     currency: zone.currency,

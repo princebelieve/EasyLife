@@ -14,6 +14,11 @@ const {
 } = require("../services/notification.service");
 const { sendPushToUser } = require("../services/push.service");
 
+const clientUrl = (process.env.CLIENT_URL || "http://localhost:5173")
+  .split(",")[0]
+  .trim()
+  .replace(/\/$/, "");
+
 router.post("/", protect, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -78,7 +83,7 @@ router.post("/", protect, async (req, res) => {
       email,
       amount: totalAmount * 100,
       currency: "NGN",
-      callback_url: `${process.env.CLIENT_URL}/success`,
+      callback_url: `${clientUrl}/success`,
       metadata: {
         userId,
         customerName,

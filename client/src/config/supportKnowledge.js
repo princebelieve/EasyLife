@@ -113,11 +113,11 @@ const supportKnowledge = [
     slug: "delivery-and-shipping",
     title: "Delivery & Shipping",
     url: "/contact",
-    summary: "Delivery availability, fees, and estimates depend on destination, product, and current shipping settings.",
+    summary: "Easy Life uses a simple flat delivery fee for checkout. The applicable rate and delivery estimate are shown before payment.",
     keywords: ["delivery", "shipping", "location", "nationwide", "fee", "arrival", "dispatch"],
     details: [
-      "Applicable delivery fees and estimates are shown before order completion where available.",
-      "For destination availability or an order-specific delivery question, contact Easy Life support with your order reference and location.",
+      "The checkout shows one flat delivery fee for the selected destination; it is not calculated from product weight, dimensions, or furniture-style categories.",
+      "Configured destination rates can override the default flat rate, while payment remains available when a destination has no custom rate.",
     ],
   },
   {
