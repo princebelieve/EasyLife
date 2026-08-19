@@ -361,6 +361,26 @@ export async function getProducts() {
   return apiRequest("/api/products");
 }
 
+export async function getTestimonials(featured = false) {
+  return apiRequest(`/api/testimonials${featured ? "?featured=true" : ""}`);
+}
+
+export async function getAdminTestimonials(token) {
+  return apiRequest("/api/testimonials/admin", { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export async function createTestimonialApi(formData, token) {
+  return apiRequest("/api/testimonials/admin", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData });
+}
+
+export async function updateTestimonialApi(id, formData, token) {
+  return apiRequest(`/api/testimonials/admin/${id}`, { method: "PUT", headers: { Authorization: `Bearer ${token}` }, body: formData });
+}
+
+export async function deleteTestimonialApi(id, token) {
+  return apiRequest(`/api/testimonials/admin/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+}
+
 export async function getProductById(id) {
   return apiRequest(`/api/products/${id}`);
 }

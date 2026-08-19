@@ -13,6 +13,18 @@
     <priority>0.80</priority>
   </url>
   <url>
+    <loc>https://easylifewellnesshub.com/testimonials</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://easylifewellnesshub.com/outreach</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://easylifewellnesshub.com/journey</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
     <loc>https://easylifewellnesshub.com/contact</loc>
     <priority>0.80</priority>
   </url>

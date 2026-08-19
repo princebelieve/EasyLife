@@ -16,6 +16,7 @@ import {
   Truck,
   MapPinned,
   MessageSquare,
+  Video,
   Home,
   User,
   Bell,
@@ -100,6 +101,12 @@ export default function AdminLayout({ children }) {
       to: "/admin/inquiries",
       label: "Inquiries",
       icon: <MessageSquare size={18} />,
+    },
+
+    {
+      to: "/admin/testimonials",
+      label: "Testimonials",
+      icon: <Video size={18} />,
     },
 
     {

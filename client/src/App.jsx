@@ -45,6 +45,10 @@ import PwaNotificationBanner from "./components/PwaNotificationBanner";
 import PwaInstallBanner from "./components/PwaInstallBanner";
 import SupportAssistant from "./components/SupportAssistant";
 import SupportGuide from "./pages/SupportGuide";
+import Testimonials from "./pages/Testimonials";
+import AdminTestimonials from "./pages/AdminTestimonials";
+import Outreach from "./pages/Outreach";
+import Journey from "./pages/Journey";
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
@@ -150,6 +154,9 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/support" element={<SupportGuide />} />
+            <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/outreach" element={<Outreach />} />
+            <Route path="/journey" element={<Journey />} />
             <Route path="/success" element={<Success />} />
             <Route path="/cancel" element={<Cancel />} />
 
@@ -275,6 +282,17 @@ export default function App() {
                 <RequireAdmin>
                   <AdminLayout>
                     <AdminInquiries />
+                  </AdminLayout>
+                </RequireAdmin>
+              }
+            />
+
+            <Route
+              path="/admin/testimonials"
+              element={
+                <RequireAdmin>
+                  <AdminLayout>
+                    <AdminTestimonials />
                   </AdminLayout>
                 </RequireAdmin>
               }

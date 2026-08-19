@@ -23,6 +23,7 @@ const inquiryRoutes = require("./routes/inquiries.routes");
 const adminShippingRoutes = require("./routes/adminShipping.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const pushRoutes = require("./routes/push.routes");
+const testimonialRoutes = require("./routes/testimonial.routes");
 
 const Product = require("./models/Product");
 const ShippingZone = require("./models/ShippingZone");
@@ -49,6 +50,8 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use("/api/testimonials", testimonialRoutes);
 
 // DYNAMIC SITEMAP - serves at root level for Google
 app.get("/sitemap.xml", async (req, res) => {
@@ -98,6 +101,7 @@ app.get("/sitemap.xml", async (req, res) => {
       { loc: `${baseUrl}/collection`, priority: "0.90" },
       { loc: `${baseUrl}/contact`, priority: "0.80" },
       { loc: `${baseUrl}/support`, priority: "0.80" },
+      { loc: `${baseUrl}/testimonials`, priority: "0.80" },
       { loc: `${baseUrl}/about`, priority: "0.70" },
       { loc: `${baseUrl}/privacy-policy`, priority: "0.50" },
       { loc: `${baseUrl}/refund-policy`, priority: "0.50" },
