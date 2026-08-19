@@ -97,6 +97,7 @@ app.get("/sitemap.xml", async (req, res) => {
       { loc: baseUrl, priority: "1.00" },
       { loc: `${baseUrl}/collection`, priority: "0.90" },
       { loc: `${baseUrl}/contact`, priority: "0.80" },
+      { loc: `${baseUrl}/support`, priority: "0.80" },
       { loc: `${baseUrl}/about`, priority: "0.70" },
       { loc: `${baseUrl}/privacy-policy`, priority: "0.50" },
       { loc: `${baseUrl}/refund-policy`, priority: "0.50" },

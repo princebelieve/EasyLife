@@ -1,7 +1,40 @@
 import { useEffect, useState } from "react";
+import supportKnowledge from "../config/supportKnowledge";
 
-function getFallbackReply(input) {
+function getKnowledgeReply(input) {
   const value = input.toLowerCase();
+  const terms = value.split(/[^a-z0-9]+/).filter((term) => term.length > 2);
+
+  const rankedEntries = supportKnowledge
+    .map((entry) => {
+      const searchable = [entry.title, entry.summary, ...entry.keywords, ...entry.details]
+        .join(" ")
+        .toLowerCase();
+      const score = terms.reduce((total, term) => total + (searchable.includes(term) ? 1 : 0), 0);
+      return { entry, score };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((left, right) => right.score - left.score);
+
+  const best = rankedEntries[0]?.entry;
+  if (!best) return null;
+
+  return `${best.summary} ${best.details[0]} Read more: ${best.url}`;
+}
+
+function getFallbackReply(input, sitemapLinks = []) {
+  const knowledgeReply = getKnowledgeReply(input);
+  if (knowledgeReply) return knowledgeReply;
+
+  const value = input.toLowerCase();
+
+  const matchingLink = sitemapLinks.find(({ label, url }) =>
+    `${label} ${url}`.toLowerCase().includes(value),
+  );
+
+  if (matchingLink) {
+    return `You can find that here: ${matchingLink.label} - ${matchingLink.url}`;
+  }
 
   if (/wellness|health|natural|product|consult/i.test(value)) {
     return "We can help with wellness products, healthy-living education, and available wellness-service consultations. Please share what you would like to learn about.";
@@ -30,8 +63,8 @@ function getFallbackReply(input) {
   return "I can help with wellness products, training, membership, services, delivery, returns, and support. Try asking about wellness, training, or how to contact us.";
 }
 
-export default function ChatbaseWidget() {
-  const [isFallbackActive, setIsFallbackActive] = useState(false);
+export default function SupportAssistant() {
+  const [sitemapLinks, setSitemapLinks] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -43,74 +76,24 @@ export default function ChatbaseWidget() {
   const [draft, setDraft] = useState("");
 
   useEffect(() => {
-    const chatbotId = import.meta.env.VITE_CHATBASE_CHATBOT_ID;
-
-    if (!chatbotId) {
-      setIsFallbackActive(true);
-      return;
-    }
-
-    if (document.getElementById("chatbase-init-script")) {
-      return;
-    }
-
-    const snippet = `
-      (function(){
-        if(!window.chatbase || window.chatbase("getState") !== "initialized"){
-          window.chatbase = (...arguments) => {
-            if(!window.chatbase.q){
-              window.chatbase.q = [];
-            }
-            window.chatbase.q.push(arguments);
-          };
-          window.chatbase = new Proxy(window.chatbase, {
-            get(target, prop) {
-              if(prop === "q") return target.q;
-              return (...args) => target(prop, ...args);
-            }
-          });
-        }
-
-        const onLoad = function(){
-          const script = document.createElement("script");
-          script.src = "https://www.chatbase.co/embed.min.js";
-          script.id = "${chatbotId}";
-          script.domain = "www.chatbase.co";
-          document.body.appendChild(script);
-        };
-
-        if(document.readyState === "complete"){
-          onLoad();
-        } else {
-          window.addEventListener("load", onLoad, { once: true });
-        }
-      })();
-    `;
-
-    const initScript = document.createElement("script");
-    initScript.id = "chatbase-init-script";
-    initScript.textContent = snippet;
-    document.body.appendChild(initScript);
-
-    const fallbackTimer = window.setTimeout(() => {
-      try {
-        const state = window.chatbase?.("getState");
-        if (state !== "initialized") {
-          setIsFallbackActive(true);
-        }
-      } catch {
-        setIsFallbackActive(true);
-      }
-    }, 3000);
-
-    return () => {
-      window.clearTimeout(fallbackTimer);
-      const init = document.getElementById("chatbase-init-script");
-      if (init) init.remove();
-
-      const widget = document.getElementById(chatbotId);
-      if (widget) widget.remove();
-    };
+    fetch("/sitemap.xml")
+      .then((response) => (response.ok ? response.text() : ""))
+      .then((xml) => {
+        if (!xml) return;
+        const documentXml = new DOMParser().parseFromString(xml, "application/xml");
+        const links = Array.from(documentXml.querySelectorAll("loc")).map((node) => {
+          const url = node.textContent || "";
+          const path = new URL(url, window.location.origin).pathname;
+          const label = path === "/" ? "Easy Life home" : path
+            .split("/")
+            .filter(Boolean)
+            .map((part) => part.replace(/-/g, " "))
+            .join(" ");
+          return { label, url };
+        });
+        setSitemapLinks(links);
+      })
+      .catch(() => setSitemapLinks([]));
   }, []);
 
   const handleSend = (value) => {
@@ -123,21 +106,17 @@ export default function ChatbaseWidget() {
       {
         id: Date.now() + 1,
         role: "assistant",
-        text: getFallbackReply(message),
+        text: getFallbackReply(message, sitemapLinks),
       },
     ]);
     setDraft("");
   };
 
-  if (!isFallbackActive) {
-    return null;
-  }
-
   return (
-    <div className="chatbase-fallback">
+    <div className="support-assistant">
       <button
         type="button"
-        className="chatbase-fallback-toggle"
+        className="support-assistant-toggle"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label="Open support assistant"
       >
@@ -145,24 +124,24 @@ export default function ChatbaseWidget() {
       </button>
 
       {isOpen && (
-        <div className="chatbase-fallback-panel">
-          <div className="chatbase-fallback-header">
+        <div className="support-assistant-panel">
+          <div className="support-assistant-header">
             <strong>Easy Life Support</strong>
             <span>Online help</span>
           </div>
 
-          <div className="chatbase-fallback-body">
+          <div className="support-assistant-body">
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`chatbase-fallback-message ${message.role}`}
+                className={`support-assistant-message ${message.role}`}
               >
                 {message.text}
               </div>
             ))}
           </div>
 
-          <div className="chatbase-fallback-suggestions">
+          <div className="support-assistant-suggestions">
             {[
               "What wellness products do you offer?",
               "What training is available?",
@@ -172,7 +151,7 @@ export default function ChatbaseWidget() {
               <button
                 key={suggestion}
                 type="button"
-                className="chatbase-fallback-chip"
+                className="support-assistant-chip"
                 onClick={() => handleSend(suggestion)}
               >
                 {suggestion}
@@ -180,7 +159,7 @@ export default function ChatbaseWidget() {
             ))}
           </div>
 
-          <div className="chatbase-fallback-input-row">
+          <div className="support-assistant-input-row">
             <input
               type="text"
               value={draft}

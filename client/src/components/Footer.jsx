@@ -26,6 +26,7 @@ export default function Footer() {
           <Link to="/collection">Shop Wellness Products</Link>
           <Link to="/cart">Cart</Link>
           <Link to="/contact">Contact</Link>
+          <Link to="/support">Support Guide</Link>
         </div>
 
         <div>
