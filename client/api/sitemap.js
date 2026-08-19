@@ -12,9 +12,13 @@ export default async function handler(req, res) {
     const products = await response.json();
     const host = req.headers.host;
     const protocol = req.headers["x-forwarded-proto"] || "https";
-    const baseUrl =
+    const baseUrl = (
       process.env.CLIENT_URL ||
-      (host ? `${protocol}://${host}` : "http://localhost:5173");
+      (host ? `${protocol}://${host}` : "http://localhost:5173")
+    )
+      .split(",")[0]
+      .trim()
+      .replace(/\/$/, "");
     const staticPages = [
       { loc: baseUrl, priority: "1.00" },
       { loc: `${baseUrl}/collection`, priority: "0.95" },

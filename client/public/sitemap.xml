@@ -24,4 +24,16 @@
     <loc>https://easylifewellnesshub.com/register</loc>
     <priority>0.40</priority>
   </url>
+  <url>
+    <loc>https://easylifewellnesshub.com/privacy-policy</loc>
+    <priority>0.50</priority>
+  </url>
+  <url>
+    <loc>https://easylifewellnesshub.com/refund-policy</loc>
+    <priority>0.50</priority>
+  </url>
+  <url>
+    <loc>https://easylifewellnesshub.com/terms-conditions</loc>
+    <priority>0.50</priority>
+  </url>
 </urlset>

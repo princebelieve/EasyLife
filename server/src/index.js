@@ -59,10 +59,14 @@ app.get("/sitemap.xml", async (req, res) => {
 
     const host = req.headers.host;
     const protocol = req.headers["x-forwarded-proto"] || "https";
-    const baseUrl =
+    const baseUrl = (
       process.env.CLIENT_URL ||
       process.env.BASE_URL ||
-      (host ? `${protocol}://${host}` : "http://localhost:5173");
+      (host ? `${protocol}://${host}` : "http://localhost:5173")
+    )
+      .split(",")[0]
+      .trim()
+      .replace(/\/$/, "");
 
     // Determine a default shipping price (lowest active baseDeliveryFee) to include in the feed.
     // Merchant Center accepts product-level <g:shipping> entries; providing a conservative
@@ -94,6 +98,9 @@ app.get("/sitemap.xml", async (req, res) => {
       { loc: `${baseUrl}/collection`, priority: "0.90" },
       { loc: `${baseUrl}/contact`, priority: "0.80" },
       { loc: `${baseUrl}/about`, priority: "0.70" },
+      { loc: `${baseUrl}/privacy-policy`, priority: "0.50" },
+      { loc: `${baseUrl}/refund-policy`, priority: "0.50" },
+      { loc: `${baseUrl}/terms-conditions`, priority: "0.50" },
     ];
 
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
