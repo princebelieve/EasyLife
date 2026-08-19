@@ -1,10 +1,10 @@
 :root {
   --navy: #063b20;
-  --navy-light: #075c32;
+  --navy-light: #0b7a43;
   --brown: #063b20;
   --brown-light: #159447;
-  --gold: #d4a72c;
-  --bg: #f6e8c4;
+  --gold: #e8c66a;
+  --bg: #fbf5e6;
   --cream: #f6e8c4;
   --white: #ffffff;
   --text: #050805;
@@ -1018,6 +1018,45 @@ input:focus {
   font-weight: 600;
 }
 
+@keyframes cardRise {
+  from { opacity: 0; transform: translateY(18px); box-shadow: 0 4px 12px rgba(6, 59, 32, .04); }
+  to { opacity: 1; transform: translateY(0); box-shadow: 0 14px 34px rgba(6, 59, 32, .1); }
+}
+
+.grid > .card,
+.contact-card,
+.support-guide-card,
+.profile-info-card,
+.cart-summary,
+.admin-card,
+.kpi-card,
+.easy-member-card {
+  animation: cardRise .7s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.grid > .card:nth-child(2),
+.contact-card:nth-child(2),
+.support-guide-card:nth-child(2) { animation-delay: .08s; }
+.grid > .card:nth-child(3),
+.contact-card:nth-child(3),
+.support-guide-card:nth-child(3) { animation-delay: .16s; }
+.grid > .card:nth-child(4),
+.contact-card:nth-child(4),
+.support-guide-card:nth-child(4) { animation-delay: .24s; }
+
+.grid > .card:hover,
+.contact-card:hover,
+.support-guide-card:hover,
+.profile-info-card:hover,
+.cart-summary:hover,
+.admin-card:hover,
+.kpi-card:hover,
+.easy-member-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 18px 44px rgba(6, 59, 32, .18), 0 0 0 1px rgba(232, 198, 106, .3), 0 0 24px rgba(21, 148, 71, .16);
+  transform: translateY(-6px);
+}
+
 .card button {
   margin: 0 22px 14px;
   width: calc(100% - 44px);
@@ -1820,6 +1859,16 @@ button:hover {
   color: #111;
 }
 
+.support-assistant-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--brown-light);
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .support-assistant-suggestions {
   display: flex;
   flex-wrap: wrap;
@@ -2217,20 +2266,23 @@ button:hover {
 
 .contact-strip {
   display: grid;
-  grid-template-columns: repeat(2, minmax(240px, 1fr));
-  gap: 16px;
-  margin-top: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 560px;
+  margin: 24px auto 0;
 }
 
 .strip-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  min-width: 260px;
-  padding: 24px;
-  border-radius: 20px;
-  color: white;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+  gap: 11px;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(6, 59, 32, .14);
+  border-radius: 8px;
+  color: var(--navy);
+  background: rgba(246, 232, 196, .72);
+  box-shadow: 0 8px 20px rgba(6, 59, 32, .08);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -2240,33 +2292,32 @@ button:hover {
 }
 
 .strip-card svg {
-  min-width: 40px;
-  min-height: 40px;
+  min-width: 22px;
+  min-height: 22px;
 }
 
 .strip-card strong {
   display: block;
-  font-size: 18px;
-  margin-bottom: 6px;
+  font-size: 14px;
+  margin-bottom: 2px;
 }
 
 .strip-card span {
-  color: rgba(255, 255, 255, 0.88);
+  color: #52675b;
+  font-size: 13px;
   line-height: 1.4;
 }
 
 .whatsapp-card {
-  background: #25d366;
+  border-color: rgba(21, 148, 71, .42);
 }
 
 .email-card {
-  background: #EA4335;
-  /* Gmail brand red */
+  border-color: rgba(184, 134, 32, .42);
 }
 
-/* Ensure CTA icons are visible (white) */
 .strip-card svg {
-  color: white;
+  color: var(--brown-light);
 }
 
 .social-links {
@@ -4504,6 +4555,12 @@ body {
   border-color: rgba(232, 198, 106, .38);
 }
 
+.story-card .contact-address {
+  color: var(--cream);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
 .form input:focus,
 .form select:focus,
 .form textarea:focus,
@@ -4575,9 +4632,77 @@ textarea:focus {
 }
 
 .contact-hero-card {
-  background: var(--white);
-  border: 1px solid rgba(212, 167, 44, .28);
+  background: linear-gradient(118deg, #050805 0%, #063b20 56%, #0b7a43 100%);
+  border: 1px solid rgba(232, 198, 106, .6);
+  box-shadow: 0 24px 70px rgba(6, 59, 32, .3);
 }
+
+.contact-hero-card::before {
+  background-image: linear-gradient(110deg, rgba(5, 8, 5, .82), rgba(6, 59, 32, .72) 58%, rgba(11, 122, 67, .62)), url("/image-6.png");
+  background-size: cover;
+  background-position: center;
+  opacity: .52;
+  mix-blend-mode: normal;
+  animation: heroSlideInRight 1.1s ease-out both;
+}
+
+.contact-copy {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  padding: 38px 44px;
+  border-left: 3px solid var(--gold);
+  background: linear-gradient(90deg, rgba(5, 8, 5, .9), rgba(5, 8, 5, .68) 68%, rgba(5, 8, 5, .18));
+  border-radius: 6px;
+  animation: heroTitleSlideInLeft .9s ease-out both;
+}
+
+.contact-strip .strip-card {
+  animation: heroTitleSlideInRight .8s ease-out both;
+}
+
+.contact-strip .strip-card:nth-child(2) {
+  animation-delay: .12s;
+}
+
+.contact-hero h1,
+.contact-hero p {
+  color: var(--cream);
+}
+
+.contact-hero {
+  text-align: left;
+}
+
+.contact-strip {
+  margin-left: 0;
+}
+
+.contact-hero h1 {
+  text-shadow: 0 3px 18px rgba(0, 0, 0, .42);
+}
+
+.contact-hero p {
+  color: rgba(255, 255, 255, .9);
+}
+
+.contact-hero .eyebrow {
+  color: var(--gold);
+}
+
+.easy-life-home .easy-pillar,
+.easy-life-home .easy-service-list > div,
+.easy-life-home .easy-member-card,
+.easy-life-home .easy-outreach-mark {
+  animation: easyHeroIn .7s ease both;
+}
+
+.easy-life-home .easy-pillar:nth-child(2),
+.easy-life-home .easy-service-list > div:nth-child(2) { animation-delay: .08s; }
+.easy-life-home .easy-pillar:nth-child(3),
+.easy-life-home .easy-service-list > div:nth-child(3) { animation-delay: .16s; }
+.easy-life-home .easy-pillar:nth-child(4) { animation-delay: .24s; }
+.easy-life-home .easy-pillar:nth-child(5) { animation-delay: .32s; }
 
 .footer {
   background: linear-gradient(135deg, var(--navy), var(--navy-light));
@@ -4585,6 +4710,181 @@ textarea:focus {
 }
 
 .footer a:hover { color: var(--cream); }
+
+a:hover { color: var(--brown-light); }
+
+button:hover,
+.easy-btn:hover,
+.cta:hover,
+.primary:hover,
+.btn-primary:hover {
+  filter: saturate(1.18) brightness(1.06);
+}
+
+.easy-btn-primary,
+.cta,
+.primary,
+.btn-primary {
+  box-shadow: 0 8px 18px rgba(6, 59, 32, .18);
+}
+
+@keyframes buttonBreathe {
+  0%, 100% { transform: scale(1); box-shadow: 0 8px 18px rgba(6, 59, 32, .16); }
+  50% { transform: scale(1.025); box-shadow: 0 12px 26px rgba(21, 148, 71, .24); }
+}
+
+@keyframes buttonBreatheGlow {
+  0%, 100% { filter: brightness(1) saturate(1); box-shadow: 0 8px 18px rgba(6, 59, 32, .16); }
+  50% { filter: brightness(1.14) saturate(1.28); box-shadow: 0 14px 32px rgba(21, 148, 71, .4), 0 0 0 3px rgba(232, 198, 106, .26); }
+}
+
+.easy-btn,
+.primary,
+.btn-primary,
+.cta,
+.card-actions button,
+.support-assistant-toggle,
+.support-assistant-input-row button {
+  animation: buttonBreathe 3.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.easy-btn:hover,
+.primary:hover,
+.btn-primary:hover,
+.cta:hover,
+.card-actions button:hover,
+.support-assistant-toggle:hover,
+.support-assistant-input-row button:hover {
+  animation-play-state: paused;
+  transform: translateY(-4px) scale(1.07);
+  box-shadow: 0 16px 32px rgba(21, 148, 71, .3), 0 0 0 2px rgba(232, 198, 106, .32);
+}
+
+.easy-pillar,
+.easy-service-list > div,
+.story-card,
+.service-card,
+.support-guide-card,
+.contact-card,
+.easy-member-card,
+.easy-outreach-mark {
+  transition: transform .28s cubic-bezier(.22, 1, .36, 1), box-shadow .28s ease, border-color .28s ease;
+}
+
+.easy-pillar:hover,
+.easy-service-list > div:hover,
+.story-card:hover,
+.service-card:hover,
+.support-guide-card:hover,
+.contact-card:hover,
+.easy-member-card:hover,
+.easy-outreach-mark:hover {
+  transform: translateY(-8px) scale(1.025);
+  border-color: var(--gold);
+  box-shadow: 0 20px 42px rgba(6, 59, 32, .2), 0 0 0 2px rgba(232, 198, 106, .22), 0 0 26px rgba(21, 148, 71, .16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .easy-btn,
+  .primary,
+  .btn-primary,
+  .cta,
+  .card-actions button,
+  .support-assistant-toggle,
+  .support-assistant-input-row button,
+  .easy-pillar,
+  .easy-service-list > div,
+  .story-card,
+  .service-card,
+  .support-guide-card,
+  .contact-card,
+  .easy-member-card,
+  .easy-outreach-mark {
+    animation: none;
+    transition: none;
+  }
+}
+
+.content-card {
+  will-change: transform, box-shadow;
+}
+
+.content-card:hover {
+  transform: translate3d(0, -9px, 0) scale(1.035) !important;
+  box-shadow: 0 22px 46px rgba(6, 59, 32, .24), 0 0 0 2px rgba(232, 198, 106, .34), 0 0 30px rgba(21, 148, 71, .22) !important;
+}
+
+.breathing-button {
+  animation: buttonBreatheGlow 2.8s ease-in-out infinite !important;
+  will-change: box-shadow;
+}
+
+.breathing-button:hover {
+  animation-play-state: paused !important;
+  transform: translate3d(0, -5px, 0) scale(1.08) !important;
+  box-shadow: 0 18px 34px rgba(21, 148, 71, .34), 0 0 0 2px rgba(232, 198, 106, .4) !important;
+}
+
+.easy-life-home .easy-btn,
+.easy-life-home button,
+.card-actions button,
+.support-assistant button,
+.contact-strip .strip-card {
+  animation: buttonBreatheGlow 2.4s ease-in-out infinite !important;
+  will-change: filter, box-shadow;
+}
+
+.easy-life-home .easy-btn:hover,
+.easy-life-home button:hover,
+.card-actions button:hover,
+.support-assistant button:hover,
+.contact-strip .strip-card:hover {
+  animation-play-state: paused !important;
+}
+
+.easy-inline-image,
+.easy-section-image,
+.shop-hero img,
+.about-image-wrap > img,
+.support-guide-badge {
+  transition: transform .35s cubic-bezier(.22, 1, .36, 1), filter .35s ease, box-shadow .35s ease;
+  will-change: transform, filter;
+}
+
+.easy-inline-image:hover,
+.easy-inline-image:active,
+.easy-section-image:hover,
+.easy-section-image:active,
+.shop-hero img:hover,
+.shop-hero img:active,
+.about-image-wrap > img:hover,
+.about-image-wrap > img:active,
+.support-guide-badge:hover,
+.support-guide-badge:active {
+  transform: scale(1.035) translateY(-5px);
+  filter: saturate(1.16) contrast(1.04) brightness(1.04);
+  box-shadow: 0 20px 42px rgba(6, 59, 32, .24), 0 0 22px rgba(21, 148, 71, .18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breathing-button {
+    animation: none !important;
+  }
+
+  .easy-life-home .easy-btn,
+  .easy-life-home button,
+  .card-actions button,
+  .support-assistant button,
+  .contact-strip .strip-card {
+    animation: none !important;
+  }
+
+  .content-card:hover,
+  .breathing-button:hover {
+    transform: none !important;
+  }
+}
 
 .support-guide-hero {
   padding: 76px 0;
@@ -4651,6 +4951,7 @@ textarea:focus {
 
 @media (max-width: 600px) {
   .auth-form { padding: 28px 20px; }
+  .contact-copy { padding: 28px 22px; }
 }
 .easy-life-home .easy-products .product-card,
 .easy-life-home .easy-service-list > div,

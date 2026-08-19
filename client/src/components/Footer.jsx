@@ -83,7 +83,7 @@ export default function Footer() {
               <FaTiktok size={24} />
             </a>
             <a
-            href="#"
+              href="https://www.youtube.com/@EasylifeWellnessHub"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube"

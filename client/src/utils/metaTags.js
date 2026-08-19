@@ -11,6 +11,10 @@ export function setMetaTags(config) {
     type = "website",
   } = config;
 
+  const absoluteImage = image
+    ? new URL(image, window.location.origin).toString()
+    : `${window.location.origin}/logo.png`;
+
   // Set document title
   document.title = title;
 
@@ -18,13 +22,14 @@ export function setMetaTags(config) {
   const metaTags = {
     "og:title": title,
     "og:description": description,
-    "og:image": image,
+    "og:image": absoluteImage,
+    "og:image:alt": title,
     "og:url": url,
     "og:type": type,
     canonical: url,
     "twitter:title": title,
     "twitter:description": description,
-    "twitter:image": image,
+    "twitter:image": absoluteImage,
     "twitter:card": "summary_large_image",
     description: description,
   };

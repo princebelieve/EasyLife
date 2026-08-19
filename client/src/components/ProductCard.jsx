@@ -24,12 +24,12 @@ export default function ProductCard({ product }) {
       <p>₦{Number(product.price || 0).toLocaleString()}</p>
 
       <div className="card-actions">
-        <button onClick={() => navigate(`/product/${product._id}`)}>
+          <button className="breathing-button" onClick={() => navigate(`/product/${product._id}`)}>
           View Product
         </button>
 
         <button
-          className="wa"
+          className="wa breathing-button"
           onClick={() =>
             window.open(
               `https://wa.me/2348037757718?text=Hello, I want to order ${product.name}`,

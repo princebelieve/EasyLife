@@ -1,7 +1,82 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import supportKnowledge from "../config/supportKnowledge";
 
-function getKnowledgeReply(input) {
+const intentRules = [
+  {
+    test: /^(hi|hello|hey|good morning|good afternoon|good evening|greetings)\b/i,
+    reply: { text: "Hello! Welcome to Easy Life Wellness Hub. Are you looking for wellness products, training, membership, support, or a checkup?" },
+  },
+  {
+    test: /\b(thank you|thanks|thank u|appreciate)\b/i,
+    reply: { text: "You’re welcome. I’m here to help you find the right Easy Life information." },
+  },
+  {
+    test: /\b(bye|goodbye|see you|that is all|that's all)\b/i,
+    reply: { text: "Thank you for visiting Easy Life Wellness Hub. Have a healthy, strong, and prosperous day!" },
+  },
+  {
+    test: /\b(who are you|what is easy life|tell me about easy life|what do you do)\b/i,
+    entry: "about-easy-life",
+  },
+  {
+    test: /\b(join|sign up|signup|register|become a member|membership)\b/i,
+    entry: "membership",
+  },
+  {
+    test: /\b(training|learn|leadership|mentor|mentorship|public speaking|financial literacy)\b/i,
+    entry: "training-and-leadership",
+  },
+  {
+    test: /\b(network marketing|business opportunity|earn|income|build a team|financial freedom)\b/i,
+    entry: "network-marketing",
+  },
+  {
+    test: /\b(product|products|shop|buy|supplement|herbal|tea|personal care)\b/i,
+    entry: "wellness-products",
+  },
+  {
+    test: /\b(equipment|device|machine)\b/i,
+    entry: "wellness-equipment",
+  },
+  {
+    test: /\b(test|testing|checkup|check up|screening|prevention)\b/i,
+    entry: "test-and-checkup",
+  },
+  {
+    test: /\b(delivery|shipping|dispatch|arrive|location|nationwide)\b/i,
+    entry: "delivery-and-shipping",
+  },
+  {
+    test: /\b(return|refund|replacement|damaged|defective|wrong item|exchange)\b/i,
+    entry: "returns-and-refunds",
+  },
+  {
+    test: /\b(order|cart|checkout|purchase|buying)\b/i,
+    entry: "orders-and-cart",
+  },
+  {
+    test: /\b(contact|support|help|whatsapp|phone|email|call|enquiry)\b/i,
+    entry: "contact-and-support",
+  },
+  {
+    test: /\b(medical|diagnosis|treatment|doctor|health advice|safe)\b/i,
+    entry: "wellness-information",
+  },
+  {
+    test: /\b(privacy|personal data|delete my data|google sign in|account security)\b/i,
+    entry: "privacy-and-account-data",
+  },
+];
+
+function replyFromEntry(entry) {
+  return {
+    text: `${entry.summary} ${entry.details[0]}`,
+    link: { label: `Read more about ${entry.title}`, to: entry.url },
+  };
+}
+
+function findKnowledgeEntry(input) {
   const value = input.toLowerCase();
   const terms = value.split(/[^a-z0-9]+/).filter((term) => term.length > 2);
 
@@ -16,55 +91,27 @@ function getKnowledgeReply(input) {
     .filter(({ score }) => score > 0)
     .sort((left, right) => right.score - left.score);
 
-  const best = rankedEntries[0]?.entry;
-  if (!best) return null;
-
-  return `${best.summary} ${best.details[0]} Read more: ${best.url}`;
+  return rankedEntries[0]?.entry || null;
 }
 
-function getFallbackReply(input, sitemapLinks = []) {
-  const knowledgeReply = getKnowledgeReply(input);
-  if (knowledgeReply) return knowledgeReply;
+function getReply(input) {
+  const matchedIntent = intentRules.find((rule) => rule.test.test(input));
+  if (matchedIntent?.reply) return matchedIntent.reply;
 
-  const value = input.toLowerCase();
-
-  const matchingLink = sitemapLinks.find(({ label, url }) =>
-    `${label} ${url}`.toLowerCase().includes(value),
-  );
-
-  if (matchingLink) {
-    return `You can find that here: ${matchingLink.label} - ${matchingLink.url}`;
+  if (matchedIntent?.entry) {
+    const entry = supportKnowledge.find((item) => item.slug === matchedIntent.entry);
+    if (entry) return replyFromEntry(entry);
   }
 
-  if (/wellness|health|natural|product|consult/i.test(value)) {
-    return "We can help with wellness products, healthy-living education, and available wellness-service consultations. Please share what you would like to learn about.";
-  }
+  const knowledgeEntry = findKnowledgeEntry(input);
+  if (knowledgeEntry) return replyFromEntry(knowledgeEntry);
 
-  if (/delivery|shipping|nationwide|order/i.test(value)) {
-    return "For product delivery or service availability, please contact Easy Life support on WhatsApp at +2348037757718 or use the Contact page.";
-  }
-
-  if (/return|refund|policy|exchange/i.test(value)) {
-    return "You can review our returns and refund policy on the website, or contact us directly for order-specific help. Our support email is support@easylifewellnesshub.com.";
-  }
-
-  if (/price|cost|quote|estimate/i.test(value)) {
-    return "Pricing and availability depend on the product, service, or program. Please share what you are interested in and Easy Life support will guide you.";
-  }
-
-  if (/contact|support|whatsapp|email|call/i.test(value)) {
-    return "You can contact us through WhatsApp at +2348037757718, email us at support@easylifewellnesshub.com, or visit our contact page for more options.";
-  }
-
-  if (/collection|training|membership|leadership|business/i.test(value)) {
-    return "Easy Life offers wellness products, practical training, leadership development, mentorship, and community opportunities.";
-  }
-
-  return "I can help with wellness products, training, membership, services, delivery, returns, and support. Try asking about wellness, training, or how to contact us.";
+  return {
+    text: "I can help with wellness products, equipment, testing, training, membership, orders, delivery, returns, and support. Which one would you like to know about?",
+  };
 }
 
 export default function SupportAssistant() {
-  const [sitemapLinks, setSitemapLinks] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
@@ -74,27 +121,6 @@ export default function SupportAssistant() {
     },
   ]);
   const [draft, setDraft] = useState("");
-
-  useEffect(() => {
-    fetch("/sitemap.xml")
-      .then((response) => (response.ok ? response.text() : ""))
-      .then((xml) => {
-        if (!xml) return;
-        const documentXml = new DOMParser().parseFromString(xml, "application/xml");
-        const links = Array.from(documentXml.querySelectorAll("loc")).map((node) => {
-          const url = node.textContent || "";
-          const path = new URL(url, window.location.origin).pathname;
-          const label = path === "/" ? "Easy Life home" : path
-            .split("/")
-            .filter(Boolean)
-            .map((part) => part.replace(/-/g, " "))
-            .join(" ");
-          return { label, url };
-        });
-        setSitemapLinks(links);
-      })
-      .catch(() => setSitemapLinks([]));
-  }, []);
 
   const handleSend = (value) => {
     const message = value.trim();
@@ -106,7 +132,7 @@ export default function SupportAssistant() {
       {
         id: Date.now() + 1,
         role: "assistant",
-        text: getFallbackReply(message, sitemapLinks),
+        ...getReply(message),
       },
     ]);
     setDraft("");
@@ -136,13 +162,19 @@ export default function SupportAssistant() {
                 key={message.id}
                 className={`support-assistant-message ${message.role}`}
               >
-                {message.text}
+                <span>{message.text}</span>
+                {message.link && (
+                  <Link className="support-assistant-link" to={message.link.to} onClick={() => setIsOpen(false)}>
+                    {message.link.label}
+                  </Link>
+                )}
               </div>
             ))}
           </div>
 
           <div className="support-assistant-suggestions">
             {[
+              "Hello",
               "What wellness products do you offer?",
               "What training is available?",
               "How can I join the community?",
