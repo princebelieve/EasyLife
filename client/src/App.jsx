@@ -43,6 +43,7 @@ import Notifications from "./pages/Notifications";
 import AdminNotifications from "./pages/AdminNotifications";
 import PwaNotificationBanner from "./components/PwaNotificationBanner";
 import PwaInstallBanner from "./components/PwaInstallBanner";
+import PrivacyConsentBanner from "./components/PrivacyConsentBanner";
 import SupportAssistant from "./components/SupportAssistant";
 import SupportGuide from "./pages/SupportGuide";
 import Testimonials from "./pages/Testimonials";
@@ -99,6 +100,7 @@ export default function App() {
         <SupportAssistant />
         <PwaNotificationBanner />
         <PwaInstallBanner />
+        <PrivacyConsentBanner />
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<Home />} />
