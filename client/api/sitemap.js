@@ -1,27 +1,19 @@
 export default async function handler(req, res) {
-  const backendUrl =
-    process.env.VITE_API_URL || process.env.BASE_URL || "http://localhost:4000";
-  const apiUrl = `${backendUrl}/api/products`;
+  const backendUrl = process.env.VITE_API_URL || process.env.BASE_URL;
+  const apiUrl = backendUrl ? `${backendUrl.replace(/\/$/, "")}/api/products` : null;
 
   try {
-    const response = await fetch(apiUrl);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch products: ${response.status}`);
+    let products = [];
+    if (apiUrl) {
+      const response = await fetch(apiUrl);
+      if (response.ok) products = await response.json();
     }
 
-    const products = await response.json();
-    const host = req.headers.host;
-    const protocol = req.headers["x-forwarded-proto"] || "https";
-    const baseUrl = (
-      process.env.CLIENT_URL ||
-      (host ? `${protocol}://${host}` : "http://localhost:5173")
-    )
-      .split(",")[0]
-      .trim()
-      .replace(/\/$/, "");
+    const baseUrl = "https://easylifewellnesshub.com";
     const staticPages = [
       { loc: baseUrl, priority: "1.00" },
       { loc: `${baseUrl}/collection`, priority: "0.95" },
+      { loc: `${baseUrl}/support`, priority: "0.90" },
       { loc: `${baseUrl}/contact`, priority: "0.85" },
       { loc: `${baseUrl}/about`, priority: "0.75" },
       { loc: `${baseUrl}/privacy-policy`, priority: "0.70" },
