@@ -34,6 +34,17 @@ export default function Collection() {
     <>
       <Navbar />
 
+      <section className="shop-hero reveal">
+        <div className="container shop-hero-grid">
+          <div>
+            <span className="eyebrow">NATUROPATHIC WELLNESS</span>
+            <h1>Natural solutions for a healthier, longer, vibrant life.</h1>
+            <p>Explore herbal products, supplements, wellness devices, and everyday care essentials from Easy Life Wellness Hub.</p>
+          </div>
+          <img src="/image-15.png" alt="Easy Life herbal products, wellness equipment, and natural care essentials" />
+        </div>
+      </section>
+
       <section className="section-alt reveal">
         <div className="container">
           <div className="reveal">

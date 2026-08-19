@@ -91,7 +91,7 @@ export default function WellnessInquiryForm() {
               onChange={handleChange}
               required
             >
-              <option value="">Select Project Type *</option>
+              <option value="">Select Wellness Interest *</option>
               <option value="wellness-products">Wellness Products</option>
               <option value="test-checkup">Test & Checkup</option>
               <option value="training">Training & Leadership</option>
@@ -138,7 +138,7 @@ export default function WellnessInquiryForm() {
 
           <textarea
             name="message"
-            placeholder="Tell us about your project, style preferences, or any specific requirements..."
+            placeholder="Tell us about your wellness goals or any specific requirements..."
             value={form.message}
             onChange={handleChange}
             rows="4"

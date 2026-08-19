@@ -96,10 +96,10 @@ export default function Login() {
     <>
       <Navbar />
 
-      <div className="form" style={{ marginTop: 50 }}>
+      <div className="form auth-form login-auth-form" style={{ marginTop: 50 }}>
         <h1>Login</h1>
         <p className="muted" style={{ marginBottom: 20 }}>
-          Welcome back. Sign in to manage your products.
+          Welcome back. Continue your Easy Life wellness journey.
         </p>
 
         <form onSubmit={handleSubmit}>

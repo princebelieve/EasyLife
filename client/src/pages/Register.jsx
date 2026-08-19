@@ -87,10 +87,10 @@ export default function Register() {
   return (
     <>
       <Navbar /> {/* ✅ THIS WAS WHAT YOU WERE MISSING */}
-      <div className="form" style={{ marginTop: 50 }}>
+      <div className="form auth-form register-auth-form" style={{ marginTop: 50 }}>
         <h1>Create Account</h1>
         <p className="muted" style={{ marginBottom: 20 }}>
-          Join us to start managing your products.
+          Join a community built around health, opportunity, and freedom.
         </p>
 
         <form onSubmit={handleSubmit}>
