@@ -29,62 +29,76 @@ export default function PrivacyPolicy() {
 
         <h1>Privacy Policy</h1>
         <p style={{ color: "#666", marginBottom: 20 }}>
-          Last updated: 2026-06-06
+          Last updated: 2026-08-18
         </p>
 
         <h2>Information We Collect</h2>
         <ul>
-          <li>Account information (name, email, phone, delivery address)</li>
-          <li>Order, payment, shipping, and support records</li>
+          <li>Account information, such as your name, email address, phone number, and profile details</li>
+          <li>Information about products, services, training, consultations, or support you request or purchase</li>
+          <li>Payment, transaction, and customer-support records; payment details are processed by our payment providers</li>
+          <li>Photos, documents, notes, or other information you choose to upload or submit</li>
           <li>
             Device, browser, IP address, and app usage data needed for security
             and support
           </li>
-          <li>
-            Photos, notes, or measurement details you provide for custom orders
-          </li>
+          <li>Information about push-notification subscriptions if you enable notifications</li>
         </ul>
 
         <h2>How We Use Your Information</h2>
         <ul>
-          <li>Process, confirm, and deliver orders</li>
-          <li>Verify payment, handle refunds, and provide customer support</li>
+          <li>Provide and manage our products, services, training, consultations, and support</li>
+          <li>Process payments, registrations, requests, refunds, and related communications</li>
           <li>
-            Improve service quality, prevent fraud, and secure our systems
+            Verify accounts, send email notifications, prevent fraud, and secure our systems
           </li>
           <li>
-            Comply with applicable law, tax, accounting, and merchant-platform
-            obligations
+            Improve our programs and services and comply with applicable law
           </li>
         </ul>
 
+        <h2>Google Sign-In and Google Data</h2>
+        <p>
+          If you choose Google Sign-In, we receive the Google account
+          information shown during sign-in, such as your name, email address,
+          and profile image, to create or access your Easy Life Wellness Hub
+          account. We use this information only to authenticate you and
+          provide the account features you request. We do not sell Google user
+          data or use it for advertising.
+        </p>
+        <p>
+          Our server may also use Gmail API OAuth credentials belonging to Easy
+          Life Wellness Hub to send account verification and password-reset
+          emails. Those credentials are not used to read or access customers’
+          Gmail accounts.
+        </p>
+
         <h2>Sharing and Third Parties</h2>
         <p>
-          We may share personal data only with payment processors, logistics
-          partners, delivery providers, hosting providers, and support tools
-          strictly needed to operate the store, including order confirmation,
-          delivery, refund handling, and merchant-platform compliance. We do
-          not sell your personal data. Where required, we will contractually
-          require these providers to protect your information.
+          We may share personal data with payment processors, email and
+          notification providers, hosting and storage providers, service
+          providers, and professional or operational partners where reasonably
+          necessary to provide Easy Life Wellness Hub services, process a
+          transaction, respond to you, or keep the Platform secure. We do not
+          sell your personal data. We require service providers to handle your
+          information only for appropriate business purposes and to protect it.
         </p>
 
         <h2>Retention and Security</h2>
         <p>
           We keep personal data for as long as needed to provide our services,
-          resolve disputes, comply with legal obligations, and maintain records
-          required by applicable Nigerian law and merchant platforms. We use
-          reasonable technical and organizational safeguards, but no internet
-          system is 100% secure.
+          manage your account, resolve disputes, meet legal and accounting
+          obligations, and enforce our agreements. We use reasonable technical
+          and organizational safeguards, but no internet system is 100% secure.
         </p>
 
         <h2>Your Rights</h2>
         <p>
           Please also read our{" "}
-          <a href="/terms-conditions">Terms & Conditions</a>
-          and <a href="/refund-policy">Refund & Returns Policy</a> for the
-          rules that apply to orders, delivery, and claims. NewBrend
-          Furniture & Interior is the business name used for these policies and
-          related customer support.
+          <a href="/terms-conditions">Terms & Conditions</a> and{" "}
+          <a href="/refund-policy">Refund & Returns Policy</a> where
+          applicable. Easy Life Wellness Hub is the business name used for
+          these policies and related customer support.
         </p>
         <p>
           You may ask for access, correction, deletion, or restriction of
