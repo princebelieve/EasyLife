@@ -140,21 +140,12 @@ export default function Register() {
             />
 
             {/* Policy Checkboxes */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 10,
-                marginTop: 10,
-                fontSize: 14,
-              }}
-            >
-              <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div className="consent-options">
+              <label className="consent-option">
                 <input
                   type="checkbox"
                   checked={acceptedPrivacy}
                   onChange={(e) => setAcceptedPrivacy(e.target.checked)}
-                  style={{ cursor: "pointer" }}
                 />
                 I agree to the{" "}
                 <Link
@@ -166,12 +157,11 @@ export default function Register() {
                 </Link>
               </label>
 
-              <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <label className="consent-option">
                 <input
                   type="checkbox"
                   checked={acceptedTerms}
                   onChange={(e) => setAcceptedTerms(e.target.checked)}
-                  style={{ cursor: "pointer" }}
                 />
                 I agree to the{" "}
                 <Link
