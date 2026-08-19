@@ -385,6 +385,12 @@ export async function getProductById(id) {
   return apiRequest(`/api/products/${id}`);
 }
 
+export async function verifyPayment(reference) {
+  return apiRequest(`/api/orders/verify-payment/${encodeURIComponent(reference)}`, {
+    method: "POST",
+  });
+}
+
 export async function getAdminProductById(id, token) {
   return apiRequest(`/api/admin/products/${id}`, {
     headers: {
