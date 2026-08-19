@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { apiRequest, verifyPayment } from "../services/api";
+import { apiRequest } from "../services/api";
 
 export default function Success() {
   const [searchParams] = useSearchParams();
@@ -33,31 +33,21 @@ export default function Success() {
       return;
     }
 
-    const fetchOrder = async (attempt = 0) => {
+    const fetchOrder = async () => {
       try {
         setLoading(true);
-        const data = attempt === 0
-          ? await verifyPayment(reference)
-          : await apiRequest(`/api/orders/by-reference/${reference}`);
+        const data = await apiRequest(`/api/orders/by-reference/${reference}`);
         setOrder(data);
         setError(null);
-        if (data?.paymentStatus === "pending" && attempt < 5) {
-          window.setTimeout(() => fetchOrder(attempt + 1), 2000);
-        }
       } catch (err) {
         console.error("Error fetching order:", err);
-        if (attempt < 5) {
-          window.setTimeout(() => fetchOrder(attempt + 1), 2000);
-        } else {
-          setError(err.message || "Failed to fetch order details. Please try again.");
-        }
+        setError(err.message || "Failed to fetch order details. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchOrder();
-    return () => undefined;
   }, [reference]);
 
   if (loading) {
