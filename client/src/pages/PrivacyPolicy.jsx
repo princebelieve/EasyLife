@@ -69,8 +69,10 @@ export default function PrivacyPolicy() {
         <p>
           Our server may also use Gmail API OAuth credentials belonging to Easy
           Life Wellness Hub to send account verification and password-reset
-          emails. Those credentials are not used to read or access customers’
-          Gmail accounts.
+          emails from our official support account. The Gmail API send scope is
+          necessary for these transactional messages. Those credentials are
+          not used to read, search, modify, or access customers’ Gmail accounts,
+          and Gmail data is not used for advertising or profiling.
         </p>
 
         <h2>Sharing and Third Parties</h2>

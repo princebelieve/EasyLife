@@ -22,11 +22,13 @@ export default function PrivacyConsentBanner() {
   return (
     <aside className="privacy-consent-banner" role="dialog" aria-label="Privacy notice">
       <div className="privacy-consent-content">
-        <strong>Your privacy matters to Easy Life.</strong>
+        <strong>Easy Life Wellness Hub: wellness, learning, and opportunity.</strong>
         <p>
-          We use account, order, support, and device information to provide
-          wellness products, training, payments, and secure account services.
-          Read our <Link to="/privacy-policy">Privacy Policy</Link>.
+          Browse wellness products, learn through training, join the community,
+          request support, and manage orders. Easy Life uses Gmail API send
+          access only to send account-verification and password-reset emails
+          from our official support account. We do not read or modify users'
+          Gmail inboxes. Read our <Link to="/privacy-policy">Privacy Policy</Link>.
         </p>
       </div>
       <div className="privacy-consent-actions">
@@ -34,7 +36,7 @@ export default function PrivacyConsentBanner() {
           Read Privacy Policy
         </Link>
         <button type="button" className="privacy-consent-accept" onClick={acceptPrivacy}>
-          Accept
+          Accept and continue
         </button>
       </div>
     </aside>
