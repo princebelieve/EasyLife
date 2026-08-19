@@ -1,8 +1,8 @@
-//client/src/components/FurnitureInquiryForm.jsx
+// Legacy component retained for the existing inquiry API contract.
 import { useState } from "react";
 import { submitInquiry } from "../services/api";
 
-export default function FurnitureInquiryForm() {
+export default function WellnessInquiryForm() {
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -46,10 +46,10 @@ export default function FurnitureInquiryForm() {
   return (
     <div className="measurement-form">
       <div className="measurement-header">
-        <h2>Start Your Furniture Project</h2>
+          <h2>Start Your Wellness Journey</h2>
         <p>
-          Tell us about your vision and we'll help bring it to life with premium
-          furniture and custom design solutions for every home.
+          Tell us what you would like to explore and our team will guide you
+          toward wellness products, testing, training, or community support.
         </p>
       </div>
 
@@ -92,11 +92,11 @@ export default function FurnitureInquiryForm() {
               required
             >
               <option value="">Select Project Type *</option>
-              <option value="ready-to-ship">Ready to Ship Furniture</option>
-              <option value="custom-design">Custom Design</option>
-              <option value="room-makeover">Complete Room Makeover</option>
-              <option value="commercial">Commercial Project</option>
-              <option value="consultation">Design Consultation</option>
+              <option value="wellness-products">Wellness Products</option>
+              <option value="test-checkup">Test & Checkup</option>
+              <option value="training">Training & Leadership</option>
+              <option value="network-marketing">Network Marketing</option>
+              <option value="consultation">Wellness Consultation</option>
             </select>
 
             <select
@@ -104,14 +104,11 @@ export default function FurnitureInquiryForm() {
               value={form.roomType}
               onChange={handleChange}
             >
-              <option value="">Room Type (Optional)</option>
-              <option value="living-room">Living Room</option>
-              <option value="bedroom">Bedroom</option>
-              <option value="dining-room">Dining Room</option>
-              <option value="office">Home Office</option>
-              <option value="kitchen">Kitchen</option>
-              <option value="bathroom">Bathroom</option>
-              <option value="outdoor">Outdoor/Patio</option>
+              <option value="">Area of Interest (Optional)</option>
+              <option value="natural-wellness">Natural Wellness</option>
+              <option value="equipment">Naturopathic Equipment</option>
+              <option value="community">Community & Mentorship</option>
+              <option value="financial-freedom">Financial Freedom</option>
             </select>
           </div>
 

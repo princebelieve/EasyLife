@@ -30,14 +30,14 @@ export default function AdminInquiries() {
 
   return (
     <div>
-      <h1 className="title">Furniture Inquiries</h1>
+      <h1 className="title">Wellness Inquiries</h1>
 
       {inquiries.length === 0 ? (
         <div className="admin-card">
           <h3>No inquiries yet</h3>
 
           <p>
-            Furniture enquiries will appear here when customers submit the
+            Wellness enquiries will appear here when visitors submit the
             inquiry form.
           </p>
         </div>
@@ -52,11 +52,11 @@ export default function AdminInquiries() {
                 <strong>Submitted:</strong> {formatDate(item.createdAt)}
               </p>
               <p>
-                <strong>Project:</strong> {item.projectType}
+                <strong>Interest:</strong> {item.projectType}
               </p>
               {item.roomType && (
                 <p>
-                  <strong>Room:</strong> {item.roomType}
+                  <strong>Area:</strong> {item.roomType}
                 </p>
               )}
               {item.budget && (

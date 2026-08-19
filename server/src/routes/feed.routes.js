@@ -37,7 +37,7 @@ router.get("/products", async (req, res) => {
       xml += `    <g:availability>${product.inStock && product.stock > 0 ? "in_stock" : "out_of_stock"}</g:availability>\n`;
       xml += `    <g:brand>${product.brand || "Easy Life Wellness Hub"}</g:brand>\n`;
       xml += `    <g:condition>new</g:condition>\n`;
-      xml += `    <g:product_type>${product.category || "Furniture"}</g:product_type>\n`;
+      xml += `    <g:product_type>${escapeXml(product.category || "Wellness Products")}</g:product_type>\n`;
       xml += `    <g:sku>${product.sku || product._id}</g:sku>\n`;
       xml += "  </entry>\n";
     });

@@ -1,19 +1,19 @@
 :root {
-  --navy: #7c4a20;
-  --navy-light: #b07a4f;
-  --brown: #7c4a20;
-  --brown-light: #b07a4f;
-  --gold: #c9a24a;
-  --bg: #ffffff;
+  --navy: #063b20;
+  --navy-light: #075c32;
+  --brown: #063b20;
+  --brown-light: #159447;
+  --gold: #d4a72c;
+  --bg: #f6e8c4;
   --white: #ffffff;
-  --text: #5c3d2d;
+  --text: #050805;
 
   --radius: 12px;
 }
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: "Trebuchet MS", Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
 }
@@ -4279,13 +4279,16 @@ iframe {
 }
 
 /* Easy Life Wellness Hub */
-.easy-life-home { color: #173b27; background: #fffdf7; }
-.easy-hero { background: radial-gradient(circle at 85% 20%, #476f22 0, transparent 27%), linear-gradient(125deg, #062919, #0b4626 58%, #123c22); color: #fff; padding: 104px 0 90px; overflow: hidden; }
+.easy-life-home { color: #050805; background: #f6e8c4; }
+.easy-hero { background: radial-gradient(circle at 85% 20%, #159447 0, transparent 27%), linear-gradient(125deg, #050805, #063b20 58%, #075c32); color: #fff; padding: 104px 0 90px; overflow: hidden; position: relative; }
+.easy-hero:after { content: ""; position: absolute; inset: auto -10% -70px; height: 140px; background: #f6e8c4; border-radius: 50% 50% 0 0; opacity: .9; }
 .easy-hero-grid, .easy-intro-grid, .easy-membership-grid, .easy-two-column, .easy-training { display: grid; grid-template-columns: 1.5fr 0.8fr; gap: 54px; align-items: center; }
 .easy-eyebrow { color: #bd8c2e; font-size: .77rem; letter-spacing: .14em; font-weight: 800; margin: 0 0 12px; }
 .easy-hero h1 { font-size: clamp(2.6rem, 5vw, 5.2rem); line-height: 1.02; max-width: 760px; margin: 0; letter-spacing: -.04em; }
 .easy-hero h1 em { color: #e2b44d; font-family: Georgia, serif; font-weight: 400; }
-.easy-hero-copy { max-width: 640px; font-size: 1.13rem; line-height: 1.75; color: #e7f0e6; margin: 24px 0 30px; }
+.easy-hero-copy { max-width: 640px; font-size: 1.13rem; line-height: 1.75; color: #f6e8c4; margin: 24px 0 30px; }
+.easy-hero-tagline { min-height: 32px; margin: 22px 0 0; color: #e8c66a; font: 700 1.1rem/1.4 Georgia, serif; letter-spacing: .08em; text-transform: uppercase; }
+.typing-caret { color: #fff; animation: easyCaret .75s steps(1) infinite; }
 .easy-actions { display: flex; gap: 14px; flex-wrap: wrap; }
 .easy-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 20px; text-decoration: none; font-weight: 750; border-radius: 3px; transition: transform .2s ease, background .2s ease; }
 .easy-btn:hover { transform: translateY(-2px); }
@@ -4295,30 +4298,38 @@ iframe {
 .easy-hero-card:before { content: ""; width: 82px; height: 82px; position: absolute; right: 22px; top: -28px; border: 2px solid #ddb24f; border-radius: 50%; }
 .easy-hero-card span { display: block; color: #ddb24f; letter-spacing: .16em; font-weight: 800; font-size: .75rem; margin-bottom: 26px; }
 .easy-hero-card strong { display: block; font: 2.1rem/1.15 Georgia, serif; }
-.easy-hero-card p { color: #d6e4d6; margin-bottom: 0; }
-.easy-intro { border-bottom: 1px solid #e4dfce; }
+.easy-hero-card p { color: #f6e8c4; margin-bottom: 0; line-height: 1.7; }.easy-hero-card p b { color: #e8c66a; text-transform: uppercase; }
+.easy-marquee { overflow: hidden; background: #d4a72c; color: #063b20; padding: 13px 0; border-top: 1px solid #e8c66a; border-bottom: 1px solid #b88620; }
+.easy-marquee-track { display: flex; width: max-content; align-items: center; gap: 24px; white-space: nowrap; animation: easyMarquee 30s linear infinite; font-size: .78rem; font-weight: 900; letter-spacing: .16em; }
+.easy-marquee-track i { font-style: normal; color: #fff; }
+.easy-intro { border-bottom: 1px solid #d4a72c; background: #fff; }
 .easy-intro-grid { grid-template-columns: .5fr 1.5fr; }
 .easy-life-home h2 { font-size: clamp(2rem, 3.5vw, 3.3rem); line-height: 1.1; margin: 0 0 16px; color: #103b22; }
 .easy-intro p:last-child, .easy-two-column p, .easy-training p { color: #52675b; font-size: 1.04rem; line-height: 1.8; }
 .easy-section-heading { max-width: 710px; margin-bottom: 32px; }
 .easy-heading-row { max-width: none; display: flex; justify-content: space-between; gap: 20px; align-items: end; }
 .easy-text-link { color: #176b36; text-decoration: none; font-weight: 750; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
-.easy-pillar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.easy-pillar { background: #f4f4ea; padding: 27px 22px; border-top: 3px solid #c79a35; }
-.easy-pillar svg { color: #c79a35; }
+.easy-pillar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.easy-pillar { background: #fff; padding: 27px 22px; border-top: 3px solid #d4a72c; box-shadow: 0 8px 22px rgba(6,59,32,.08); }
+.easy-pillar svg { color: #159447; }
 .easy-pillar h3 { margin: 17px 0 9px; font-size: 1.1rem; color: #103b22; }
 .easy-pillar p { margin: 0; color: #52675b; font-size: .94rem; line-height: 1.6; }
-.easy-products { background: #f8f5ec; }
-.easy-empty { min-height: 180px; display: grid; place-items: center; align-content: center; color: #55705d; background: #fff; border: 1px dashed #c9c0a5; }
+.easy-products { background: #f6e8c4; }
+.easy-empty { min-height: 180px; display: grid; place-items: center; align-content: center; color: #075c32; background: #fff; border: 1px dashed #b88620; }
 .easy-services { background: #103b22; color: #fff; }
 .easy-services h2 { color: #fff; }.easy-services p { color: #d8e7d9 !important; }.easy-services .easy-btn { margin-top: 12px; }.easy-services .easy-eyebrow { color: #e2b44d; }
 .easy-service-list { display: grid; gap: 12px; }.easy-service-list div { border-left: 2px solid #d8a83d; padding: 16px 18px; background: rgba(255,255,255,.07); }.easy-service-list strong, .easy-service-list span { display: block; }.easy-service-list span { margin-top: 5px; color: #d8e7d9; font-size: .92rem; }
-.easy-training { background: #f4f4ea; padding: 48px; }.easy-training ul, .easy-member-card ul { list-style: none; padding: 0; margin: 0; }.easy-training li { padding: 13px 0; border-bottom: 1px solid #d6d8c8; font-weight: 650; }
+.easy-training { background: #fff; padding: 48px; border-left: 5px solid #d4a72c; }.easy-training ul, .easy-member-card ul { list-style: none; padding: 0; margin: 0; }.easy-training li { padding: 13px 0; border-bottom: 1px solid #e8c66a; font-weight: 650; }
 .easy-membership { background: linear-gradient(115deg,#0b301d,#174f2b); color: #fff; padding: 78px 0; }.easy-membership h2 { color: #fff; }.easy-membership p { color: #d8e7d9; line-height: 1.75; }.easy-member-card { background: #f7f2df; color: #183b27; padding: 28px; }.easy-member-card li { padding: 8px 0; font-size: .94rem; }.easy-member-card .easy-btn { margin-top: 18px; background: #173b27; color: #fff; border: 0; }
 .easy-outreach-mark { min-height: 235px; background: #d8aa40; color: #103b22; display: grid; place-items: center; align-content: center; gap: 12px; font-weight: 900; letter-spacing: .14em; text-align: center; }
-.easy-closing { background: #ede6d3; text-align: center; padding: 82px 0; }.easy-closing h2 { max-width: 800px; margin: 0 auto 26px; }.easy-closing .easy-actions { justify-content: center; }.easy-closing .easy-btn-light { color: #173b27; border-color: #173b27; }
+.easy-closing { background: linear-gradient(135deg, #063b20, #075c32); color: #fff; text-align: center; padding: 82px 0; }.easy-closing h2 { max-width: 800px; margin: 0 auto 18px; color: #fff; }.easy-closing .easy-actions { justify-content: center; }.easy-closing .easy-btn-light { color: #fff; border-color: #e8c66a; }.easy-closing-copy { color: #f6e8c4; font-size: 1.15rem; line-height: 1.8; margin: 0 auto 26px; }
 .easy-about-mark { background: radial-gradient(circle at 50% 28%, #e3b64e 0 7%, transparent 8%), linear-gradient(135deg, #0e4b29, #082719); color: #f3cf73; display: grid; place-items: center; align-content: center; gap: 12px; min-height: 300px; letter-spacing: .12em; text-align: center; }.easy-about-mark strong { font: 2.2rem/1.05 Georgia, serif; }.easy-about-mark small { color: #dce9d9; }
 .easy-inline-image { display: block; width: min(100%, 520px); margin-top: 28px; border-radius: 5px; box-shadow: 0 16px 38px rgba(6, 41, 25, .16); }
+
+@keyframes easyCaret { 50% { opacity: 0; } }
+@keyframes easyMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes easyHeroIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.easy-hero-content { animation: easyHeroIn .8s ease both; }.easy-hero-card { animation: easyHeroIn .8s .18s ease both; }
 
 /* Easy Life footer palette and existing motion utilities on the new home. */
 .footer { background: linear-gradient(135deg, #062919, #0d4827); border-top: 3px solid #c99f3f; }
@@ -4331,5 +4342,6 @@ iframe {
 .easy-life-home .easy-service-list > div:hover,
 .easy-life-home .easy-member-card:hover,
 .easy-life-home .easy-outreach-mark:hover { transform: translateY(-8px); box-shadow: 0 18px 50px rgba(0, 0, 0, .18); }
+@media (max-width: 1100px) { .easy-pillar-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 800px) { .easy-hero { padding: 72px 0; }.easy-hero-grid, .easy-intro-grid, .easy-membership-grid, .easy-two-column, .easy-training { grid-template-columns: 1fr; gap: 30px; }.easy-pillar-grid { grid-template-columns: 1fr 1fr; }.easy-training { padding: 28px; }.easy-heading-row { align-items: start; flex-direction: column; }.easy-hero-card { max-width: 350px; } }
 @media (max-width: 480px) { .easy-pillar-grid { grid-template-columns: 1fr; }.easy-hero h1 { font-size: 2.7rem; }.easy-btn { width: 100%; }.easy-hero-card { padding: 25px; } }
