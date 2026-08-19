@@ -65,6 +65,7 @@ export default function Home() {
               <p className="easy-eyebrow">EASY LIFE <span>WELLNESS HUB</span></p>
               <h1>Empowering People.<br /><em>Transforming Lives.</em></h1>
               <p className="easy-hero-tagline">{typedText}<span className="typing-caret" aria-hidden="true">|</span></p>
+              <p className="easy-purpose-label">What Easy Life Wellness Hub does</p>
               <p className="easy-hero-copy">Easy Life Wellness Hub is a naturopathic network marketing platform dedicated to natural health, wellness, and financial freedom. We empower people to live healthy, earn income, and build generational wealth.</p>
               <div className="easy-actions">
                 <Link className="easy-btn easy-btn-primary" to="/collection">Shop Wellness Products <ArrowRight size={18} /></Link>

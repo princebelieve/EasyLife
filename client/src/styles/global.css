@@ -4377,6 +4377,7 @@ iframe {
 .easy-hero h1 { font-size: clamp(2.6rem, 5vw, 5.2rem); line-height: 1.02; max-width: 760px; margin: 0; letter-spacing: -.04em; }
 .easy-hero h1 em { color: #e2b44d; font-family: Georgia, serif; font-weight: 400; }
 .easy-hero-copy { max-width: 640px; font-size: 1.13rem; line-height: 1.75; color: #f6e8c4; margin: 24px 0 30px; }
+.easy-purpose-label { margin: 18px 0 0; color: var(--gold); font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
 .easy-hero-tagline { min-height: 32px; margin: 22px 0 0; color: #e8c66a; font: 700 1.1rem/1.4 Georgia, serif; letter-spacing: .08em; text-transform: uppercase; }
 .typing-caret { color: #fff; animation: easyCaret .75s steps(1) infinite; }
 .easy-actions { display: flex; gap: 14px; flex-wrap: wrap; }
