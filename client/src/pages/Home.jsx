@@ -18,6 +18,17 @@ const pillars = [
 
 const trainings = ["Network marketing", "Sales & customer relationships", "Leadership & public speaking", "Personal branding & financial literacy"];
 
+function getTestimonialEmbedUrl(url) {
+  if (!url) return "";
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.includes("youtu.be")) return `https://www.youtube.com/embed/${parsed.pathname.slice(1)}`;
+    if (parsed.hostname.includes("youtube.com")) return `https://www.youtube.com/embed/${parsed.searchParams.get("v") || ""}`;
+    if (parsed.hostname.includes("vimeo.com")) return `https://player.vimeo.com/video/${parsed.pathname.split("/").filter(Boolean).pop()}`;
+  } catch { return ""; }
+  return "";
+}
+
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
@@ -106,7 +117,7 @@ export default function Home() {
 
         <section className="section easy-training-section reveal"><div className="container easy-two-column"><div><p className="easy-eyebrow">NETWORK MARKETING</p><h2>A proven platform to build your team and earn unlimited income.</h2><p>Live better, earn big, improve lives, create impact, and enjoy financial independence through practical training and ethical opportunity.</p><Link to="/register" className="easy-btn easy-btn-primary breathing-button">Join the movement <ArrowRight size={18} /></Link><ul className="easy-training-list">{trainings.map((item) => <li key={item}>✓ {item}</li>)}</ul></div><img className="easy-section-image" src="/image-5.png" alt="Easy Life leadership and team building training" /></div></section>
 
-        {testimonials.length > 0 && <section className="section testimonials-showcase reveal"><div className="container"><div className="easy-section-heading easy-heading-row"><div><p className="easy-eyebrow">REAL PEOPLE. REAL RESULTS.</p><h2>See how the Easy Life community is growing.</h2></div><Link className="easy-text-link" to="/testimonials">View all stories <ArrowRight size={17} /></Link></div><div className="testimonial-home-grid">{testimonials.map((item) => <article className="testimonial-home-card content-card" key={item._id}>{(item.videoFile || item.videoUrl) ? <video controls preload="metadata" poster={item.image || undefined} src={item.videoFile || item.videoUrl} /> : item.image && <img src={item.image} alt={item.name} />}<div><p>“{item.testimony}”</p><strong>{item.name}</strong>{item.role && <span>{item.role}</span>}</div></article>)}</div></div></section>}
+        {testimonials.length > 0 && <section className="section testimonials-showcase reveal"><div className="container"><div className="easy-section-heading easy-heading-row"><div><p className="easy-eyebrow">REAL PEOPLE. REAL RESULTS.</p><h2>See how the Easy Life community is growing.</h2></div><Link className="easy-text-link" to="/testimonials">View all stories <ArrowRight size={17} /></Link></div><div className="testimonial-home-grid">{testimonials.map((item) => { const embedUrl = getTestimonialEmbedUrl(item.videoUrl); return <article className="testimonial-home-card content-card" key={item._id}>{(item.videoFile || embedUrl || item.image) && <div className="testimonial-home-media">{item.videoFile ? <video controls preload="metadata" poster={item.image || undefined} src={item.videoFile} /> : embedUrl ? <iframe title={`${item.name} testimonial video`} src={embedUrl} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen /> : <img src={item.image} alt={item.name} />}</div>}<div><p>“{item.testimony}”</p><strong>{item.name}</strong>{item.role && <span>{item.role}</span>}</div></article>; })}</div></div></section>}
 
         <section className="easy-membership"><div className="container easy-membership-grid"><div><p className="easy-eyebrow">MEMBERSHIP</p><h2>Learn freely. Participate fully.</h2><p>Introductory training is open to everyone. Registered members receive mentorship, leadership development, networking opportunities, priority outreach participation and selected-program discounts.</p></div><div className="easy-member-card content-card"><strong>Registered members can</strong><ul><li>Access exclusive training sessions</li><li>Request business mentorship</li><li>Represent Easy Life at official outreach activities</li><li>Build their network and confidence</li></ul><Link to="/register" className="easy-btn easy-btn-light breathing-button">Become a member</Link></div></div></section>
 

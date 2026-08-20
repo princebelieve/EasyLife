@@ -44,6 +44,7 @@ import AdminNotifications from "./pages/AdminNotifications";
 import PwaNotificationBanner from "./components/PwaNotificationBanner";
 import PwaInstallBanner from "./components/PwaInstallBanner";
 import PrivacyConsentBanner from "./components/PrivacyConsentBanner";
+import SiteAnnouncementBanner from "./components/SiteAnnouncementBanner";
 import SupportAssistant from "./components/SupportAssistant";
 import SupportGuide from "./pages/SupportGuide";
 import Testimonials from "./pages/Testimonials";
@@ -101,6 +102,7 @@ export default function App() {
         <PwaNotificationBanner />
         <PwaInstallBanner />
         <PrivacyConsentBanner />
+        <SiteAnnouncementBanner />
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -292,11 +294,11 @@ export default function App() {
             <Route
               path="/admin/testimonials"
               element={
-                <RequireAdmin>
+                <RequireAdminOrSubadmin>
                   <AdminLayout>
                     <AdminTestimonials />
                   </AdminLayout>
-                </RequireAdmin>
+                </RequireAdminOrSubadmin>
               }
             />
             <Route

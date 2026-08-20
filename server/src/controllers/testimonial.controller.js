@@ -9,10 +9,18 @@ function publicFilter() {
   return { approved: { $ne: false }, status: "active" };
 }
 
+async function keepBannerLimit(currentId) {
+  const banners = await Testimonial.find({ bannerEnabled: true, approved: { $ne: false }, status: "active" })
+    .sort({ createdAt: 1 });
+  const excess = banners.filter((item) => String(item._id) !== String(currentId)).slice(0, Math.max(0, banners.length - 3));
+  if (excess.length) await Testimonial.updateMany({ _id: { $in: excess.map((item) => item._id) } }, { $set: { bannerEnabled: false } });
+}
+
 async function getTestimonials(req, res) {
   try {
     const filter = { ...publicFilter() };
     if (req.query.featured === "true") filter.featured = true;
+    if (req.query.banner === "true") filter.bannerEnabled = true;
     const testimonials = await Testimonial.find(filter).sort({ createdAt: -1 });
     res.json(testimonials);
   } catch (error) {
@@ -30,8 +38,9 @@ async function getAdminTestimonials(req, res) {
 
 async function createTestimonial(req, res) {
   try {
-    const { name, role, testimony, videoUrl, featured, seoTitle, seoDescription, status } = req.body;
-    if (!name || !testimony) return res.status(400).json({ message: "Name and testimony are required." });
+    const { contentType, title, name, role, testimony, linkUrl, videoUrl, featured, bannerEnabled, seoTitle, seoDescription, status } = req.body;
+    if (!name || !testimony) return res.status(400).json({ message: "Author or organisation and content are required." });
+    const isAdmin = req.user.role === "admin";
 
     let image = "";
     let videoFile = "";
@@ -39,10 +48,15 @@ async function createTestimonial(req, res) {
     if (req.files?.video?.[0]) videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
 
     const testimonial = await Testimonial.create({
-      name, role, testimony, videoUrl, image, videoFile,
+      contentType, title, name, role, testimony, linkUrl, videoUrl, image, videoFile,
       featured: asBoolean(featured),
-      seoTitle, seoDescription, status: status || "active",
+      bannerEnabled: isAdmin && asBoolean(bannerEnabled),
+      approved: isAdmin,
+      status: isAdmin ? (status || "active") : "inactive",
+      submittedBy: req.user._id,
+      seoTitle, seoDescription,
     });
+    if (testimonial.bannerEnabled) await keepBannerLimit(testimonial._id);
     res.status(201).json(testimonial);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -54,16 +68,18 @@ async function updateTestimonial(req, res) {
     const testimonial = await Testimonial.findById(req.params.id);
     if (!testimonial) return res.status(404).json({ message: "Testimonial not found." });
 
-    const fields = ["name", "role", "testimony", "videoUrl", "seoTitle", "seoDescription", "status"];
+    const fields = ["contentType", "title", "name", "role", "testimony", "linkUrl", "videoUrl", "seoTitle", "seoDescription", "status"];
     fields.forEach((field) => {
       if (req.body[field] !== undefined) testimonial[field] = req.body[field];
     });
     if (req.body.featured !== undefined) testimonial.featured = asBoolean(req.body.featured);
-    if (req.body.approved !== undefined) testimonial.approved = asBoolean(req.body.approved);
+    if (req.body.bannerEnabled !== undefined) testimonial.bannerEnabled = asBoolean(req.body.bannerEnabled);
+    if (req.user.role === "admin" && req.body.approved !== undefined) testimonial.approved = asBoolean(req.body.approved);
     if (req.files?.image?.[0]) testimonial.image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) testimonial.videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
 
     await testimonial.save();
+    if (testimonial.bannerEnabled) await keepBannerLimit(testimonial._id);
     res.json(testimonial);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -7,23 +7,23 @@ const {
   updateTestimonial,
   deleteTestimonial,
 } = require("../controllers/testimonial.controller");
-const { protect, adminOnly } = require("../middleware/auth");
+const { protect, adminOnly, adminOrSubadminOnly } = require("../middleware/auth");
 
 const router = express.Router();
 
 router.get("/", getTestimonials);
-router.get("/admin", protect, adminOnly, getAdminTestimonials);
+router.get("/admin", protect, adminOrSubadminOnly, getAdminTestimonials);
 router.post(
   "/admin",
   protect,
-  adminOnly,
+  adminOrSubadminOnly,
   upload.fields([{ name: "image", maxCount: 1 }, { name: "video", maxCount: 1 }]),
   createTestimonial,
 );
 router.put(
   "/admin/:id",
   protect,
-  adminOnly,
+  adminOrSubadminOnly,
   upload.fields([{ name: "image", maxCount: 1 }, { name: "video", maxCount: 1 }]),
   updateTestimonial,
 );
