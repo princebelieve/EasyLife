@@ -1,5 +1,9 @@
 const Testimonial = require("../models/Testimonial");
+const User = require("../models/User");
 const { uploadToR2 } = require("../config/r2");
+const { createNotificationsForUsers } = require("../services/notification.service");
+const { sendPushToUsers } = require("../services/push.service");
+const { sendAnnouncementEmail } = require("../services/email");
 
 function asBoolean(value) {
   return value === true || value === "true";
@@ -58,10 +62,31 @@ async function createTestimonial(req, res) {
       seoTitle, seoDescription,
     });
     if (testimonial.bannerEnabled) await keepBannerLimit(testimonial._id);
+    if (isAdmin && testimonial.contentType === "announcement" && testimonial.approved && testimonial.status === "active") {
+      await notifyUsersOfAnnouncement(testimonial);
+      testimonial.announcementNotifiedAt = new Date();
+      await testimonial.save();
+    }
     res.status(201).json(testimonial);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+}
+
+async function notifyUsersOfAnnouncement(post) {
+  const users = await User.find({ isDeleted: { $ne: true }, isSuspended: { $ne: true } }).select("_id email").lean();
+  const userIds = users.map((user) => user._id);
+  const link = post.linkUrl || "/testimonials";
+  const payload = {
+    type: "announcement",
+    title: post.title || "Easy Life announcement",
+    body: post.testimony.slice(0, 180),
+    link,
+    data: { contentId: post._id, contentType: post.contentType },
+  };
+  await createNotificationsForUsers(userIds, payload);
+  await sendPushToUsers(userIds, { title: payload.title, body: payload.body, link, data: payload.data });
+  await Promise.all(users.filter((user) => user.email).map((user) => sendAnnouncementEmail({ to: user.email, title: payload.title, body: post.testimony, link }).catch((error) => console.error("Announcement email failed:", error.message))));
 }
 
 async function updateTestimonial(req, res) {
@@ -90,8 +115,14 @@ async function updateTestimonial(req, res) {
     if (req.files?.image?.[0]) testimonial.image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) testimonial.videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
 
+    const shouldNotify = req.user.role === "admin" && testimonial.contentType === "announcement" && testimonial.approved && testimonial.status === "active" && !testimonial.announcementNotifiedAt;
     await testimonial.save();
     if (testimonial.bannerEnabled) await keepBannerLimit(testimonial._id);
+    if (shouldNotify) {
+      await notifyUsersOfAnnouncement(testimonial);
+      testimonial.announcementNotifiedAt = new Date();
+      await testimonial.save();
+    }
     res.json(testimonial);
   } catch (error) {
     res.status(500).json({ message: error.message });

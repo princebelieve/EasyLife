@@ -109,7 +109,15 @@ async function sendEmailVerification({ to, verificationUrl }) {
   }
 }
 
+async function sendAnnouncementEmail({ to, title, body, link }) {
+  if (!process.env.GMAIL_REFRESH_TOKEN || !process.env.EMAIL_USER) return;
+  const subject = title || "New Easy Life announcement";
+  const html = `<h2>${subject}</h2><p>${body}</p>${link ? `<p><a href="${link}">View announcement</a></p>` : ""}`;
+  return sendViaGmail({ to, subject, text: `${body}\n\n${link || ""}`, html });
+}
+
 module.exports = {
   sendResetPasswordEmail,
   sendEmailVerification,
+  sendAnnouncementEmail,
 };

@@ -18,6 +18,7 @@ const testimonialSchema = new mongoose.Schema(
     seoTitle: { type: String, default: "", trim: true },
     seoDescription: { type: String, default: "", trim: true },
     submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    announcementNotifiedAt: { type: Date },
   },
   { timestamps: true },
 );

@@ -34,6 +34,7 @@ export default function SiteAnnouncementBanner() {
   const target = item.linkUrl || "/testimonials";
   const isExternal = /^https?:\/\//i.test(target);
   function viewPost(event) {
+    setDismissed(true);
     if (isLoggedIn) return;
     event.preventDefault();
     sessionStorage.setItem("pendingAnnouncementUrl", target);
