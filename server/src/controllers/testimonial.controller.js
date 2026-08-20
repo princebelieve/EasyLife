@@ -30,7 +30,8 @@ async function getTestimonials(req, res) {
 
 async function getAdminTestimonials(req, res) {
   try {
-    res.json(await Testimonial.find().sort({ createdAt: -1 }));
+    const filter = req.user.role === "subadmin" ? { submittedBy: req.user._id } : {};
+    res.json(await Testimonial.find(filter).sort({ createdAt: -1 }));
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -67,14 +68,25 @@ async function updateTestimonial(req, res) {
   try {
     const testimonial = await Testimonial.findById(req.params.id);
     if (!testimonial) return res.status(404).json({ message: "Testimonial not found." });
+    if (req.user.role === "subadmin" && String(testimonial.submittedBy) !== String(req.user._id)) {
+      return res.status(403).json({ message: "You can only edit your own submissions." });
+    }
 
-    const fields = ["contentType", "title", "name", "role", "testimony", "linkUrl", "videoUrl", "seoTitle", "seoDescription", "status"];
+    const fields = ["contentType", "title", "name", "role", "testimony", "linkUrl", "videoUrl", "seoTitle", "seoDescription"];
     fields.forEach((field) => {
       if (req.body[field] !== undefined) testimonial[field] = req.body[field];
     });
-    if (req.body.featured !== undefined) testimonial.featured = asBoolean(req.body.featured);
-    if (req.body.bannerEnabled !== undefined) testimonial.bannerEnabled = asBoolean(req.body.bannerEnabled);
-    if (req.user.role === "admin" && req.body.approved !== undefined) testimonial.approved = asBoolean(req.body.approved);
+    if (req.user.role === "admin") {
+      if (req.body.featured !== undefined) testimonial.featured = asBoolean(req.body.featured);
+      if (req.body.bannerEnabled !== undefined) testimonial.bannerEnabled = asBoolean(req.body.bannerEnabled);
+      if (req.body.approved !== undefined) testimonial.approved = asBoolean(req.body.approved);
+      if (req.body.status !== undefined) testimonial.status = req.body.status;
+    } else {
+      testimonial.featured = false;
+      testimonial.bannerEnabled = false;
+      testimonial.approved = false;
+      testimonial.status = "inactive";
+    }
     if (req.files?.image?.[0]) testimonial.image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) testimonial.videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
 
@@ -88,7 +100,10 @@ async function updateTestimonial(req, res) {
 
 async function deleteTestimonial(req, res) {
   try {
-    const deleted = await Testimonial.findByIdAndDelete(req.params.id);
+    const filter = req.user.role === "subadmin"
+      ? { _id: req.params.id, submittedBy: req.user._id }
+      : { _id: req.params.id };
+    const deleted = await Testimonial.findOneAndDelete(filter);
     if (!deleted) return res.status(404).json({ message: "Testimonial not found." });
     res.json({ message: "Testimonial deleted." });
   } catch (error) {

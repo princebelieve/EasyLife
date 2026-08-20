@@ -104,8 +104,8 @@ export default function AdminLayout({ children }) {
     },
 
     {
-      to: "/admin/testimonials",
-      label: "Testimonials",
+      to: "/admin/content",
+      label: "Content Studio",
       icon: <Video size={18} />,
     },
 

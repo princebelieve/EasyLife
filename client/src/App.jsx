@@ -292,6 +292,17 @@ export default function App() {
             />
 
             <Route
+              path="/admin/content"
+              element={
+                <RequireAdminOrSubadmin>
+                  <AdminLayout>
+                    <AdminTestimonials />
+                  </AdminLayout>
+                </RequireAdminOrSubadmin>
+              }
+            />
+
+            <Route
               path="/admin/testimonials"
               element={
                 <RequireAdminOrSubadmin>
