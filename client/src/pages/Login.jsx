@@ -32,6 +32,13 @@ export default function Login() {
 
       await login(res.accessToken, res.refreshToken);
 
+      const pendingAnnouncementUrl = sessionStorage.getItem("pendingAnnouncementUrl");
+      if (pendingAnnouncementUrl) {
+        sessionStorage.removeItem("pendingAnnouncementUrl");
+        window.location.href = pendingAnnouncementUrl;
+        return;
+      }
+
       let payload;
 
       try {
@@ -72,6 +79,12 @@ export default function Login() {
       }
 
       await login(res.accessToken, res.refreshToken);
+      const pendingAnnouncementUrl = sessionStorage.getItem("pendingAnnouncementUrl");
+      if (pendingAnnouncementUrl) {
+        sessionStorage.removeItem("pendingAnnouncementUrl");
+        window.location.href = pendingAnnouncementUrl;
+        return;
+      }
       const payload = JSON.parse(atob(res.accessToken.split(".")[1]));
 
       if (payload.role === "admin") {
