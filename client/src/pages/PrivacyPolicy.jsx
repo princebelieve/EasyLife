@@ -93,6 +93,13 @@ export default function PrivacyPolicy() {
           obligations, and enforce our agreements. We use reasonable technical
           and organizational safeguards, but no internet system is 100% secure.
         </p>
+        <p>
+          To keep you signed in between visits, the Platform stores
+          authentication information in your browser&apos;s local storage. This
+          information is used only to maintain your Easy Life Wellness Hub
+          session and is removed when you log out or when the session expires.
+          It is not Google user data and is not used for advertising.
+        </p>
 
         <h2>Your Rights</h2>
         <p>

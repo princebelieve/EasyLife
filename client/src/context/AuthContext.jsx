@@ -10,7 +10,12 @@ import {
 } from "react";
 
 import { getProfile } from "../services/api";
-import { setRefreshToken } from "../utils/auth";
+import {
+  getToken,
+  setRefreshToken,
+  setToken,
+  logout as clearStoredAuth,
+} from "../utils/auth";
 import { ensurePushSubscription } from "../registerServiceWorker";
 
 const AuthContext = createContext(null);
@@ -31,8 +36,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const logout = useCallback(() => {
-    sessionStorage.removeItem("accessToken");
-    sessionStorage.removeItem("refreshToken");
+    clearStoredAuth();
 
     setTokenState(null);
 
@@ -40,17 +44,17 @@ export function AuthProvider({ children }) {
   }, []);
 
   const hydrateUser = useCallback(async () => {
-    const fallbackToken = sessionStorage.getItem("accessToken");
+    const fallbackToken = getToken();
 
     try {
       const profile = await getProfile();
 
       setUser(profile.user);
-      setTokenState(sessionStorage.getItem("accessToken"));
+      setTokenState(getToken());
     } catch (error) {
       console.error(error);
 
-      if (!sessionStorage.getItem("accessToken")) {
+      if (!getToken()) {
         logout();
         return;
       }
@@ -68,7 +72,7 @@ export function AuthProvider({ children }) {
 
   const updateToken = useCallback(
     async (newToken) => {
-      sessionStorage.setItem("accessToken", newToken);
+      setToken(newToken);
 
       const parsedUser = parseToken(newToken);
 
@@ -100,7 +104,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     async function syncAuth() {
-      const storedToken = sessionStorage.getItem("accessToken");
+      const storedToken = getToken();
 
       if (!storedToken) {
         setTokenState(null);

@@ -1,6 +1,21 @@
 //client/src/utils/auth.js
 function storage() {
-  return typeof window !== "undefined" ? window.sessionStorage : null;
+  if (typeof window === "undefined") return null;
+
+  const persistentStore = window.localStorage;
+  const temporaryStore = window.sessionStorage;
+
+  for (const key of ["accessToken", "refreshToken"]) {
+    const legacyToken = temporaryStore.getItem(key);
+
+    if (!persistentStore.getItem(key) && legacyToken) {
+      persistentStore.setItem(key, legacyToken);
+    }
+
+    if (legacyToken) temporaryStore.removeItem(key);
+  }
+
+  return persistentStore;
 }
 
 export function setToken(token) {
