@@ -3118,6 +3118,18 @@ button:hover {
   color: white;
 }
 
+.cart-actions input[type="number"] {
+  width: 68px;
+  height: 42px;
+  padding: 0 8px;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  background: var(--cream);
+  color: var(--navy);
+  font-weight: 800;
+  text-align: center;
+}
+
 .cart-summary {
   margin-top: 30px;
   background: white;
@@ -4444,6 +4456,7 @@ iframe {
 .easy-life-home h2 { font-size: clamp(2rem, 3.5vw, 3.3rem); line-height: 1.1; margin: 0 0 16px; color: #103b22; }
 .easy-intro p:last-child, .easy-two-column p, .easy-training p { color: #52675b; font-size: 1.04rem; line-height: 1.8; }
 .easy-section-heading { max-width: 710px; margin-bottom: 32px; }
+.easy-products-intro { max-width: 650px; margin: 0; color: #52675b; font-size: 1rem; line-height: 1.65; }
 .easy-heading-row { max-width: none; display: flex; justify-content: space-between; gap: 20px; align-items: end; }
 .easy-text-link { color: #176b36; text-decoration: none; font-weight: 750; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
 .easy-pillar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }

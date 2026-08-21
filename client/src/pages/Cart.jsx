@@ -95,6 +95,7 @@ export default function Cart() {
 
                     <div className="cart-actions">
                       <button
+                        type="button"
                         onClick={() =>
                           updateQuantity(item.productId, item.quantity - 1)
                         }
@@ -102,9 +103,22 @@ export default function Cart() {
                         -
                       </button>
 
-                      <span>{item.quantity}</span>
+                      <input
+                        type="number"
+                        min="1"
+                        inputMode="numeric"
+                        aria-label={`Quantity for ${item.name}`}
+                        value={item.quantity}
+                        onChange={(event) => {
+                          const value = Number(event.target.value);
+                          if (Number.isInteger(value) && value > 0) {
+                            updateQuantity(item.productId, value);
+                          }
+                        }}
+                      />
 
                       <button
+                        type="button"
                         onClick={() =>
                           updateQuantity(item.productId, item.quantity + 1)
                         }
@@ -114,6 +128,7 @@ export default function Cart() {
                     </div>
 
                     <button
+                      type="button"
                       className="btn-danger"
                       onClick={() => removeFromCart(item.productId)}
                     >
@@ -145,13 +160,14 @@ export default function Cart() {
                 }}
               >
                 <button
+                  type="button"
                   className="primary"
                   onClick={() => navigate("/checkout")}
                 >
                   Proceed To Checkout
                 </button>
 
-                <button className="btn-danger" onClick={clearCart}>
+                <button type="button" className="btn-danger" onClick={clearCart}>
                   Clear Cart
                 </button>
               </div>

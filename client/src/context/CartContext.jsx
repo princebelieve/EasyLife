@@ -1,5 +1,5 @@
 //client/src/context/CartContext.jsx
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import useAuth from "./AuthContext";
 import {
   getCart,
@@ -14,6 +14,7 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
+  const quantityTimers = useRef(new Map());
   const { token } = useAuth();
 
   async function loadCart() {
@@ -98,12 +99,23 @@ export function CartProvider({ children }) {
       return;
     }
 
-    try {
-      await updateCartApi(token, productId, quantity);
-      loadCart();
-    } catch (err) {
-      console.error(err);
-    }
+    setCart((current) => current.map((item) => item.productId === productId ? { ...item, quantity } : item));
+
+    const previousTimer = quantityTimers.current.get(productId);
+    if (previousTimer) window.clearTimeout(previousTimer);
+
+    const timer = window.setTimeout(async () => {
+      try {
+        await updateCartApi(token, productId, quantity);
+      } catch (err) {
+        console.error(err);
+        await loadCart();
+      } finally {
+        quantityTimers.current.delete(productId);
+      }
+    }, 300);
+
+    quantityTimers.current.set(productId, timer);
   }
 
   async function clearCart() {
