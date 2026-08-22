@@ -5017,14 +5017,16 @@ button:hover,
 .service-banner:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 22px 44px rgba(6, 59, 32, .24), 0 0 22px rgba(21, 148, 71, .2); }
 .service-banner:hover img { transform: scale(1.08); opacity: .88; }
 
-.service-promo-section { padding: 34px 0 54px; background: #fbf5e6; }
-.service-promo { position: relative; min-height: 300px; overflow: hidden; border: 1px solid rgba(232, 198, 106, .55); border-radius: 8px; background: var(--navy); box-shadow: 0 18px 40px rgba(6, 59, 32, .16); animation: promoSlideIn .55s ease both; }
+.service-promo-section { padding: 42px 0 60px; background: #eef3ef; }
+.service-promo { position: relative; min-height: 350px; overflow: hidden; border: 2px solid #e85d4a; border-radius: 8px; background: var(--navy); box-shadow: 0 20px 44px rgba(6, 59, 32, .2); animation: promoSlideIn .55s ease both; }
 .service-promo > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: .7; animation: promoImageDrift 5.5s ease both; }
-.service-promo-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(5, 8, 5, .94), rgba(6, 59, 32, .76) 48%, rgba(6, 59, 32, .24)); }
-.service-promo-content { position: relative; z-index: 1; width: min(620px, 72%); padding: 48px; color: var(--white); }
-.service-promo-content > span { color: var(--gold); font-size: .74rem; font-weight: 800; letter-spacing: .15em; }
-.service-promo-content h2 { margin: 12px 0 10px; color: var(--cream); font: clamp(2rem, 4vw, 3.5rem)/1.05 Georgia, serif; }
+.service-promo-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(3, 29, 16, .97), rgba(6, 59, 32, .82) 52%, rgba(6, 59, 32, .3)); }
+.service-promo-content { position: relative; z-index: 1; width: min(700px, 78%); padding: 48px; color: var(--white); }
+.service-promo-kicker { display: inline-block; padding: 8px 12px; border-radius: 4px; background: #e85d4a; color: #fff; font-size: .72rem; font-weight: 900; letter-spacing: .13em; }
+.service-promo-label { display: block; margin-top: 18px; color: var(--gold); font-size: .82rem; font-weight: 800; letter-spacing: .15em; }
+.service-promo-content h2 { max-width: 650px; margin: 10px 0 12px; color: #fff8e8; font: clamp(2.5rem, 5vw, 4.4rem)/1.02 Georgia, serif; }
 .service-promo-content p { max-width: 520px; margin: 0 0 22px; color: rgba(255, 255, 255, .84); line-height: 1.65; }
+.service-promo-destination { display: block; margin: 0 0 22px; color: #bce8d0; font-size: .9rem; letter-spacing: .02em; }
 .service-promo-controls { position: absolute; right: 26px; bottom: 24px; z-index: 2; display: flex; align-items: center; gap: 12px; }
 .service-promo-controls > button { display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 1px solid rgba(232, 198, 106, .7); border-radius: 50%; background: rgba(5, 8, 5, .45); color: var(--cream); }
 .service-promo-dots { display: flex; gap: 7px; }
@@ -5034,8 +5036,16 @@ button:hover,
 @keyframes promoImageDrift { from { transform: scale(1.06); } to { transform: scale(1); } }
 
 @media (max-width: 600px) {
-  .service-promo { min-height: 390px; }
-  .service-promo-content { width: 100%; padding: 32px 24px 84px; }
+  .service-promo { min-height: 540px; border-width: 3px; }
+  .service-promo > img { height: 205px; object-position: center; opacity: .9; }
+  .service-promo-overlay { height: 205px; background: linear-gradient(180deg, rgba(3, 29, 16, .08), rgba(3, 29, 16, .78)); }
+  .service-promo-content { width: 100%; min-height: 335px; margin-top: 205px; padding: 26px 22px 88px; background: var(--navy); }
+  .service-promo-kicker { padding: 9px 11px; font-size: .68rem; }
+  .service-promo-label { margin-top: 15px; font-size: .74rem; }
+  .service-promo-content h2 { margin: 8px 0 10px; font-size: clamp(2.2rem, 11vw, 3.2rem); }
+  .service-promo-content p { margin-bottom: 13px; font-size: .96rem; line-height: 1.5; }
+  .service-promo-destination { margin-bottom: 18px; font-size: .82rem; overflow-wrap: anywhere; }
+  .service-promo-content .easy-btn { width: 100%; justify-content: center; }
   .service-promo-controls { right: 20px; bottom: 20px; }
 }
 

@@ -9,6 +9,7 @@ const promotions = [
     text: "Explore wellness products, education, and practical support.",
     image: "/image-13.png",
     to: "/collection",
+    destination: "easylifewellnesshub.com/collection",
     action: "Shop wellness products",
   },
   {
@@ -16,7 +17,8 @@ const promotions = [
     title: "Everyday essentials for your home and family.",
     text: "Ask about convenient products and services from the Easy Life family.",
     image: "/image-15.png",
-    to: "/contact",
+    to: "https://supermarket.easylifewellnesshub.com",
+    destination: "supermarket.easylifewellnesshub.com",
     action: "Learn more",
   },
   {
@@ -24,7 +26,8 @@ const promotions = [
     title: "Clearer vision. Better everyday living.",
     text: "Contact us to ask about eye-care appointments and support.",
     image: "/image-6.png",
-    to: "/contact",
+    to: "https://clinic.easylifewellnesshub.com",
+    destination: "clinic.easylifewellnesshub.com",
     action: "Make an enquiry",
   },
 ];
@@ -55,12 +58,20 @@ export default function ServicePromoCarousel() {
           <img src={activePromotion.image} alt="" aria-hidden="true" />
           <div className="service-promo-overlay" />
           <div className="service-promo-content">
-            <span>{activePromotion.label}</span>
+            <span className="service-promo-kicker">FEATURED ADVERT</span>
+            <span className="service-promo-label">{activePromotion.label}</span>
             <h2>{activePromotion.title}</h2>
             <p>{activePromotion.text}</p>
-            <Link className="easy-btn easy-btn-primary breathing-button" to={activePromotion.to}>
-              {activePromotion.action} <ArrowRight size={17} />
-            </Link>
+            <strong className="service-promo-destination">{activePromotion.destination}</strong>
+            {activePromotion.to.startsWith("http") ? (
+              <a className="easy-btn easy-btn-primary breathing-button" href={activePromotion.to}>
+                {activePromotion.action} <ArrowRight size={17} />
+              </a>
+            ) : (
+              <Link className="easy-btn easy-btn-primary breathing-button" to={activePromotion.to}>
+                {activePromotion.action} <ArrowRight size={17} />
+              </Link>
+            )}
           </div>
           <div className="service-promo-controls">
             <button type="button" onClick={showPrevious} aria-label="Previous advert"><ArrowLeft size={17} /></button>
