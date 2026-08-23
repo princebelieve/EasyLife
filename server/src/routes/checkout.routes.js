@@ -1,5 +1,6 @@
 //server/src/routes/checkout.routes.js
 const express = require("express");
+const crypto = require("crypto");
 const router = express.Router();
 
 const Cart = require("../models/Cart");
@@ -77,13 +78,18 @@ router.post("/", protect, async (req, res) => {
     const shippingFee = shippingData.shippingFee || 0;
 
     const totalAmount = subtotal + shippingFee;
+    const confirmationToken = crypto.randomBytes(32).toString("hex");
+    const confirmationTokenHash = crypto
+      .createHash("sha256")
+      .update(confirmationToken)
+      .digest("hex");
 
     // 3. INIT PAYSTACK
     const payment = await paystack.post("/transaction/initialize", {
       email,
       amount: totalAmount * 100,
       currency: "NGN",
-      callback_url: `${clientUrl}/success`,
+      callback_url: `${clientUrl}/success?order_token=${confirmationToken}`,
       metadata: {
         userId,
         customerName,
@@ -115,10 +121,14 @@ router.post("/", protect, async (req, res) => {
       deliveryStatus: "pending",
       deliveryFee: shippingFee,
       deliveryZone: country,
+      deliveryEstimate: shippingData.estimatedDays || "",
+      shippingService: shippingData.serviceName || "",
       deliveryContact: phone,
       totalAmount,
       currency: "NGN",
       paymentReference: data.reference,
+      confirmationTokenHash,
+      confirmationTokenExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
 
     // Create notification for user

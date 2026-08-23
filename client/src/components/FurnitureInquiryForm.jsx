@@ -93,9 +93,8 @@ export default function WellnessInquiryForm() {
             >
               <option value="">Select Wellness Interest *</option>
               <option value="wellness-products">Wellness Products</option>
-              <option value="test-checkup">Test & Checkup</option>
               <option value="training">Training & Leadership</option>
-              <option value="network-marketing">Network Marketing</option>
+              <option value="wellness-education">Wellness Education</option>
               <option value="consultation">Wellness Consultation</option>
             </select>
 
@@ -108,7 +107,7 @@ export default function WellnessInquiryForm() {
               <option value="natural-wellness">Natural Wellness</option>
               <option value="equipment">Naturopathic Equipment</option>
               <option value="community">Community & Mentorship</option>
-              <option value="financial-freedom">Financial Freedom</option>
+              <option value="community-outreach">Community Outreach</option>
             </select>
           </div>
 

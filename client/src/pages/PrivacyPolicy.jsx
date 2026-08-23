@@ -1,129 +1,16 @@
 import Navbar from "../components/Navbar";
 
+const policyLinks = <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}><a className="cta" href="/refund-policy">Refund & Returns</a><a className="cta" href="/terms-conditions">Terms & Conditions</a><a className="cta" href="/contact">Contact Support</a></div>;
+
 export default function PrivacyPolicy() {
-  return (
-    <>
-      <Navbar />
-      <div
-        className="page"
-        style={{ maxWidth: 900, margin: "0 auto", padding: "40px 20px" }}
-      >
-        <div
-          style={{
-            display: "flex",
-            gap: 8,
-            flexWrap: "wrap",
-            marginBottom: 16,
-          }}
-        >
-          <a className="cta" href="/refund-policy">
-            Refund Policy
-          </a>
-          <a className="cta" href="/terms-conditions">
-            Terms & Conditions
-          </a>
-          <a className="cta" href="/contact">
-            Contact Support
-          </a>
-        </div>
-
-        <h1>Privacy Policy</h1>
-        <p style={{ color: "#666", marginBottom: 20 }}>
-          Last updated: 2026-08-18
-        </p>
-
-        <h2>Information We Collect</h2>
-        <ul>
-          <li>Account information, such as your name, email address, phone number, and profile details</li>
-          <li>Information about products, services, training, consultations, or support you request or purchase</li>
-          <li>Payment, transaction, and customer-support records; payment details are processed by our payment providers</li>
-          <li>Photos, documents, notes, or other information you choose to upload or submit</li>
-          <li>
-            Device, browser, IP address, and app usage data needed for security
-            and support
-          </li>
-          <li>Information about push-notification subscriptions if you enable notifications</li>
-        </ul>
-
-        <h2>How We Use Your Information</h2>
-        <ul>
-          <li>Provide and manage our products, services, training, consultations, and support</li>
-          <li>Process payments, registrations, requests, refunds, and related communications</li>
-          <li>
-            Verify accounts, send email notifications, prevent fraud, and secure our systems
-          </li>
-          <li>
-            Improve our programs and services and comply with applicable law
-          </li>
-        </ul>
-
-        <h2>Google Sign-In and Google Data</h2>
-        <p>
-          If you choose Google Sign-In, we receive the Google account
-          information shown during sign-in, such as your name, email address,
-          and profile image, to create or access your Easy Life Wellness Hub
-          account. We use this information only to authenticate you and
-          provide the account features you request. We do not sell Google user
-          data or use it for advertising.
-        </p>
-        <p>
-          Our server may also use Gmail API OAuth credentials belonging to Easy
-          Life Wellness Hub to send account verification and password-reset
-          emails from our official support account. The Gmail API send scope is
-          necessary for these transactional messages. Those credentials are
-          not used to read, search, modify, or access customers’ Gmail accounts,
-          and Gmail data is not used for advertising or profiling.
-        </p>
-
-        <h2>Sharing and Third Parties</h2>
-        <p>
-          We may share personal data with payment processors, email and
-          notification providers, hosting and storage providers, service
-          providers, and professional or operational partners where reasonably
-          necessary to provide Easy Life Wellness Hub services, process a
-          transaction, respond to you, or keep the Platform secure. We do not
-          sell your personal data. We require service providers to handle your
-          information only for appropriate business purposes and to protect it.
-        </p>
-
-        <h2>Retention and Security</h2>
-        <p>
-          We keep personal data for as long as needed to provide our services,
-          manage your account, resolve disputes, meet legal and accounting
-          obligations, and enforce our agreements. We use reasonable technical
-          and organizational safeguards, but no internet system is 100% secure.
-        </p>
-        <p>
-          To keep you signed in between visits, the Platform stores
-          authentication information in your browser&apos;s local storage. This
-          information is used only to maintain your Easy Life Wellness Hub
-          session and is removed when you log out or when the session expires.
-          It is not Google user data and is not used for advertising.
-        </p>
-
-        <h2>Your Rights</h2>
-        <p>
-          Please also read our{" "}
-          <a href="/terms-conditions">Terms & Conditions</a> and{" "}
-          <a href="/refund-policy">Refund & Returns Policy</a> where
-          applicable. Easy Life Wellness Hub is the business name used for
-          these policies and related customer support.
-        </p>
-        <p>
-          You may ask for access, correction, deletion, or restriction of
-          certain personal data, and you may object to direct marketing or
-          unnecessary processing, subject to applicable law. To exercise these
-          rights, contact us through the Support page or email us at
-          support@easylifewellnesshub.com.
-        </p>
-
-        <h2>Contact</h2>
-        <p>
-          For privacy concerns, please use the{" "}
-          <a href="/contact">Contact Support</a> page or email
-          support@easylifewellnesshub.com.
-        </p>
-      </div>
-    </>
-  );
+  return <><Navbar /><main className="page" style={{ maxWidth: 900, margin: "0 auto", padding: "40px 20px" }}>{policyLinks}<h1>Privacy Policy</h1><p style={{ color: "#666", marginBottom: 20 }}>Last updated: 2026-08-23</p>
+    <h2>Who is responsible for your information</h2><p>Easy Life Wellness Hub operates this website and is responsible for the personal information described in this policy. Our registered business address is 95, Akpakpava, Benin City, Edo State, Nigeria. Contact us at <a href="mailto:support@easylifewellnesshub.com">support@easylifewellnesshub.com</a>, WhatsApp 08089938820, or through our <a href="/contact">Contact Support</a> page.</p>
+    <h2>Information we collect</h2><ul><li>Account details such as your name, email address, phone number, password credentials, and profile information.</li><li>Order and delivery details such as products ordered, delivery address, country, city, contact number, order history, and support messages.</li><li>Payment and refund records, including payment reference, amount, payment status, and transaction date. Card and bank credentials are processed by Paystack and are not stored by us.</li><li>Information you submit through contact, enquiry, review, registration, or support forms, including files or photos you choose to send us.</li><li>Technical information needed to operate and secure the website, such as device, browser, IP address, session information, and push-notification subscription data if you enable notifications.</li></ul>
+    <h2>How we use information</h2><ul><li>To create and manage accounts, fulfil orders, process payments and refunds, deliver products, and provide customer support.</li><li>To send necessary order, account-verification, password-reset, security, and service communications.</li><li>To prevent fraud, protect our services, resolve disputes, maintain records, and comply with legal or accounting obligations.</li><li>To improve our products, website, and customer experience. We do not sell personal information.</li></ul>
+    <h2>Payments and service providers</h2><p>We use Paystack to process online payments. When you pay, Paystack processes the payment information under its own privacy notice and security controls. We may also use hosting, cloud storage, email, notification, delivery, and customer-support providers where necessary to run our services. We share only the information reasonably needed for the service they provide or where law requires it.</p>
+    <h2>Google Sign-In and Google data</h2><p>If you choose Google Sign-In, we receive the basic account information you approve, such as your name, email address, and profile image, to authenticate you and provide your Easy Life Wellness Hub account. We do not use Google user data for advertising, sell it, or use it to determine eligibility for credit, employment, housing, insurance, or other sensitive decisions.</p><p>Our official email system may use Gmail API credentials to send account-verification and password-reset emails. This permission is used to send those transactional emails, not to read, search, or access customers’ Gmail content.</p>
+    <h2>Retention and security</h2><p>We retain information only for as long as reasonably needed to provide services, maintain records, resolve disputes, prevent fraud, meet legal obligations, and enforce our agreements. We use reasonable organisational and technical safeguards; however, no online system can be guaranteed completely secure. Keep your password private and contact us promptly if you believe your account has been accessed without permission.</p><p>We use secure, time-limited order-confirmation links to help customers access order information after checkout. These links are designed to protect order and delivery information and may expire or be usable only once.</p>
+    <h2>Your choices and rights</h2><p>Subject to applicable law, you may ask us to access, correct, delete, or restrict certain personal information, or object to certain processing. You can opt out of non-essential marketing communications using the unsubscribe option where provided or by contacting us. You can disable browser or device notifications at any time in your device or browser settings.</p>
+    <h2>Policy changes</h2><p>We may update this policy when our practices or legal obligations change. We will publish the current version on this page and update the date above.</p>
+  </main></>;
 }

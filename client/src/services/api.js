@@ -234,6 +234,37 @@ export async function getShippingZones(token) {
   });
 }
 
+export async function getShippingSummary(country = "NG") {
+  const res = await fetch(`${BASE_URL}/api/shipping/summary?country=${encodeURIComponent(country)}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Unable to load delivery information");
+  return data;
+}
+
+export async function getShippingDestinations() {
+  const res = await fetch(`${BASE_URL}/api/shipping/destinations`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Unable to load shipping destinations");
+  return data;
+}
+
+export async function getShippingSettings(token) {
+  return apiRequest("/api/admin/shipping/settings", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function updateShippingSettings(data, token) {
+  return apiRequest("/api/admin/shipping/settings", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+}
+
 export async function getProductCategories() {
   return apiRequest("/api/products/categories");
 }

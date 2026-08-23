@@ -74,7 +74,7 @@ export default function Hero() {
 
           <button
             className="secondary"
-            onClick={() => window.open("https://wa.me/2348037757718", "_blank")}
+            onClick={() => window.open("https://wa.me/2348089938820", "_blank")}
           >
             WhatsApp
           </button>

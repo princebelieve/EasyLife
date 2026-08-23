@@ -27,6 +27,7 @@ const testimonialRoutes = require("./routes/testimonial.routes");
 
 const Product = require("./models/Product");
 const ShippingZone = require("./models/ShippingZone");
+const ShippingSettings = require("./models/ShippingSettings");
 
 const app = express();
 
@@ -71,31 +72,6 @@ app.get("/sitemap.xml", async (req, res) => {
       .trim()
       .replace(/\/$/, "");
 
-    // Determine a default shipping price (lowest active baseDeliveryFee) to include in the feed.
-    // Merchant Center accepts product-level <g:shipping> entries; providing a conservative
-    // default helps listings show a shipping estimate. For accurate per-order shipping,
-    // configure shipping settings inside Merchant Center or extend the feed generation.
-    let defaultShippingPrice = 0;
-    try {
-      const zones = await ShippingZone.find({ active: true }).select(
-        "baseDeliveryFee",
-      );
-      if (zones && zones.length > 0) {
-        defaultShippingPrice = zones.reduce((min, z) => {
-          const v = Number(z.baseDeliveryFee || 0);
-          return min === null || v < min ? v : min;
-        }, null);
-        if (defaultShippingPrice === null) defaultShippingPrice = 0;
-      } else {
-        defaultShippingPrice = Number(process.env.DEFAULT_SHIPPING_PRICE || 0);
-      }
-    } catch (err) {
-      console.warn(
-        "Unable to compute default shipping price for feed:",
-        err.message || err,
-      );
-      defaultShippingPrice = Number(process.env.DEFAULT_SHIPPING_PRICE || 0);
-    }
     const staticPages = [
       { loc: baseUrl, priority: "1.00" },
       { loc: `${baseUrl}/collection`, priority: "0.90" },
@@ -141,59 +117,52 @@ app.get("/sitemap.xml", async (req, res) => {
 // GOOGLE SHOPPING FEED - for Google Merchant Center
 app.get("/feed.xml", async (req, res) => {
   try {
-    const products = await Product.find({ active: true });
+    const products = await Product.find({
+      hidden: { $ne: true },
+      pendingApproval: { $ne: true },
+      pendingDeletion: { $ne: true },
+      status: { $ne: "inactive" },
+      approved: { $ne: false },
+    });
 
     const baseUrl =
       process.env.CLIENT_URL || process.env.BASE_URL || "http://localhost:5173";
 
-    let defaultShippingPrice = 0;
-    let defaultHandlingMinDays = 0;
-    let defaultHandlingMaxDays = 1;
-    let defaultTransitMinDays = 0;
-    let defaultTransitMaxDays = 1;
+    const [zones, settings] = await Promise.all([
+      ShippingZone.find({ active: true }).select(
+        "state baseDeliveryFee serviceName handlingTimeMinDays handlingTimeMaxDays transitTimeMinDays transitTimeMaxDays currency",
+      ),
+      ShippingSettings.findOneAndUpdate(
+        { key: "default" },
+        { $setOnInsert: { key: "default" } },
+        { new: true, upsert: true, setDefaultsOnInsert: true },
+      ),
+    ]);
+    // Product and checkout prices are NGN, so only NGN delivery rates can be
+    // advertised in this feed. Merchant requires the shipping price currency
+    // to match the offer price currency.
+    const shippingRates = zones
+      .filter((zone) => (zone.currency || "NGN") === "NGN")
+      .map((zone) => ({
+        country: zone.state,
+        price: Number(zone.baseDeliveryFee || 0),
+        service: zone.serviceName || "Standard delivery",
+        minHandlingTime: Number(zone.handlingTimeMinDays || 0),
+        maxHandlingTime: Number(zone.handlingTimeMaxDays || 1),
+        minTransitTime: Number(zone.transitTimeMinDays || 0),
+        maxTransitTime: Number(zone.transitTimeMaxDays || 1),
+      }));
 
-    try {
-      const zones = await ShippingZone.find({ active: true }).select(
-        "baseDeliveryFee handlingTimeMinDays handlingTimeMaxDays transitTimeMinDays transitTimeMaxDays",
-      );
-
-      if (zones && zones.length > 0) {
-        defaultShippingPrice = zones.reduce((min, z) => {
-          const v = Number(z.baseDeliveryFee || 0);
-          return min === null || v < min ? v : min;
-        }, null);
-
-        if (defaultShippingPrice === null) {
-          defaultShippingPrice = Number(
-            process.env.DEFAULT_SHIPPING_PRICE || 0,
-          );
-        }
-
-        defaultHandlingMinDays = Math.min(
-          ...zones.map((z) => Number(z.handlingTimeMinDays || 0)),
-          0,
-        );
-        defaultHandlingMaxDays = Math.max(
-          ...zones.map((z) => Number(z.handlingTimeMaxDays || 0)),
-          1,
-        );
-        defaultTransitMinDays = Math.min(
-          ...zones.map((z) => Number(z.transitTimeMinDays || 0)),
-          0,
-        );
-        defaultTransitMaxDays = Math.max(
-          ...zones.map((z) => Number(z.transitTimeMaxDays || 0)),
-          1,
-        );
-      } else {
-        defaultShippingPrice = Number(process.env.DEFAULT_SHIPPING_PRICE || 0);
-      }
-    } catch (err) {
-      console.warn(
-        "Unable to compute default shipping values for feed:",
-        err.message || err,
-      );
-      defaultShippingPrice = Number(process.env.DEFAULT_SHIPPING_PRICE || 0);
+    if (!shippingRates.length) {
+      shippingRates.push({
+        country: "NG",
+        price: Number(settings.defaultShippingPrice || 0),
+        service: "Standard delivery",
+        minHandlingTime: 0,
+        maxHandlingTime: 1,
+        minTransitTime: 0,
+        maxTransitTime: 1,
+      });
     }
 
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
@@ -215,21 +184,6 @@ app.get("/feed.xml", async (req, res) => {
       const description =
         product.fullDescription || product.shortDescription || product.name;
 
-      // Derive per-product transit times from `deliveryEstimate` when available
-      // Expect formats like "7-14 days" or "3 - 5 days"
-      let productTransitMin = defaultTransitMinDays;
-      let productTransitMax = defaultTransitMaxDays;
-      try {
-        const de = (product.deliveryEstimate || "").toString();
-        const m = de.match(/(\d+)\s*-\s*(\d+)/);
-        if (m) {
-          productTransitMin = Number(m[1]);
-          productTransitMax = Number(m[2]);
-        }
-      } catch (e) {
-        // fallback to defaults
-      }
-
       xml += "  <entry>\n";
       xml += `    <id>${baseUrl}/product/${product._id}</id>\n`;
       xml += `    <g:id>${escapeXml(String(itemId))}</g:id>\n`;
@@ -237,21 +191,29 @@ app.get("/feed.xml", async (req, res) => {
       xml += `    <description>${escapeXml(description)}</description>\n`;
       xml += `    <link rel="alternate" type="text/html" href="${baseUrl}/product/${product._id}"/>\n`;
       xml += `    <g:image_link>${product.coverImage}</g:image_link>\n`;
-      xml += `    <g:price>${Number(product.price || 0).toFixed(2)} NGN</g:price>\n`;
+      const regularPrice = Number(product.price || 0);
+      const salePrice = Number(product.salePrice);
+      const hasSalePrice = Number.isFinite(salePrice) && salePrice >= 0 && salePrice < regularPrice;
+      xml += `    <g:price>${regularPrice.toFixed(2)} NGN</g:price>\n`;
+      if (hasSalePrice) xml += `    <g:sale_price>${salePrice.toFixed(2)} NGN</g:sale_price>\n`;
       xml += `    <g:availability>${availability}</g:availability>\n`;
-      xml += `    <g:brand>${escapeXml(product.brand || "Easy Life Wellness Hub")}</g:brand>\n`;
-      xml += `    <g:condition>new</g:condition>\n`;
+      if (product.brand) xml += `    <g:brand>${escapeXml(product.brand)}</g:brand>\n`;
+      if (product.gtin) xml += `    <g:gtin>${escapeXml(product.gtin)}</g:gtin>\n`;
+      if (!product.gtin) xml += "    <g:identifier_exists>no</g:identifier_exists>\n";
+      xml += `    <g:condition>${escapeXml(product.condition || "new")}</g:condition>\n`;
       xml += `    <g:product_type>${escapeXml(product.category || "Wellness Products")}</g:product_type>\n`;
-      xml += `    <g:shipping>\n`;
-      xml += `      <g:country>NG</g:country>\n`;
-      xml += `      <g:region>Delta</g:region>\n`;
-      xml += `      <g:service>Standard</g:service>\n`;
-      xml += `      <g:price>${Number(defaultShippingPrice).toFixed(2)} NGN</g:price>\n`;
-      xml += `      <g:min_handling_time>${defaultHandlingMinDays}</g:min_handling_time>\n`;
-      xml += `      <g:max_handling_time>${defaultHandlingMaxDays}</g:max_handling_time>\n`;
-      xml += `      <g:min_transit_time>${productTransitMin}</g:min_transit_time>\n`;
-      xml += `      <g:max_transit_time>${productTransitMax}</g:max_transit_time>\n`;
-      xml += `    </g:shipping>\n`;
+      if (product.googleProductCategory) xml += `    <g:google_product_category>${escapeXml(product.googleProductCategory)}</g:google_product_category>\n`;
+      shippingRates.forEach((rate) => {
+        xml += `    <g:shipping>\n`;
+        xml += `      <g:country>${escapeXml(rate.country)}</g:country>\n`;
+        xml += `      <g:service>${escapeXml(rate.service)}</g:service>\n`;
+        xml += `      <g:price>${rate.price.toFixed(2)} NGN</g:price>\n`;
+        xml += `      <g:min_handling_time>${rate.minHandlingTime}</g:min_handling_time>\n`;
+        xml += `      <g:max_handling_time>${rate.maxHandlingTime}</g:max_handling_time>\n`;
+        xml += `      <g:min_transit_time>${rate.minTransitTime}</g:min_transit_time>\n`;
+        xml += `      <g:max_transit_time>${rate.maxTransitTime}</g:max_transit_time>\n`;
+        xml += `    </g:shipping>\n`;
+      });
       xml += "  </entry>\n";
     });
 

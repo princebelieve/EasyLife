@@ -5,7 +5,7 @@ import supportKnowledge from "../config/supportKnowledge";
 const intentRules = [
   {
     test: /^(hi|hello|hey|good morning|good afternoon|good evening|greetings)\b/i,
-    reply: { text: "Hello! Welcome to Easy Life Wellness Hub. Are you looking for wellness products, training, membership, support, or a checkup?" },
+    reply: { text: "Hello! Welcome to Easy Life Wellness Hub. Are you looking for wellness products, training, membership, outreach, or support?" },
   },
   {
     test: /\b(thank you|thanks|thank u|appreciate)\b/i,
@@ -28,8 +28,8 @@ const intentRules = [
     entry: "training-and-leadership",
   },
   {
-    test: /\b(network marketing|business opportunity|earn|income|build a team|financial freedom)\b/i,
-    entry: "network-marketing",
+    test: /\b(wellness education|hygiene|training|community outreach|outreach)\b/i,
+    entry: "wellness-education",
   },
   {
     test: /\b(product|products|shop|buy|supplement|herbal|tea|personal care)\b/i,
@@ -38,10 +38,6 @@ const intentRules = [
   {
     test: /\b(equipment|device|machine)\b/i,
     entry: "wellness-equipment",
-  },
-  {
-    test: /\b(test|testing|checkup|check up|screening|prevention)\b/i,
-    entry: "test-and-checkup",
   },
   {
     test: /\b(delivery|shipping|dispatch|arrive|location|nationwide)\b/i,

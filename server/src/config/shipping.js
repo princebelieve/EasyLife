@@ -1,5 +1,6 @@
 //server/src/config/shipping.js
 const ShippingZone = require("../models/ShippingZone");
+const ShippingSettings = require("../models/ShippingSettings");
 
 // `state` remains the persisted field name for backward-compatible data migration.
 // It now contains an ISO destination country code (for example NG or GB).
@@ -9,11 +10,16 @@ async function calculateShipping({ country = "", items = [] }) {
   const zone = await ShippingZone.findOne({ state: destination, active: true });
 
   if (!zone) {
-    const shippingFee = Number(process.env.DEFAULT_SHIPPING_PRICE || 0);
+    const settings = await ShippingSettings.findOneAndUpdate(
+      { key: "default" },
+      { $setOnInsert: { key: "default" } },
+      { new: true, upsert: true, setDefaultsOnInsert: true },
+    );
+    const shippingFee = Number(settings.defaultShippingPrice || 0);
     return {
       shippingFee,
       flatRate: shippingFee,
-      estimatedDays: process.env.DEFAULT_DELIVERY_ESTIMATE || "3-7 business days",
+      estimatedDays: settings.defaultDeliveryEstimate,
       serviceName: "Standard delivery",
       currency: "NGN",
       dutiesAndTaxes: "customer",

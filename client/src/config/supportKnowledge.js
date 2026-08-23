@@ -3,11 +3,11 @@ const supportKnowledge = [
     slug: "about-easy-life",
     title: "About Easy Life Wellness Hub",
     url: "/about",
-    summary: "Easy Life Wellness Hub is a naturopathic network marketing platform dedicated to natural health, wellness, and financial freedom. We empower people to live healthy, earn income, and build generational wealth.",
+    summary: "Easy Life Wellness Hub provides wellness products, free practical education, and community support for healthier everyday living.",
     keywords: ["about", "company", "vision", "mission", "easy life", "wellness hub", "who are you"],
     details: [
-      "Our vision is to help people build a healthy body, a strong mind, and financial freedom through natural wellness, practical learning, and a supportive community.",
-      "Our mission includes naturopathic wellness education, quality natural products, wellness equipment, entrepreneurship skills, ethical network marketing, leadership development, and community outreach.",
+      "Our vision is to help people build healthier habits and stronger communities through wellness education, practical learning, and support.",
+      "Our mission includes wellness education, quality products, wellness equipment, leadership development, and community outreach.",
     ],
   },
   {
@@ -44,25 +44,14 @@ const supportKnowledge = [
     ],
   },
   {
-    slug: "test-and-checkup",
-    title: "Test & Checkup",
-    url: "/contact",
-    summary: "Accurate wellness testing and checkups support early detection and prevention.",
-    keywords: ["test", "testing", "checkup", "check up", "screening", "prevention", "early detection"],
-    details: [
-      "Contact Easy Life to ask about available wellness testing, checkup appointments, preparation, and service availability.",
-      "Wellness checkups do not replace diagnosis or treatment from a qualified healthcare professional.",
-    ],
-  },
-  {
-    slug: "network-marketing",
-    title: "Network Marketing",
+    slug: "wellness-education",
+    title: "Wellness Education",
     url: "/register",
-    summary: "A proven platform to build your team and earn unlimited income.",
-    keywords: ["network marketing", "business", "income", "team", "earn", "opportunity", "financial freedom"],
+    summary: "Free practical learning on wellness, hygiene, responsible product use, leadership, and community outreach.",
+    keywords: ["wellness education", "hygiene", "training", "leadership", "community", "outreach"],
     details: [
-      "Easy Life supports practical learning in customer relationships, sales, leadership, public speaking, personal branding, and financial literacy.",
-      "Income depends on individual effort, skills, customer relationships, participation, and results. No income is guaranteed.",
+      "Easy Life provides practical learning in wellness, hygiene, responsible product use according to label directions, leadership, and public speaking.",
+      "Registered members do not receive commissions or rewards for recruiting other members.",
     ],
   },
   {
@@ -72,8 +61,8 @@ const supportKnowledge = [
     summary: "Build practical skills, confidence, leadership ability, and a stronger network through Easy Life learning opportunities.",
     keywords: ["training", "leadership", "learning", "mentorship", "public speaking", "sales", "personal branding"],
     details: [
-      "Training topics include network marketing, sales and customer relationships, leadership and public speaking, personal branding, and financial literacy.",
-      "Register to learn about available introductory sessions, mentorship, and community participation.",
+      "Free training takes place every Thursday at 11:00 AM at the Akpakpava location.",
+      "Training covers wellness and hygiene education, responsible product use according to label directions, leadership, and community participation.",
     ],
   },
   {
@@ -83,7 +72,7 @@ const supportKnowledge = [
     summary: "Learn freely and participate fully in the Easy Life community.",
     keywords: ["membership", "member", "join", "community", "register", "mentorship"],
     details: [
-      "Registered members may access selected training sessions, request business mentorship, participate in official outreach activities, and build their network and confidence.",
+      "Registered members may attend free Thursday training at 11:00 AM in Akpakpava and join official health-awareness outreaches.",
       "Create an account to begin. Account verification may be required before some features become available.",
     ],
   },
@@ -146,7 +135,7 @@ const supportKnowledge = [
     slug: "contact-and-support",
     title: "Contact & Support",
     url: "/contact",
-    summary: "Contact Easy Life about wellness products, testing, training, membership, mentorship, outreach, partnerships, delivery, or order support.",
+    summary: "Contact Easy Life about wellness products, training, membership, outreach, partnerships, delivery, or order support.",
     keywords: ["contact", "support", "help", "whatsapp", "phone", "email", "call", "enquiry"],
     details: [
       "WhatsApp and phone support: 08089938820.",

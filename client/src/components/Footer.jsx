@@ -1,6 +1,6 @@
 //client/src/components/Footer.jsx
 import { Link } from "react-router-dom";
-import { FaFacebook, FaInstagram, FaTiktok, FaYoutube } from "react-icons/fa";
+import { FaFacebook, FaYoutube } from "react-icons/fa";
 import { SiX } from "react-icons/si";
 
 export default function Footer() {
@@ -70,22 +70,6 @@ export default function Footer() {
               <SiX size={24} />
             </a>
             <a
-            href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-            >
-              <FaInstagram size={24} />
-            </a>
-            <a
-            href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="TikTok"
-            >
-              <FaTiktok size={24} />
-            </a>
-            <a
               href="https://www.youtube.com/@EasylifeWellnessHub"
               target="_blank"
               rel="noopener noreferrer"
@@ -99,11 +83,25 @@ export default function Footer() {
         <div>
           <h4>Address</h4>
           <p>
-            Easylife Supermarket
+            <a href="mailto:support@easylifewellnesshub.com">support@easylifewellnesshub.com</a>
             <br />
-            Along Lucky Way Road
+            <a href="tel:+2348089938820">08089938820</a>
+          </p>
+          <p>
+            Registered business address
             <br />
-            Benin City, Nigeria
+            95, Akpakpava, Benin City
+            <br />
+            Edo State, Nigeria
+          </p>
+          <p>
+            Supermarket branch
+            <br />
+            No. 56B, Lucky Igbinedion Way,
+            <br />
+            off Upper Mission Extension,
+            <br />
+            Benin City, Edo State, Nigeria
           </p>
         </div>
       </div>

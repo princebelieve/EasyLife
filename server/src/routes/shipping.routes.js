@@ -4,6 +4,75 @@ const express = require("express");
 const router = express.Router();
 
 const { calculateShipping } = require("../config/shipping");
+const ShippingZone = require("../models/ShippingZone");
+const ShippingSettings = require("../models/ShippingSettings");
+
+router.get("/destinations", async (req, res) => {
+  try {
+    const zones = await ShippingZone.find({ active: true, currency: "NGN" })
+      .select("state")
+      .sort({ state: 1 });
+    const destinations = zones.map((zone) => zone.state).filter(Boolean);
+    res.json(destinations.length ? destinations : ["NG"]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Unable to load shipping destinations" });
+  }
+});
+
+router.get("/summary", async (req, res) => {
+  try {
+    const shippingData = await calculateShipping({
+      country: req.query.country || "NG",
+      items: [],
+    });
+    res.json(shippingData);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Unable to load delivery information" });
+  }
+});
+
+// Used by the hosted CSV feed. Prices are NGN because checkout and product
+// prices are NGN; Merchant requires a shipping price in the offer currency.
+router.get("/merchant-rates", async (req, res) => {
+  try {
+    const [zones, settings] = await Promise.all([
+      ShippingZone.find({ active: true }).select(
+        "state baseDeliveryFee serviceName handlingTimeMinDays handlingTimeMaxDays transitTimeMinDays transitTimeMaxDays currency",
+      ),
+      ShippingSettings.findOneAndUpdate(
+        { key: "default" },
+        { $setOnInsert: { key: "default" } },
+        { new: true, upsert: true, setDefaultsOnInsert: true },
+      ),
+    ]);
+    const rates = zones
+      .filter((zone) => (zone.currency || "NGN") === "NGN")
+      .map((zone) => ({
+        country: zone.state,
+        price: Number(zone.baseDeliveryFee || 0),
+        service: zone.serviceName || "Standard delivery",
+        minHandlingTime: Number(zone.handlingTimeMinDays || 0),
+        maxHandlingTime: Number(zone.handlingTimeMaxDays || 1),
+        minTransitTime: Number(zone.transitTimeMinDays || 0),
+        maxTransitTime: Number(zone.transitTimeMaxDays || 1),
+      }));
+
+    res.json(rates.length ? rates : [{
+      country: "NG",
+      price: Number(settings.defaultShippingPrice || 0),
+      service: "Standard delivery",
+      minHandlingTime: 0,
+      maxHandlingTime: 1,
+      minTransitTime: 0,
+      maxTransitTime: 1,
+    }]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Unable to fetch Merchant shipping rates" });
+  }
+});
 
 router.post("/preview", async (req, res) => {
   try {

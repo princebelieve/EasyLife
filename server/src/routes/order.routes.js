@@ -1,40 +1,37 @@
-//server/src/routes/order.routes.js
 const express = require("express");
-const router = express.Router();
+const crypto = require("crypto");
 const Order = require("../models/Order");
 
-// 🔥 ONLY RETURN LATEST ORDER (NOT ALL ORDERS)
-router.get("/latest", async (req, res) => {
-  const order = await Order.findOne().sort({ createdAt: -1 });
+const router = express.Router();
 
-  if (!order) {
-    return res.json(null);
-  }
-
-  res.json(order);
-});
-
-// Get order by payment reference (for success/cancel pages)
-router.get("/by-reference/:reference", async (req, res) => {
+// The checkout creates a high-entropy token that is valid for 24 hours and
+// consumed atomically on first use. Payment references must never grant access
+// to order/contact data.
+router.get("/confirmation/:token", async (req, res) => {
   try {
-    const { reference } = req.params;
-
-    const order = await Order.findOne({
-      paymentReference: reference,
-    });
+    const confirmationTokenHash = crypto
+      .createHash("sha256")
+      .update(req.params.token)
+      .digest("hex");
+    const order = await Order.findOneAndUpdate(
+      {
+        confirmationTokenHash,
+        confirmationTokenExpires: { $gt: new Date() },
+      },
+      { $unset: { confirmationTokenHash: 1, confirmationTokenExpires: 1 } },
+      { new: false },
+    );
 
     if (!order) {
       return res.status(404).json({
-        message: "Order not found",
+        message: "This order confirmation link is invalid, expired, or has already been used.",
       });
     }
 
     res.json(order);
   } catch (err) {
     console.error(err);
-    res.status(500).json({
-      message: "Error fetching order",
-    });
+    res.status(500).json({ message: "Unable to load order confirmation" });
   }
 });
 

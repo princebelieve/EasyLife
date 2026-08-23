@@ -1,18 +1,15 @@
 //client/src/pages/Checkout.jsx
 import { useEffect, useState } from "react";
-import { initializeCheckout, previewShipping } from "../services/api";
+import { getShippingDestinations, initializeCheckout, previewShipping } from "../services/api";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
-const SHIPPING_DESTINATIONS = [
-  { value: "NG", label: "Nigeria" },
-  { value: "GH", label: "Ghana" },
-  { value: "GB", label: "United Kingdom" },
-  { value: "US", label: "United States" },
-];
+const COUNTRY_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
 
 export default function Checkout() {
   const { cart, subtotal } = useCart();
   const [shippingFee, setShippingFee] = useState(0);
+  const [shippingInfo, setShippingInfo] = useState(null);
+  const [shippingDestinations, setShippingDestinations] = useState(["NG"]);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [shippingError, setShippingError] = useState("");
@@ -41,11 +38,21 @@ export default function Checkout() {
   }
 
   useEffect(() => {
+    getShippingDestinations()
+      .then((destinations) => {
+        setShippingDestinations(destinations);
+        setForm((current) => destinations.includes(current.country) ? current : { ...current, country: destinations[0] || "NG" });
+      })
+      .catch(() => setShippingDestinations(["NG"]));
+  }, []);
+
+  useEffect(() => {
     async function loadShipping() {
       try {
         if (!form.country) {
           setShippingError("");
           setShippingFee(0);
+          setShippingInfo(null);
           return;
         }
 
@@ -56,12 +63,14 @@ export default function Checkout() {
 
         setShippingError("");
         setShippingFee(Number(data.shippingFee || 0));
+        setShippingInfo(data);
       } catch (err) {
         console.error(err);
         setShippingError(
           err.message || "Unable to verify delivery availability.",
         );
         setShippingFee(0);
+        setShippingInfo(null);
       }
     }
 
@@ -134,7 +143,7 @@ export default function Checkout() {
               />
 
               <select name="country" value={form.country} onChange={handleChange} required>
-                {SHIPPING_DESTINATIONS.map((destination) => <option key={destination.value} value={destination.value}>{destination.label}</option>)}
+                {shippingDestinations.map((country) => <option key={country} value={country}>{COUNTRY_NAMES.of(country) || country}</option>)}
               </select>
 
               <input name="city" placeholder="City" value={form.city} onChange={handleChange} required />
@@ -170,7 +179,7 @@ export default function Checkout() {
                 <div className="error-message" style={{ marginTop: 12 }}>
                   <p>{shippingError}</p>
                   <a
-                    href="https://wa.me/2348037757718"
+                    href="https://wa.me/2348089938820"
                     target="_blank"
                     rel="noreferrer"
                     className="secondary-button"
@@ -213,12 +222,7 @@ export default function Checkout() {
               </p>
 
               <p>
-                Flat delivery fee:
-                <strong>₦{shippingFee.toLocaleString()}</strong>
-              </p>
-
-              <p>
-                Total shipping:
+                Delivery fee:
                 <strong>₦{shippingFee.toLocaleString()}</strong>
               </p>
 
@@ -227,6 +231,13 @@ export default function Checkout() {
                 This amount becomes sales revenue only after payment is
                 confirmed.
               </p>
+              {shippingInfo?.serviceName && <p><span>Delivery method:</span><strong>{shippingInfo.serviceName}</strong></p>}
+              {shippingInfo?.estimatedDays && <p><span>Estimated delivery:</span><strong>{shippingInfo.estimatedDays}</strong></p>}
+              {shippingInfo?.dutiesAndTaxes && form.country !== "NG" && (
+                <p className="muted">
+                  {shippingInfo.dutiesAndTaxes === "included" ? "Duties and taxes are included." : "Import duties and taxes, if applicable, are paid by the customer."}
+                </p>
+              )}
             </div>
           </div>
         )}

@@ -11,13 +11,12 @@ import useScrollReveal from "../hooks/useScrollReveal";
 
 const pillars = [
   { icon: Sprout, title: "Naturopathic Wellness", text: "Natural solutions for a healthier, longer, and vibrant life." },
-  { icon: BriefcaseBusiness, title: "Network Marketing", text: "A proven platform to build your team and earn unlimited income." },
+  { icon: BriefcaseBusiness, title: "Wellness Education", text: "Free practical learning on wellness, hygiene, and responsible product use." },
   { icon: Users, title: "Naturopathic Equipment", text: "High-quality wellness equipment for home use and professional care." },
-  { icon: HeartPulse, title: "Test & Checkup", text: "Accurate wellness testing and checkups for early detection and prevention." },
-  { icon: ArrowRight, title: "Live Better Earn Big", text: "Improve lives, create impact, and enjoy financial independence." },
+  { icon: ArrowRight, title: "Community Outreach", text: "Learn, serve, and create meaningful community impact." },
 ];
 
-const trainings = ["Network marketing", "Sales & customer relationships", "Leadership & public speaking", "Personal branding & financial literacy"];
+const trainings = ["Wellness and hygiene education", "Responsible product use according to label directions", "Leadership and public speaking", "Community outreach and customer relationships"];
 
 function getTestimonialEmbedUrl(url) {
   if (!url) return "";
@@ -38,9 +37,9 @@ export default function Home() {
 
   useEffect(() => {
     const phrases = [
-      "Naturopathic health. Wealth. Freedom.",
+      "Wellness education. Community. Support.",
       "Natural health for a vibrant life.",
-      "Build your team. Build your legacy.",
+      "Learn together. Serve your community.",
     ];
     let phraseIndex = 0;
     let characterIndex = 0;
@@ -78,7 +77,7 @@ export default function Home() {
               <h1>Empowering People.<br /><em>Transforming Lives.</em></h1>
               <p className="easy-hero-tagline">{typedText}<span className="typing-caret" aria-hidden="true">|</span></p>
               <p className="easy-purpose-label">What Easy Life Wellness Hub does</p>
-              <p className="easy-hero-copy">Easy Life Wellness Hub is a naturopathic network marketing platform dedicated to natural health, wellness, and financial freedom. We empower people to live healthy, earn income, and build generational wealth.</p>
+              <p className="easy-hero-copy">Easy Life Wellness Hub offers wellness products, free practical education, and community support for healthier everyday living.</p>
               <div className="easy-actions">
                 <Link className="easy-btn easy-btn-primary" to="/collection">Shop Wellness Products <ArrowRight size={18} /></Link>
                 <Link className="easy-btn easy-btn-light" to="/register">Join the Community</Link>
@@ -86,7 +85,7 @@ export default function Home() {
             </div>
             <aside className="easy-hero-card hover-lift">
               <span>GOOD HEALTH</span>
-              <strong>Good Health.<br />Wealth.<br />Freedom.</strong>
+              <strong>Good Health.<br />Knowledge.<br />Community.</strong>
               <p>Be part of a global movement.<br />★★★★★<br /><b>Your future starts here!</b></p>
             </aside>
           </div>
@@ -109,22 +108,20 @@ export default function Home() {
         </section>
 
         <section className="section easy-pillars reveal">
-          <div className="container"><div className="easy-section-heading"><p className="easy-eyebrow">OUR FIVE CORE AREAS</p><h2>Live better. Earn big. Build your legacy.</h2></div><div className="easy-pillar-grid">{pillars.map(({ icon: Icon, title, text }) => <article key={title} className="easy-pillar content-card"><Icon size={28} /><h3>{title}</h3><p>{text}</p></article>)}</div></div>
+          <div className="container"><div className="easy-section-heading"><p className="easy-eyebrow">OUR CORE AREAS</p><h2>Learn, live well, and serve your community.</h2></div><div className="easy-pillar-grid">{pillars.map(({ icon: Icon, title, text }) => <article key={title} className="easy-pillar content-card"><Icon size={28} /><h3>{title}</h3><p>{text}</p></article>)}</div></div>
         </section>
 
         <section className="section easy-products reveal"><div className="container"><div className="easy-section-heading easy-heading-row"><div><p className="easy-eyebrow">NATUROPATHIC WELLNESS</p><h2>Natural solutions for a healthier, longer, vibrant life.</h2><p className="easy-products-intro">These featured products and more, are available to purchase from Easy Life Wellness Hub. Open any product to view its description, price, availability, and ordering options.</p></div><Link to="/collection" className="easy-text-link">Explore products <ArrowRight size={17} /></Link></div>{products.length ? <ProductGrid products={products} /> : <div className="easy-empty"><Sprout size={30} /><p>Our wellness product collection is being prepared. Please check back soon.</p></div>}</div></section>
 
-        <section className="section easy-services reveal"><div className="container easy-two-column"><div><p className="easy-eyebrow">TEST & CHECKUP</p><h2>Know more. Prevent earlier. Live stronger.</h2><p>Accurate wellness testing and checkups support early detection and prevention. Explore wellness education, product guidance and available appointments with an Easy Life representative.</p><Link to="/contact" className="easy-btn easy-btn-primary breathing-button">Make an enquiry <ArrowRight size={18} /></Link></div><div><div className="easy-service-list"><div className="content-card"><strong>Naturopathic wellness</strong><span>Natural solutions for a healthier, longer, vibrant life.</span></div><div className="content-card"><strong>Naturopathic equipment</strong><span>High-quality wellness equipment for home use and professional care.</span></div><div className="content-card"><strong>Test & checkup</strong><span>Accurate wellness testing and checkups for early detection and prevention.</span></div></div><img className="easy-section-image" src="/image-3.png" alt="Professional wellness testing and checkup session" /></div></div></section>
+        <section className="section easy-training-section reveal"><div className="container easy-two-column"><div><p className="easy-eyebrow">FREE WEEKLY TRAINING</p><h2>Learn practical wellness, hygiene, and community skills.</h2><p>Registered members can attend free training every Thursday at 11:00 AM at our Akpakpava location. Sessions cover wellness and hygiene education, responsible product use according to label directions, leadership, and community outreach.</p><Link to="/register" className="easy-btn easy-btn-primary breathing-button">Join the community <ArrowRight size={18} /></Link><ul className="easy-training-list">{trainings.map((item) => <li key={item}>✓ {item}</li>)}</ul></div><img className="easy-section-image" src="/image-5.png" alt="Easy Life wellness education and community training" /></div></section>
 
-        <section className="section easy-training-section reveal"><div className="container easy-two-column"><div><p className="easy-eyebrow">NETWORK MARKETING</p><h2>A proven platform to build your team and earn unlimited income.</h2><p>Live better, earn big, improve lives, create impact, and enjoy financial independence through practical training and ethical opportunity.</p><Link to="/register" className="easy-btn easy-btn-primary breathing-button">Join the movement <ArrowRight size={18} /></Link><ul className="easy-training-list">{trainings.map((item) => <li key={item}>✓ {item}</li>)}</ul></div><img className="easy-section-image" src="/image-5.png" alt="Easy Life leadership and team building training" /></div></section>
+        {testimonials.length > 0 && <section className="section testimonials-showcase reveal"><div className="container"><div className="easy-section-heading easy-heading-row"><div><p className="easy-eyebrow">COMMUNITY STORIES</p><h2>See how the Easy Life community is growing.</h2></div><Link className="easy-text-link" to="/testimonials">View all stories <ArrowRight size={17} /></Link></div><div className="testimonial-home-grid">{testimonials.map((item) => { const embedUrl = getTestimonialEmbedUrl(item.videoUrl); return <article className="testimonial-home-card content-card" key={item._id}>{(item.videoFile || embedUrl || item.image) && <div className="testimonial-home-media">{item.videoFile ? <video controls preload="metadata" poster={item.image || undefined} src={item.videoFile} /> : embedUrl ? <iframe title={`${item.name} testimonial video`} src={embedUrl} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen /> : <img src={item.image} alt={item.name} />}</div>}<div><p>“{item.testimony}”</p><strong>{item.name}</strong>{item.role && <span>{item.role}</span>}<PostShareButton title={item.title || item.name} text={item.testimony} url={`${window.location.origin}/testimonials#${item._id}`} /></div></article>; })}</div></div></section>}
 
-        {testimonials.length > 0 && <section className="section testimonials-showcase reveal"><div className="container"><div className="easy-section-heading easy-heading-row"><div><p className="easy-eyebrow">REAL PEOPLE. REAL RESULTS.</p><h2>See how the Easy Life community is growing.</h2></div><Link className="easy-text-link" to="/testimonials">View all stories <ArrowRight size={17} /></Link></div><div className="testimonial-home-grid">{testimonials.map((item) => { const embedUrl = getTestimonialEmbedUrl(item.videoUrl); return <article className="testimonial-home-card content-card" key={item._id}>{(item.videoFile || embedUrl || item.image) && <div className="testimonial-home-media">{item.videoFile ? <video controls preload="metadata" poster={item.image || undefined} src={item.videoFile} /> : embedUrl ? <iframe title={`${item.name} testimonial video`} src={embedUrl} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen /> : <img src={item.image} alt={item.name} />}</div>}<div><p>“{item.testimony}”</p><strong>{item.name}</strong>{item.role && <span>{item.role}</span>}<PostShareButton title={item.title || item.name} text={item.testimony} url={`${window.location.origin}/testimonials#${item._id}`} /></div></article>; })}</div></div></section>}
-
-        <section className="easy-membership"><div className="container easy-membership-grid"><div><p className="easy-eyebrow">MEMBERSHIP</p><h2>Learn freely. Participate fully.</h2><p>Introductory training is open to everyone. Registered members receive mentorship, leadership development, networking opportunities, priority outreach participation and selected-program discounts.</p></div><div className="easy-member-card content-card"><strong>Registered members can</strong><ul><li>Access exclusive training sessions</li><li>Request business mentorship</li><li>Represent Easy Life at official outreach activities</li><li>Build their network and confidence</li></ul><Link to="/register" className="easy-btn easy-btn-light breathing-button">Become a member</Link></div></div></section>
+        <section className="easy-membership"><div className="container easy-membership-grid"><div><p className="easy-eyebrow">MEMBERSHIP</p><h2>Learn freely. Participate fully.</h2><p>Registered members receive free Thursday training at 11:00 AM in Akpakpava, wellness education, leadership development, and opportunities to join official health-awareness outreaches.</p></div><div className="easy-member-card content-card"><strong>Registered members can</strong><ul><li>Attend free weekly wellness and hygiene training</li><li>Learn responsible product use according to label directions</li><li>Follow Easy Life to official health-awareness outreaches</li><li>Build confidence, leadership, and community connections</li></ul><Link to="/register" className="easy-btn easy-btn-light breathing-button">Become a member</Link></div></div></section>
 
         <section className="section easy-outreach reveal"><div className="container easy-three-column"><img className="easy-section-image" src="/image-7.png" alt="Easy Life community outreach and partnership activity" /><div><p className="easy-eyebrow">OUTREACH & PARTNERSHIPS</p><h2>Growing healthier, stronger communities together.</h2><p>We welcome wellness companies, schools, churches, NGOs, corporate organizations and community associations that want to sponsor learning, showcase products or create meaningful local impact.</p><Link to="/contact" className="easy-text-link">Discuss a partnership <Handshake size={18} /></Link></div><div className="easy-outreach-mark content-card"><HeartPulse size={48} /><span>COMMUNITY<br />IMPACT</span></div></div></section>
 
-        <section className="easy-closing reveal"><div className="container"><p className="easy-eyebrow">HEALTH IS YOUR GREATEST WEALTH</p><h2>We help you build the rest.</h2><p className="easy-closing-copy">Live the Easy Life.<br />Healthy body. Strong mind. Financial freedom.</p><div className="easy-actions"><Link className="easy-btn easy-btn-primary breathing-button" to="/register">Join today & build your legacy</Link><Link className="easy-btn easy-btn-light breathing-button" to="/contact">Contact Easy Life</Link></div></div></section>
+        <section className="easy-closing reveal"><div className="container"><p className="easy-eyebrow">WELLNESS STARTS WITH KNOWLEDGE</p><h2>We help you learn and live well.</h2><p className="easy-closing-copy">Live the Easy Life.<br />Healthy body. Strong mind. Supportive community.</p><div className="easy-actions"><Link className="easy-btn easy-btn-primary breathing-button" to="/register">Join the community</Link><Link className="easy-btn easy-btn-light breathing-button" to="/contact">Contact Easy Life</Link></div></div></section>
       </main>
       <Footer />
     </>

@@ -6,7 +6,8 @@ export default async function handler(req, res) {
   const clientUrl =
     process.env.CLIENT_URL ||
     (host ? `${protocol}://${host}` : "http://localhost:5173");
-  const apiUrl = `${backendUrl}/api/products`;
+    const apiUrl = `${backendUrl}/api/products`;
+    const shippingUrl = `${backendUrl}/api/shipping/merchant-rates`;
 
   try {
     const response = await fetch(apiUrl);
@@ -15,6 +16,11 @@ export default async function handler(req, res) {
     }
 
     const products = await response.json();
+    const shippingResponse = await fetch(shippingUrl);
+    if (!shippingResponse.ok) {
+      throw new Error(`Failed to fetch shipping rates: ${shippingResponse.status}`);
+    }
+    const shippingRates = await shippingResponse.json();
 
     // Create CSV feed for Google Merchant Center
     const csvHeaders = [
@@ -25,19 +31,15 @@ export default async function handler(req, res) {
       "image_link",
       "price",
       "sale_price",
-      "currency",
       "availability",
       "brand",
-      "sku",
+      "gtin",
       "condition",
-      "min_handling_time",
-      "max_handling_time",
-      "min_transit_time",
-      "max_transit_time",
-      "shipping_country",
-      "shipping_region",
-      "shipping_city",
-      "shipping_postal_code",
+      "google_product_category",
+      "identifier_exists",
+      ...shippingRates.map(
+        () => "shipping(country:price:min_handling_time:max_handling_time:min_transit_time:max_transit_time)",
+      ),
     ];
 
     let csv = csvHeaders.join(",") + "\n";
@@ -56,41 +58,23 @@ export default async function handler(req, res) {
         return stringField;
       };
 
-      // derive transit times from product.deliveryEstimate (e.g. "7-14 days")
-      let transitMin = 0;
-      let transitMax = 1;
-      try {
-        const de = (product.deliveryEstimate || "").toString();
-        const m = de.match(/(\d+)\s*-\s*(\d+)/);
-        if (m) {
-          transitMin = Number(m[1]);
-          transitMax = Number(m[2]);
-        }
-      } catch {
-        // ignore
-      }
-
       const row = [
         product._id || product.sku,
         product.name,
         product.fullDescription || product.shortDescription || product.name,
         `${clientUrl}/product/${product._id}`,
         product.coverImage,
-        product.price,
-        "", // sale_price (optional)
-        "NGN",
+        `${Number(product.price || 0).toFixed(2)} NGN`,
+        product.salePrice != null && Number(product.salePrice) < Number(product.price) ? `${Number(product.salePrice).toFixed(2)} NGN` : "",
         product.inStock && product.stock > 0 ? "in_stock" : "out_of_stock",
-        product.brand || "Easy Life Wellness Hub",
-        product.sku,
-        "new",
-        0,
-        1,
-        transitMin,
-        transitMax,
-        "NG",
-        "Delta",
-        "Abraka",
-        "330106",
+        product.brand || "",
+        product.gtin || "",
+        product.condition || "new",
+        product.googleProductCategory || "",
+        product.gtin ? "yes" : "no",
+        ...shippingRates.map((rate) =>
+          `${rate.country}:${Number(rate.price || 0).toFixed(2)} NGN:${rate.minHandlingTime}:${rate.maxHandlingTime}:${rate.minTransitTime}:${rate.maxTransitTime}`,
+        ),
       ]
         .map(escapeCsvField)
         .join(",");

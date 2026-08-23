@@ -1,15 +1,22 @@
 //client/src/pages/Cart.jsx
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import Navbar from "../components/Navbar";
 
 import { useCart } from "../context/CartContext";
+import { getShippingSummary } from "../services/api";
 
 export default function Cart() {
   const navigate = useNavigate();
+  const [deliveryInfo, setDeliveryInfo] = useState(null);
 
   const { cart, subtotal, removeFromCart, updateQuantity, clearCart, loading } =
     useCart();
+
+  useEffect(() => {
+    getShippingSummary("NG").then(setDeliveryInfo).catch(() => setDeliveryInfo(null));
+  }, []);
 
   return (
     <>
@@ -149,6 +156,12 @@ export default function Cart() {
                 Delivery:
                 <strong>Calculated at checkout</strong>
               </p>
+              {deliveryInfo?.estimatedDays && (
+                <p>
+                  Estimated delivery to Nigeria:
+                  <strong>{deliveryInfo.estimatedDays}</strong>
+                </p>
+              )}
 
               <h2>Total: Based on checkout (includes shipping)</h2>
 

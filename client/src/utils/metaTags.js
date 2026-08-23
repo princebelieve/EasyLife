@@ -5,7 +5,7 @@
 export function setMetaTags(config) {
   const {
     title = "Easy Life Wellness Hub",
-    description = "Easy Life Wellness Hub is a naturopathic network marketing platform dedicated to natural health, wellness, and financial freedom. We empower people to live healthy, earn income, and build generational wealth.",
+    description = "Easy Life Wellness Hub offers wellness products, free practical education, and community support for healthier everyday living.",
     image = "",
     url = window.location.href,
     type = "website",
@@ -99,15 +99,11 @@ export function setProductSchema(product, url) {
     description: description,
     image: images, // Changed from single image to array
     sku: product.sku || product._id,
-    brand: {
-      "@type": "Brand",
-      name: product.brand || "Easy Life Wellness Hub",
-    },
     offers: {
       "@type": "Offer",
       url: url,
       priceCurrency: "NGN",
-      price: product.price?.toString() || "0",
+      price: (product.salePrice != null && Number(product.salePrice) < Number(product.price) ? product.salePrice : product.price)?.toString() || "0",
       availability: availability,
       seller: {
         "@type": "Organization",
@@ -122,6 +118,9 @@ export function setProductSchema(product, url) {
         }
       : undefined,
   };
+
+  if (product.brand) schema.brand = { "@type": "Brand", name: product.brand };
+  if (product.gtin) schema.gtin = product.gtin;
 
   // Remove undefined fields
   Object.keys(schema).forEach(

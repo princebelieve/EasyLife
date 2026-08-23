@@ -157,7 +157,7 @@ async function createProduct(req, res) {
       inStock: Number(stock || 0) > 0,
 
       salePrice: salePrice === "" || salePrice === undefined ? null : Number(salePrice),
-      currency: currency || "NGN",
+      currency: "NGN",
       brand: brand || "",
       vendor: vendor || "",
       gtin: gtin || "",
@@ -295,7 +295,7 @@ async function updateProduct(req, res) {
     }
 
     if (salePrice !== undefined) product.salePrice = salePrice === "" ? null : Number(salePrice);
-    if (currency) product.currency = currency;
+    product.currency = "NGN";
     if (brand !== undefined) product.brand = brand;
     if (vendor !== undefined) product.vendor = vendor;
     if (gtin !== undefined) product.gtin = gtin;

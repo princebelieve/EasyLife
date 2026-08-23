@@ -5,7 +5,7 @@ import useScrollReveal from "../hooks/useScrollReveal";
 import { ArrowRight, HeartHandshake, Users } from "lucide-react";
 
 const activities = [
-  { title: "Community wellness education", text: "We create spaces where families, schools, churches, NGOs, and community groups can learn about healthier living and prevention.", image: "/image-12.png" },
+  { title: "Community wellness education", text: "We create spaces where families, schools, churches, NGOs, and community groups can learn about wellness, hygiene, and healthier everyday living.", image: "/image-12.png" },
   { title: "Product and checkup days", text: "Partners can host product showcases, wellness education, and available testing or checkup activities for their communities.", image: "/image-13.png" },
   { title: "Partnership and impact", text: "Organizations can work with Easy Life to sponsor learning, support local initiatives, and create practical opportunities.", image: "/image-67.png" },
 ];

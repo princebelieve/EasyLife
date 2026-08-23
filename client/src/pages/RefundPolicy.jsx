@@ -1,150 +1,16 @@
 import Navbar from "../components/Navbar";
 
+const policyLinks = <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}><a className="cta" href="/privacy-policy">Privacy Policy</a><a className="cta" href="/terms-conditions">Terms & Conditions</a><a className="cta" href="/contact">Contact Support</a></div>;
+
 export default function RefundPolicy() {
-  return (
-    <>
-      <Navbar />
-      <div
-        className="page"
-        style={{ maxWidth: 900, margin: "0 auto", padding: "40px 20px" }}
-      >
-        <div
-          style={{
-            display: "flex",
-            gap: 8,
-            flexWrap: "wrap",
-            marginBottom: 16,
-          }}
-        >
-          <a className="cta" href="/privacy-policy">
-            Privacy Policy
-          </a>
-          <a className="cta" href="/terms-conditions">
-            Terms & Conditions
-          </a>
-          <a className="cta" href="/contact">
-            Contact Support
-          </a>
-        </div>
-
-        <h1>Refund & Returns Policy</h1>
-        <p style={{ color: "#666", marginBottom: 20 }}>
-          Last updated: 2026-06-06
-        </p>
-
-        <h2>Overview</h2>
-        <p>
-          At Easy Life Wellness Hub, we want you to be satisfied with
-          your purchase. This policy applies to products and paid services
-          offered through Easy Life Wellness Hub, unless a
-          specific product page states a different return or warranty term. If a
-          product is defective, damaged on arrival, or materially different from
-          the description, you may be eligible for a refund, replacement, or
-          repair, subject to this policy and applicable consumer protection
-          rights.
-        </p>
-
-        <h2>Eligibility</h2>
-        <p>
-          To qualify, you must notify us promptly and provide evidence such as
-          order number, photos, and a brief description of the issue. Please
-          inspect your goods at delivery. If any item is damaged, incomplete, or
-          missing, you must confirm and report it before taking the item away
-          from the delivery or logistics representative. If the issue is not
-          reported at delivery, the refund or return privilege for that damage
-          or shortage may be treated as void. This includes any visible damage,
-          shortage, or wrong item that is noticed before the delivery is
-          accepted.
-        </p>
-        <ul>
-          <li>Report damaged or defective items within 7 days of delivery.</li>
-          <li>
-            To be eligible for a refund or replacement the product must be in
-            substantially the same condition as delivered and include any
-            supplied accessories and documentation.
-          </li>
-          <li>
-            Custom-made or bespoke products, and items clearly marked as
-            non-returnable, are not eligible unless faulty.
-          </li>
-          <li>
-            Products damaged after delivery due to misuse, incorrect
-            installation, or normal wear and tear are not eligible.
-          </li>
-        </ul>
-
-        <h2>How to Request a Return</h2>
-        <ol>
-          <li>
-            Contact support via email at support@easylifewellnesshub.com or call our
-            support line with your order reference and photos of the issue.
-          </li>
-          <li>
-            Provide clear photos and a description of the defect or damage.
-          </li>
-          <li>
-            Our support team will review and provide instructions for return or
-            collection.
-          </li>
-        </ol>
-
-        <h2>Refunds</h2>
-        <p>
-          Approved refunds will be processed to the original payment method
-          within 7–14 business days, depending on your card provider or payment
-          processor. Refunds exclude delivery/shipping charges unless the issue
-          was caused by our error or the item was not delivered as described.
-        </p>
-
-        <h2>Collections and Return Shipping</h2>
-        <p>
-          For large or bulky items, custom installations, or made-to-order
-          products, we may arrange collection. If the return is due to our
-          error, defective goods, or a product not as described, we will cover
-          return shipping/collection costs where required by law or our stated
-          support process. For a change-of-mind return after the product has
-          already been shipped, the full delivery/shipping cost to and from the
-          destination will be deducted from the customer’s payment, even if the
-          order originally qualified for free delivery. If the damage or defect
-          is due to our production process or delivery handling, we will bear
-          the return cost. Any oversight must be reported within 7 days of
-          delivery, and returned items must be returned in a neat condition and,
-          where applicable, with the original packaging.
-        </p>
-
-        <h2>Reporting Time and Condition of Returned Goods</h2>
-        <p>
-          Any oversight, defect, missing item, or other issue must be reported
-          within 7 days of delivery. Returned goods must be sent back in a neat
-          condition, with the original packaging and accessories where
-          applicable, and must not be damaged by misuse or careless handling.
-        </p>
-
-        <h2>Non-Returnable / Custom Items</h2>
-        <p>
-          Custom-made, made-to-order, assembled-on-request, or clearly
-          personalised items may not be returnable unless faulty, damaged on
-          arrival, materially misdescribed, or otherwise not fit for the purpose
-          described. This does not limit your rights under applicable Nigerian
-          consumer protection law or any broader platform rules that apply to
-          our store.
-        </p>
-
-        <h2>Warranty</h2>
-        <p>
-          Products may include a manufacturer warranty where applicable.
-          Warranty claims are handled in accordance with the manufacturer's
-          terms. This policy does not limit any rights you have under Nigerian
-          consumer protection law.
-        </p>
-
-        <h2>Contact</h2>
-        <p>
-          Questions about refunds or returns should be directed to the{" "}
-          <a href="/contact">Contact Support</a> page, WhatsApp, or email
-          support@easylifewellnesshub.com.
-        </p>
-      </div>
-    </>
-  );
+  return <><Navbar /><main className="page" style={{ maxWidth: 900, margin: "0 auto", padding: "40px 20px" }}>{policyLinks}<h1>Refund & Returns Policy</h1><p style={{ color: "#666", marginBottom: 20 }}>Last updated: 2026-08-23</p>
+    <h2>Our promise</h2><p>This policy explains how Easy Life Wellness Hub handles returns, replacements, and refunds for physical wellness products bought on this website. It applies alongside your rights under applicable Nigerian consumer-protection law; nothing here removes rights that cannot lawfully be excluded.</p>
+    <h2>Before you buy</h2><p>Each product page should show the product description, price, availability, and relevant product information. Delivery charges and the delivery estimate for your selected destination are shown at checkout before payment. Please check these details and contact us before ordering if you need help choosing a product.</p>
+    <h2>When a return, replacement, or refund may be available</h2><ul><li><strong>Damaged, defective, incorrect, incomplete, or materially misdescribed items:</strong> contact us within 7 days of delivery with your order number, photos, and a short description of the issue. We will assess the issue and, where appropriate, arrange a replacement, repair, return, or refund.</li><li><strong>Change-of-mind requests:</strong> contact us within 7 days of delivery. We may accept an unopened, unused item in its original sealed packaging, subject to inspection and any applicable legal rights.</li><li><strong>Health, hygiene, and safety items:</strong> for customer safety, products that have been opened, used, unsealed, or cannot be resold safely are not eligible for change-of-mind returns. This does not apply where an item is faulty, damaged, incorrect, or not as described.</li></ul>
+    <h2>How to request help</h2><ol><li>Email <a href="mailto:support@easylifewellnesshub.com">support@easylifewellnesshub.com</a>, use our <a href="/contact">Contact Support</a> page, call or WhatsApp 08089938820.</li><li>Include your order number, the product name, the reason for your request, and clear photos where relevant.</li><li>Wait for written return instructions before sending an item back. Do not return goods to a location unless we confirm the return address and method.</li></ol>
+    <h2>Return delivery costs</h2><p>If the item is faulty, damaged on arrival, incorrect, or not as described, Easy Life Wellness Hub will provide reasonable return instructions and cover or reimburse the approved return-delivery cost where required. For an approved change-of-mind return, the customer is responsible for return delivery costs unless we agree otherwise. Original delivery charges are refunded only where required by law or where the issue was our error.</p>
+    <h2>Refund timing and method</h2><p>Once a return is received or an issue is verified, we will notify you of the outcome. Approved refunds are sent to the original payment method where possible. Payment-provider and bank processing times vary; our usual processing target is 7–14 business days after approval. If a replacement is agreed, we will confirm the dispatch plan and any delivery estimate.</p>
+    <h2>Orders that have not arrived</h2><p>If your order has not arrived by the displayed delivery estimate, please contact us with your order number. We will investigate with the delivery provider and keep you updated before deciding the appropriate remedy.</p>
+    <h2>Contact and business details</h2><p>Easy Life Wellness Hub. Registered business address: 95, Akpakpava, Benin City, Edo State, Nigeria. Supermarket branch: No. 56B, Lucky Igbinedion Way, off Upper Mission Extension, Benin City, Edo State, Nigeria.</p>
+  </main></>;
 }

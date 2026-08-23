@@ -7,7 +7,7 @@ import Navbar from "../components/Navbar";
 
 import { useCart } from "../context/CartContext";
 
-import { getProductById } from "../services/api";
+import { getProductById, getShippingSummary } from "../services/api";
 
 import { setMetaTags, setProductSchema, getShareUrl } from "../utils/metaTags";
 
@@ -21,6 +21,7 @@ export default function ProductDetails() {
   const [addSuccess, setAddSuccess] = useState(false);
   const [addError, setAddError] = useState("");
   const [expandedDescription, setExpandedDescription] = useState(false);
+  const [deliveryInfo, setDeliveryInfo] = useState(null);
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -62,6 +63,12 @@ export default function ProductDetails() {
 
     loadProduct();
   }, [id]);
+
+  useEffect(() => {
+    getShippingSummary("NG")
+      .then(setDeliveryInfo)
+      .catch(() => setDeliveryInfo(null));
+  }, []);
 
   const lightboxItems = [
     ...(product?.gallery || []).map((img, index) => ({
@@ -124,7 +131,17 @@ export default function ProductDetails() {
           <div className="product-detail-content">
             <h1>{product.name}</h1>
 
-            <h2>₦{Number(product?.price || 0).toLocaleString()}</h2>
+            {product.salePrice != null && Number(product.salePrice) < Number(product.price) ? (
+              <div>
+                <h2>₦{Number(product.salePrice).toLocaleString()}</h2>
+                <p className="muted"><s>₦{Number(product.price).toLocaleString()}</s></p>
+              </div>
+            ) : (
+              <h2>₦{Number(product?.price || 0).toLocaleString()}</h2>
+            )}
+
+            {product.shortDescription && <p className="muted">{product.shortDescription}</p>}
+            <p><strong>{Number(product.stock || 0) > 0 ? "In stock" : "Currently unavailable"}</strong></p>
 
             {(product.fullDescription || product.shortDescription) && (
               <div className="product-description">
@@ -149,6 +166,37 @@ export default function ProductDetails() {
                     {expandedDescription ? "Show Less" : "View More"}
                   </button>
                 )}
+              </div>
+            )}
+
+            {(deliveryInfo?.estimatedDays || deliveryInfo?.serviceName) && (
+              <div className="cart-summary" style={{ margin: "16px 0", padding: 16 }}>
+                <h3 style={{ marginTop: 0 }}>Delivery</h3>
+                {deliveryInfo.serviceName && <p><strong>Method:</strong> {deliveryInfo.serviceName}</p>}
+                {deliveryInfo.estimatedDays && <p><strong>Estimated delivery to Nigeria:</strong> {deliveryInfo.estimatedDays}</p>}
+                <p className="muted">Your delivery fee and estimate are confirmed for your destination at checkout.</p>
+              </div>
+            )}
+
+            {(product.category || product.brand || product.vendor || product.netContent || product.countryOfOrigin || product.condition || product.sku || product.gtin) && (
+              <div className="cart-summary" style={{ margin: "16px 0", padding: 16 }}>
+                <h3 style={{ marginTop: 0 }}>Product details</h3>
+                {product.category && <p><strong>Category:</strong> {product.category}</p>}
+                {product.brand && <p><strong>Brand:</strong> {product.brand}</p>}
+                {product.vendor && <p><strong>Vendor:</strong> {product.vendor}</p>}
+                {product.netContent && <p><strong>Net content:</strong> {product.netContent}</p>}
+                {product.countryOfOrigin && <p><strong>Country of origin:</strong> {product.countryOfOrigin}</p>}
+                {product.condition && <p><strong>Condition:</strong> {product.condition}</p>}
+                {(product.sku || product.gtin) && <p><strong>Product code:</strong> {product.sku || product.gtin}</p>}
+              </div>
+            )}
+
+            {(product.ingredients || product.directions || product.warnings) && (
+              <div className="cart-summary" style={{ margin: "16px 0", padding: 16 }}>
+                <h3 style={{ marginTop: 0 }}>Product care and safety</h3>
+                {product.ingredients && <p><strong>Ingredients:</strong> {product.ingredients}</p>}
+                {product.directions && <p><strong>Directions:</strong> {product.directions}</p>}
+                {product.warnings && <p><strong>Warnings:</strong> {product.warnings}</p>}
               </div>
             )}
 

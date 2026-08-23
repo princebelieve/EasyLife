@@ -20,7 +20,7 @@ export default function SupportGuide() {
             </div>
             <div className="support-guide-badge">
               <strong>GOOD HEALTH</strong>
-              <span>WEALTH · FREEDOM</span>
+              <span>KNOWLEDGE · COMMUNITY</span>
               <small>THE EASY LIFE</small>
             </div>
           </div>

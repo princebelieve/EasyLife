@@ -183,6 +183,16 @@ export default function Dashboard() {
                         {formatDate(order.estimatedDeliveryDate)}
                       </p>
                     )}
+                    {order.deliveryEstimate && (
+                      <p style={{ margin: "4px 0", fontSize: "13px" }}>
+                        <strong>Delivery estimate:</strong> {order.deliveryEstimate}
+                      </p>
+                    )}
+                    {order.shippingService && (
+                      <p style={{ margin: "4px 0", fontSize: "13px" }}>
+                        <strong>Delivery method:</strong> {order.shippingService}
+                      </p>
+                    )}
                   </div>
                   <div style={{ textAlign: "right", whiteSpace: "nowrap" }}>
                     <span

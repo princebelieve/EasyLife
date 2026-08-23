@@ -11,7 +11,7 @@ export default function Success() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const reference = searchParams.get("reference");
+  const orderToken = searchParams.get("order_token");
   const isPaid = Boolean(order?.paymentStatus === "paid");
   const isError = Boolean(error || !order);
   const pageTitle = isError
@@ -27,8 +27,8 @@ export default function Success() {
     : "We're processing your payment. Check back soon for updates.";
 
   useEffect(() => {
-    if (!reference) {
-      setError("No payment reference provided");
+    if (!orderToken) {
+      setError("This order confirmation link is missing or invalid. Please view the order in your dashboard.");
       setLoading(false);
       return;
     }
@@ -36,7 +36,7 @@ export default function Success() {
     const fetchOrder = async () => {
       try {
         setLoading(true);
-        const data = await apiRequest(`/api/orders/by-reference/${reference}`);
+        const data = await apiRequest(`/api/orders/confirmation/${orderToken}`);
         setOrder(data);
         setError(null);
       } catch (err) {
@@ -48,7 +48,7 @@ export default function Success() {
     };
 
     fetchOrder();
-  }, [reference]);
+  }, [orderToken]);
 
   if (loading) {
     return (
@@ -96,7 +96,7 @@ export default function Success() {
                 color: "#999",
               }}
             >
-              Reference: <code>{reference}</code>
+              Order confirmations are available once only. Please use your dashboard to view your order.
             </p>
             <div
               style={{
@@ -122,10 +122,6 @@ export default function Success() {
       </>
     );
   }
-
-  const estimatedDelivery = new Date(
-    new Date(order.createdAt).getTime() + 5 * 24 * 60 * 60 * 1000,
-  );
 
   return (
     <>
@@ -302,7 +298,7 @@ export default function Success() {
           </div>
 
           {/* Delivery Information */}
-          {isPaid && (
+          {(order.deliveryEstimate || order.estimatedDeliveryDate || order.shippingService) && (
             <div
               style={{
                 padding: "15px",
@@ -318,19 +314,9 @@ export default function Success() {
                 <p style={{ margin: "5px 0" }}>
                   <strong>Destination:</strong> {order.city}, {order.state}
                 </p>
-                <p style={{ margin: "5px 0" }}>
-                  <strong>Estimated Delivery:</strong>{" "}
-                  {estimatedDelivery.toLocaleDateString("en-US", {
-                    weekday: "short",
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </p>
-                <p style={{ margin: "5px 0" }}>
-                  <strong>Delivery Method:</strong>{" "}
-                  {order.deliveryMethod === "home" ? "Home Delivery" : "Pickup"}
-                </p>
+                {order.deliveryEstimate && <p style={{ margin: "5px 0" }}><strong>Delivery estimate:</strong> {order.deliveryEstimate}</p>}
+                {order.estimatedDeliveryDate && <p style={{ margin: "5px 0" }}><strong>Estimated arrival:</strong> {new Date(order.estimatedDeliveryDate).toLocaleDateString()}</p>}
+                {order.shippingService && <p style={{ margin: "5px 0" }}><strong>Delivery method:</strong> {order.shippingService}</p>}
               </div>
             </div>
           )}

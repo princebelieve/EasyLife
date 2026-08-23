@@ -1,106 +1,18 @@
 import Navbar from "../components/Navbar";
 
+const policyLinks = <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}><a className="cta" href="/privacy-policy">Privacy Policy</a><a className="cta" href="/refund-policy">Refund & Returns</a><a className="cta" href="/contact">Contact Support</a></div>;
+
 export default function TermsConditions() {
-  return (
-    <>
-      <Navbar />
-      <div
-        className="page"
-        style={{ maxWidth: 900, margin: "0 auto", padding: "40px 20px" }}
-      >
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
-          <a className="cta" href="/privacy-policy">Privacy Policy</a>
-          <a className="cta" href="/refund-policy">Refund Policy</a>
-          <a className="cta" href="/contact">Contact Support</a>
-        </div>
-
-        <h1>Terms & Conditions</h1>
-        <p style={{ color: "#666", marginBottom: 20 }}>Last updated: 2026-08-18</p>
-
-        <h2>Agreement and Definitions</h2>
-        <p>
-          By using the Easy Life Wellness Hub platform (the "Platform"), you
-          agree to these Terms of Use and any information shown for a product,
-          service, program, or checkout. "We", "our", and "Easy Life Wellness
-          Hub" mean the business operating this Platform and its authorised
-          representatives. These terms apply to our wellness products,
-          educational resources, training, consultations, community programs,
-          and related support.
-        </p>
-
-        <h2>Terms of Use</h2>
-        <p>
-          You may use the Platform for lawful browsing, learning,
-          participation, shopping, support, and account management only. You
-          must not misuse the site, attempt unauthorized access, or share false
-          or misleading information. You are responsible for keeping your
-          account details and login credentials accurate and secure.
-        </p>
-
-        <h2>Wellness Information</h2>
-        <p>
-          Information, educational materials, and activities provided through
-          the Platform are for general education and wellbeing support. They do
-          not constitute medical advice, diagnosis, treatment, or a substitute
-          for a qualified healthcare professional. Seek professional advice for
-          personal health concerns or emergencies.
-        </p>
-
-        <h2>Orders, Services, and Pricing</h2>
-        <p>
-          Prices are displayed in NGN. We may correct pricing errors or update
-          offers, and may decline or cancel transactions where availability,
-          payment, service capacity, or product information is invalid. Prices,
-          schedules, program details, and eligibility may change. Applicable
-          delivery fees or service charges will be shown before completion.
-        </p>
-
-        <h2>Fulfilment and Delivery</h2>
-        <p>
-          Where physical products or materials are supplied, delivery timelines
-          are estimates and may be affected by weather, logistics, and
-          third-party carriers. Any missing, damaged, or incorrect item should
-          be reported promptly through the Contact Support page. Details for a
-          specific service or program may be provided at registration or
-          checkout.
-        </p>
-
-        <h2>Payment</h2>
-        <p>
-          We use third-party payment processors such as Paystack. Payment
-          processing is subject to the processor's terms. A transaction is not
-          complete until payment is successfully authorised and we confirm it.
-        </p>
-
-        <h2>Returns and Refunds</h2>
-        <p>
-          Our full return and refund rules are available on the{" "}
-          <a href="/refund-policy">Refund & Returns Policy</a> page. Refunds
-          are processed to the original payment method where possible. A
-          defect, missing item, or other issue must be reported within the
-          period stated in the applicable policy or order information.
-        </p>
-
-        <h2>Liability</h2>
-        <p>
-          To the extent allowed by law, Easy Life Wellness Hub's liability for
-          any claim arising from the Platform or a transaction is limited to
-          the amount paid for that transaction, except for fraud, willful
-          misconduct, death, personal injury, or other liabilities that cannot
-          be excluded by law. Nothing in these terms excludes your consumer
-          rights under Nigerian law.
-        </p>
-
-        <h2>Governing Law</h2>
-        <p>These terms are governed by the laws of Nigeria.</p>
-
-        <h2>Contact</h2>
-        <p>
-          For questions about these terms, use the{" "}
-          <a href="/contact">Contact Support</a> page or email
-          support@easylifewellnesshub.com.
-        </p>
-      </div>
-    </>
-  );
+  return <><Navbar /><main className="page" style={{ maxWidth: 900, margin: "0 auto", padding: "40px 20px" }}>{policyLinks}<h1>Terms & Conditions</h1><p style={{ color: "#666", marginBottom: 20 }}>Last updated: 2026-08-23</p>
+    <h2>Who we are</h2><p>“Easy Life Wellness Hub”, “we”, “us”, and “our” refer to the business operating this website. Our registered business address is 95, Akpakpava, Benin City, Edo State, Nigeria. Our supermarket branch is at No. 56B, Lucky Igbinedion Way, off Upper Mission Extension, Benin City, Edo State, Nigeria. Our support email is <a href="mailto:support@easylifewellnesshub.com">support@easylifewellnesshub.com</a> and our support phone/WhatsApp number is 08089938820.</p>
+    <h2>Using this website</h2><p>You may use this website to browse, purchase products, manage your account, and contact support for lawful personal purposes. You must provide accurate contact and delivery information and must not misuse the website, interfere with its security, or use another person’s account without permission.</p>
+    <h2>Products and product information</h2><p>We aim to show accurate product descriptions, images, prices, availability, and product information. Product images are illustrative where stated and colours may vary slightly by screen. Only products shown as available can be ordered. If we discover a material pricing, stock, or listing error before fulfilment, we may cancel the affected order and will notify and refund you where payment has been received.</p>
+    <h2>Wellness information</h2><p>Product and wellness information is for general information and wellbeing support only. It is not medical advice, diagnosis, treatment, or a guarantee of results. Do not use our products or content as a substitute for advice from a qualified healthcare professional. Read product labels, ingredients, directions, and warnings before use, and seek professional advice for a medical condition, pregnancy, medication interactions, or an emergency.</p>
+    <h2>Prices, orders, and payment</h2><p>Product prices and checkout totals are displayed in Nigerian naira (NGN). The final amount, including the applicable delivery fee, is shown before you submit payment. We use Paystack to process payments; we do not receive or store your full card details. An order is accepted only when payment is successfully authorised and we confirm the order. We may decline or cancel an order where payment fails, fraud is reasonably suspected, stock is unavailable, or a material listing error has occurred.</p>
+    <h2>Delivery</h2><p>Delivery options, charges, service, and estimated delivery period depend on the destination selected at checkout. Delivery estimates are not guaranteed arrival dates and may be affected by logistics, weather, public holidays, customs, or events outside our reasonable control. You must provide a complete and accurate delivery address and reachable contact number. Contact us promptly if an order is delayed, damaged, incomplete, or incorrect.</p>
+    <h2>Returns and refunds</h2><p>Our <a href="/refund-policy">Refund & Returns Policy</a> explains eligibility, the return process, costs, and refund timing. It forms part of these terms and does not limit any rights you have under applicable law.</p>
+    <h2>Third-party services and links</h2><p>Payment processing, delivery, social media, and other third-party services may have their own terms and privacy notices. We are not responsible for third-party content or services outside our reasonable control.</p>
+    <h2>Changes and governing law</h2><p>We may update these terms when our business, products, or legal obligations change. The version published on this page applies from its “Last updated” date. These terms are governed by the laws of Nigeria, without limiting mandatory consumer protections that apply to you.</p>
+    <h2>Contact us</h2><p>For questions about these terms or an order, contact <a href="mailto:support@easylifewellnesshub.com">support@easylifewellnesshub.com</a>, WhatsApp 08089938820, or use the <a href="/contact">Contact Support</a> page.</p>
+  </main></>;
 }
