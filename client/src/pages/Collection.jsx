@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import Navbar from "../components/Navbar";
 import ProductGrid from "../components/ProductGrid";
+import RelatedProductCarousel from "../components/RelatedProductCarousel";
 
 import useScrollReveal from "../hooks/useScrollReveal";
 
@@ -85,6 +86,9 @@ export default function Collection() {
                 autoComplete="off"
               />
             </div>
+
+            {!loading && <RelatedProductCarousel products={products} />}
+            <p className="collection-details-hint">Click the View Product button for more details.</p>
           </div>
 
           <div className="reveal">
