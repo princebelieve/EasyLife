@@ -6,7 +6,7 @@ const {
   createNotification,
   notifyAdmins,
 } = require("../services/notification.service");
-const { sendPushToAdmins } = require("../services/push.service");
+const { sendPushToAdmins, sendPushToUser } = require("../services/push.service");
 
 async function getProducts(req, res) {
   try {
@@ -182,7 +182,7 @@ async function createProduct(req, res) {
       approvalRequestedBy: isSubadmin ? req.user._id : undefined,
     });
 
-    if (adminIds.length > 0) {
+    if (isSubadmin && adminIds.length > 0) {
       await notifyAdmins(
         {
           type: "product.upload",
@@ -203,6 +203,24 @@ async function createProduct(req, res) {
         link: `/admin/products/${product._id}`,
         data: { productId: product._id, type: "product.upload" },
       }).catch((pushErr) => console.warn("Push to admins failed:", pushErr));
+    } else if (!isSubadmin) {
+      // Administrators publish immediately, so their confirmation must not
+      // imply that the visible product is still awaiting approval.
+      await createNotification({
+        userId: req.user._id,
+        type: "product.published",
+        title: "Product published",
+        body: `"${product.name}" is now live in the product catalogue.`,
+        link: `/admin/products/${product._id}`,
+        data: { productId: product._id, status: "published" },
+      });
+
+      await sendPushToUser(req.user._id, {
+        title: "Product published",
+        body: `"${product.name}" is now live in the product catalogue.`,
+        link: `/admin/products/${product._id}`,
+        data: { productId: product._id, type: "product.published" },
+      }).catch((pushErr) => console.warn("Push to admin failed:", pushErr));
     }
 
     res.status(201).json(product);
