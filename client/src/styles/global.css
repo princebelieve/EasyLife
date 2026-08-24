@@ -2192,6 +2192,43 @@ button:hover {
   box-shadow: 0 24px 50px rgba(0, 0, 0, .24);
 }
 
+.product-search {
+  max-width: 680px;
+  margin: 24px 0;
+}
+
+.product-search label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: var(--ink, #1d2b1f);
+}
+
+.product-search input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px solid #b8c3b8;
+  border-radius: 8px;
+  background: #fff;
+  color: #172118;
+  font: inherit;
+}
+
+.product-search input:focus {
+  outline: 3px solid rgba(59, 130, 86, 0.25);
+  border-color: #2f7d4b;
+}
+
+.product-search-empty {
+  margin: 24px 0;
+  padding: 16px;
+  border: 1px solid #d9e1d9;
+  border-radius: 8px;
+  background: #fff;
+  color: #465248;
+}
+
 .contact-hero-card>* {
   position: relative;
   z-index: 2;

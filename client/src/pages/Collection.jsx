@@ -1,5 +1,5 @@
 //client/src/pages/Collection.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Navbar from "../components/Navbar";
 import ProductGrid from "../components/ProductGrid";
@@ -13,6 +13,27 @@ export default function Collection() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredProducts = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return products;
+
+    return products.filter((product) =>
+      [
+        product.name,
+        product.shortDescription,
+        product.fullDescription,
+        product.category,
+        product.brand,
+        product.sku,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(query),
+    );
+  }, [products, searchQuery]);
 
   useEffect(() => {
     async function loadProducts() {
@@ -52,6 +73,18 @@ export default function Collection() {
             <p className="muted">
               Explore Easy Life wellness products for your everyday wellness journey.
             </p>
+
+            <div className="product-search" role="search">
+              <label htmlFor="product-search">Search products</label>
+              <input
+                id="product-search"
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Search by product, category, brand, or code"
+                autoComplete="off"
+              />
+            </div>
           </div>
 
           <div className="reveal">
@@ -68,7 +101,13 @@ export default function Collection() {
                 ))}
               </div>
             ) : (
-              <ProductGrid products={products} />
+              filteredProducts.length > 0 ? (
+                <ProductGrid products={filteredProducts} />
+              ) : (
+                <p className="product-search-empty">
+                  No products match “{searchQuery.trim()}”. Try another name, category, or brand.
+                </p>
+              )
             )}
           </div>
         </div>

@@ -1,5 +1,5 @@
 // src/pages/AdminProducts.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
 
@@ -14,6 +14,7 @@ import { getToken } from "../utils/auth";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { isAdminOrSubadmin } = useAuth();
   const { isAdmin } = useAuth();
@@ -39,6 +40,27 @@ export default function AdminProducts() {
     loadProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdminOrSubadmin]);
+
+  const filteredProducts = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return products;
+
+    return products.filter((product) =>
+      [
+        product.name,
+        product.shortDescription,
+        product.fullDescription,
+        product.category,
+        product.brand,
+        product.sku,
+        product.gtin,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(query),
+    );
+  }, [products, searchQuery]);
 
   async function handleDelete(id) {
     const ok = window.confirm("Delete this product?");
@@ -99,6 +121,18 @@ export default function AdminProducts() {
           </button>
         </div>
 
+        <div className="product-search" role="search">
+          <label htmlFor="admin-product-search">Search existing products</label>
+          <input
+            id="admin-product-search"
+            type="search"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            placeholder="Name, category, brand, SKU, or GTIN"
+            autoComplete="off"
+          />
+        </div>
+
         <div
           style={{
             display: "grid",
@@ -107,7 +141,7 @@ export default function AdminProducts() {
             marginTop: 30,
           }}
         >
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <div
               key={product._id}
               style={{
@@ -191,6 +225,12 @@ export default function AdminProducts() {
             </div>
           ))}
         </div>
+
+        {!filteredProducts.length && (
+          <p className="product-search-empty">
+            No existing products match “{searchQuery.trim()}”.
+          </p>
+        )}
       </div>
     </>
   );
