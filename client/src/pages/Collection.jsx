@@ -71,9 +71,7 @@ export default function Collection() {
         <div className="container">
           <div className="reveal">
             <h1 className="title">Wellness Shop</h1>
-            <p className="muted">
-              Explore Easy Life wellness products for your everyday wellness journey.
-            </p>
+            <p className="collection-shop-instruction">Search for a product or choose one below. Click the View Product button for more details.</p>
 
             <div className="product-search" role="search">
               <label htmlFor="product-search">Search products</label>
@@ -88,7 +86,6 @@ export default function Collection() {
             </div>
 
             {!loading && <RelatedProductCarousel products={products} />}
-            <p className="collection-details-hint">Click the View Product button for more details.</p>
           </div>
 
           <div className="reveal">

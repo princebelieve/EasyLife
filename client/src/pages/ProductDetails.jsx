@@ -169,37 +169,6 @@ export default function ProductDetails() {
               </div>
             )}
 
-            {(deliveryInfo?.estimatedDays || deliveryInfo?.serviceName) && (
-              <div className="cart-summary" style={{ margin: "16px 0", padding: 16 }}>
-                <h3 style={{ marginTop: 0 }}>Delivery</h3>
-                {deliveryInfo.serviceName && <p><strong>Method:</strong> {deliveryInfo.serviceName}</p>}
-                {deliveryInfo.estimatedDays && <p><strong>Estimated delivery to Nigeria:</strong> {deliveryInfo.estimatedDays}</p>}
-                <p className="muted">Your delivery fee and estimate are confirmed for your destination at checkout.</p>
-              </div>
-            )}
-
-            {(product.category || product.brand || product.vendor || product.netContent || product.countryOfOrigin || product.condition || product.sku || product.gtin) && (
-              <div className="cart-summary" style={{ margin: "16px 0", padding: 16 }}>
-                <h3 style={{ marginTop: 0 }}>Product details</h3>
-                {product.category && <p><strong>Category:</strong> {product.category}</p>}
-                {product.brand && <p><strong>Brand:</strong> {product.brand}</p>}
-                {product.vendor && <p><strong>Vendor:</strong> {product.vendor}</p>}
-                {product.netContent && <p><strong>Net content:</strong> {product.netContent}</p>}
-                {product.countryOfOrigin && <p><strong>Country of origin:</strong> {product.countryOfOrigin}</p>}
-                {product.condition && <p><strong>Condition:</strong> {product.condition}</p>}
-                {(product.sku || product.gtin) && <p><strong>Product code:</strong> {product.sku || product.gtin}</p>}
-              </div>
-            )}
-
-            {(product.ingredients || product.directions || product.warnings) && (
-              <div className="cart-summary" style={{ margin: "16px 0", padding: 16 }}>
-                <h3 style={{ marginTop: 0 }}>Product care and safety</h3>
-                {product.ingredients && <p><strong>Ingredients:</strong> {product.ingredients}</p>}
-                {product.directions && <p><strong>Directions:</strong> {product.directions}</p>}
-                {product.warnings && <p><strong>Warnings:</strong> {product.warnings}</p>}
-              </div>
-            )}
-
             <button
               type="button"
               disabled={addLoading}
@@ -377,6 +346,41 @@ export default function ProductDetails() {
             </div>
           </div>
         </div>
+
+        {(deliveryInfo?.estimatedDays || deliveryInfo?.serviceName || product.category || product.brand || product.vendor || product.netContent || product.countryOfOrigin || product.condition || product.sku || product.gtin || product.ingredients || product.directions || product.warnings) && (
+          <section className="product-information-grid" aria-label="Product information">
+            {(deliveryInfo?.estimatedDays || deliveryInfo?.serviceName) && (
+              <div className="cart-summary product-information-card">
+                <h3>Delivery</h3>
+                {deliveryInfo.serviceName && <p><strong>Method:</strong> {deliveryInfo.serviceName}</p>}
+                {deliveryInfo.estimatedDays && <p><strong>Estimated delivery to Nigeria:</strong> {deliveryInfo.estimatedDays}</p>}
+                <p className="muted">Your delivery fee and estimate are confirmed for your destination at checkout.</p>
+              </div>
+            )}
+
+            {(product.category || product.brand || product.vendor || product.netContent || product.countryOfOrigin || product.condition || product.sku || product.gtin) && (
+              <div className="cart-summary product-information-card">
+                <h3>Product details</h3>
+                {product.category && <p><strong>Category:</strong> {product.category}</p>}
+                {product.brand && <p><strong>Brand:</strong> {product.brand}</p>}
+                {product.vendor && <p><strong>Vendor:</strong> {product.vendor}</p>}
+                {product.netContent && <p><strong>Net content:</strong> {product.netContent}</p>}
+                {product.countryOfOrigin && <p><strong>Country of origin:</strong> {product.countryOfOrigin}</p>}
+                {product.condition && <p><strong>Condition:</strong> {product.condition}</p>}
+                {(product.sku || product.gtin) && <p><strong>Product code:</strong> {product.sku || product.gtin}</p>}
+              </div>
+            )}
+
+            {(product.ingredients || product.directions || product.warnings) && (
+              <div className="cart-summary product-information-card">
+                <h3>Product care and safety</h3>
+                {product.ingredients && <p><strong>Ingredients:</strong> {product.ingredients}</p>}
+                {product.directions && <p><strong>Directions:</strong> {product.directions}</p>}
+                {product.warnings && <p><strong>Warnings:</strong> {product.warnings}</p>}
+              </div>
+            )}
+          </section>
+        )}
 
         {product.gallery?.length > 0 && (
           <div className="gallery-strip">
