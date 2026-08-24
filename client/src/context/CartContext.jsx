@@ -15,9 +15,12 @@ export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const quantityTimers = useRef(new Map());
+  const cartRequestId = useRef(0);
+  const addingProductIds = useRef(new Set());
   const { token } = useAuth();
 
   async function loadCart() {
+    const requestId = ++cartRequestId.current;
     setLoading(true);
 
     if (!token) {
@@ -49,11 +52,19 @@ export function CartProvider({ children }) {
         })
         .filter(Boolean);
 
-      setCart(formatted);
+      // Do not allow a cart request started before logout (or an account switch)
+      // to put a previous customer's cart back on screen.
+      if (requestId === cartRequestId.current) {
+        setCart(formatted);
+      }
     } catch (err) {
-      console.error(err);
+      if (requestId === cartRequestId.current) {
+        console.error(err);
+      }
     } finally {
-      setLoading(false);
+      if (requestId === cartRequestId.current) {
+        setLoading(false);
+      }
     }
   }
 
@@ -69,8 +80,20 @@ export function CartProvider({ children }) {
       };
     }
 
+    const productId = product?._id;
+    if (!productId) {
+      return { success: false, message: "This product is unavailable." };
+    }
+
+    // A rapid double-click must not create two add requests.
+    if (addingProductIds.current.has(productId)) {
+      return { success: false, message: "This product is already being added." };
+    }
+
+    addingProductIds.current.add(productId);
+
     try {
-      await addToCartApi(token, product._id, quantity);
+      await addToCartApi(token, productId, quantity);
       await loadCart();
       return {
         success: true,
@@ -81,6 +104,8 @@ export function CartProvider({ children }) {
         success: false,
         message: err?.message || "Failed to add item to cart.",
       };
+    } finally {
+      addingProductIds.current.delete(productId);
     }
   }
 

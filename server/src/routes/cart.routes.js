@@ -24,6 +24,13 @@ router.get("/", protect, async (req, res) => {
 
 router.post("/add", protect, async (req, res) => {
   const { productId, quantity = 1 } = req.body;
+  const quantityToAdd = Number(quantity);
+
+  if (!Number.isSafeInteger(quantityToAdd) || quantityToAdd < 1) {
+    return res.status(400).json({
+      message: "Quantity must be a whole number of at least 1.",
+    });
+  }
 
   let cart = await Cart.findOne({
     userId: req.user.id,
@@ -41,11 +48,11 @@ router.post("/add", protect, async (req, res) => {
   );
 
   if (existingItem) {
-    existingItem.quantity += quantity;
+    existingItem.quantity += quantityToAdd;
   } else {
     cart.items.push({
       productId,
-      quantity,
+      quantity: quantityToAdd,
     });
   }
 

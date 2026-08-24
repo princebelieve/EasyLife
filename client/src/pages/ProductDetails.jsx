@@ -22,7 +22,7 @@ export default function ProductDetails() {
   const [addError, setAddError] = useState("");
   const [expandedDescription, setExpandedDescription] = useState(false);
   const [deliveryInfo, setDeliveryInfo] = useState(null);
-  const { addToCart } = useCart();
+  const { addToCart, cart } = useCart();
 
   useEffect(() => {
     async function loadProduct() {
@@ -236,15 +236,21 @@ export default function ProductDetails() {
                 setAddSuccess(false);
                 setAddLoading(true);
 
-                const result = await addToCart(product);
+                const alreadyInCart = cart.some(
+                  (item) => item.productId === product._id,
+                );
 
+                if (alreadyInCart) {
+                  setAddLoading(false);
+                  navigate("/checkout");
+                  return;
+                }
+
+                const result = await addToCart(product);
                 setAddLoading(false);
 
-                if (result.success) {
-                  navigate("/checkout");
-                } else {
-                  setAddError(result.message || "Failed to add item to cart.");
-                }
+                if (result.success) navigate("/checkout");
+                else setAddError(result.message || "Failed to add item to cart.");
               }}
             >
               {addLoading ? "Adding..." : "Buy Now"}

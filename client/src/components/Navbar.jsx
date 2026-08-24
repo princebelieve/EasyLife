@@ -114,7 +114,7 @@ export default function Navbar() {
           <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>
 
-          <Link to="/cart">Cart</Link>
+          {isLoggedIn && <Link to="/cart">Cart</Link>}
 
           {isLoggedIn && <Link to="/dashboard">Dashboard</Link>}
 
@@ -135,13 +135,15 @@ export default function Navbar() {
         <div className="nav-actions">
           <NotificationDropdown />
 
-          <button
-            type="button"
-            className="cart-btn"
-            onClick={() => navigate("/cart")}
-          >
-            Cart ({cartCount})
-          </button>
+          {isLoggedIn && (
+            <button
+              type="button"
+              className="cart-btn"
+              onClick={() => navigate("/cart")}
+            >
+              Cart ({cartCount})
+            </button>
+          )}
 
           <button
             type="button"
@@ -231,9 +233,11 @@ export default function Navbar() {
             Contact
           </Link>
 
-          <Link to="/cart" onClick={() => setOpen(false)}>
-            Cart ({cartCount})
-          </Link>
+          {isLoggedIn && (
+            <Link to="/cart" onClick={() => setOpen(false)}>
+              Cart ({cartCount})
+            </Link>
+          )}
 
           <Link to="/notifications" onClick={() => setOpen(false)}>
             Notifications {unreadCount > 0 ? `(${unreadCount})` : ""}

@@ -109,7 +109,14 @@ export default function App() {
             <Route path="/collection" element={<Collection />} />
             <Route path="/product/:id" element={<ProductDetails />} />
 
-            <Route path="/cart" element={<Cart />} />
+            <Route
+              path="/cart"
+              element={
+                <RequireAuth>
+                  <Cart />
+                </RequireAuth>
+              }
+            />
             <Route
               path="/checkout"
               element={
