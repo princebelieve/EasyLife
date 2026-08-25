@@ -8,6 +8,42 @@ const {
 } = require("../services/notification.service");
 const { sendPushToAdmins, sendPushToUser } = require("../services/push.service");
 
+async function assertUniqueProductName(name, excludedProductId) {
+  const trimmedName = name?.trim();
+  if (!trimmedName) return;
+
+  const query = { name: trimmedName };
+  if (excludedProductId) query._id = { $ne: excludedProductId };
+
+  const existingProduct = await Product.findOne(query)
+    .collation({ locale: "en", strength: 2 })
+    .select("_id")
+    .lean();
+
+  if (existingProduct) {
+    const error = new Error("A product with this name already exists.");
+    error.statusCode = 409;
+    throw error;
+  }
+}
+
+function assertProductImages(files) {
+  const productFiles = [
+    ...(files.coverImage || []),
+    ...(files.gallery || []),
+  ];
+
+  const invalidFile = productFiles.find(
+    (file) => !file.mimetype || !file.mimetype.startsWith("image/"),
+  );
+
+  if (invalidFile) {
+    const error = new Error("Product media must be image files.");
+    error.statusCode = 400;
+    throw error;
+  }
+}
+
 async function getProducts(req, res) {
   try {
     const products = await Product.find({
@@ -22,7 +58,7 @@ async function getProducts(req, res) {
   } catch (err) {
     console.error("Error in getProducts:", err);
 
-    res.status(500).json({
+    res.status(err.statusCode || 500).json({
       error: err.message,
     });
   }
@@ -103,6 +139,8 @@ async function createProduct(req, res) {
     } = req.body;
 
     const files = req.files || {};
+    assertProductImages(files);
+    await assertUniqueProductName(name);
 
     // COVER IMAGE
     let coverImage = "";
@@ -284,6 +322,8 @@ async function updateProduct(req, res) {
     } = req.body;
 
     const files = req.files || {};
+    assertProductImages(files);
+    await assertUniqueProductName(name, product._id);
 
     // BASIC FIELDS
     product.name = name || product.name;
@@ -414,7 +454,7 @@ async function updateProduct(req, res) {
       );
     }
 
-    res.status(500).json({
+    res.status(err.statusCode || 500).json({
       error: err.message,
     });
   }

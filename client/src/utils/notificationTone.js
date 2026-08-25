@@ -1,5 +1,9 @@
-export function playNotificationTone() {
+export function playNotificationTone({ userInitiated = false } = {}) {
   if (typeof window === "undefined") return;
+
+  // Browsers block audio that was not triggered directly by a user gesture.
+  // Notification polling must never cause a console warning or affect the UI.
+  if (!userInitiated) return;
 
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -33,7 +37,7 @@ export function playNotificationTone() {
     });
 
     setTimeout(() => ctx.close().catch(() => {}), 500);
-  } catch (error) {
-    console.warn("Unable to play notification tone", error);
+  } catch {
+    // Audio feedback is optional; a blocked browser policy is not an app error.
   }
 }

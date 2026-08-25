@@ -9,7 +9,6 @@ import {
   updateProductApi,
 } from "../services/api";
 import { getToken } from "../utils/auth";
-import { playNotificationTone } from "../utils/notificationTone";
 
 export default function AdminProductForm() {
   const { id } = useParams();
@@ -39,19 +38,13 @@ export default function AdminProductForm() {
   }, [id]);
 
   async function handleSubmit(formData) {
-    try {
-      if (editingProduct) {
-        await updateProductApi(editingProduct._id, formData, getToken());
-      } else {
-        await createProductApi(formData, getToken());
-      }
-
-      playNotificationTone();
-      navigate("/admin/products");
-    } catch (error) {
-      playNotificationTone();
-      throw error;
+    if (editingProduct) {
+      await updateProductApi(editingProduct._id, formData, getToken());
+    } else {
+      await createProductApi(formData, getToken());
     }
+
+    navigate("/admin/products");
   }
 
   return (

@@ -14,13 +14,15 @@ export default function Collection() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState("newest");
 
   const filteredProducts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    if (!query) return products;
-
-    return products.filter((product) =>
+    const matches = !query
+      ? products
+      : products.filter((product) =>
       [
         product.name,
         product.shortDescription,
@@ -33,17 +35,40 @@ export default function Collection() {
         .join(" ")
         .toLowerCase()
         .includes(query),
-    );
-  }, [products, searchQuery]);
+      );
+
+    return [...matches].sort((a, b) => {
+      switch (sortOrder) {
+        case "oldest":
+          return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+        case "name-asc":
+          return (a.name || "").localeCompare(b.name || "");
+        case "name-desc":
+          return (b.name || "").localeCompare(a.name || "");
+        case "price-low":
+          return Number(a.salePrice ?? a.price ?? 0) - Number(b.salePrice ?? b.price ?? 0);
+        case "price-high":
+          return Number(b.salePrice ?? b.price ?? 0) - Number(a.salePrice ?? a.price ?? 0);
+        case "newest":
+        default:
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      }
+    });
+  }, [products, searchQuery, sortOrder]);
 
   useEffect(() => {
     async function loadProducts() {
       try {
         const data = await getProducts();
+        if (!Array.isArray(data)) {
+          throw new Error("The product service returned an unexpected response.");
+        }
 
-        setProducts(Array.isArray(data) ? data : []);
-      } catch {
+        setProducts(data.filter((product) => product && typeof product === "object"));
+      } catch (error) {
+        console.error("Unable to load products", error);
         setProducts([]);
+        setLoadError("We could not load the wellness shop right now. Please refresh the page in a moment.");
       } finally {
         setLoading(false);
       }
@@ -85,7 +110,23 @@ export default function Collection() {
               />
             </div>
 
-            {!loading && <RelatedProductCarousel products={products} />}
+            <div className="product-sort">
+              <label htmlFor="product-sort">Arrange products</label>
+              <select
+                id="product-sort"
+                value={sortOrder}
+                onChange={(event) => setSortOrder(event.target.value)}
+              >
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="name-asc">Name: A–Z</option>
+                <option value="name-desc">Name: Z–A</option>
+                <option value="price-low">Price: low to high</option>
+                <option value="price-high">Price: high to low</option>
+              </select>
+            </div>
+
+            {!loading && !loadError && <RelatedProductCarousel products={products} />}
           </div>
 
           <div className="reveal">
@@ -100,6 +141,13 @@ export default function Collection() {
                     <div className="skeleton-button" />
                   </div>
                 ))}
+              </div>
+            ) : loadError ? (
+              <div className="product-load-error" role="alert">
+                <p>{loadError}</p>
+                <button type="button" onClick={() => window.location.reload()}>
+                  Try again
+                </button>
               </div>
             ) : (
               filteredProducts.length > 0 ? (
