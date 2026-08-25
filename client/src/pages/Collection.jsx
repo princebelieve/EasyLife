@@ -68,7 +68,9 @@ export default function Collection() {
       } catch (error) {
         console.error("Unable to load products", error);
         setProducts([]);
-        setLoadError("We could not load the wellness shop right now. Please refresh the page in a moment.");
+        setLoadError(
+          `We could not load the wellness shop right now${error?.message ? `: ${error.message}` : ". Please refresh the page in a moment."}`,
+        );
       } finally {
         setLoading(false);
       }

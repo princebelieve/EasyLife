@@ -86,13 +86,15 @@ async function apiRequest(endpoint, options = {}) {
       retryData = {};
     }
 
-    if (!retry.ok) throw new Error(retryData.message || "Request failed");
+    if (!retry.ok) {
+      throw new Error(retryData.message || retryData.error || "Request failed");
+    }
 
     return retryData;
   }
 
   if (!res.ok) {
-    throw new Error(data.message || "Request failed");
+    throw new Error(data.message || data.error || "Request failed");
   }
 
   return data;
