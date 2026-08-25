@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
 import { useNotifications } from "../context/NotificationContext";
-import { normalizeNotificationLink, openNotificationLink } from "../utils/notificationLinks";
+import { normalizeNotificationLink } from "../utils/notificationLinks";
+import { getNotificationActionLabel, getNotificationDestination } from "../utils/notificationDestination";
 
 export default function Notifications() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isAdmin } = useAuth();
   const navigate = useNavigate();
   const {
     notifications,
@@ -13,6 +14,7 @@ export default function Notifications() {
     unreadCount,
     markNotificationRead,
     markAllAsRead,
+    dismissNotification,
   } = useNotifications();
 
   useEffect(() => {
@@ -22,7 +24,7 @@ export default function Notifications() {
   }, [isLoggedIn, navigate]);
 
   const handleOpenNotification = async (notification) => {
-    const target = openNotificationLink(notification.link);
+    const target = getNotificationDestination(notification, isAdmin);
 
     if (typeof target === "string" && /^https?:|^mailto:/i.test(target)) {
       window.open(target, "_blank", "noopener,noreferrer");
@@ -67,6 +69,17 @@ export default function Notifications() {
               <strong>{notification.title || "Notification"}</strong>
               <p>{notification.body}</p>
               <small>{new Date(notification.createdAt).toLocaleString()}</small>
+              {notification.data?.productId && (
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleOpenNotification(notification);
+                  }}
+                >
+                  {getNotificationActionLabel(notification, isAdmin)}
+                </button>
+              )}
             </div>
 
             {!notification.read ? (
@@ -80,6 +93,16 @@ export default function Notifications() {
                 Mark read
               </button>
             ) : null}
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                dismissNotification(notification._id);
+              }}
+              aria-label={`Dismiss ${notification.title || "notification"}`}
+            >
+              Dismiss
+            </button>
           </article>
         ))}
       </div>

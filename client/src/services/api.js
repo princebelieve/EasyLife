@@ -288,6 +288,12 @@ export async function markAllNotificationsRead() {
   });
 }
 
+export async function dismissNotification(id) {
+  return apiRequest(`/api/notifications/${id}`, {
+    method: "DELETE",
+  });
+}
+
 export async function createShippingZone(data, token) {
   return apiRequest("/api/admin/shipping", {
     method: "POST",

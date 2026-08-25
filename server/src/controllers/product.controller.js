@@ -188,7 +188,7 @@ async function createProduct(req, res) {
           type: "product.upload",
           title: "Product upload submitted",
           body: `"${product.name}" has been submitted for review.`,
-          link: `/admin/products/${product._id}`,
+          link: `/admin/products/edit/${product._id}`,
           data: {
             productId: product._id,
             status: isSubadmin ? "pending" : "published",
@@ -200,7 +200,7 @@ async function createProduct(req, res) {
       await sendPushToAdmins(adminIds, {
         title: "Product upload submitted",
         body: `"${product.name}" has been submitted for review.`,
-        link: `/admin/products/${product._id}`,
+        link: `/admin/products/edit/${product._id}`,
         data: { productId: product._id, type: "product.upload" },
       }).catch((pushErr) => console.warn("Push to admins failed:", pushErr));
     } else if (!isSubadmin) {
@@ -211,14 +211,14 @@ async function createProduct(req, res) {
         type: "product.published",
         title: "Product published",
         body: `"${product.name}" is now live in the product catalogue.`,
-        link: `/admin/products/${product._id}`,
+        link: `/admin/products/edit/${product._id}`,
         data: { productId: product._id, status: "published" },
       });
 
       await sendPushToUser(req.user._id, {
         title: "Product published",
         body: `"${product.name}" is now live in the product catalogue.`,
-        link: `/admin/products/${product._id}`,
+        link: `/admin/products/edit/${product._id}`,
         data: { productId: product._id, type: "product.published" },
       }).catch((pushErr) => console.warn("Push to admin failed:", pushErr));
     }
@@ -360,7 +360,7 @@ async function updateProduct(req, res) {
           type: "product.updated",
           title: "Product updated",
           body: `"${product.name}" was updated successfully.`,
-          link: `/admin/products/${product._id}`,
+        link: `/admin/products/edit/${product._id}`,
           data: { productId: product._id },
         },
         adminIds,
@@ -379,7 +379,7 @@ async function updateProduct(req, res) {
             type: "stock.alert",
             title: "Low Stock Alert",
             body: `Product "${product.name}" has low stock: ${product.stock} unit(s) remaining.`,
-            link: `/admin/products/${product._id}`,
+            link: `/admin/products/edit/${product._id}`,
             data: { productId: product._id, stock: product.stock },
           },
           adminIds,

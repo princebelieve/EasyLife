@@ -4,12 +4,15 @@ import { ChevronRight } from "lucide-react";
 import NotificationBell from "./NotificationBell";
 import useClickOutside from "../hooks/useClickOutside";
 import { useNotifications } from "../context/NotificationContext";
-import { normalizeNotificationLink, openNotificationLink } from "../utils/notificationLinks";
+import { normalizeNotificationLink } from "../utils/notificationLinks";
+import { getNotificationDestination } from "../utils/notificationDestination";
+import useAuth from "../context/AuthContext";
 
 export default function NotificationDropdown() {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const {
     notifications,
     loading,
@@ -35,7 +38,7 @@ export default function NotificationDropdown() {
 
     setOpen(false);
 
-    const target = openNotificationLink(notification.link);
+    const target = getNotificationDestination(notification, isAdmin);
 
     if (typeof target === "string" && /^(https?:|mailto:)/i.test(target)) {
       window.open(target, "_blank", "noopener,noreferrer");

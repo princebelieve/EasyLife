@@ -13,6 +13,7 @@ import {
   getNotifications,
   markNotificationRead as markNotificationReadApi,
   markAllNotificationsRead as markAllNotificationsReadApi,
+  dismissNotification as dismissNotificationApi,
 } from "../services/api";
 import useAuth from "./AuthContext";
 import { playNotificationTone } from "../utils/notificationTone";
@@ -116,6 +117,15 @@ export function NotificationProvider({ children }) {
     }
   }, []);
 
+  const dismissNotification = useCallback(async (id) => {
+    try {
+      await dismissNotificationApi(id);
+      setNotifications((prev) => prev.filter((item) => item._id !== id));
+    } catch (err) {
+      console.error("Unable to dismiss notification", err);
+    }
+  }, []);
+
   const value = useMemo(
     () => ({
       notifications,
@@ -125,12 +135,14 @@ export function NotificationProvider({ children }) {
       fetchNotifications,
       markNotificationRead,
       markAllAsRead,
+      dismissNotification,
     }),
     [
       error,
       fetchNotifications,
       loading,
       markAllAsRead,
+      dismissNotification,
       markNotificationRead,
       notifications,
       unreadCount,

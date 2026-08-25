@@ -98,7 +98,7 @@ router.post("/", async (req, res) => {
                 type: "stock.alert",
                 title: "Low Stock Alert",
                 body: `Product "${product.name}" has low stock: ${product.stock} unit(s) remaining.`,
-                link: `/admin/products/${product._id}`,
+                link: `/admin/products/edit/${product._id}`,
                 data: { productId: product._id, stock: product.stock },
               },
               adminIds,
