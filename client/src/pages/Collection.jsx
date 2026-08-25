@@ -94,9 +94,9 @@ export default function Collection() {
         </div>
       </section>
 
-      <section className="section-alt reveal">
+      <section className="section-alt">
         <div className="container">
-          <div className="reveal">
+          <div>
             <h1 className="title">Wellness Shop</h1>
             <p className="collection-shop-instruction">Search for a product or choose one below. Click the View Product button for more details.</p>
 
@@ -131,7 +131,7 @@ export default function Collection() {
             {!loading && !loadError && <RelatedProductCarousel products={products} />}
           </div>
 
-          <div className="reveal">
+          <div>
             {loading ? (
               <div className="grid">
                 {Array.from({ length: 8 }).map((_, i) => (

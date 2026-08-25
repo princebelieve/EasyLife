@@ -207,13 +207,13 @@ export default function AdminProducts() {
                   </span>
                 )}
 
-                {isAdmin && product.pendingApproval && (
+                {isAdmin && (product.pendingApproval || product.pendingDeletion) && (
                   <>
-                    <button onClick={() => handleApprove(product._id)}>
-                      Approve
+                    <button type="button" onClick={() => handleApprove(product._id)}>
+                      {product.pendingDeletion ? "Approve deletion" : "Approve"}
                     </button>
-                    <button onClick={() => handleReject(product._id)}>
-                      Reject
+                    <button type="button" onClick={() => handleReject(product._id)}>
+                      {product.pendingDeletion ? "Keep product" : "Reject"}
                     </button>
                   </>
                 )}

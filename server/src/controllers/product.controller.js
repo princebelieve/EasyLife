@@ -1,7 +1,7 @@
 // server/src/controllers/product.controller.js
 const Product = require("../models/Product");
 const User = require("../models/User");
-const { uploadToR2 } = require("../config/r2");
+const { uploadToR2, deleteFromR2 } = require("../config/r2");
 const {
   createNotification,
   notifyAdmins,
@@ -42,6 +42,41 @@ function assertProductImages(files) {
     error.statusCode = 400;
     throw error;
   }
+}
+
+async function deleteProductMedia(product) {
+  const mediaUrls = [...new Set([product.coverImage, ...(product.gallery || [])].filter(Boolean))];
+  if (!mediaUrls.length) return [];
+
+  // Do not remove a file if another product is still using that exact URL.
+  const productsUsingMedia = await Product.find({
+    _id: { $ne: product._id },
+    $or: [{ coverImage: { $in: mediaUrls } }, { gallery: { $in: mediaUrls } }],
+  })
+    .select("coverImage gallery")
+    .lean();
+  const sharedUrls = new Set(
+    productsUsingMedia.flatMap((item) => [item.coverImage, ...(item.gallery || [])]),
+  );
+
+  const results = await Promise.allSettled(
+    mediaUrls.filter((url) => !sharedUrls.has(url)).map(deleteFromR2),
+  );
+
+  return results.filter((result) => result.status === "rejected");
+}
+
+async function permanentlyDeleteProduct(product) {
+  await Product.findByIdAndDelete(product._id);
+
+  const failedMediaDeletes = await deleteProductMedia(product);
+  if (failedMediaDeletes.length) {
+    console.error(
+      `Deleted product ${product._id}, but could not remove ${failedMediaDeletes.length} media file(s) from R2.`,
+    );
+  }
+
+  return failedMediaDeletes.length;
 }
 
 async function getProducts(req, res) {
@@ -483,10 +518,12 @@ async function deleteProduct(req, res) {
       });
     }
 
-    await Product.findByIdAndDelete(req.params.id);
+    const failedMediaDeletes = await permanentlyDeleteProduct(product);
 
     res.json({
-      message: "Product deleted successfully",
+      message: failedMediaDeletes
+        ? "Product deleted, but some unused media files could not be removed."
+        : "Product and its unused media files were deleted successfully",
     });
   } catch (err) {
     console.error("Error in deleteProduct:", err);
@@ -545,8 +582,12 @@ async function approveProduct(req, res) {
     }
 
     if (product.pendingDeletion) {
-      await Product.findByIdAndDelete(req.params.id);
-      return res.json({ message: "Product deletion approved and executed" });
+      const failedMediaDeletes = await permanentlyDeleteProduct(product);
+      return res.json({
+        message: failedMediaDeletes
+          ? "Product deletion approved, but some unused media files could not be removed."
+          : "Product deletion approved and product media removed.",
+      });
     }
 
     return res
@@ -578,6 +619,8 @@ async function rejectProduct(req, res) {
     if (product.pendingDeletion) {
       product.pendingDeletion = false;
       product.hidden = false;
+      product.deletionRequestedBy = undefined;
+      product.deletionRequestedAt = undefined;
       await product.save();
 
       return res.json({ message: "Product deletion request rejected" });

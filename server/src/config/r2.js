@@ -1,5 +1,9 @@
 //server/src/config/r2.js
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} = require("@aws-sdk/client-s3");
 
 const s3 = new S3Client({
   region: "auto",
@@ -27,4 +31,40 @@ async function uploadToR2(file, folder = "general") {
   return `${process.env.R2_PUBLIC_BASE_URL}/${key}`;
 }
 
-module.exports = { uploadToR2 };
+function getR2KeyFromPublicUrl(fileUrl) {
+  if (!fileUrl || !process.env.R2_PUBLIC_BASE_URL) return null;
+
+  try {
+    const publicBase = new URL(process.env.R2_PUBLIC_BASE_URL);
+    const fileLocation = new URL(fileUrl);
+    const basePath = publicBase.pathname.replace(/\/$/, "");
+    const expectedPrefix = `${basePath}/`;
+
+    if (
+      fileLocation.origin !== publicBase.origin ||
+      !fileLocation.pathname.startsWith(expectedPrefix)
+    ) {
+      return null;
+    }
+
+    return decodeURIComponent(fileLocation.pathname.slice(expectedPrefix.length));
+  } catch {
+    return null;
+  }
+}
+
+async function deleteFromR2(fileUrl) {
+  const key = getR2KeyFromPublicUrl(fileUrl);
+  if (!key) return false;
+
+  await s3.send(
+    new DeleteObjectCommand({
+      Bucket: process.env.R2_BUCKET,
+      Key: key,
+    }),
+  );
+
+  return true;
+}
+
+module.exports = { uploadToR2, deleteFromR2 };
