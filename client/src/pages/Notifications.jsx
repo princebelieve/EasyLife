@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../context/AuthContext";
 import { useNotifications } from "../context/NotificationContext";
-import { normalizeNotificationLink } from "../utils/notificationLinks";
-import { getNotificationActionLabel, getNotificationDestination } from "../utils/notificationDestination";
+import { getNotificationActionLabel } from "../utils/notificationDestination";
 
 export default function Notifications() {
   const { isLoggedIn, isAdmin } = useAuth();
@@ -24,17 +23,7 @@ export default function Notifications() {
   }, [isLoggedIn, navigate]);
 
   const handleOpenNotification = async (notification) => {
-    const target = getNotificationDestination(notification, isAdmin);
-
-    if (typeof target === "string" && /^https?:|^mailto:/i.test(target)) {
-      window.open(target, "_blank", "noopener,noreferrer");
-    } else if (typeof target === "string") {
-      navigate(normalizeNotificationLink(target));
-    }
-
-    if (!notification.read) {
-      await markNotificationRead(notification._id);
-    }
+    navigate(`/notifications/${notification._id}`);
   };
 
   return (
@@ -47,9 +36,23 @@ export default function Notifications() {
           </p>
         </div>
 
-        <button type="button" onClick={markAllAsRead} disabled={loading}>
-          Mark all read
-        </button>
+        <div className="notification-page-actions">
+          <button type="button" onClick={markAllAsRead} disabled={loading}>
+            Mark all read
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                navigate(isAdmin ? "/admin" : "/dashboard");
+              }
+            }}
+          >
+            Close
+          </button>
+        </div>
       </header>
 
       {loading && <p>Loading notifications...</p>}

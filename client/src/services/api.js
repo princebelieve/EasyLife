@@ -288,6 +288,10 @@ export async function markAllNotificationsRead() {
   });
 }
 
+export async function getNotificationById(id) {
+  return apiRequest(`/api/notifications/${id}`);
+}
+
 export async function dismissNotification(id) {
   return apiRequest(`/api/notifications/${id}`, {
     method: "DELETE",

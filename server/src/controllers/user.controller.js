@@ -1,6 +1,7 @@
 //server/src/controllers/user.controller.js
 const User = require("../models/User");
 const { uploadToR2 } = require("../config/r2");
+const { createNotification } = require("../services/notification.service");
 
 const uploadAvatar = async (req, res) => {
   try {
@@ -21,6 +22,14 @@ const uploadAvatar = async (req, res) => {
         new: true,
       },
     ).select("-password");
+
+    await createNotification({
+      userId: req.user.id,
+      type: "profile.avatar.updated",
+      title: "Profile image updated",
+      body: "Your profile image was uploaded successfully.",
+      link: "/profile",
+    });
 
     res.json({
       message: "Avatar uploaded successfully",

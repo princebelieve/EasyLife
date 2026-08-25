@@ -40,6 +40,7 @@ import AdminUsers from "./pages/AdminUsers";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import Notifications from "./pages/Notifications";
+import NotificationDetails from "./pages/NotificationDetails";
 import AdminNotifications from "./pages/AdminNotifications";
 import PwaNotificationBanner from "./components/PwaNotificationBanner";
 import PwaInstallBanner from "./components/PwaInstallBanner";
@@ -161,6 +162,7 @@ export default function App() {
                 </RequireAuth>
               }
             />
+            <Route path="/notifications/:id" element={<RequireAuth><NotificationDetails /></RequireAuth>} />
 
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />

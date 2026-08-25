@@ -5193,6 +5193,7 @@ button:hover,
 .collection-product-promo .service-promo-content h2 { font-size: clamp(1.65rem, 3.2vw, 2.6rem); }
 .collection-product-promo .service-promo-content p { margin-bottom: 14px; }
 .collection-product-promo-action { display: inline-flex; align-items: center; gap: 7px; color: var(--white); font-size: .9rem; }
+.notification-page-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 
 @media (max-width: 600px) {
   .collection-product-promo { min-height: 340px; }

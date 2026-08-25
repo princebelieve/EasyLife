@@ -170,6 +170,25 @@ router.put("/mark-all-read", protect, async (req, res) => {
   }
 });
 
+router.get("/:id", protect, async (req, res) => {
+  try {
+    const notification = await Notification.findOne({
+      _id: req.params.id,
+      userId: req.user.id,
+      status: "approved",
+    }).lean();
+
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+
+    res.json({ notification });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch notification" });
+  }
+});
+
 router.delete("/:id", protect, async (req, res) => {
   try {
     const notification = await Notification.findOneAndDelete({
