@@ -49,11 +49,13 @@ async function createTestimonial(req, res) {
 
     let image = "";
     let videoFile = "";
+    let audioFile = "";
     if (req.files?.image?.[0]) image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
+    if (req.files?.audio?.[0]) audioFile = await uploadToR2(req.files.audio[0], "testimonials/audio");
 
     const testimonial = await Testimonial.create({
-      contentType, title, name, role, testimony, linkUrl, videoUrl, image, videoFile,
+      contentType, title, name, role, testimony, linkUrl, videoUrl, image, videoFile, audioFile,
       featured: asBoolean(featured),
       bannerEnabled: isAdmin && asBoolean(bannerEnabled),
       approved: isAdmin,
@@ -133,6 +135,7 @@ async function updateTestimonial(req, res) {
     }
     if (req.files?.image?.[0]) testimonial.image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) testimonial.videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
+    if (req.files?.audio?.[0]) testimonial.audioFile = await uploadToR2(req.files.audio[0], "testimonials/audio");
 
     const shouldNotify = req.user.role === "admin" && testimonial.approved && testimonial.status === "active" && !testimonial.announcementNotifiedAt;
     await testimonial.save();

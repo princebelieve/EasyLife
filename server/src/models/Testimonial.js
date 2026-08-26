@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const testimonialSchema = new mongoose.Schema(
   {
-    contentType: { type: String, enum: ["testimony", "announcement", "story", "outreach", "journey"], default: "testimony" },
+    contentType: { type: String, enum: ["testimony", "announcement", "story", "outreach", "journey", "homepage-media"], default: "testimony" },
     title: { type: String, default: "", trim: true },
     name: { type: String, required: true, trim: true },
     role: { type: String, default: "", trim: true },
@@ -11,6 +11,7 @@ const testimonialSchema = new mongoose.Schema(
     image: { type: String, default: "" },
     videoUrl: { type: String, default: "", trim: true },
     videoFile: { type: String, default: "" },
+    audioFile: { type: String, default: "" },
     featured: { type: Boolean, default: false },
     bannerEnabled: { type: Boolean, default: false },
     approved: { type: Boolean, default: true },
