@@ -139,7 +139,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="admin-media-panel">
+      <div className="admin-media-panel admin-home-media-panel">
         <h2>Homepage Media</h2>
         <p>
           Upload a photo or video here and it will appear in the home page media
@@ -147,35 +147,50 @@ export default function AdminDashboard() {
         </p>
 
         <form className="admin-media-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            placeholder="Title"
-          />
+          <div className="admin-media-form-grid">
+            <label>
+              <span>Media title</span>
+              <input
+                type="text"
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
+                placeholder="e.g. Healthy living workshop"
+              />
+            </label>
 
-          <textarea
-            value={caption}
-            onChange={(event) => setCaption(event.target.value)}
-            placeholder="Short caption"
-            rows="3"
-          />
+            <label>
+              <span>Media type</span>
+              <select
+                value={mediaType}
+                onChange={(event) => setMediaType(event.target.value)}
+              >
+                <option value="image">Image</option>
+                <option value="video">Video</option>
+              </select>
+            </label>
+          </div>
 
-          <select
-            value={mediaType}
-            onChange={(event) => setMediaType(event.target.value)}
-          >
-            <option value="image">Image</option>
-            <option value="video">Video</option>
-          </select>
+          <label>
+            <span>Caption</span>
+            <textarea
+              value={caption}
+              onChange={(event) => setCaption(event.target.value)}
+              placeholder="Briefly describe what visitors are seeing"
+              rows="3"
+            />
+          </label>
 
-          <input
-            type="file"
-            accept={mediaType === "video" ? "video/*" : "image/*"}
-            onChange={(event) => setFile(event.target.files?.[0] || null)}
-          />
+          <label className="admin-media-file-field">
+            <span>Choose {mediaType === "video" ? "video" : "image"}</span>
+            <input
+              type="file"
+              accept={mediaType === "video" ? "video/*" : "image/*"}
+              onChange={(event) => setFile(event.target.files?.[0] || null)}
+            />
+            <small>{file ? file.name : mediaType === "video" ? "Video files up to 100 MB" : "Choose an image to upload"}</small>
+          </label>
 
-          <button type="submit">Save to Home Page</button>
+          <button type="submit" className="admin-media-submit">Save to Home Page</button>
         </form>
 
         {status && <p className="upload-status">{status}</p>}
