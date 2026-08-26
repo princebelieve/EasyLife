@@ -1005,9 +1005,23 @@ input:focus {
 .card-image-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
-  background: #f3f1ed;
+  background: linear-gradient(145deg, #f7f5ef, #e7eee6);
+}
+
+.product-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 290px));
+  justify-content: center;
+}
+
+.product-grid .card-image-wrap {
+  aspect-ratio: 3 / 4;
+}
+
+.product-grid .card img {
+  object-fit: contain;
+  padding: 8px;
 }
 
 .card img {
@@ -1366,7 +1380,8 @@ button:hover {
   aspect-ratio: 4 / 3;
   margin: 0 0 10px;
   border-radius: 10px;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 8px;
 }
 
 .account-danger-zone {
@@ -3196,7 +3211,7 @@ button:hover {
 
 .skeleton-image {
   width: 100%;
-  aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 4;
 }
 
 .skeleton-line {
