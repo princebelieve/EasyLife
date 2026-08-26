@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from "react";
 
-import { getProducts, getAdminOrders } from "../services/api";
+import {
+  createTestimonialApi,
+  deleteTestimonialApi,
+  getAdminOrders,
+  getAdminTestimonials,
+  getProducts,
+} from "../services/api";
 
 import { getToken } from "../utils/auth";
-
-const STORAGE_KEY = "easylife-home-media";
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState([]);
@@ -21,28 +25,25 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [productsData, ordersData] = await Promise.all([
+        const [productsData, ordersData, contentData] = await Promise.all([
           getProducts(),
           getAdminOrders(getToken()),
+          getAdminTestimonials(getToken()),
         ]);
 
         setProducts(productsData);
         setOrders(ordersData);
+        setItems(
+          Array.isArray(contentData)
+            ? contentData.filter((item) => item.featured)
+            : [],
+        );
       } catch (err) {
         console.error(err);
       }
     }
 
     loadData();
-
-    try {
-      const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        setItems(JSON.parse(saved));
-      }
-    } catch {
-      setItems([]);
-    }
   }, []);
 
   const paidOrders = orders.filter((order) => order?.paymentStatus === "paid");
@@ -54,12 +55,7 @@ export default function AdminDashboard() {
 
   const lowStock = products.filter((p) => p.stock <= 5);
 
-  function saveItems(nextItems) {
-    setItems(nextItems);
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextItems));
-  }
-
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     if (!file) {
@@ -67,32 +63,41 @@ export default function AdminDashboard() {
       return;
     }
 
-    const reader = new FileReader();
+    setStatus("Uploading media…");
+    const data = new FormData();
+    data.append("contentType", "story");
+    data.append("title", title.trim() || "Homepage media");
+    data.append("name", "Easy Life Wellness Hub");
+    data.append("testimony", caption.trim() || "Added from the admin panel.");
+    data.append("featured", "true");
+    data.append("approved", "true");
+    data.append("status", "active");
+    data.append(mediaType === "video" ? "video" : "image", file);
 
-    reader.onloadend = () => {
-      const nextItem = {
-        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-        type: mediaType,
-        title: title.trim() || "Homepage media",
-        caption: caption.trim() || "Added from the admin panel.",
-        src: reader.result,
-      };
-
-      const nextItems = [nextItem, ...items];
-      saveItems(nextItems);
-      setStatus("Saved to the homepage gallery.");
+    try {
+      const saved = await createTestimonialApi(data, getToken());
+      setItems((current) => [saved, ...current]);
+      setStatus("Saved and published on the home page.");
       setTitle("");
       setCaption("");
       setFile(null);
       event.target.reset();
-    };
-
-    reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("Unable to upload homepage media", error);
+      setStatus(error.message || "The media could not be uploaded.");
+    }
   }
 
-  function handleRemove(id) {
-    const nextItems = items.filter((item) => item.id !== id);
-    saveItems(nextItems);
+  async function handleRemove(id) {
+    if (!window.confirm("Remove this media from the home page?")) return;
+
+    try {
+      await deleteTestimonialApi(id, getToken());
+      setItems((current) => current.filter((item) => item._id !== id));
+    } catch (error) {
+      console.error("Unable to delete homepage media", error);
+      setStatus(error.message || "The media could not be removed.");
+    }
   }
 
   return (
@@ -107,8 +112,8 @@ export default function AdminDashboard() {
       >
         <h2 style={{ marginTop: 0 }}>Homepage Media</h2>
         <p style={{ marginBottom: 0 }}>
-          Upload images and videos here. They will appear in the home page
-          gallery automatically.
+          Upload images and videos here. They are stored securely and shown in
+          the Home page media section.
         </p>
       </div>
 
@@ -177,17 +182,17 @@ export default function AdminDashboard() {
 
         <div className="admin-media-list">
           {items.map((item) => (
-            <div key={item.id} className="admin-media-item">
-              {item.type === "video" ? (
-                <video src={item.src} controls />
+            <div key={item._id} className="admin-media-item">
+              {item.videoFile ? (
+                <video src={item.videoFile} controls preload="metadata" />
               ) : (
-                <img src={item.src} alt={item.title} />
+                <img src={item.image} alt={item.title} />
               )}
 
               <div>
                 <strong>{item.title}</strong>
-                <p>{item.caption}</p>
-                <button type="button" onClick={() => handleRemove(item.id)}>
+                <p>{item.testimony}</p>
+                <button type="button" onClick={() => handleRemove(item._id)}>
                   Remove
                 </button>
               </div>

@@ -120,7 +120,10 @@ export default function ProductDetails() {
     <>
       <Navbar />
 
-      <div className="page">
+      <div
+        className="page product-page"
+        style={{ "--product-image": `url("${product.coverImage}")` }}
+      >
         <div className="product-detail">
           <img
             src={product.coverImage}
@@ -373,7 +376,7 @@ export default function ProductDetails() {
             )}
 
             {(product.ingredients || product.directions || product.warnings) && (
-              <div className="cart-summary product-information-card">
+              <div className="cart-summary product-information-card product-care-card">
                 <h3>Product care and safety</h3>
                 {product.ingredients && <p><strong>Ingredients:</strong> {product.ingredients}</p>}
                 {product.directions && <p><strong>Directions:</strong> {product.directions}</p>}

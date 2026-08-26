@@ -536,6 +536,27 @@ async function deleteProduct(req, res) {
   }
 }
 
+async function setProductVisibility(req, res) {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    if (product.pendingDeletion) {
+      return res.status(400).json({ message: "Resolve the pending deletion request before changing visibility." });
+    }
+
+    product.hidden = req.body.hidden === true || req.body.hidden === "true";
+    await product.save();
+
+    res.json({
+      message: product.hidden ? "Product hidden from customers." : "Product is visible to customers again.",
+      product,
+    });
+  } catch (err) {
+    console.error("Error changing product visibility:", err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
 async function getAdminProduct(req, res) {
   try {
     const product = await Product.findById(req.params.id);
@@ -644,6 +665,7 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  setProductVisibility,
   getAdminProduct,
   getAdminProducts,
   approveProduct,

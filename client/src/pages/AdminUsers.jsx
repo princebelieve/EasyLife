@@ -162,10 +162,18 @@ export default function AdminUsers() {
                 <strong>Status:</strong>{" "}
                 {u.isDeleted
                   ? "Deleted"
+                  : u.deletionRequestedAt
+                    ? "Deletion requested"
                   : u.isSuspended
                     ? "Suspended"
                     : "Active"}
               </p>
+              {u.deletionRequestedAt && (
+                <p>
+                  <strong>Request:</strong> {formatDate(u.deletionRequestedAt)}
+                  {u.deletionRequestReason ? ` — ${u.deletionRequestReason}` : ""}
+                </p>
+              )}
               <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
                 <button onClick={() => toggleSuspend(u)} className="btn">
                   {u.isSuspended ? "Restore" : "Suspend"}
@@ -175,7 +183,7 @@ export default function AdminUsers() {
                   onClick={() => toggleDelete(u)}
                   className="btn btn-danger"
                 >
-                  {u.isDeleted ? "Restore" : "Soft Delete"}
+                  {u.isDeleted ? "Restore" : u.deletionRequestedAt ? "Approve deletion" : "Soft Delete"}
                 </button>
 
                 <button

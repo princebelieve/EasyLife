@@ -500,6 +500,28 @@ export async function rejectProductApi(id, token) {
   });
 }
 
+export async function requestAccountDeletion(reason, token) {
+  return apiRequest("/api/users/delete-request", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ reason }),
+  });
+}
+
+export async function setProductVisibilityApi(id, hidden, token) {
+  return apiRequest(`/api/admin/products/${id}/visibility`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ hidden }),
+  });
+}
+
 // -------------------------
 // ADMIN NOTIFICATIONS
 // -------------------------

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import useAuth from "../context/AuthContext";
 
-import { getProfile, updateProfile, changePassword } from "../services/api";
+import { getProfile, updateProfile, changePassword, requestAccountDeletion } from "../services/api";
 
 import UserLayout from "../components/user/UserLayout";
 
@@ -141,6 +141,21 @@ export default function EditProfile() {
       alert(error.message);
     } finally {
       setChangingPassword(false);
+    }
+  }
+
+  async function handleAccountDeletionRequest() {
+    const confirmed = window.confirm(
+      "Request deletion of your account? An administrator will review the request. Your order history may be retained where required.",
+    );
+    if (!confirmed) return;
+
+    const reason = window.prompt("Optional: tell us why you would like your account deleted.") ?? "";
+    try {
+      const response = await requestAccountDeletion(reason, token);
+      alert(response.message);
+    } catch (error) {
+      alert(error.message || "Unable to submit account deletion request.");
     }
   }
 
@@ -322,6 +337,16 @@ export default function EditProfile() {
               </button>
             </form>
           </div>
+
+          <section className="account-danger-zone">
+            <h2>Delete account</h2>
+            <p>
+              Request deletion of your Easy Life account. An administrator will review it; orders and records that must be retained are not deleted immediately.
+            </p>
+            <button type="button" className="account-delete-request" onClick={handleAccountDeletionRequest}>
+              Request account deletion
+            </button>
+          </section>
         </div>
       </div>
     </UserLayout>

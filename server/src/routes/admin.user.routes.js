@@ -10,7 +10,7 @@ const User = require("../models/User");
 router.get("/", protect, adminOnly, async (req, res) => {
   try {
     const users = await User.find()
-      .select("name email role isSuspended isDeleted createdAt")
+      .select("name email role isSuspended isDeleted deletionRequestedAt deletionRequestReason createdAt")
       .sort({ createdAt: -1 });
 
     res.json(users);
@@ -38,6 +38,8 @@ router.put("/:id", protect, adminOnly, async (req, res) => {
     if (typeof isDeleted !== "undefined") {
       user.isDeleted = !!isDeleted;
       user.deletedAt = isDeleted ? Date.now() : null;
+      user.deletionRequestedAt = undefined;
+      user.deletionRequestReason = "";
     }
 
     if (role) {

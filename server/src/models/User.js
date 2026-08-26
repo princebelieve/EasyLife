@@ -90,6 +90,15 @@ const userSchema = new mongoose.Schema(
     deletedAt: {
       type: Date,
     },
+    deletionRequestedAt: {
+      type: Date,
+    },
+    deletionRequestReason: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 1000,
+    },
   },
   { timestamps: true },
 );

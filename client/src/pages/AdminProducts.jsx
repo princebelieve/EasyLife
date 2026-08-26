@@ -9,6 +9,7 @@ import {
   getAdminProducts,
   approveProductApi,
   rejectProductApi,
+  setProductVisibilityApi,
 } from "../services/api";
 import { getToken } from "../utils/auth";
 
@@ -93,6 +94,19 @@ export default function AdminProducts() {
     } catch (err) {
       console.error(err);
       alert(err.message || "Unable to reject");
+    }
+  }
+
+  async function handleVisibility(product) {
+    const action = product.hidden ? "show" : "hide";
+    if (!window.confirm(`${action[0].toUpperCase()}${action.slice(1)} “${product.name}” for customers?`)) return;
+
+    try {
+      await setProductVisibilityApi(product._id, !product.hidden, getToken());
+      loadProducts();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Unable to change product visibility");
     }
   }
 
@@ -216,6 +230,18 @@ export default function AdminProducts() {
                       {product.pendingDeletion ? "Keep product" : "Reject"}
                     </button>
                   </>
+                )}
+
+                {product.hidden && !product.pendingDeletion && (
+                  <span style={{ color: "#8c6a00", fontWeight: 600 }}>
+                    Hidden from customers
+                  </span>
+                )}
+
+                {isAdmin && !product.pendingDeletion && (
+                  <button type="button" onClick={() => handleVisibility(product)}>
+                    {product.hidden ? "Show product" : "Hide product"}
+                  </button>
                 )}
 
                 <button type="button" onClick={() => handleDelete(product._id)}>
