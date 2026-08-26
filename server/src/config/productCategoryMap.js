@@ -4,11 +4,12 @@ module.exports = {
   "Eye Care": "eye-care",
   "Capsules & Supplements": "capsules-supplements",
   "Herbal Tea": "herbal-teas",
-  "Herbal Oral Liquids": "herbal-oral-liquids",
+  "Herbal Drink": "herbal-drinks",
   "Wellness Devices": "wellness-devices",
   // Preserve historic category labels for products that have not yet been
   // edited in the new product form.
-  "Herbal Products": "herbal-oral-liquids",
+  "Herbal Products": "herbal-drinks",
+  "Herbal Oral Liquids": "herbal-drinks",
   "Herbal Tea": "herbal-teas",
   Supplements: "capsules-supplements",
   "Personal Care": "oral-care",

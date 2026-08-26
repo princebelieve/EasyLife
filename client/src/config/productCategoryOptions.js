@@ -5,7 +5,7 @@ const PRODUCT_CATEGORY_OPTIONS = [
   "Eye Care",
   "Capsules & Supplements",
   "Herbal Tea",
-  "Herbal Oral Liquids",
+  "Herbal Drink",
   "Wellness Devices",
 ];
 
