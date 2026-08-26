@@ -87,6 +87,7 @@ const productSchema = new mongoose.Schema(
     brand: { type: String, default: "" },
     vendor: { type: String, default: "" },
     gtin: { type: String, default: "", trim: true },
+    nafdacNumber: { type: String, default: "", trim: true },
     googleProductCategory: { type: String, default: "", trim: true },
     condition: { type: String, enum: ["new", "refurbished", "used"], default: "new" },
     ingredients: { type: String, default: "" },

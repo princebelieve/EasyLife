@@ -347,7 +347,7 @@ export default function ProductDetails() {
           </div>
         </div>
 
-        {(deliveryInfo?.estimatedDays || deliveryInfo?.serviceName || product.category || product.brand || product.vendor || product.netContent || product.countryOfOrigin || product.condition || product.sku || product.gtin || product.ingredients || product.directions || product.warnings) && (
+        {(deliveryInfo?.estimatedDays || deliveryInfo?.serviceName || product.category || product.brand || product.vendor || product.netContent || product.countryOfOrigin || product.condition || product.sku || product.gtin || product.nafdacNumber || product.ingredients || product.directions || product.warnings) && (
           <section className="product-information-grid" aria-label="Product information">
             {(deliveryInfo?.estimatedDays || deliveryInfo?.serviceName) && (
               <div className="cart-summary product-information-card">
@@ -358,7 +358,7 @@ export default function ProductDetails() {
               </div>
             )}
 
-            {(product.category || product.brand || product.vendor || product.netContent || product.countryOfOrigin || product.condition || product.sku || product.gtin) && (
+            {(product.category || product.brand || product.vendor || product.netContent || product.countryOfOrigin || product.condition || product.sku || product.gtin || product.nafdacNumber) && (
               <div className="cart-summary product-information-card">
                 <h3>Product details</h3>
                 {product.category && <p><strong>Category:</strong> {product.category}</p>}
@@ -368,6 +368,7 @@ export default function ProductDetails() {
                 {product.countryOfOrigin && <p><strong>Country of origin:</strong> {product.countryOfOrigin}</p>}
                 {product.condition && <p><strong>Condition:</strong> {product.condition}</p>}
                 {(product.sku || product.gtin) && <p><strong>Product code:</strong> {product.sku || product.gtin}</p>}
+                {product.nafdacNumber && <p><strong>NAFDAC registration number:</strong> {product.nafdacNumber}</p>}
               </div>
             )}
 

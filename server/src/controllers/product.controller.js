@@ -167,7 +167,7 @@ async function createProduct(req, res) {
       stock,
       featured,
       status,
-      salePrice, currency, brand, vendor, gtin, googleProductCategory,
+      salePrice, currency, brand, vendor, gtin, nafdacNumber, googleProductCategory,
       condition, ingredients, directions, warnings, netContent, countryOfOrigin,
       shippingWeight, shippingLength, shippingWidth, shippingHeight,
       shippingClass, shipsInternationally,
@@ -234,6 +234,7 @@ async function createProduct(req, res) {
       brand: brand || "",
       vendor: vendor || "",
       gtin: gtin || "",
+      nafdacNumber: nafdacNumber || "",
       googleProductCategory: googleProductCategory || "",
       condition: condition || "new",
       ingredients: ingredients || "",
@@ -350,7 +351,7 @@ async function updateProduct(req, res) {
       featured,
       status,
       sku,
-      salePrice, currency, brand, vendor, gtin, googleProductCategory,
+      salePrice, currency, brand, vendor, gtin, nafdacNumber, googleProductCategory,
       condition, ingredients, directions, warnings, netContent, countryOfOrigin,
       shippingWeight, shippingLength, shippingWidth, shippingHeight,
       shippingClass, shipsInternationally,
@@ -392,6 +393,7 @@ async function updateProduct(req, res) {
     if (brand !== undefined) product.brand = brand;
     if (vendor !== undefined) product.vendor = vendor;
     if (gtin !== undefined) product.gtin = gtin;
+    if (nafdacNumber !== undefined) product.nafdacNumber = nafdacNumber;
     if (googleProductCategory !== undefined) product.googleProductCategory = googleProductCategory;
     if (condition) product.condition = condition;
     if (ingredients !== undefined) product.ingredients = ingredients;
