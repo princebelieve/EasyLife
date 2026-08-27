@@ -5444,6 +5444,10 @@ button:hover,
 .testimonial-admin-form input, .testimonial-admin-form textarea { width: 100%; padding: 13px 15px; border: 1px solid #d7dce2; border-radius: 8px; font: inherit; }
 .testimonial-admin-form label { display: grid; gap: 7px; color: var(--navy); font-weight: 700; }
 .testimonial-admin-form input[type="checkbox"] { width: 18px; }
+.content-studio-message { margin: 0; padding: 10px 12px; border-radius: 7px; font-weight: 700; }
+.content-studio-message.error { background: #fff0f0; color: #a52222; border: 1px solid #efb5b5; }
+.content-studio-message.success { background: #eaf8ef; color: #176b38; border: 1px solid #acdcb8; }
+.content-studio-message.info { background: #eef6ff; color: #195c9d; border: 1px solid #b8d6f2; }
 .testimonial-admin-list { display: grid; gap: 16px; }
 .testimonial-admin-item { display: flex; justify-content: space-between; gap: 20px; padding: 22px; border: 1px solid rgba(184, 134, 32, .25); border-radius: 8px; background: var(--white); }
 .testimonial-admin-item span, .testimonial-admin-item small { display: block; color: #52675b; margin-top: 5px; }
