@@ -500,6 +500,14 @@ export async function rejectProductApi(id, token) {
   });
 }
 
+export async function getContentUploadUrl(file, mediaType, token) {
+  return apiRequest("/api/testimonials/admin/upload-url", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ mediaType, fileName: file.name, contentType: file.type }),
+  });
+}
+
 export async function requestAccountDeletion(reason, token) {
   return apiRequest("/api/users/delete-request", {
     method: "POST",

@@ -1,6 +1,6 @@
 const Testimonial = require("../models/Testimonial");
 const User = require("../models/User");
-const { uploadToR2 } = require("../config/r2");
+const { uploadToR2, createPresignedContentUpload } = require("../config/r2");
 const { createNotification, createNotificationsForUsers, notifyAdmins } = require("../services/notification.service");
 const { sendPushToUsers } = require("../services/push.service");
 const { sendAnnouncementEmail } = require("../services/email");
@@ -41,15 +41,23 @@ async function getAdminTestimonials(req, res) {
   }
 }
 
+async function createContentUploadUrl(req, res) {
+  try {
+    res.json(await createPresignedContentUpload(req.body));
+  } catch (error) {
+    res.status(400).json({ message: error.message || "Unable to prepare the media upload." });
+  }
+}
+
 async function createTestimonial(req, res) {
   try {
     const { contentType, title, name, role, testimony, linkUrl, videoUrl, featured, bannerEnabled, seoTitle, seoDescription, status } = req.body;
     if (!name || !testimony) return res.status(400).json({ message: "Author or organisation and content are required." });
     const isAdmin = req.user.role === "admin";
 
-    let image = "";
-    let videoFile = "";
-    let audioFile = "";
+    let image = req.body.image || "";
+    let videoFile = req.body.videoFile || "";
+    let audioFile = req.body.audioFile || "";
     if (req.files?.image?.[0]) image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
     if (req.files?.audio?.[0]) audioFile = await uploadToR2(req.files.audio[0], "testimonials/audio");
@@ -133,6 +141,9 @@ async function updateTestimonial(req, res) {
       testimonial.approved = false;
       testimonial.status = "inactive";
     }
+    if (req.body.image !== undefined) testimonial.image = req.body.image;
+    if (req.body.videoFile !== undefined) testimonial.videoFile = req.body.videoFile;
+    if (req.body.audioFile !== undefined) testimonial.audioFile = req.body.audioFile;
     if (req.files?.image?.[0]) testimonial.image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) testimonial.videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
     if (req.files?.audio?.[0]) testimonial.audioFile = await uploadToR2(req.files.audio[0], "testimonials/audio");
@@ -186,6 +197,7 @@ async function deleteTestimonial(req, res) {
 module.exports = {
   getTestimonials,
   getAdminTestimonials,
+  createContentUploadUrl,
   createTestimonial,
   updateTestimonial,
   deleteTestimonial,

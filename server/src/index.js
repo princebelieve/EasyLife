@@ -3,6 +3,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const multer = require("multer");
 
 const connectDB = require("./config/db");
 
@@ -257,6 +258,23 @@ app.use("/api/admin/users", adminUserRoutes);
 
 app.get("/", (req, res) => {
   res.send("Easy Life Wellness Hub API is running");
+});
+
+// Keep multipart validation errors in JSON so the Content Studio can show a
+// useful message instead of receiving Express's default HTML error page.
+app.use((error, req, res, next) => {
+  if (error instanceof multer.MulterError) {
+    if (error.code === "LIMIT_FILE_SIZE") {
+      return res.status(413).json({ message: "The selected media file is larger than the allowed upload limit." });
+    }
+    return res.status(400).json({ message: `Media upload failed: ${error.message}` });
+  }
+
+  if (error?.message === "Only audio, image, or video files are allowed.") {
+    return res.status(415).json({ message: error.message });
+  }
+
+  return next(error);
 });
 
 const PORT = process.env.PORT || 4000;

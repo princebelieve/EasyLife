@@ -8,6 +8,7 @@ import ServicePromoCarousel from "../components/ServicePromoCarousel";
 import PostShareButton from "../components/PostShareButton";
 import { getProducts, getTestimonials } from "../services/api";
 import useScrollReveal from "../hooks/useScrollReveal";
+import { getVideoEmbedUrl } from "../utils/videoEmbed";
 
 const pillars = [
   { icon: Sprout, title: "Naturopathic Wellness", text: "Natural solutions for a healthier, longer, and vibrant life." },
@@ -17,17 +18,6 @@ const pillars = [
 ];
 
 const trainings = ["Wellness and hygiene education", "Responsible product use according to label directions", "Leadership and public speaking", "Community outreach and customer relationships"];
-
-function getTestimonialEmbedUrl(url) {
-  if (!url) return "";
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname.includes("youtu.be")) return `https://www.youtube.com/embed/${parsed.pathname.slice(1)}`;
-    if (parsed.hostname.includes("youtube.com")) return `https://www.youtube.com/embed/${parsed.searchParams.get("v") || ""}`;
-    if (parsed.hostname.includes("vimeo.com")) return `https://player.vimeo.com/video/${parsed.pathname.split("/").filter(Boolean).pop()}`;
-  } catch { return ""; }
-  return "";
-}
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -63,7 +53,7 @@ export default function Home() {
 
   useEffect(() => {
     getProducts().then((data) => setProducts(Array.isArray(data) ? data.filter((p) => p.featured).slice(0, 4) : [])).catch(() => setProducts([]));
-    getTestimonials(true).then((data) => setTestimonials(Array.isArray(data) ? data.map((item) => item.audioFile ? { ...item, videoFile: item.audioFile } : item).slice(0, 3) : [])).catch(() => setTestimonials([]));
+    getTestimonials(true).then((data) => setTestimonials(Array.isArray(data) ? data.slice(0, 3) : [])).catch(() => setTestimonials([]));
   }, []);
 
   return (
@@ -115,7 +105,7 @@ export default function Home() {
 
         <section className="section easy-training-section reveal"><div className="container easy-two-column"><div><p className="easy-eyebrow">FREE WEEKLY TRAINING</p><h2>Learn practical wellness, hygiene, and community skills.</h2><p>Registered members can attend free training every Thursday at 11:00 AM at our Akpakpava location. Sessions cover wellness and hygiene education, responsible product use according to label directions, leadership, and community outreach.</p><Link to="/register" className="easy-btn easy-btn-primary breathing-button">Join the community <ArrowRight size={18} /></Link><ul className="easy-training-list">{trainings.map((item) => <li key={item}>✓ {item}</li>)}</ul></div><img className="easy-section-image" src="/image-5.png" alt="Easy Life wellness education and community training" /></div></section>
 
-        {testimonials.length > 0 && <section className="section testimonials-showcase reveal"><div className="container"><div className="easy-section-heading easy-heading-row"><div><p className="easy-eyebrow">COMMUNITY STORIES</p><h2>See how the Easy Life community is growing.</h2></div><Link className="easy-text-link" to="/testimonials">View all stories <ArrowRight size={17} /></Link></div><div className="testimonial-home-grid">{testimonials.map((item) => { const embedUrl = getTestimonialEmbedUrl(item.videoUrl); return <article className="testimonial-home-card content-card" key={item._id}>{(item.videoFile || embedUrl || item.image) && <div className="testimonial-home-media">{item.videoFile ? <video controls preload="metadata" poster={item.image || undefined} src={item.videoFile} /> : embedUrl ? <iframe title={`${item.name} testimonial video`} src={embedUrl} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen /> : <img src={item.image} alt={item.name} />}</div>}<div><p>“{item.testimony}”</p><strong>{item.name}</strong>{item.role && <span>{item.role}</span>}<PostShareButton title={item.title || item.name} text={item.testimony} url={`${window.location.origin}/testimonials#${item._id}`} /></div></article>; })}</div></div></section>}
+        {testimonials.length > 0 && <section className="section testimonials-showcase reveal"><div className="container"><div className="easy-section-heading easy-heading-row"><div><p className="easy-eyebrow">COMMUNITY STORIES</p><h2>See how the Easy Life community is growing.</h2></div><Link className="easy-text-link" to="/testimonials">View all stories <ArrowRight size={17} /></Link></div><div className="testimonial-home-grid">{testimonials.map((item) => { const embedUrl = getVideoEmbedUrl(item.videoUrl); return <article className="testimonial-home-card content-card" key={item._id}>{(item.videoFile || item.audioFile || embedUrl || item.image) && <div className="testimonial-home-media">{item.videoFile ? <video controls preload="metadata" poster={item.image || undefined} src={item.videoFile} /> : item.audioFile ? <audio controls preload="metadata" src={item.audioFile} /> : embedUrl ? <iframe title={`${item.name} testimonial video`} src={embedUrl} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen /> : <img src={item.image} alt={item.name} />}</div>}<div><p>“{item.testimony}”</p><strong>{item.name}</strong>{item.role && <span>{item.role}</span>}<PostShareButton title={item.title || item.name} text={item.testimony} url={`${window.location.origin}/testimonials#${item._id}`} /></div></article>; })}</div></div></section>}
 
         <section className="easy-membership"><div className="container easy-membership-grid"><div><p className="easy-eyebrow">MEMBERSHIP</p><h2>Learn freely. Participate fully.</h2><p>Registered members receive free Thursday training at 11:00 AM in Akpakpava, wellness education, leadership development, and opportunities to join official health-awareness outreaches.</p></div><div className="easy-member-card content-card"><strong>Registered members can</strong><ul><li>Attend free weekly wellness and hygiene training</li><li>Learn responsible product use according to label directions</li><li>Follow Easy Life to official health-awareness outreaches</li><li>Build confidence, leadership, and community connections</li></ul><Link to="/register" className="easy-btn easy-btn-light breathing-button">Become a member</Link></div></div></section>
 

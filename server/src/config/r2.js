@@ -4,6 +4,8 @@ const {
   PutObjectCommand,
   DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { randomUUID } = require("crypto");
 
 const s3 = new S3Client({
   region: "auto",
@@ -29,6 +31,23 @@ async function uploadToR2(file, folder = "general") {
   );
 
   return `${process.env.R2_PUBLIC_BASE_URL}/${key}`;
+}
+
+function safeFileName(fileName = "upload") {
+  return fileName.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-").slice(0, 120) || "upload";
+}
+
+async function createPresignedContentUpload({ mediaType, fileName, contentType }) {
+  const mediaFolders = { image: "testimonials/images", video: "testimonials/videos", audio: "testimonials/audio" };
+  const folder = mediaFolders[mediaType];
+  if (!folder || !contentType?.toLowerCase().startsWith(`${mediaType}/`)) {
+    throw new Error("The selected file type does not match the requested media type.");
+  }
+
+  const key = `${folder}/${randomUUID()}-${safeFileName(fileName)}`;
+  const command = new PutObjectCommand({ Bucket: process.env.R2_BUCKET, Key: key, ContentType: contentType });
+  const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 10 * 60 });
+  return { uploadUrl, publicUrl: `${process.env.R2_PUBLIC_BASE_URL.replace(/\/$/, "")}/${key}` };
 }
 
 function getR2KeyFromPublicUrl(fileUrl) {
@@ -67,4 +86,4 @@ async function deleteFromR2(fileUrl) {
   return true;
 }
 
-module.exports = { uploadToR2, deleteFromR2 };
+module.exports = { uploadToR2, createPresignedContentUpload, deleteFromR2 };

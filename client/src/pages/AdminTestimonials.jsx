@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createTestimonialApi, deleteTestimonialApi, getAdminTestimonials, updateTestimonialApi } from "../services/api";
+import { createTestimonialApi, deleteTestimonialApi, getAdminTestimonials, getContentUploadUrl, updateTestimonialApi } from "../services/api";
 import { getToken } from "../utils/auth";
 import useAuth from "../context/AuthContext";
 
@@ -45,8 +45,15 @@ export default function AdminTestimonials() {
     Object.entries(form).forEach(([key, value]) => {
       if (value !== null && value !== undefined && !["image", "video", "audio"].includes(key)) data.append(key, value);
     });
-    if (form[mediaType]) data.append(mediaType, form[mediaType]);
     try {
+      const file = form[mediaType];
+      if (file) {
+        setMessage("Uploading media directly to storage…");
+        const { uploadUrl, publicUrl } = await getContentUploadUrl(file, mediaType, getToken());
+        const upload = await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+        if (!upload.ok) throw new Error("Media upload to storage failed.");
+        data.append(mediaType === "image" ? "image" : `${mediaType}File`, publicUrl);
+      }
       if (editing) await updateTestimonialApi(editing, data, getToken());
       else await createTestimonialApi(data, getToken());
       setForm(blank);
