@@ -17,6 +17,7 @@ export default function PwaNotificationBanner() {
 
     // Check if permission is already granted
     if (Notification.permission === "granted") {
+      ensurePushSubscription();
       return;
     }
 

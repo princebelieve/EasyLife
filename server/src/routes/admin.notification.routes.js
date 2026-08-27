@@ -4,6 +4,7 @@ const router = express.Router();
 
 const Notification = require("../models/Notification");
 const { protect, adminOnly } = require("../middleware/auth");
+const { sendPushToUser } = require("../services/push.service");
 
 router.get("/pending", protect, adminOnly, async (req, res) => {
   try {
@@ -35,6 +36,15 @@ router.put("/:id/approve", protect, adminOnly, async (req, res) => {
     notification.reviewedAt = Date.now();
     notification.reviewedBy = req.user._id;
     await notification.save();
+
+    if (notification.userId) {
+      await sendPushToUser(notification.userId, {
+        title: notification.title,
+        body: notification.body,
+        link: notification.link,
+        data: notification.data,
+      });
+    }
 
     res.json({ message: "Notification request approved", notification });
   } catch (error) {

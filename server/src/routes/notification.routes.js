@@ -1,6 +1,7 @@
 const express = require("express");
 const { protect, adminOnly } = require("../middleware/auth");
 const Notification = require("../models/Notification");
+const { sendPushToUser, sendPushToUsers } = require("../services/push.service");
 
 const router = express.Router();
 
@@ -75,6 +76,15 @@ router.post("/", protect, async (req, res) => {
       reviewedBy: isSubadmin ? undefined : req.user._id,
     });
 
+    if (!isSubadmin && notification.userId) {
+      await sendPushToUser(notification.userId, {
+        title: notification.title,
+        body: notification.body,
+        link: notification.link,
+        data: notification.data,
+      });
+    }
+
     res.status(isSubadmin ? 202 : 201).json(notification);
   } catch (error) {
     console.error(error);
@@ -125,6 +135,10 @@ router.post("/broadcast/all", protect, async (req, res) => {
     }));
 
     const notifications = await Notification.insertMany(notificationData);
+
+    if (!isSubadmin) {
+      await sendPushToUsers(users.map((user) => user._id), { title, body, link, data });
+    }
 
     res.status(isSubadmin ? 202 : 201).json({
       message: `Notification sent to ${notifications.length} users`,

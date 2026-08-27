@@ -1,97 +1,77 @@
 import { useEffect, useState } from "react";
-import { Download } from "lucide-react";
+import { Download, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+const benefits = [
+  "Install Easy Life for one-tap access from your home screen.",
+  "Get timely order, community, and wellness updates.",
+  "Open Easy Life faster, with an app-like full-screen experience.",
+];
+
+function isInstalled() {
+  return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)
+    || window.navigator.standalone === true;
+}
 
 export default function PwaInstallBanner() {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [benefitIndex, setBenefitIndex] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const deferredPrompt = window.__deferredPrompt;
-    const isInstalled =
-      (window.matchMedia &&
-        window.matchMedia("(display-mode: standalone)").matches) ||
-      window.navigator.standalone === true;
+    const isiOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
+    const canInstall = () => Boolean(window.__deferredPrompt) || isiOS;
+    const showWhenAvailable = () => {
+      if (!isInstalled() && !localStorage.getItem("pwaInstallDismissed") && canInstall()) setVisible(true);
+    };
 
-    // show banner if either install prompt exists (Android) or it's iOS where we'll show instructions
-    const isiOS =
-      /iphone|ipad|ipod/i.test(navigator.userAgent) &&
-      !window.navigator.standalone;
-    if (isInstalled) return;
-
-    const dismissedFlag = localStorage.getItem("pwaInstallDismissed");
-    if (dismissedFlag) return setDismissed(true);
-
-    if (!deferredPrompt && !isiOS) return; // nothing to do for non-mobile install-capable browsers
-
-    const timer = setTimeout(() => setVisible(true), 30000);
-
-    return () => clearTimeout(timer);
+    if (localStorage.getItem("pwaInstallDismissed")) setDismissed(true);
+    const timer = window.setTimeout(showWhenAvailable, 12000);
+    window.addEventListener("beforeinstallprompt", showWhenAvailable);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("beforeinstallprompt", showWhenAvailable);
+    };
   }, []);
 
-  const deferredPrompt = window.__deferredPrompt;
-  const isInstalled =
-    (window.matchMedia &&
-      window.matchMedia("(display-mode: standalone)").matches) ||
-    window.navigator.standalone === true;
+  useEffect(() => {
+    if (!visible) return undefined;
+    const timer = window.setInterval(() => setBenefitIndex((current) => (current + 1) % benefits.length), 5000);
+    return () => window.clearInterval(timer);
+  }, [visible]);
 
-  if (!visible || dismissed || isInstalled) return null;
+  if (!visible || dismissed || isInstalled()) return null;
 
-  const handleInstall = async () => {
-    const isiOS =
-      /iphone|ipad|ipod/i.test(navigator.userAgent) &&
-      !window.navigator.standalone;
-
+  async function handleInstall() {
+    const deferredPrompt = window.__deferredPrompt;
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const choice = await deferredPrompt.userChoice;
-      if (choice && choice.outcome === "accepted") {
+      if (choice?.outcome === "accepted") {
         setVisible(false);
-        localStorage.setItem("pwaInstallDismissed", "true");
         window.__deferredPrompt = null;
       }
       return;
     }
+    navigate("/install-instructions");
+  }
 
-    if (isiOS) {
-      navigate("/install-instructions");
-      return;
-    }
-
-    window.alert(
-      "Open this page in Chrome and tap the menu (⋮) → Add to Home screen to install the app.",
-    );
-  };
-
-  const handleDismiss = () => {
+  function dismiss() {
     setVisible(false);
     setDismissed(true);
     localStorage.setItem("pwaInstallDismissed", "true");
-  };
+  }
 
   return (
-    <div className="pwa-install-banner">
-      <div className="pwa-banner-content">
-        <Download size={20} className="pwa-banner-icon" />
-        <div>
-          <strong>Install Easy Life App</strong>
-          <p>Get faster access — add Easy Life to your home screen</p>
-        </div>
+    <aside className="pwa-install-pill" aria-label="Install the Easy Life app">
+      <Download size={17} aria-hidden="true" />
+      <div className="pwa-install-pill-copy">
+        <strong>Easy Life App</strong>
+        <span key={benefitIndex}>{benefits[benefitIndex]}</span>
       </div>
-
-      <div className="pwa-banner-actions">
-        <button className="pwa-btn-enable" onClick={handleInstall}>
-          Install
-        </button>
-        <button
-          className="pwa-btn-dismiss"
-          onClick={handleDismiss}
-          aria-label="Dismiss"
-        >
-          ✕
-        </button>
-      </div>
-    </div>
+      <button type="button" onClick={handleInstall}>Install</button>
+      <button type="button" className="pwa-install-pill-dismiss" onClick={dismiss} aria-label="Dismiss install suggestion"><X size={16} /></button>
+    </aside>
   );
 }

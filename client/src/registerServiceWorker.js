@@ -17,46 +17,38 @@ async function subscribeToPush(registration) {
       return;
     }
 
-    // Check if already subscribed
-    const existingSubscription =
-      await registration.pushManager.getSubscription();
-    if (existingSubscription) {
-      console.log("Already subscribed to push notifications");
-      return;
-    }
-
-    // Fetch VAPID public key from backend
-    const apiUrl = import.meta.env.VITE_API_URL || "";
-    const vapidResponse = await fetch(`${apiUrl}/api/push/vapid-public-key`);
-
-    if (!vapidResponse.ok) {
-      console.log("VAPID key not available on server");
-      return;
-    }
-
-    const { publicKey } = await vapidResponse.json();
-
-    if (!publicKey) {
-      console.log("No VAPID public key received");
-      return;
-    }
-
-    // Convert public key to Uint8Array
-    const convertedVapidKey = urlBase64ToUint8Array(publicKey);
-
-    // Subscribe to push
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: convertedVapidKey,
-    });
-
-    // Send subscription to backend
+    // Do not create a subscription until it can be associated with a signed-in
+    // user. Existing subscriptions must still be synchronised after login.
     const token = localStorage.getItem("accessToken");
     if (!token) {
       console.log("User not authenticated, skipping push subscription");
       return;
     }
 
+    let subscription = await registration.pushManager.getSubscription();
+
+    const apiUrl = import.meta.env.VITE_API_URL || "";
+    if (!subscription) {
+      const vapidResponse = await fetch(`${apiUrl}/api/push/vapid-public-key`);
+      if (!vapidResponse.ok) {
+        console.log("VAPID key not available on server");
+        return;
+      }
+
+      const { publicKey } = await vapidResponse.json();
+      if (!publicKey) {
+        console.log("No VAPID public key received");
+        return;
+      }
+
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicKey),
+      });
+    }
+
+    // Always send the current endpoint to the API, including endpoints retained
+    // by the browser across refreshes.
     const subscribeResponse = await fetch(`${apiUrl}/api/push/subscribe`, {
       method: "POST",
       headers: {
