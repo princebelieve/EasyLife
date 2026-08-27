@@ -16,6 +16,8 @@ function isInstalled() {
 export default function PwaInstallBanner() {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [eligible, setEligible] = useState(false);
+  const [leaving, setLeaving] = useState(false);
   const [benefitIndex, setBenefitIndex] = useState(0);
   const navigate = useNavigate();
 
@@ -23,7 +25,7 @@ export default function PwaInstallBanner() {
     const isiOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
     const canInstall = () => Boolean(window.__deferredPrompt) || isiOS;
     const showWhenAvailable = () => {
-      if (!isInstalled() && !localStorage.getItem("pwaInstallDismissed") && canInstall()) setVisible(true);
+      if (!isInstalled() && !localStorage.getItem("pwaInstallDismissed") && canInstall()) setEligible(true);
     };
 
     if (localStorage.getItem("pwaInstallDismissed")) setDismissed(true);
@@ -36,10 +38,23 @@ export default function PwaInstallBanner() {
   }, []);
 
   useEffect(() => {
-    if (!visible) return undefined;
-    const timer = window.setInterval(() => setBenefitIndex((current) => (current + 1) % benefits.length), 5000);
-    return () => window.clearInterval(timer);
-  }, [visible]);
+    if (!eligible || dismissed) return undefined;
+    let holdTimer; let leaveTimer; let waitTimer;
+    const showNext = () => {
+      setLeaving(false);
+      setVisible(true);
+      holdTimer = window.setTimeout(() => {
+        setLeaving(true);
+        leaveTimer = window.setTimeout(() => {
+          setVisible(false);
+          setBenefitIndex((current) => (current + 1) % benefits.length);
+          waitTimer = window.setTimeout(showNext, 22000);
+        }, 350);
+      }, 8000);
+    };
+    showNext();
+    return () => { window.clearTimeout(holdTimer); window.clearTimeout(leaveTimer); window.clearTimeout(waitTimer); };
+  }, [eligible, dismissed]);
 
   if (!visible || dismissed || isInstalled()) return null;
 
@@ -50,6 +65,7 @@ export default function PwaInstallBanner() {
       const choice = await deferredPrompt.userChoice;
       if (choice?.outcome === "accepted") {
         setVisible(false);
+        setEligible(false);
         window.__deferredPrompt = null;
       }
       return;
@@ -59,12 +75,13 @@ export default function PwaInstallBanner() {
 
   function dismiss() {
     setVisible(false);
+    setEligible(false);
     setDismissed(true);
     localStorage.setItem("pwaInstallDismissed", "true");
   }
 
   return (
-    <aside className="pwa-install-pill" aria-label="Install the Easy Life app">
+    <aside className={`pwa-install-pill${leaving ? " leaving" : ""}`} aria-label="Install the Easy Life app">
       <Download size={17} aria-hidden="true" />
       <div className="pwa-install-pill-copy">
         <strong>Easy Life App</strong>

@@ -447,7 +447,9 @@ button {
 .pwa-install-pill-copy span { overflow: hidden; max-width: 330px; color: rgba(255,255,255,.88); font-size: 12px; white-space: nowrap; text-overflow: ellipsis; animation: installPillText .35s ease-out; }
 .pwa-install-pill button { border: 0; border-radius: 999px; padding: 7px 12px; background: var(--gold); color: var(--navy); font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
 .pwa-install-pill .pwa-install-pill-dismiss { display: grid; place-items: center; padding: 4px; background: transparent; color: var(--cream); }
+.pwa-install-pill.leaving { animation: installPillOut .35s ease-in both; }
 @keyframes installPillIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes installPillOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(16px); } }
 @keyframes installPillText { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
 @media (max-width: 560px) { .pwa-install-pill { right: 12px; bottom: 12px; left: 12px; } .pwa-install-pill-copy { flex: 1; } .pwa-install-pill-copy span { max-width: 50vw; } }
 
