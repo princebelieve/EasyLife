@@ -9,6 +9,10 @@ function asBoolean(value) {
   return value === true || value === "true";
 }
 
+function lastValue(value) {
+  return Array.isArray(value) ? value[value.length - 1] : value;
+}
+
 function publicFilter() {
   return { approved: { $ne: false }, status: "active" };
 }
@@ -55,9 +59,9 @@ async function createTestimonial(req, res) {
     if (!name || !testimony) return res.status(400).json({ message: "Author or organisation and content are required." });
     const isAdmin = req.user.role === "admin";
 
-    let image = req.body.image || "";
-    let videoFile = req.body.videoFile || req.body.video || "";
-    let audioFile = req.body.audioFile || req.body.audio || "";
+    let image = lastValue(req.body.image) || "";
+    let videoFile = lastValue(req.body.videoFile || req.body.video) || "";
+    let audioFile = lastValue(req.body.audioFile || req.body.audio) || "";
     if (req.files?.image?.[0]) image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
     if (req.files?.audio?.[0]) audioFile = await uploadToR2(req.files.audio[0], "testimonials/audio");
@@ -141,9 +145,9 @@ async function updateTestimonial(req, res) {
       testimonial.approved = false;
       testimonial.status = "inactive";
     }
-    if (req.body.image !== undefined) testimonial.image = req.body.image;
-    if (req.body.videoFile !== undefined) testimonial.videoFile = req.body.videoFile;
-    if (req.body.audioFile !== undefined) testimonial.audioFile = req.body.audioFile;
+    if (req.body.image !== undefined) testimonial.image = lastValue(req.body.image);
+    if (req.body.videoFile !== undefined) testimonial.videoFile = lastValue(req.body.videoFile);
+    if (req.body.audioFile !== undefined) testimonial.audioFile = lastValue(req.body.audioFile);
     if (req.body.mediaType !== undefined) {
       testimonial.mediaType = req.body.mediaType;
       if (req.body.mediaType !== "image") testimonial.image = "";
