@@ -2,7 +2,11 @@ import { Share2 } from "lucide-react";
 
 export default function PostShareButton({ title, text, url }) {
   async function sharePost() {
-    const shareData = { title, text, url };
+    const legacyMatch = url.match(/\/testimonials#([^/?#]+)/);
+    const shareUrl = legacyMatch
+      ? `${window.location.origin}/share/testimonial?id=${encodeURIComponent(legacyMatch[1])}`
+      : url;
+    const shareData = { title, text, url: shareUrl };
 
     try {
       if (navigator.share) {
@@ -10,7 +14,7 @@ export default function PostShareButton({ title, text, url }) {
         return;
       }
 
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(shareUrl);
       window.alert("Post link copied.");
     } catch (error) {
       if (error?.name !== "AbortError") {
