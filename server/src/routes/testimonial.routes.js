@@ -19,14 +19,14 @@ router.post(
   "/admin",
   protect,
   adminOrSubadminOnly,
-  upload.fields([{ name: "image", maxCount: 1 }, { name: "video", maxCount: 1 }, { name: "audio", maxCount: 1 }]),
+  upload.fields([{ name: "image", maxCount: 1 }, { name: "video", maxCount: 1 }, { name: "audio", maxCount: 1 }, { name: "videoFile", maxCount: 1 }, { name: "audioFile", maxCount: 1 }]),
   createTestimonial,
 );
 router.put(
   "/admin/:id",
   protect,
   adminOrSubadminOnly,
-  upload.fields([{ name: "image", maxCount: 1 }, { name: "video", maxCount: 1 }, { name: "audio", maxCount: 1 }]),
+  upload.fields([{ name: "image", maxCount: 1 }, { name: "video", maxCount: 1 }, { name: "audio", maxCount: 1 }, { name: "videoFile", maxCount: 1 }, { name: "audioFile", maxCount: 1 }]),
   updateTestimonial,
 );
 router.delete("/admin/:id", protect, adminOnly, deleteTestimonial);
