@@ -5433,6 +5433,7 @@ button:hover,
 .testimonial-media iframe, .testimonial-home-media iframe { width: 100%; height: 100%; min-height: 220px; border: 0; display: block; }
 .testimonial-home-media { position: relative; z-index: 1; width: 100%; aspect-ratio: 16 / 10; background: var(--navy); }
 .testimonial-home-media video, .testimonial-home-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.testimonial-media video, .testimonial-home-media video { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; background: #000; image-rendering: auto; }
 .testimonial-home-media audio { display: block; width: calc(100% - 32px); margin: calc(31.25% - 20px) 16px; }
 .testimonial-placeholder { display: grid; place-items: center; height: 100%; color: var(--cream); letter-spacing: .1em; }
 .testimonial-body, .testimonial-home-card > div:not(.testimonial-home-media) { position: relative; z-index: 1; padding: 22px; }
