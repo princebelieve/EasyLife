@@ -56,8 +56,8 @@ async function createTestimonial(req, res) {
     const isAdmin = req.user.role === "admin";
 
     let image = req.body.image || "";
-    let videoFile = req.body.videoFile || "";
-    let audioFile = req.body.audioFile || "";
+    let videoFile = req.body.videoFile || req.body.video || "";
+    let audioFile = req.body.audioFile || req.body.audio || "";
     if (req.files?.image?.[0]) image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
     if (req.files?.audio?.[0]) audioFile = await uploadToR2(req.files.audio[0], "testimonials/audio");

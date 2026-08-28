@@ -53,7 +53,7 @@ export default function Home() {
 
   useEffect(() => {
     getProducts().then((data) => setProducts(Array.isArray(data) ? data.filter((p) => p.featured).slice(0, 4) : [])).catch(() => setProducts([]));
-    getTestimonials(true).then((data) => setTestimonials(Array.isArray(data) ? data.slice(0, 3) : [])).catch(() => setTestimonials([]));
+    getTestimonials(true).then((data) => setTestimonials(Array.isArray(data) ? data.map((item) => ({ ...item, videoFile: item.videoFile || item.video || "", audioFile: item.audioFile || item.audio || "" })).slice(0, 3) : [])).catch(() => setTestimonials([]));
   }, []);
 
   return (
