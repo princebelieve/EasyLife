@@ -51,7 +51,7 @@ async function createContentUploadUrl(req, res) {
 
 async function createTestimonial(req, res) {
   try {
-    const { contentType, title, name, role, testimony, linkUrl, videoUrl, featured, bannerEnabled, seoTitle, seoDescription, status } = req.body;
+    const { contentType, mediaType, title, name, role, testimony, linkUrl, videoUrl, featured, bannerEnabled, seoTitle, seoDescription, status } = req.body;
     if (!name || !testimony) return res.status(400).json({ message: "Author or organisation and content are required." });
     const isAdmin = req.user.role === "admin";
 
@@ -63,7 +63,7 @@ async function createTestimonial(req, res) {
     if (req.files?.audio?.[0]) audioFile = await uploadToR2(req.files.audio[0], "testimonials/audio");
 
     const testimonial = await Testimonial.create({
-      contentType, title, name, role, testimony, linkUrl, videoUrl, image, videoFile, audioFile,
+      contentType, mediaType: mediaType || (videoFile ? "video" : audioFile ? "audio" : image ? "image" : "text"), title, name, role, testimony, linkUrl, videoUrl, image, videoFile, audioFile,
       featured: asBoolean(featured),
       bannerEnabled: isAdmin && asBoolean(bannerEnabled),
       approved: isAdmin,
@@ -126,7 +126,7 @@ async function updateTestimonial(req, res) {
       return res.status(403).json({ message: "You can only edit your own submissions." });
     }
 
-    const fields = ["contentType", "title", "name", "role", "testimony", "linkUrl", "videoUrl", "seoTitle", "seoDescription"];
+    const fields = ["contentType", "mediaType", "title", "name", "role", "testimony", "linkUrl", "videoUrl", "seoTitle", "seoDescription"];
     fields.forEach((field) => {
       if (req.body[field] !== undefined) testimonial[field] = req.body[field];
     });
@@ -144,6 +144,12 @@ async function updateTestimonial(req, res) {
     if (req.body.image !== undefined) testimonial.image = req.body.image;
     if (req.body.videoFile !== undefined) testimonial.videoFile = req.body.videoFile;
     if (req.body.audioFile !== undefined) testimonial.audioFile = req.body.audioFile;
+    if (req.body.mediaType !== undefined) {
+      testimonial.mediaType = req.body.mediaType;
+      if (req.body.mediaType !== "image") testimonial.image = "";
+      if (req.body.mediaType !== "video") testimonial.videoFile = "";
+      if (req.body.mediaType !== "audio") testimonial.audioFile = "";
+    }
     if (req.files?.image?.[0]) testimonial.image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) testimonial.videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
     if (req.files?.audio?.[0]) testimonial.audioFile = await uploadToR2(req.files.audio[0], "testimonials/audio");
