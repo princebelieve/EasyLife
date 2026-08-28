@@ -1,5 +1,9 @@
 {
   "rewrites": [
+        {
+          "source": "/share/testimonial",
+          "destination": "/api/share-testimonial"
+        },
     {
       "source": "/api/products-feed.csv",
       "destination": "/api/products-feed"

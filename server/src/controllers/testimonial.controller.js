@@ -36,6 +36,16 @@ async function getTestimonials(req, res) {
   }
 }
 
+  async function getTestimonialById(req, res) {
+    try {
+      const testimonial = await Testimonial.findOne({ _id: req.params.id, ...publicFilter() });
+      if (!testimonial) return res.status(404).json({ message: "Content not found." });
+      res.json(testimonial);
+    } catch (error) {
+      res.status(404).json({ message: "Content not found." });
+    }
+  }
+
 async function getAdminTestimonials(req, res) {
   try {
     const filter = req.user.role === "subadmin" ? { submittedBy: req.user._id } : {};
@@ -206,6 +216,7 @@ async function deleteTestimonial(req, res) {
 
 module.exports = {
   getTestimonials,
+  getTestimonialById,
   getAdminTestimonials,
   createContentUploadUrl,
   createTestimonial,

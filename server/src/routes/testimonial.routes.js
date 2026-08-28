@@ -2,6 +2,7 @@ const express = require("express");
 const upload = require("../middleware/testimonialUpload");
 const {
   getTestimonials,
+  getTestimonialById,
   getAdminTestimonials,
   createContentUploadUrl,
   createTestimonial,
@@ -14,6 +15,7 @@ const router = express.Router();
 
 router.get("/", getTestimonials);
 router.get("/admin", protect, adminOrSubadminOnly, getAdminTestimonials);
+router.get("/:id", getTestimonialById);
 router.post("/admin/upload-url", protect, adminOrSubadminOnly, createContentUploadUrl);
 router.post(
   "/admin",

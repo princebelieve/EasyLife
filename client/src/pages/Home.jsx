@@ -1,3 +1,4 @@
+<PostShareButton title={item.title || item.name} text={item.testimony} url={`${window.location.origin}/share/testimonial?id=${item._id}`} />
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { HeartPulse, Sprout, Users, BriefcaseBusiness, ArrowRight, Handshake } from "lucide-react";

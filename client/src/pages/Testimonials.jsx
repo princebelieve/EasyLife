@@ -1,3 +1,4 @@
+<PostShareButton title={item.title || item.name} text={item.testimony} url={`${window.location.origin}/share/testimonial?id=${item._id}`} />
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
