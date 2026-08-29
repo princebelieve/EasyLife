@@ -1,7 +1,7 @@
 //client/src/pages/AdminOrderDetails.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getOrderById, updateOrderStatusApi } from "../services/api";
+import { getOrderById, markCashCollectedApi, updateOrderStatusApi } from "../services/api";
 import { getToken } from "../utils/auth";
 import { formatDate } from "../utils/formatDate";
 
@@ -18,6 +18,14 @@ export default function AdminOrderDetails() {
       const updated = await updateOrderStatusApi(orderId, status, getToken());
 
       setOrder(updated);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function markCashCollected() {
+    try {
+      setOrder(await markCashCollectedApi(order._id, getToken()));
     } catch (err) {
       console.error(err);
     }
@@ -57,6 +65,8 @@ export default function AdminOrderDetails() {
       <div className="order-side">
         <div className="order-card">
           <h3>Summary</h3>
+          <p>Payment method: {order.paymentMethod === "cash_on_delivery" ? "Pay on delivery" : "Paystack"}</p>
+          {order.paymentMethod === "cash_on_delivery" && <p>Cash collection: {order.cashCollectionStatus}</p>}
           <p>Total: ₦{order.totalAmount}</p>
           <p>Placed: {formatDate(order.createdAt)}</p>
           {order.paidAt && <p>Paid: {formatDate(order.paidAt)}</p>}
@@ -85,6 +95,13 @@ export default function AdminOrderDetails() {
             <option value="delivered">Delivered</option>
           </select>
         </div>
+
+        {order.paymentMethod === "cash_on_delivery" && order.paymentStatus !== "paid" && (
+          <div className="order-card">
+            <h3>Cash collection</h3>
+            <button type="button" className="primary" onClick={markCashCollected}>Mark cash collected</button>
+          </div>
+        )}
       </div>
     </div>
   );

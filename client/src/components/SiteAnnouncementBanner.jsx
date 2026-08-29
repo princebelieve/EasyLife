@@ -41,5 +41,24 @@ export default function SiteAnnouncementBanner() {
     navigate("/login");
   }
 
-  return <div className="site-announcement-banner" role="status"><span className="site-announcement-label">{item.contentType || "announcement"}</span><span className="site-announcement-text">{item.title || item.testimony}</span>{isExternal ? <a href={target} target="_blank" rel="noreferrer" onClick={viewPost}>View post <ArrowRight size={14} /></a> : <Link to={target} onClick={viewPost}>View post <ArrowRight size={14} /></Link>}<button type="button" onClick={() => setDismissed(true)} aria-label="Dismiss announcement"><X size={15} /></button></div>;
+  const announcementLink = isExternal ? (
+    <a href={target} target="_blank" rel="noreferrer" onClick={viewPost}>
+      Read announcement <ArrowRight size={16} aria-hidden="true" />
+    </a>
+  ) : (
+    <Link to={target} onClick={viewPost}>
+      Read announcement <ArrowRight size={16} aria-hidden="true" />
+    </Link>
+  );
+
+  return (
+    <aside className="site-announcement-banner" role="status" aria-live="polite">
+      <span className="site-announcement-label">{item.contentType || "Announcement"}</span>
+      <span className="site-announcement-text">{item.title || item.testimony}</span>
+      {announcementLink}
+      <button type="button" onClick={() => setDismissed(true)} aria-label="Dismiss announcement">
+        <X size={18} aria-hidden="true" />
+      </button>
+    </aside>
+  );
 }

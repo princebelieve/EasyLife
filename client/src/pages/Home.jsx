@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { HeartPulse, Sprout, Users, BriefcaseBusiness, ArrowRight, Handshake } from "lucide-react";
+import { HeartPulse, Sprout, Users, BriefcaseBusiness, ArrowRight, Handshake, Truck } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductGrid from "../components/ProductGrid";
@@ -71,6 +71,10 @@ export default function Home() {
               <div className="easy-actions">
                 <Link className="easy-btn easy-btn-primary" to="/collection">Shop Wellness Products <ArrowRight size={18} /></Link>
                 <Link className="easy-btn easy-btn-light" to="/register">Join the Community</Link>
+              </div>
+              <div className="easy-payment-promise">
+                <Truck size={22} aria-hidden="true" />
+                <div><strong>Pay on Delivery Available</strong><span>Order online and pay when your items arrive.</span></div>
               </div>
             </div>
             <aside className="easy-hero-card hover-lift">

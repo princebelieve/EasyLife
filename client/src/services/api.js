@@ -637,6 +637,13 @@ export async function updateOrderStatusApi(orderId, deliveryStatus, token) {
   });
 }
 
+export async function markCashCollectedApi(orderId, token) {
+  return apiRequest(`/api/admin/orders/${orderId}/cash-collected`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
 export async function archiveOrderApi(orderId, token) {
   return apiRequest(`/api/admin/orders/${orderId}/archive`, {
     method: "PUT",

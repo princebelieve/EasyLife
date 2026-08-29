@@ -6,7 +6,7 @@ import { useCart } from "../context/CartContext";
 const COUNTRY_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
 
 export default function Checkout() {
-  const { cart, subtotal } = useCart();
+  const { cart, subtotal, clearCart } = useCart();
   const [shippingFee, setShippingFee] = useState(0);
   const [shippingInfo, setShippingInfo] = useState(null);
   const [shippingDestinations, setShippingDestinations] = useState(["NG"]);
@@ -25,15 +25,17 @@ export default function Checkout() {
     state: "",
     country: "NG",
     notes: "",
+    paymentMethod: "paystack",
   });
 
   function handleChange(e) {
     const { name, value } = e.target;
 
-    setForm({
-      ...form,
+    setForm((current) => ({
+      ...current,
       [name]: value,
-    });
+      ...(name === "country" && value !== "NG" ? { paymentMethod: "paystack" } : {}),
+    }));
 
   }
 
@@ -86,6 +88,12 @@ export default function Checkout() {
       const response = await initializeCheckout({
         ...form,
       });
+
+      if (response.checkoutType === "cash_on_delivery") {
+        await clearCart();
+        window.location.href = response.confirmation_url;
+        return;
+      }
 
       window.location.href = response.authorization_url;
     } catch (err) {
@@ -157,15 +165,27 @@ export default function Checkout() {
                 onChange={handleChange}
               />
 
+              <fieldset className="payment-methods">
+                <legend>Choose a payment method</legend>
+                <label className="payment-method-option">
+                  <input type="radio" name="paymentMethod" value="paystack" checked={form.paymentMethod === "paystack"} onChange={handleChange} />
+                  <span><strong>Pay online</strong><small>Card, bank transfer, or USSD through Paystack.</small></span>
+                </label>
+                <label className="payment-method-option">
+                  <input type="radio" name="paymentMethod" value="cash_on_delivery" checked={form.paymentMethod === "cash_on_delivery"} onChange={handleChange} disabled={form.country !== "NG"} />
+                  <span><strong>Pay on delivery</strong><small>{form.country === "NG" ? "Pay the exact total to the delivery agent when your order arrives." : "Currently available for deliveries within Nigeria only."}</small></span>
+                </label>
+              </fieldset>
+
               <button
                 type="submit"
                 className="primary"
                 disabled={checkoutLoading || Boolean(shippingError)}
               >
-                {checkoutLoading ? "Processing…" : "Continue To Payment"}
+                {checkoutLoading ? "Processing…" : form.paymentMethod === "cash_on_delivery" ? "Place Pay-on-Delivery Order" : "Continue To Payment"}
               </button>
               <p style={{ marginTop: 12, fontSize: 14, color: "#666" }}>
-                By clicking Continue To Payment, you accept our{" "}
+                By placing your order, you accept our{" "}
                 <a href="/refund-policy" style={{ color: "var(--gold)" }}>
                   Refund & Returns Policy
                 </a>{" "}

@@ -112,6 +112,23 @@ router.put("/:id/status", protect, adminOnly, async (req, res) => {
   res.json(order);
 });
 
+// MARK CASH AS COLLECTED FOR A PAY-ON-DELIVERY ORDER
+router.put("/:id/cash-collected", protect, adminOnly, async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) return res.status(404).json({ message: "Order not found" });
+  if (order.paymentMethod !== "cash_on_delivery") {
+    return res.status(400).json({ message: "This order is not a pay-on-delivery order." });
+  }
+
+  order.paymentStatus = "paid";
+  order.cashCollectionStatus = "collected";
+  order.paidAt = order.paidAt || new Date();
+  await order.save();
+
+  res.json(order);
+});
+
 // ARCHIVE ORDER
 router.put("/:id/archive", protect, adminOnly, async (req, res) => {
   const order = await Order.findById(req.params.id);

@@ -98,6 +98,18 @@ const orderSchema = new mongoose.Schema(
       default: "NGN",
     },
 
+    paymentMethod: {
+      type: String,
+      enum: ["paystack", "cash_on_delivery"],
+      default: "paystack",
+    },
+
+    cashCollectionStatus: {
+      type: String,
+      enum: ["not_applicable", "pending_collection", "collected", "failed"],
+      default: "not_applicable",
+    },
+
     paymentReference: {
       type: String,
       unique: true,

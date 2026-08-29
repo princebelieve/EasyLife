@@ -24,8 +24,20 @@ router.post("/", protect, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const { customerName, email, phone, address, city, state, country, notes } =
-      req.body;
+    const {
+      customerName, email, phone, address, city, state, country, notes,
+      paymentMethod = "paystack",
+    } = req.body;
+
+    if (!["paystack", "cash_on_delivery"].includes(paymentMethod)) {
+      return res.status(400).json({ message: "Choose a valid payment method." });
+    }
+
+    if (paymentMethod === "cash_on_delivery" && country !== "NG") {
+      return res.status(400).json({
+        message: "Payment on delivery is currently available for deliveries within Nigeria only.",
+      });
+    }
 
     // 1. GET CART
     const cart = await Cart.findOne({ userId }).populate("items.productId");
@@ -84,25 +96,21 @@ router.post("/", protect, async (req, res) => {
       .update(confirmationToken)
       .digest("hex");
 
-    // 3. INIT PAYSTACK
-    const payment = await paystack.post("/transaction/initialize", {
-      email,
-      amount: totalAmount * 100,
-      currency: "NGN",
-      callback_url: `${clientUrl}/success?order_token=${confirmationToken}`,
-      metadata: {
-        userId,
-        customerName,
-        phone,
-        address,
-        city,
-        state,
-        country,
-        notes,
-      },
-    });
+    let paymentReference;
+    let authorizationUrl;
 
-    const data = payment.data.data;
+    // 3. Start Paystack only for online payments. COD orders go straight to confirmation.
+    if (paymentMethod === "paystack") {
+      const payment = await paystack.post("/transaction/initialize", {
+        email,
+        amount: totalAmount * 100,
+        currency: "NGN",
+        callback_url: `${clientUrl}/success?order_token=${confirmationToken}`,
+        metadata: { userId, customerName, phone, address, city, state, country, notes },
+      });
+      paymentReference = payment.data.data.reference;
+      authorizationUrl = payment.data.data.authorization_url;
+    }
 
     // 4. CREATE ORDER (pending) with valid payment reference
     const order = await Order.create({
@@ -126,7 +134,9 @@ router.post("/", protect, async (req, res) => {
       deliveryContact: phone,
       totalAmount,
       currency: "NGN",
-      paymentReference: data.reference,
+      paymentMethod,
+      cashCollectionStatus: paymentMethod === "cash_on_delivery" ? "pending_collection" : "not_applicable",
+      paymentReference,
       confirmationTokenHash,
       confirmationTokenExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
@@ -136,7 +146,9 @@ router.post("/", protect, async (req, res) => {
       userId,
       type: "order.created",
       title: "Order Placed",
-      body: `Your order #${order._id.toString().slice(-6).toUpperCase()} has been placed. Awaiting payment confirmation.`,
+      body: paymentMethod === "cash_on_delivery"
+        ? `Your order #${order._id.toString().slice(-6).toUpperCase()} has been received. Please pay the delivery agent on arrival.`
+        : `Your order #${order._id.toString().slice(-6).toUpperCase()} has been placed. Awaiting payment confirmation.`,
       link: `/dashboard`,
       data: { orderId: order._id },
     });
@@ -156,10 +168,19 @@ router.post("/", protect, async (req, res) => {
       });
     }
 
-    res.json({
-      authorization_url: data.authorization_url,
-      reference: data.reference,
+    if (paymentMethod === "cash_on_delivery") {
+      await Cart.findOneAndUpdate({ userId }, { items: [] });
+      return res.json({
+        checkoutType: "cash_on_delivery",
+        confirmation_url: `${clientUrl}/success?order_token=${confirmationToken}`,
+        shipping: shippingData,
+      });
+    }
 
+    res.json({
+      checkoutType: "paystack",
+      authorization_url: authorizationUrl,
+      reference: paymentReference,
       shipping: shippingData,
     });
   } catch (err) {

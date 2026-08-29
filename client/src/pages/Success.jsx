@@ -13,15 +13,20 @@ export default function Success() {
 
   const orderToken = searchParams.get("order_token");
   const isPaid = Boolean(order?.paymentStatus === "paid");
+  const isCashOnDelivery = order?.paymentMethod === "cash_on_delivery";
   const isError = Boolean(error || !order);
   const pageTitle = isError
     ? "⚠️ Verification Pending"
+    : isCashOnDelivery
+    ? "Order received — pay on delivery"
     : isPaid
     ? "✅ Payment Received!"
     : "⏳ Payment Processing...";
   const pageMessage = isError
     ? error ||
       "We're processing your payment. Order details will appear here shortly."
+    : isCashOnDelivery
+    ? "We will confirm your order before dispatch. Please pay the delivery agent when it arrives."
     : isPaid
     ? "Your order has been confirmed and is being prepared."
     : "We're processing your payment. Check back soon for updates.";
@@ -194,7 +199,7 @@ export default function Success() {
                   color: isPaid ? "#155724" : "#856404",
                 }}
               >
-                {isPaid ? "PAID" : "PENDING"}
+                {isPaid ? "PAID" : isCashOnDelivery ? "PAY ON DELIVERY" : "PENDING"}
               </span>
             </div>
           </div>
