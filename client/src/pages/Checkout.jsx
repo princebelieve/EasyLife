@@ -169,11 +169,11 @@ export default function Checkout() {
                 <legend>Choose a payment method</legend>
                 <label className="payment-method-option">
                   <input type="radio" name="paymentMethod" value="paystack" checked={form.paymentMethod === "paystack"} onChange={handleChange} />
-                  <span><strong>Pay online</strong><small>Card, bank transfer, or USSD through Paystack.</small></span>
+                  <span><strong>Pay online securely</strong><small>Use card, bank transfer, or USSD through Paystack.</small></span>
                 </label>
                 <label className="payment-method-option">
                   <input type="radio" name="paymentMethod" value="cash_on_delivery" checked={form.paymentMethod === "cash_on_delivery"} onChange={handleChange} disabled={form.country !== "NG"} />
-                  <span><strong>Pay on delivery</strong><small>{form.country === "NG" ? "Pay the exact total to the delivery agent when your order arrives." : "Currently available for deliveries within Nigeria only."}</small></span>
+                  <span><strong>Pay on delivery</strong><small>{form.country === "NG" ? "Pay the total amount to the delivery agent when your order arrives." : "Available for deliveries within Nigeria only."}</small></span>
                 </label>
               </fieldset>
 
@@ -182,7 +182,11 @@ export default function Checkout() {
                 className="primary"
                 disabled={checkoutLoading || Boolean(shippingError)}
               >
-                {checkoutLoading ? "Processing…" : form.paymentMethod === "cash_on_delivery" ? "Place Pay-on-Delivery Order" : "Continue To Payment"}
+                {checkoutLoading
+                  ? "Processing…"
+                  : form.paymentMethod === "cash_on_delivery"
+                    ? "Place Order & Pay on Delivery"
+                    : "Continue to Secure Online Payment"}
               </button>
               <p style={{ marginTop: 12, fontSize: 14, color: "#666" }}>
                 By placing your order, you accept our{" "}

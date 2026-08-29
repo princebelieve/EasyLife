@@ -322,10 +322,55 @@ button {
 .payment-method-option { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid #d5dfd7; border-radius: 10px; background: #fff; cursor: pointer; }
 .payment-method-option:has(input:checked) { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(232, 198, 106, .18); }
 .payment-method-option input { width: 20px; height: 20px; flex: 0 0 auto; margin: 2px 0 0; padding: 0; accent-color: var(--navy-light); }
-.payment-method-option span { display: grid; gap: 3px; }
+.payment-method-option span { display: grid; gap: 3px; min-width: 0; }
 .payment-method-option strong { color: var(--navy); }
 .payment-method-option small { color: #52675b; line-height: 1.4; }
 .payment-method-option:has(input:disabled) { cursor: not-allowed; opacity: .56; }
+
+@media (max-width: 640px) {
+  .payment-methods {
+    gap: 12px;
+  }
+
+  .payment-method-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 12px;
+    border-radius: 12px;
+  }
+
+  .payment-method-option input {
+    width: 22px;
+    height: 22px;
+    margin-top: 2px;
+  }
+
+  .payment-method-option span {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .payment-method-option strong,
+  .payment-method-option small {
+    display: block;
+  }
+
+  .payment-method-option strong {
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+
+  .payment-method-option small {
+    margin-top: 5px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+}
 @keyframes announcementFlicker { 0%, 100% { opacity: .88; } 50% { opacity: 1; } }
 @keyframes announcementReveal { from { opacity: 0; transform: translateY(-100%); } to { opacity: 1; transform: translateY(0); } }
 @keyframes glitterDrift { from { transform: translate3d(0, 0, 0) rotate(0deg); } to { transform: translate3d(34px, 24px, 0) rotate(8deg); } }
@@ -1024,11 +1069,22 @@ input:focus {
 
 .card {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background: var(--white);
   border-radius: 28px;
   overflow: hidden;
   border: 1px solid #eceff3;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+}
+
+.card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 18px 18px;
 }
 
 .card-image-wrap {
@@ -1095,16 +1151,116 @@ input:focus {
 }
 
 .card h3 {
-  margin: 22px 22px 8px;
+  margin: 18px 0 0;
   font-size: 22px;
   color: #111;
 }
 
 .card p {
-  margin: 0 22px 18px;
+  margin: 0;
   font-size: 18px;
   color: var(--gold);
   font-weight: 600;
+}
+
+.card-description-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 64px;
+}
+
+.card-short-description {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #52675b;
+  font-size: 0.96rem;
+  font-weight: 500;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.card-clickable-description:hover,
+.card-clickable-description:focus-visible {
+  color: var(--navy);
+  text-decoration: underline;
+  outline: none;
+}
+
+.card-price-block {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid rgba(184, 134, 32, 0.24);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 249, 233, 0.8), rgba(255, 255, 255, 0.98));
+}
+
+.card-price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.card-price-label {
+  color: #52675b;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.card-price {
+  color: var(--navy);
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.card-original-price {
+  color: #6b7a72;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: line-through;
+}
+
+.card-stock {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.card-stock.in-stock {
+  background: rgba(16, 116, 63, 0.12);
+  color: #0a6a38;
+}
+
+.card-stock.out-of-stock {
+  background: rgba(186, 69, 69, 0.08);
+  color: #8a2c2c;
+}
+
+.card-actions {
+  display: flex;
+  gap: 12px;
+  padding: 0;
+  margin-top: 4px;
+}
+
+.card-actions button {
+  flex: 1;
+  margin: 0;
 }
 
 @keyframes cardRise {
@@ -1627,6 +1783,10 @@ button:hover {
     gap: 24px;
   }
 
+  .product-detail-content {
+    min-width: 0;
+  }
+
   .product-detail-content h1 {
     font-size: 32px;
   }
@@ -1642,6 +1802,42 @@ button:hover {
   .product-page .product-detail,
   .product-page .product-information-grid {
     padding: 22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-page .product-detail-content {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .product-page .product-detail-content h1,
+  .product-page .product-detail-content h2,
+  .product-page .product-detail-content p,
+  .product-page .product-detail-content .muted,
+  .product-page .product-description,
+  .product-page .inline-toast {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .product-page .product-detail-content .share-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .product-page .product-detail-content .share-btn,
+  .product-page .product-detail-content .primary,
+  .product-page .product-detail-content .view-more-btn,
+  .product-page .product-detail-content button {
+    width: auto;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .product-page .product-detail-content .share-btn {
+    flex: 1 1 140px;
   }
 }
 
@@ -3987,11 +4183,15 @@ iframe {
   }
 
   .card button,
-  .primary,
   .secondary,
   .btn-danger,
   .admin-logout {
     width: 100%;
+  }
+
+  /* Keep primary actions readable on checkout and product pages instead of forcing them to full width. */
+  .primary {
+    width: auto;
   }
 
   /* The full-width mobile rule above must not combine with card button margins. */
