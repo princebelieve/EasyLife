@@ -1,10 +1,11 @@
 import { Share2 } from "lucide-react";
+import { getContentShareUrl } from "../utils/metaTags";
 
 export default function PostShareButton({ title, text, url }) {
   async function sharePost() {
     const legacyMatch = url.match(/\/testimonials#([^/?#]+)/);
     const shareUrl = legacyMatch
-      ? `${window.location.origin}/share/testimonial?id=${encodeURIComponent(legacyMatch[1])}`
+      ? getContentShareUrl(legacyMatch[1])
       : url;
     const shareData = { title, text, url: shareUrl };
 

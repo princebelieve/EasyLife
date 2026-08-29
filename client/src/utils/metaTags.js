@@ -134,6 +134,11 @@ export function setProductSchema(product, url) {
 }
 
 export function getShareUrl(productId, productName) {
-  const baseUrl = window.location.origin;
-  return `${baseUrl}/product/${productId}?utm_source=share&utm_medium=social&utm_campaign=${encodeURIComponent(productName)}`;
+  const apiBaseUrl = (import.meta.env.VITE_API_URL || window.location.origin).replace(/\/$/, "");
+  return `${apiBaseUrl}/api/share/product/${encodeURIComponent(productId)}?utm_source=share&utm_medium=social&utm_campaign=${encodeURIComponent(productName)}`;
+}
+
+export function getContentShareUrl(contentId) {
+  const apiBaseUrl = (import.meta.env.VITE_API_URL || window.location.origin).replace(/\/$/, "");
+  return `${apiBaseUrl}/api/share/content/${encodeURIComponent(contentId)}`;
 }

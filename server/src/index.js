@@ -25,6 +25,7 @@ const adminShippingRoutes = require("./routes/adminShipping.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const pushRoutes = require("./routes/push.routes");
 const testimonialRoutes = require("./routes/testimonial.routes");
+const shareRoutes = require("./routes/share.routes");
 
 const Product = require("./models/Product");
 const ShippingZone = require("./models/ShippingZone");
@@ -54,6 +55,7 @@ app.use(
 app.use(express.json());
 
 app.use("/api/testimonials", testimonialRoutes);
+app.use("/api/share", shareRoutes);
 
 // DYNAMIC SITEMAP - serves at root level for Google
 app.get("/sitemap.xml", async (req, res) => {
