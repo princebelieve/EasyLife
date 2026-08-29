@@ -63,6 +63,25 @@ export default function AdminUsers() {
     }
   }
 
+  async function permanentlyDeleteUser(user) {
+    const userName = user.name || user.email || "this user";
+    const confirmed = window.confirm(
+      `Permanently delete ${userName}? This removes the account and related cart/token data and cannot be undone.`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await updateAdminUser(user._id, { permanentDelete: true }, token);
+      setUsers((prev) => prev.filter((u) => u._id !== user._id));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to permanently delete user.");
+    }
+  }
+
   async function changeRole(user, newRole) {
     try {
       await updateAdminUser(user._id, { role: newRole }, token);
@@ -174,7 +193,7 @@ export default function AdminUsers() {
                   {u.deletionRequestReason ? ` — ${u.deletionRequestReason}` : ""}
                 </p>
               )}
-              <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+              <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
                 <button onClick={() => toggleSuspend(u)} className="btn">
                   {u.isSuspended ? "Restore" : "Suspend"}
                 </button>
@@ -184,6 +203,14 @@ export default function AdminUsers() {
                   className="btn btn-danger"
                 >
                   {u.isDeleted ? "Restore" : u.deletionRequestedAt ? "Approve deletion" : "Soft Delete"}
+                </button>
+
+                <button
+                  onClick={() => permanentlyDeleteUser(u)}
+                  className="btn btn-danger"
+                  style={{ backgroundColor: "#b42318" }}
+                >
+                  Permanent delete
                 </button>
 
                 <button

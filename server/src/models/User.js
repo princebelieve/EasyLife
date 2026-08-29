@@ -83,6 +83,9 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    suspendedAt: {
+      type: Date,
+    },
     isDeleted: {
       type: Boolean,
       default: false,

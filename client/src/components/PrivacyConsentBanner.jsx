@@ -25,10 +25,11 @@ export default function PrivacyConsentBanner() {
         <strong>Easy Life Wellness Hub: wellness, learning, and opportunity.</strong>
         <p>
           Browse wellness products, learn through training, join the community,
-          request support, and manage orders. Easy Life uses Gmail API send
-          access only to send account-verification and password-reset emails
-          from our official support account. We do not read or modify users'
-          Gmail inboxes. Read our <Link to="/privacy-policy">Privacy Policy</Link>.
+          request support, and manage orders. Easy Life uses Google Sign-In to
+          create and manage your account, and Gmail API only to send
+          account-verification, password-reset, and important service emails from
+          our official support account. We do not read, store, or modify the
+          contents of your Gmail inbox. Read our <Link to="/privacy-policy">Privacy Policy</Link>.
         </p>
       </div>
       <div className="privacy-consent-actions">

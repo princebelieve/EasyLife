@@ -26,6 +26,7 @@ const notificationRoutes = require("./routes/notification.routes");
 const pushRoutes = require("./routes/push.routes");
 const testimonialRoutes = require("./routes/testimonial.routes");
 const shareRoutes = require("./routes/share.routes");
+const { runUserRetentionCleanup } = require("./routes/admin.user.routes");
 
 const Product = require("./models/Product");
 const ShippingZone = require("./models/ShippingZone");
@@ -34,6 +35,16 @@ const ShippingSettings = require("./models/ShippingSettings");
 const app = express();
 
 connectDB();
+
+runUserRetentionCleanup().catch((error) => {
+  console.error("Initial retention cleanup failed:", error);
+});
+
+setInterval(() => {
+  runUserRetentionCleanup().catch((error) => {
+    console.error("Scheduled retention cleanup failed:", error);
+  });
+}, 6 * 60 * 60 * 1000);
 
 // Paystack requires the raw request body for signature verification
 app.use(

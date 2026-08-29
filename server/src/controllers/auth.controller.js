@@ -103,6 +103,14 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    if (user.isDeleted) {
+      return res.status(410).json({ message: "This account has been permanently deleted." });
+    }
+
+    if (user.isSuspended) {
+      return res.status(403).json({ message: "This account is suspended. Please contact support." });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -171,6 +179,14 @@ const googleSignIn = async (req, res) => {
 
     const normalizedEmail = String(payload.email || "").toLowerCase();
     let user = await User.findOne({ email: normalizedEmail });
+
+    if (user?.isDeleted) {
+      return res.status(410).json({ message: "This account has been permanently deleted." });
+    }
+
+    if (user?.isSuspended) {
+      return res.status(403).json({ message: "This account is suspended. Please contact support." });
+    }
 
     if (!user) {
       const password = crypto.randomBytes(32).toString("hex");
