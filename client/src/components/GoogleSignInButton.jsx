@@ -69,7 +69,17 @@ export default function GoogleSignInButton({ onSuccess, onError }) {
   }, [clientId, onError, onSuccess]);
 
   return (
-    <div style={{ width: "100%", marginTop: 16 }}>
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        marginTop: 16,
+        minHeight: 56,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       {error ? (
         <button
           disabled
@@ -87,16 +97,28 @@ export default function GoogleSignInButton({ onSuccess, onError }) {
           {error}
         </button>
       ) : (
-        <div ref={buttonRef} />
+        <div
+          ref={buttonRef}
+          style={{
+            width: "100%",
+            minHeight: 44,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        />
       )}
       {!error && !isReady ? (
         <div
           style={{
-            width: "100%",
-            marginTop: 12,
-            textAlign: "center",
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             color: "#666",
             fontSize: 14,
+            pointerEvents: "none",
           }}
         >
           Loading Google sign-in...
