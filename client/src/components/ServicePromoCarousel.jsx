@@ -54,7 +54,7 @@ export default function ServicePromoCarousel() {
   return (
     <section className="service-promo-section reveal" aria-label="Easy Life services">
       <div className="container">
-        <div className="service-promo" key={activePromotion.label}>
+        <div className="service-promo" key={activePromotion.to}>
           <img src={activePromotion.image} alt="" aria-hidden="true" />
           <div className="service-promo-overlay" />
           <div className="service-promo-content">
