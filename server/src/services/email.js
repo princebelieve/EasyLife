@@ -80,12 +80,37 @@ async function sendResetPasswordEmail({ to, resetUrl }) {
   const text = `You requested a password reset. Use the link below:\n\n${resetUrl}`;
   const html = `<p>You requested a password reset.</p><p><a href="${resetUrl}">${resetUrl}</a></p>`;
 
-  // fire-and-forget: don't await to avoid blocking the HTTP handler
-  sendViaGmail({ to, subject, text, html })
-    .then(() => console.log(`Password reset email sent to ${to}`))
-    .catch((err) =>
-      console.error("Reset email send failed:", err?.message || err),
-    );
+  try {
+    await sendViaGmail({ to, subject, text, html });
+    console.log(`Password reset email sent to ${to}`);
+    return true;
+  } catch (err) {
+    console.error("Reset email send failed:", err?.message || err);
+    throw err;
+  }
+}
+
+async function sendPasswordResetSuccessEmail({ to }) {
+  if (!process.env.GMAIL_REFRESH_TOKEN || !process.env.EMAIL_USER) {
+    console.warn("OAuth2 not configured. Password reset success email skipped for:", to);
+    return;
+  }
+
+  const subject = "Your password has been reset";
+  const text = "Your Easy Life password was reset successfully. If you did not do this, please contact support immediately.";
+  const html = `
+    <p>Your Easy Life password was reset successfully.</p>
+    <p>If you did not do this, please contact support immediately.</p>
+  `;
+
+  try {
+    await sendViaGmail({ to, subject, text, html });
+    console.log(`Password reset confirmation sent to ${to}`);
+    return true;
+  } catch (err) {
+    console.error("Password reset success email failed:", err?.message || err);
+    throw err;
+  }
 }
 
 // SEND VERIFICATION EMAIL
@@ -118,6 +143,7 @@ async function sendAnnouncementEmail({ to, title, body, link }) {
 
 module.exports = {
   sendResetPasswordEmail,
+  sendPasswordResetSuccessEmail,
   sendEmailVerification,
   sendAnnouncementEmail,
 };

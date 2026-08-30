@@ -9,6 +9,7 @@ const {
 } = require("../utils/generateToken");
 const {
   sendResetPasswordEmail,
+  sendPasswordResetSuccessEmail,
   sendEmailVerification,
 } = require("../services/email");
 const RefreshToken = require("../models/RefreshToken");
@@ -303,6 +304,15 @@ const resetPassword = async (req, res) => {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save();
+
+    try {
+      await sendPasswordResetSuccessEmail({ to: user.email });
+    } catch (emailError) {
+      console.warn(
+        "Password reset success email could not be sent:",
+        emailError?.message || emailError,
+      );
+    }
 
     res.json({ message: "Password has been reset successfully." });
   } catch (err) {
