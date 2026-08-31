@@ -93,6 +93,13 @@ export default function AdminUsers() {
     }
   }
 
+  async function changeDistributorStatus(user, distributorStatus) {
+    try {
+      const response = await updateAdminUser(user._id, { distributorStatus }, token);
+      setUsers((prev) => prev.map((u) => u._id === user._id ? { ...u, ...response.user } : u));
+    } catch (err) { console.error(err); }
+  }
+
   function handleSendNotification(userId) {
     setNotificationState({
       userId: userId,
@@ -173,6 +180,13 @@ export default function AdminUsers() {
                   <option value="subadmin">Subadmin</option>
                   <option value="admin">Admin</option>
                 </select>
+              </div>
+              <div style={{ marginBottom: 12 }}>
+                <strong>Distributor:</strong>{" "}
+                <select value={u.distributorStatus || "none"} onChange={(e) => changeDistributorStatus(u, e.target.value)} style={{ marginLeft: 8, padding: 4, borderRadius: 4, border: "1px solid #ccc" }}>
+                  <option value="none">Not a distributor</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="suspended">Suspended</option>
+                </select>
+                {u.distributorCode && <small style={{ display: "block", marginTop: 4 }}>Code: {u.distributorCode}</small>}
               </div>
               <p>
                 <strong>Joined:</strong> {formatDate(u.createdAt)}

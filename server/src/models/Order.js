@@ -98,9 +98,12 @@ const orderSchema = new mongoose.Schema(
       default: "NGN",
     },
 
+    distributorId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    distributorCode: { type: String, default: "" },
+
     paymentMethod: {
       type: String,
-      enum: ["paystack", "cash_on_delivery"],
+      enum: ["paystack", "cash_on_delivery", "distributor_transfer"],
       default: "paystack",
     },
 
@@ -166,6 +169,9 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+
+    pickupLocation: { type: String, default: "" },
+    paymentInstructions: { type: String, default: "" },
 
     deliveryEstimate: {
       type: String,

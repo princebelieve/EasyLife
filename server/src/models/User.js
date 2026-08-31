@@ -31,6 +31,20 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
+    distributorStatus: {
+      type: String,
+      enum: ["none", "pending", "approved", "suspended"],
+      default: "none",
+    },
+
+    distributorCode: { type: String, default: "", unique: true, sparse: true },
+    distributorBankName: { type: String, default: "" },
+    distributorAccountName: { type: String, default: "" },
+    distributorAccountNumber: { type: String, default: "" },
+    distributorPickupAddress: { type: String, default: "" },
+    distributorPickupEnabled: { type: Boolean, default: true },
+    distributorDeliveryEnabled: { type: Boolean, default: true },
+
     phone: {
       type: String,
       default: "",

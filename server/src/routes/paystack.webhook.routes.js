@@ -7,6 +7,8 @@ const Order = require("../models/Order");
 const Product = require("../models/Product");
 const User = require("../models/User");
 const Cart = require("../models/Cart");
+const DistributorStockOrder = require("../models/DistributorStockOrder");
+const DistributorInventory = require("../models/DistributorInventory");
 const {
   createNotification,
   countUnreadNotifications,
@@ -47,6 +49,28 @@ router.post("/", async (req, res) => {
     if (event.event === "charge.success") {
       const reference = event.data.reference;
 
+      const distributorOrder = await DistributorStockOrder.findOne({ paymentReference: reference });
+      if (distributorOrder) {
+        if (distributorOrder.paymentStatus === "paid") return res.json({ received: true });
+        for (const item of distributorOrder.items) {
+          const product = await Product.findOneAndUpdate({ _id: item.productId, stock: { $gte: item.quantity } }, { $inc: { stock: -item.quantity } }, { new: true });
+          if (!product) {
+            distributorOrder.paymentStatus = "failed";
+            await distributorOrder.save();
+            return res.status(409).json({ message: "Central stock is no longer available." });
+          }
+          await DistributorInventory.findOneAndUpdate(
+            { distributorId: distributorOrder.distributorId, productId: item.productId },
+            { $inc: { quantity: item.quantity } },
+            { upsert: true, new: true, setDefaultsOnInsert: true },
+          );
+        }
+        distributorOrder.paymentStatus = "paid";
+        distributorOrder.fulfilledAt = new Date();
+        await distributorOrder.save();
+        return res.json({ received: true });
+      }
+
       const order = await Order.findOne({
         paymentReference: reference,
       });
@@ -74,9 +98,18 @@ router.post("/", async (req, res) => {
         status: "confirmed",
       });
 
-      // update stock for every ordered item
+      // Deduct from distributor stock when this customer entered through a distributor shop.
       const LOW_STOCK_THRESHOLD = 5;
       for (const item of order.items) {
+        if (order.distributorId) {
+          const inventory = await DistributorInventory.findOneAndUpdate({ distributorId: order.distributorId, productId: item.productId, quantity: { $gte: item.quantity } }, { $inc: { quantity: -item.quantity, unitsSold: item.quantity } }, { new: true });
+          if (!inventory) {
+            order.paymentStatus = "failed";
+            await order.save();
+            return res.status(409).json({ message: "Distributor stock is no longer available." });
+          }
+          continue;
+        }
         const product = await Product.findById(item.productId);
 
         if (!product) continue;

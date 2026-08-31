@@ -56,6 +56,8 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
     salePrice: { type: Number, default: null },
+    distributorPrice: { type: Number, default: null, min: 0 },
+    distributorMinimumQuantity: { type: Number, default: 1, min: 1 },
     currency: { type: String, default: "NGN", trim: true, uppercase: true },
 
     stock: {

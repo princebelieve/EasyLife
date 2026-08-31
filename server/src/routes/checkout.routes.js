@@ -6,6 +6,7 @@ const router = express.Router();
 const Cart = require("../models/Cart");
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const User = require("../models/User");
 const paystack = require("../services/paystack");
 const { protect } = require("../middleware/auth");
 const { calculateShipping } = require("../config/shipping");
@@ -26,10 +27,10 @@ router.post("/", protect, async (req, res) => {
 
     const {
       customerName, email, phone, address, city, state, country, notes,
-      paymentMethod = "paystack",
+      paymentMethod = "paystack", distributorCode = "", deliveryMethod = "delivery",
     } = req.body;
 
-    if (!["paystack", "cash_on_delivery"].includes(paymentMethod)) {
+    if (!["paystack", "cash_on_delivery", "distributor_transfer"].includes(paymentMethod)) {
       return res.status(400).json({ message: "Choose a valid payment method." });
     }
 
@@ -38,6 +39,14 @@ router.post("/", protect, async (req, res) => {
         message: "Payment on delivery is currently available for deliveries within Nigeria only.",
       });
     }
+
+    let distributor = null;
+    if (distributorCode) {
+      distributor = await User.findOne({ distributorCode: String(distributorCode).toUpperCase(), distributorStatus: "approved", isSuspended: { $ne: true }, isDeleted: { $ne: true } });
+      if (!distributor) return res.status(400).json({ message: "The selected distributor is no longer available." });
+    }
+    if (paymentMethod === "distributor_transfer" && !distributor) return res.status(400).json({ message: "Bank transfer is available only through an approved distributor shop." });
+    if (paymentMethod === "distributor_transfer" && (!distributor.distributorBankName || !distributor.distributorAccountNumber)) return res.status(400).json({ message: "This distributor has not completed payment details yet." });
 
     // 1. GET CART
     const cart = await Cart.findOne({ userId }).populate("items.productId");
@@ -74,10 +83,7 @@ router.post("/", protect, async (req, res) => {
       };
     });
 
-    const shippingData = await calculateShipping({
-      country,
-      items: cart.items,
-    });
+    const shippingData = deliveryMethod === "pickup" ? { shippingAvailable: true, shippingFee: 0, serviceName: "Pickup", estimatedDays: "Ready after confirmation" } : await calculateShipping({ country, items: cart.items });
 
     if (shippingData.shippingAvailable === false) {
       return res.status(400).json({
@@ -115,6 +121,8 @@ router.post("/", protect, async (req, res) => {
     // 4. CREATE ORDER (pending) with valid payment reference
     const order = await Order.create({
       userId,
+      distributorId: distributor?._id || null,
+      distributorCode: distributor?.distributorCode || "",
       customerName,
       email,
       phone,
@@ -129,6 +137,9 @@ router.post("/", protect, async (req, res) => {
       deliveryStatus: "pending",
       deliveryFee: shippingFee,
       deliveryZone: country,
+      deliveryMethod,
+      pickupLocation: deliveryMethod === "pickup" ? (distributor?.distributorPickupAddress || "Easy Life Wellness Hub") : "",
+      paymentInstructions: paymentMethod === "distributor_transfer" ? `Transfer ₦${totalAmount.toLocaleString()} to ${distributor.distributorAccountName} · ${distributor.distributorAccountNumber} · ${distributor.distributorBankName}` : "",
       deliveryEstimate: shippingData.estimatedDays || "",
       shippingService: shippingData.serviceName || "",
       deliveryContact: phone,
@@ -168,10 +179,10 @@ router.post("/", protect, async (req, res) => {
       });
     }
 
-    if (paymentMethod === "cash_on_delivery") {
+    if (paymentMethod === "cash_on_delivery" || paymentMethod === "distributor_transfer") {
       await Cart.findOneAndUpdate({ userId }, { items: [] });
       return res.json({
-        checkoutType: "cash_on_delivery",
+        checkoutType: paymentMethod,
         confirmation_url: `${clientUrl}/success?order_token=${confirmationToken}`,
         shipping: shippingData,
       });

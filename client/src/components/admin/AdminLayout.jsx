@@ -12,6 +12,7 @@ import {
   Package,
   ShoppingCart,
   BarChart3,
+  UsersRound,
   AlertTriangle,
   Truck,
   MapPinned,
@@ -71,6 +72,12 @@ export default function AdminLayout({ children }) {
       to: "/admin/orders",
       label: "Orders",
       icon: <ShoppingCart size={18} />,
+    },
+
+    {
+      to: "/admin/distributors",
+      label: "Distributors",
+      icon: <UsersRound size={18} />,
     },
 
     {

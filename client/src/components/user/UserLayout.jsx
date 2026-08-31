@@ -45,6 +45,8 @@ export default function UserLayout({ children }) {
       icon: <ShoppingBag size={18} />,
     },
 
+    ...(user?.distributorStatus === "approved" ? [{ to: "/distributor", label: "Distributor Dashboard", icon: <ShoppingBag size={18} /> }] : []),
+
     {
       to: "/checkout",
       label: "Checkout",

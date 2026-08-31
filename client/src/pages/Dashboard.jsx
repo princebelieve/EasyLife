@@ -1,6 +1,6 @@
 //client/src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
-import { getMyOrders, getProfile } from "../services/api";
+import { applyForDistributor, getMyOrders, getProfile } from "../services/api";
 import { formatDate } from "../utils/formatDate";
 import useAuth from "../context/AuthContext";
 import UserLayout from "../components/user/UserLayout";
@@ -33,6 +33,11 @@ export default function Dashboard() {
   const deliveredOrdersCount = orders.filter(
     (o) => o.deliveryStatus === "delivered",
   ).length;
+
+  async function applyForDistributorAccount() {
+    try { await applyForDistributor(); setUser((current) => ({ ...current, distributorStatus: "pending" })); }
+    catch (error) { console.error(error); }
+  }
 
   return (
     <UserLayout>
@@ -91,6 +96,7 @@ export default function Dashboard() {
           <button onClick={() => (window.location.href = "/profile")}>
             Edit Profile
           </button>
+          {user?.distributorStatus === "approved" ? <button onClick={() => (window.location.href = "/distributor")}>Open Distributor Dashboard</button> : user?.distributorStatus === "pending" ? <button disabled>Distributor application pending</button> : <button onClick={applyForDistributorAccount}>Apply to become a distributor</button>}
         </div>
 
         {/* Account Information */}

@@ -236,6 +236,15 @@ export async function getShippingZones(token) {
   });
 }
 
+export async function getDistributorDashboard() { return apiRequest("/api/distributor/dashboard"); }
+export async function getDistributorCatalog() { return apiRequest("/api/distributor/catalog"); }
+export async function getDistributorStore(code) { return apiRequest(`/api/distributor/store/${encodeURIComponent(code)}`); }
+export async function createDistributorStockOrder(items) { return apiRequest("/api/distributor/stock-orders", { method: "POST", body: JSON.stringify({ items }) }); }
+export async function recordDistributorSale(productId, quantity) { return apiRequest("/api/distributor/sales", { method: "POST", body: JSON.stringify({ productId, quantity }) }); }
+export async function applyForDistributor() { return apiRequest("/api/distributor/apply", { method: "POST" }); }
+export async function updateDistributorSettings(payload) { return apiRequest("/api/distributor/settings", { method: "PUT", body: JSON.stringify(payload) }); }
+export async function getAdminDistributorInventory() { return apiRequest("/api/admin/distributors/inventory"); }
+
 export async function getShippingSummary(country = "NG") {
   const res = await fetch(`${BASE_URL}/api/shipping/summary?country=${encodeURIComponent(country)}`);
   const data = await res.json();

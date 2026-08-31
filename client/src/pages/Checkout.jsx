@@ -1,6 +1,6 @@
 //client/src/pages/Checkout.jsx
 import { useEffect, useState } from "react";
-import { getShippingDestinations, initializeCheckout, previewShipping } from "../services/api";
+import { getDistributorStore, getShippingDestinations, initializeCheckout, previewShipping } from "../services/api";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
 const COUNTRY_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
@@ -13,8 +13,15 @@ export default function Checkout() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [shippingError, setShippingError] = useState("");
+  const [distributor, setDistributor] = useState(null);
 
   const totalAmount = subtotal + shippingFee;
+  function sendOrderSummaryToWhatsApp() {
+    const items = cart.map((item) => `- ${item.quantity} x ${item.name} (${Number(item.price * item.quantity).toLocaleString()} NGN)`).join("\n");
+    const delivery = form.deliveryMethod === "pickup" ? "Pickup (no shipping fee)" : `Delivery (${shippingFee.toLocaleString()} NGN)`;
+    const message = `Hello Easy Life Wellness Hub, I would like help with this order:\n\n${items}\n\nSubtotal: ${subtotal.toLocaleString()} NGN\nCollection: ${delivery}\nTotal: ${totalAmount.toLocaleString()} NGN\n\nName: ${form.customerName || "Not entered"}\nPhone: ${form.phone || "Not entered"}`;
+    window.open(`https://wa.me/2348089938820?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+  }
 
   const [form, setForm] = useState({
     customerName: "",
@@ -26,6 +33,7 @@ export default function Checkout() {
     country: "NG",
     notes: "",
     paymentMethod: "paystack",
+    deliveryMethod: "delivery",
   });
 
   function handleChange(e) {
@@ -49,8 +57,20 @@ export default function Checkout() {
   }, []);
 
   useEffect(() => {
+    const code = sessionStorage.getItem("activeDistributorCode");
+    if (!code) return;
+    getDistributorStore(code).then((data) => setDistributor(data.distributor)).catch(() => { sessionStorage.removeItem("activeDistributorCode"); setDistributor(null); });
+  }, []);
+
+  useEffect(() => {
     async function loadShipping() {
       try {
+        if (form.deliveryMethod === "pickup") {
+          setShippingError("");
+          setShippingFee(0);
+          setShippingInfo({ serviceName: "Pickup", estimatedDays: "Ready after confirmation" });
+          return;
+        }
         if (!form.country) {
           setShippingError("");
           setShippingFee(0);
@@ -77,7 +97,7 @@ export default function Checkout() {
     }
 
     loadShipping();
-  }, [form.country, cart]);
+  }, [form.country, form.deliveryMethod, cart]);
 
   async function handleCheckout(e) {
     e.preventDefault();
@@ -87,9 +107,10 @@ export default function Checkout() {
     try {
       const response = await initializeCheckout({
         ...form,
+        distributorCode: sessionStorage.getItem("activeDistributorCode") || "",
       });
 
-      if (response.checkoutType === "cash_on_delivery") {
+      if (["cash_on_delivery", "distributor_transfer"].includes(response.checkoutType)) {
         await clearCart();
         window.location.href = response.confirmation_url;
         return;
@@ -166,11 +187,18 @@ export default function Checkout() {
               />
 
               <fieldset className="payment-methods">
+                <legend>Receive your order</legend>
+                <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="delivery" checked={form.deliveryMethod === "delivery"} onChange={handleChange} /><span><strong>Delivery</strong><small>{distributor ? `${distributor.name} will arrange delivery.` : "Easy Life will arrange delivery."}</small></span></label>
+                <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="pickup" checked={form.deliveryMethod === "pickup"} onChange={handleChange} disabled={Boolean(distributor && !distributor.distributorPickupEnabled)} /><span><strong>Pick up</strong><small>{distributor?.distributorPickupAddress || "Pick up from Easy Life Wellness Hub after confirmation."}</small></span></label>
+              </fieldset>
+
+              <fieldset className="payment-methods">
                 <legend>Choose a payment method</legend>
                 <label className="payment-method-option">
                   <input type="radio" name="paymentMethod" value="paystack" checked={form.paymentMethod === "paystack"} onChange={handleChange} />
                   <span><strong>Pay online securely</strong><small>Use card, bank transfer, or USSD through Paystack.</small></span>
                 </label>
+                {distributor && <label className="payment-method-option"><input type="radio" name="paymentMethod" value="distributor_transfer" checked={form.paymentMethod === "distributor_transfer"} onChange={handleChange} disabled={!distributor.distributorBankName || !distributor.distributorAccountNumber} /><span><strong>Transfer to {distributor.name}</strong><small>{distributor.distributorAccountName} · {distributor.distributorAccountNumber} · {distributor.distributorBankName}</small></span></label>}
                 <label className="payment-method-option">
                   <input type="radio" name="paymentMethod" value="cash_on_delivery" checked={form.paymentMethod === "cash_on_delivery"} onChange={handleChange} disabled={form.country !== "NG"} />
                   <span><strong>Pay on delivery</strong><small>{form.country === "NG" ? "Pay the total amount to the delivery agent when your order arrives." : "Available for deliveries within Nigeria only."}</small></span>
@@ -186,7 +214,9 @@ export default function Checkout() {
                   ? "Processing…"
                   : form.paymentMethod === "cash_on_delivery"
                     ? "Place Order & Pay on Delivery"
-                    : "Continue to Secure Online Payment"}
+                    : form.paymentMethod === "distributor_transfer"
+                      ? "Place Transfer Order"
+                      : "Continue to Secure Online Payment"}
               </button>
               <p style={{ marginTop: 12, fontSize: 14, color: "#666" }}>
                 By placing your order, you accept our{" "}
@@ -251,6 +281,18 @@ export default function Checkout() {
               </p>
 
               <h2>Total to pay: ₦{totalAmount.toLocaleString()}</h2>
+              <p className="muted" style={{ marginTop: 6 }}>
+                {form.deliveryMethod === "pickup" ? "Pickup selected — no shipping fee applies." : "Delivery selected — the delivery fee is included above."}
+              </p>
+              {distributor && (
+                <div className="distributor-delivery-summary">
+                  <strong>Fulfilled by {distributor.name}</strong>
+                  <span>{form.deliveryMethod === "pickup" ? `Pickup location: ${distributor.distributorPickupAddress || "Address will be confirmed by the distributor."}` : "Delivery will be arranged by this distributor after your order is confirmed."}</span>
+                </div>
+              )}
+              <button type="button" className="checkout-whatsapp-summary" onClick={sendOrderSummaryToWhatsApp}>
+                Send order summary to Easy Life on WhatsApp
+              </button>
               <p className="muted" style={{ marginTop: 6 }}>
                 This amount becomes sales revenue only after payment is
                 confirmed.

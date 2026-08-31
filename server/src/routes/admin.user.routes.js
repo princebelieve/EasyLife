@@ -48,7 +48,7 @@ async function runUserRetentionCleanup() {
 router.get("/", protect, adminOnly, async (req, res) => {
   try {
     const users = await User.find()
-      .select("name email role isSuspended isDeleted deletionRequestedAt deletionRequestReason createdAt")
+      .select("name email role distributorStatus distributorCode isSuspended isDeleted deletionRequestedAt deletionRequestReason createdAt")
       .sort({ createdAt: -1 });
 
     res.json(users);
@@ -61,7 +61,7 @@ router.get("/", protect, adminOnly, async (req, res) => {
 // PUT /api/admin/users/:id - update suspend / soft-delete flags and role
 router.put("/:id", protect, adminOnly, async (req, res) => {
   try {
-    const { isSuspended, isDeleted, role, permanentDelete, deleteImmediately } = req.body;
+    const { isSuspended, isDeleted, role, distributorStatus, permanentDelete, deleteImmediately } = req.body;
 
     const user = await User.findById(req.params.id);
 
@@ -101,6 +101,13 @@ router.put("/:id", protect, adminOnly, async (req, res) => {
       user.role = role;
     }
 
+    if (distributorStatus) {
+      const validStatuses = ["none", "pending", "approved", "suspended"];
+      if (!validStatuses.includes(distributorStatus)) return res.status(400).json({ message: "Invalid distributor status" });
+      user.distributorStatus = distributorStatus;
+      if (distributorStatus === "approved" && !user.distributorCode) user.distributorCode = `ELD-${String(user._id).slice(-6).toUpperCase()}`;
+    }
+
     await user.save();
 
     res.json({
@@ -110,6 +117,8 @@ router.put("/:id", protect, adminOnly, async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        distributorStatus: user.distributorStatus,
+        distributorCode: user.distributorCode,
         isSuspended: user.isSuspended,
         isDeleted: user.isDeleted,
       },

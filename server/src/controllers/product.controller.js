@@ -167,7 +167,7 @@ async function createProduct(req, res) {
       stock,
       featured,
       status,
-      salePrice, currency, brand, vendor, gtin, nafdacNumber, googleProductCategory,
+      salePrice, distributorPrice, distributorMinimumQuantity, currency, brand, vendor, gtin, nafdacNumber, googleProductCategory,
       condition, ingredients, directions, warnings, netContent, countryOfOrigin,
       shippingWeight, shippingLength, shippingWidth, shippingHeight,
       shippingClass, shipsInternationally,
@@ -230,6 +230,8 @@ async function createProduct(req, res) {
       inStock: Number(stock || 0) > 0,
 
       salePrice: salePrice === "" || salePrice === undefined ? null : Number(salePrice),
+      distributorPrice: distributorPrice === "" || distributorPrice === undefined ? null : Number(distributorPrice),
+      distributorMinimumQuantity: Math.max(1, Number(distributorMinimumQuantity || 1)),
       currency: "NGN",
       brand: brand || "",
       vendor: vendor || "",
@@ -351,7 +353,7 @@ async function updateProduct(req, res) {
       featured,
       status,
       sku,
-      salePrice, currency, brand, vendor, gtin, nafdacNumber, googleProductCategory,
+      salePrice, distributorPrice, distributorMinimumQuantity, currency, brand, vendor, gtin, nafdacNumber, googleProductCategory,
       condition, ingredients, directions, warnings, netContent, countryOfOrigin,
       shippingWeight, shippingLength, shippingWidth, shippingHeight,
       shippingClass, shipsInternationally,
@@ -389,6 +391,8 @@ async function updateProduct(req, res) {
     }
 
     if (salePrice !== undefined) product.salePrice = salePrice === "" ? null : Number(salePrice);
+    if (distributorPrice !== undefined) product.distributorPrice = distributorPrice === "" ? null : Number(distributorPrice);
+    if (distributorMinimumQuantity !== undefined) product.distributorMinimumQuantity = Math.max(1, Number(distributorMinimumQuantity || 1));
     product.currency = "NGN";
     if (brand !== undefined) product.brand = brand;
     if (vendor !== undefined) product.vendor = vendor;
