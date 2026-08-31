@@ -5603,10 +5603,11 @@ button:hover,
 
 .service-promo-section { padding: 42px 0 60px; background: #eef3ef; }
 .service-promo { position: relative; min-height: 350px; overflow: hidden; border: 2px solid #e85d4a; border-radius: 8px; background: var(--navy); box-shadow: 0 20px 44px rgba(6, 59, 32, .2); animation: promoSlideIn .55s ease both; }
-.service-promo-carousel { position: relative; height: clamp(220px, 24vw, 280px); overflow: hidden; border: 0; border-radius: 18px; background: var(--navy); box-shadow: 0 14px 30px rgba(6, 59, 32, .18); }
+.service-promo-carousel { position: relative; height: clamp(220px, 24vw, 280px); overflow: hidden; }
 .service-promo-track { display: flex; height: 100%; will-change: transform; }
-.service-promo-carousel .service-promo { flex: 0 0 100%; width: 100%; min-height: 0; height: 100%; border: 0; border-radius: 0; box-shadow: none; animation: none; }
-.service-promo-carousel .service-promo > img { left: auto; width: 43%; opacity: 1; }
+.service-promo-carousel .service-promo { box-sizing: border-box; flex: 0 0 100%; width: 100%; min-height: 0; height: 100%; border: 2px solid #e85d4a; border-radius: 18px; box-shadow: 0 14px 30px rgba(6, 59, 32, .18); animation: none; }
+.service-promo-carousel .service-promo > img { top: 14px; right: 14px; bottom: 14px; left: auto; width: calc(43% - 14px); height: calc(100% - 28px); border-radius: 12px; background: #dbe8df; box-shadow: 0 8px 18px rgba(0, 0, 0, .18); opacity: 1; }
+.service-promo-carousel .service-promo-image-ceo { box-sizing: border-box; padding: 12px 8px 0; object-fit: contain; object-position: center top; }
 .service-promo-carousel .service-promo-overlay { right: auto; width: 58%; background: linear-gradient(90deg, rgba(3, 29, 16, .96), rgba(6, 59, 32, .82) 70%, rgba(6, 59, 32, .08)); }
 .service-promo-carousel .service-promo-content { width: min(650px, 58%); padding: 28px 32px; }
 .service-promo-carousel .service-promo-content h2 { margin: 6px 0 8px; font-size: clamp(1.65rem, 3.2vw, 2.75rem); }
@@ -5642,12 +5643,13 @@ button:hover,
   .service-promo-content .easy-btn { width: 100%; justify-content: center; }
   .service-promo-controls { right: 20px; bottom: 20px; }
 
-  .service-promo-carousel { height: 158px; min-height: 0; border-radius: 14px; }
+  .service-promo-carousel { height: 158px; min-height: 0; }
   .service-promo-carousel .service-promo,
   .service-promo-carousel .service-promo-track { min-height: 0; height: 100%; }
-  .service-promo-carousel .service-promo > img { inset: 0; width: 100%; height: 100%; object-position: center; opacity: 1; }
-  .service-promo-carousel .service-promo-overlay { display: block; width: 74%; height: 100%; background: linear-gradient(90deg, rgba(3, 29, 16, .94), rgba(6, 59, 32, .68) 60%, rgba(6, 59, 32, 0)); }
-  .service-promo-carousel .service-promo-content { width: 72%; min-height: 0; margin-top: 0; padding: 15px 16px; background: transparent; }
+  .service-promo-carousel .service-promo { border-radius: 14px; }
+  .service-promo-carousel .service-promo > img { top: 10px; right: 10px; bottom: 10px; left: auto; width: 36%; height: auto; border-radius: 10px; object-position: center; }
+  .service-promo-carousel .service-promo-overlay { display: block; width: 66%; height: 100%; background: linear-gradient(90deg, rgba(3, 29, 16, .94), rgba(6, 59, 32, .78)); }
+  .service-promo-carousel .service-promo-content { width: 64%; min-height: 0; margin-top: 0; padding: 15px 16px; background: transparent; }
   .service-promo-carousel .service-promo-kicker { padding: 5px 7px; font-size: .55rem; }
   .service-promo-carousel .service-promo-label { margin-top: 7px; font-size: .58rem; }
   .service-promo-carousel .service-promo-content h2 { margin: 4px 0 8px; font-size: 1.2rem; line-height: 1.08; }
@@ -5850,9 +5852,9 @@ button:hover,
 
 @media (max-width: 600px) {
   .collection-product-promo { height: 158px; min-height: 0; border: 0; border-radius: 14px; }
-  .collection-product-promo > img { inset: 0; width: 100%; height: 100%; object-position: center; opacity: 1; }
-  .collection-product-promo .service-promo-overlay { display: block; width: 74%; height: 100%; background: linear-gradient(90deg, rgba(3, 29, 16, .94), rgba(6, 59, 32, .68) 60%, rgba(6, 59, 32, 0)); }
-  .collection-product-promo .service-promo-content { width: 72%; min-height: 0; margin-top: 0; padding: 15px 16px; background: transparent; }
+  .collection-product-promo > img { top: 10px; right: 10px; bottom: 10px; left: auto; width: 36%; height: auto; border-radius: 10px; object-position: center; opacity: 1; }
+  .collection-product-promo .service-promo-overlay { display: block; width: 66%; height: 100%; background: linear-gradient(90deg, rgba(3, 29, 16, .94), rgba(6, 59, 32, .78)); }
+  .collection-product-promo .service-promo-content { width: 64%; min-height: 0; margin-top: 0; padding: 15px 16px; background: transparent; }
   .collection-product-promo .service-promo-kicker { padding: 5px 7px; font-size: .55rem; }
   .collection-product-promo .service-promo-label { margin-top: 7px; font-size: .58rem; }
   .collection-product-promo .service-promo-content h2 { margin: 4px 0 8px; font-size: 1.2rem; line-height: 1.08; }

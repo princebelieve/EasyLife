@@ -26,6 +26,7 @@ const promotions = [
     title: "Visit Easy Life Clinic",
     text: "Book eye-care appointments and get the support you need.",
     image: "/ceo.png",
+    imageClass: "service-promo-image-ceo",
     to: "https://clinic.easylifewellnesshub.com",
     destination: "clinic.easylifewellnesshub.com",
     action: "Visit clinic",
@@ -94,7 +95,12 @@ export default function ServicePromoCarousel() {
           >
             {slides.map((promotion, index) => (
               <article className="service-promo service-promo-slide" key={`${promotion.to}-${index}`}>
-                <img src={promotion.image} alt="" aria-hidden="true" />
+                <img
+                  className={promotion.imageClass}
+                  src={promotion.image}
+                  alt=""
+                  aria-hidden="true"
+                />
                 <div className="service-promo-overlay" />
                 <div className="service-promo-content">
                   <span className="service-promo-kicker">FEATURED ADVERT</span>
