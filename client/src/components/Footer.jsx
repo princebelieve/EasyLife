@@ -42,6 +42,25 @@ export default function Footer() {
         </div>
 
         <div>
+          <h4>Easy Life Family</h4>
+
+          <a
+            href="https://supermarket.easylifewellnesshub.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Visit Supermarket
+          </a>
+          <a
+            href="https://clinic.easylifewellnesshub.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Visit Clinic
+          </a>
+        </div>
+
+        <div>
           <h4>Policies</h4>
 
           <Link to="/privacy-policy">Privacy Policy</Link>
