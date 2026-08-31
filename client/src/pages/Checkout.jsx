@@ -6,7 +6,7 @@ import { useCart } from "../context/CartContext";
 const COUNTRY_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
 
 export default function Checkout() {
-  const { cart, subtotal, clearCart } = useCart();
+  const { cart, subtotal, clearCart, removeFromCart } = useCart();
   const [shippingFee, setShippingFee] = useState(0);
   const [shippingInfo, setShippingInfo] = useState(null);
   const [shippingDestinations, setShippingDestinations] = useState(["NG"]);
@@ -45,6 +45,11 @@ export default function Checkout() {
       ...(name === "country" && value !== "NG" ? { paymentMethod: "paystack" } : {}),
     }));
 
+  }
+
+  async function removeCheckoutItem(productId) {
+    setCheckoutError("");
+    await removeFromCart(productId);
   }
 
   useEffect(() => {
@@ -163,21 +168,27 @@ export default function Checkout() {
                 required
               />
 
-              <input
-                name="address"
-                placeholder="Delivery Address"
-                value={form.address}
-                onChange={handleChange}
-                required
-              />
+              <fieldset className="payment-methods checkout-fulfilment-methods">
+                <legend>How would you like to receive your order?</legend>
+                <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="delivery" checked={form.deliveryMethod === "delivery"} onChange={handleChange} /><span><strong>Delivery</strong><small>{distributor ? `${distributor.name} will arrange delivery.` : "Easy Life will arrange delivery."}</small></span></label>
+                <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="pickup" checked={form.deliveryMethod === "pickup"} onChange={handleChange} disabled={Boolean(distributor && !distributor.distributorPickupEnabled)} /><span><strong>Pick up — no shipping fee</strong><small>{distributor?.distributorPickupAddress || "Pick up from Easy Life Wellness Hub after confirmation."}</small></span></label>
+              </fieldset>
 
-              <select name="country" value={form.country} onChange={handleChange} required>
-                {shippingDestinations.map((country) => <option key={country} value={country}>{COUNTRY_NAMES.of(country) || country}</option>)}
-              </select>
-
-              <input name="city" placeholder="City" value={form.city} onChange={handleChange} required />
-
-              <input name="state" placeholder="State / Region" value={form.state} onChange={handleChange} />
+              {form.deliveryMethod === "delivery" ? (
+                <>
+                  <input name="address" placeholder="Delivery Address" value={form.address} onChange={handleChange} required />
+                  <select name="country" value={form.country} onChange={handleChange} required>
+                    {shippingDestinations.map((country) => <option key={country} value={country}>{COUNTRY_NAMES.of(country) || country}</option>)}
+                  </select>
+                  <input name="city" placeholder="City" value={form.city} onChange={handleChange} required />
+                  <input name="state" placeholder="State / Region" value={form.state} onChange={handleChange} />
+                </>
+              ) : (
+                <div className="checkout-pickup-note">
+                  <strong>Pickup selected</strong>
+                  <span>{distributor?.distributorPickupAddress || "Easy Life Wellness Hub will confirm the pickup location after your order is placed."}</span>
+                </div>
+              )}
 
               <textarea
                 name="notes"
@@ -187,12 +198,6 @@ export default function Checkout() {
               />
 
               <fieldset className="payment-methods">
-                <legend>Receive your order</legend>
-                <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="delivery" checked={form.deliveryMethod === "delivery"} onChange={handleChange} /><span><strong>Delivery</strong><small>{distributor ? `${distributor.name} will arrange delivery.` : "Easy Life will arrange delivery."}</small></span></label>
-                <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="pickup" checked={form.deliveryMethod === "pickup"} onChange={handleChange} disabled={Boolean(distributor && !distributor.distributorPickupEnabled)} /><span><strong>Pick up</strong><small>{distributor?.distributorPickupAddress || "Pick up from Easy Life Wellness Hub after confirmation."}</small></span></label>
-              </fieldset>
-
-              <fieldset className="payment-methods">
                 <legend>Choose a payment method</legend>
                 <label className="payment-method-option">
                   <input type="radio" name="paymentMethod" value="paystack" checked={form.paymentMethod === "paystack"} onChange={handleChange} />
@@ -200,20 +205,20 @@ export default function Checkout() {
                 </label>
                 {distributor && <label className="payment-method-option"><input type="radio" name="paymentMethod" value="distributor_transfer" checked={form.paymentMethod === "distributor_transfer"} onChange={handleChange} disabled={!distributor.distributorBankName || !distributor.distributorAccountNumber} /><span><strong>Transfer to {distributor.name}</strong><small>{distributor.distributorAccountName} · {distributor.distributorAccountNumber} · {distributor.distributorBankName}</small></span></label>}
                 <label className="payment-method-option">
-                  <input type="radio" name="paymentMethod" value="cash_on_delivery" checked={form.paymentMethod === "cash_on_delivery"} onChange={handleChange} disabled={form.country !== "NG"} />
-                  <span><strong>Pay on delivery</strong><small>{form.country === "NG" ? "Pay the total amount to the delivery agent when your order arrives." : "Available for deliveries within Nigeria only."}</small></span>
+                  <input type="radio" name="paymentMethod" value="cash_on_delivery" checked={form.paymentMethod === "cash_on_delivery"} onChange={handleChange} disabled={form.deliveryMethod === "delivery" && form.country !== "NG"} />
+                  <span><strong>{form.deliveryMethod === "pickup" ? "Pay at pickup" : "Pay on delivery"}</strong><small>{form.deliveryMethod === "pickup" ? "Pay the total amount when you collect your order." : form.country === "NG" ? "Pay the total amount to the delivery agent when your order arrives." : "Available for deliveries within Nigeria only."}</small></span>
                 </label>
               </fieldset>
 
               <button
                 type="submit"
-                className="primary"
+                className="primary checkout-submit-button"
                 disabled={checkoutLoading || Boolean(shippingError)}
               >
                 {checkoutLoading
                   ? "Processing…"
                   : form.paymentMethod === "cash_on_delivery"
-                    ? "Place Order & Pay on Delivery"
+                    ? form.deliveryMethod === "pickup" ? "Place Order & Pay at Pickup" : "Place Order & Pay on Delivery"
                     : form.paymentMethod === "distributor_transfer"
                       ? "Place Transfer Order"
                       : "Continue to Secure Online Payment"}
@@ -254,17 +259,21 @@ export default function Checkout() {
               <h2>Order Summary</h2>
 
               {cart.map((item) => (
-                <div
-                  key={item.productId}
-                  style={{
-                    marginBottom: 16,
-                  }}
-                >
-                  <p>{item.name}</p>
-
-                  <small>
-                    {item.quantity} × ₦{Number(item.price).toLocaleString()}
-                  </small>
+                <div key={item.productId} className="checkout-summary-item">
+                  <div>
+                    <p>{item.name}</p>
+                    <small>
+                      {item.quantity} × ₦{Number(item.price).toLocaleString()}
+                    </small>
+                  </div>
+                  <button
+                    type="button"
+                    className="checkout-remove-item"
+                    onClick={() => removeCheckoutItem(item.productId)}
+                    aria-label={`Remove ${item.name} from checkout`}
+                  >
+                    Remove
+                  </button>
                 </div>
               ))}
 

@@ -48,7 +48,7 @@ async function runUserRetentionCleanup() {
 router.get("/", protect, adminOnly, async (req, res) => {
   try {
     const users = await User.find()
-      .select("name email role distributorStatus distributorCode isSuspended isDeleted deletionRequestedAt deletionRequestReason createdAt")
+      .select("name email phone role distributorStatus distributorCode distributorBusinessName distributorApplicationNote distributorDeliveryCoverage distributorBankName distributorAccountName distributorAccountNumber distributorPickupAddress isSuspended isDeleted deletionRequestedAt deletionRequestReason createdAt")
       .sort({ createdAt: -1 });
 
     res.json(users);

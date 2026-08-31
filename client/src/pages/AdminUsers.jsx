@@ -188,6 +188,17 @@ export default function AdminUsers() {
                 </select>
                 {u.distributorCode && <small style={{ display: "block", marginTop: 4 }}>Code: {u.distributorCode}</small>}
               </div>
+              {u.distributorStatus === "pending" && (
+                <div className="admin-distributor-application">
+                  <strong>Application details</strong>
+                  <p><b>Business:</b> {u.distributorBusinessName || "Not provided"}</p>
+                  <p><b>Phone:</b> {u.phone || "Not provided"}</p>
+                  <p><b>Pickup:</b> {u.distributorPickupAddress || "Not provided"}</p>
+                  {u.distributorDeliveryCoverage && <p><b>Delivery area:</b> {u.distributorDeliveryCoverage}</p>}
+                  <p><b>Payment account:</b> {u.distributorBankName || "—"} · {u.distributorAccountName || "—"} · {u.distributorAccountNumber || "—"}</p>
+                  {u.distributorApplicationNote && <p><b>Note:</b> {u.distributorApplicationNote}</p>}
+                </div>
+              )}
               <p>
                 <strong>Joined:</strong> {formatDate(u.createdAt)}
               </p>

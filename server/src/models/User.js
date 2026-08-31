@@ -44,6 +44,9 @@ const userSchema = new mongoose.Schema(
     distributorPickupAddress: { type: String, default: "" },
     distributorPickupEnabled: { type: Boolean, default: true },
     distributorDeliveryEnabled: { type: Boolean, default: true },
+    distributorBusinessName: { type: String, default: "" },
+    distributorApplicationNote: { type: String, default: "" },
+    distributorDeliveryCoverage: { type: String, default: "" },
 
     phone: {
       type: String,

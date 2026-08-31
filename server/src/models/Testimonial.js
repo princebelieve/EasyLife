@@ -15,6 +15,7 @@ const testimonialSchema = new mongoose.Schema(
     audioFile: { type: String, default: "" },
     featured: { type: Boolean, default: false },
     bannerEnabled: { type: Boolean, default: false },
+    sitewideAdvertEnabled: { type: Boolean, default: false },
     approved: { type: Boolean, default: true },
     status: { type: String, enum: ["active", "inactive"], default: "active" },
     seoTitle: { type: String, default: "", trim: true },

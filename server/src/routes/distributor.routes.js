@@ -30,7 +30,19 @@ router.get("/catalog", protect, approved, async (req, res) => {
 router.get("/dashboard", protect, approved, async (req, res) => {
   const inventory = await DistributorInventory.find({ distributorId: req.user._id }).populate("productId", "name coverImage price distributorPrice stock").lean();
   const orders = await DistributorStockOrder.find({ distributorId: req.user._id }).sort({ createdAt: -1 }).limit(20).lean();
-  res.json({ distributorCode: req.user.distributorCode, inventory: inventory.filter((item) => item.productId), orders });
+  res.json({
+    distributorCode: req.user.distributorCode,
+    inventory: inventory.filter((item) => item.productId),
+    orders,
+    settings: {
+      bankName: req.user.distributorBankName || "",
+      accountName: req.user.distributorAccountName || "",
+      accountNumber: req.user.distributorAccountNumber || "",
+      pickupAddress: req.user.distributorPickupAddress || "",
+      pickupEnabled: req.user.distributorPickupEnabled !== false,
+      deliveryEnabled: req.user.distributorDeliveryEnabled !== false,
+    },
+  });
 });
 
 router.post("/stock-orders", protect, approved, async (req, res) => {
@@ -66,7 +78,20 @@ router.post("/sales", protect, approved, async (req, res) => {
 
 router.post("/apply", protect, async (req, res) => {
   if (req.user.distributorStatus === "approved") return res.json({ message: "Your distributor account is already approved." });
+  if (req.user.distributorStatus === "pending") return res.json({ message: "Your distributor application is already pending admin approval." });
+  const { businessName, phone, pickupAddress, deliveryCoverage, bankName, accountName, accountNumber, note } = req.body;
+  if (!businessName || !phone || !pickupAddress || !bankName || !accountName || !accountNumber) {
+    return res.status(400).json({ message: "Business name, phone, pickup address, and bank details are required." });
+  }
   req.user.distributorStatus = "pending";
+  req.user.distributorBusinessName = String(businessName).trim();
+  req.user.phone = String(phone).trim();
+  req.user.distributorPickupAddress = String(pickupAddress).trim();
+  req.user.distributorDeliveryCoverage = String(deliveryCoverage || "").trim();
+  req.user.distributorBankName = String(bankName).trim();
+  req.user.distributorAccountName = String(accountName).trim();
+  req.user.distributorAccountNumber = String(accountNumber).trim();
+  req.user.distributorApplicationNote = String(note || "").trim();
   await req.user.save();
   res.json({ message: "Distributor application submitted for review." });
 });

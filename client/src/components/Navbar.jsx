@@ -113,6 +113,7 @@ export default function Navbar() {
           <Link to="/collection">Shop</Link>
           <Link to="/about">About</Link>
           <Link to="/contact">Contact</Link>
+          <Link to="/how-to-use">How It Works</Link>
 
           {isLoggedIn && <Link to="/cart">Cart</Link>}
 
@@ -231,6 +232,10 @@ export default function Navbar() {
 
           <Link to="/contact" onClick={() => setOpen(false)}>
             Contact
+          </Link>
+
+          <Link to="/how-to-use" onClick={() => setOpen(false)}>
+            How It Works
           </Link>
 
           {isLoggedIn && (

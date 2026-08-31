@@ -241,7 +241,7 @@ export async function getDistributorCatalog() { return apiRequest("/api/distribu
 export async function getDistributorStore(code) { return apiRequest(`/api/distributor/store/${encodeURIComponent(code)}`); }
 export async function createDistributorStockOrder(items) { return apiRequest("/api/distributor/stock-orders", { method: "POST", body: JSON.stringify({ items }) }); }
 export async function recordDistributorSale(productId, quantity) { return apiRequest("/api/distributor/sales", { method: "POST", body: JSON.stringify({ productId, quantity }) }); }
-export async function applyForDistributor() { return apiRequest("/api/distributor/apply", { method: "POST" }); }
+export async function applyForDistributor(payload) { return apiRequest("/api/distributor/apply", { method: "POST", body: JSON.stringify(payload) }); }
 export async function updateDistributorSettings(payload) { return apiRequest("/api/distributor/settings", { method: "PUT", body: JSON.stringify(payload) }); }
 export async function getAdminDistributorInventory() { return apiRequest("/api/admin/distributors/inventory"); }
 

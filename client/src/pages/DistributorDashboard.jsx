@@ -11,7 +11,7 @@ export default function DistributorDashboard() {
   const [quantities, setQuantities] = useState({});
   const [notice, setNotice] = useState("");
   const [settings, setSettings] = useState({ bankName: "", accountName: "", accountNumber: "", pickupAddress: "", pickupEnabled: true, deliveryEnabled: true });
-  async function load() { try { const [dashboard, products] = await Promise.all([getDistributorDashboard(), getDistributorCatalog()]); setData(dashboard); setCatalog(products); } catch (error) { setNotice(error.message || "Unable to load distributor information."); } }
+  async function load() { try { const [dashboard, products] = await Promise.all([getDistributorDashboard(), getDistributorCatalog()]); setData(dashboard); setCatalog(products); if (dashboard.settings) setSettings(dashboard.settings); } catch (error) { setNotice(error.message || "Unable to load distributor information."); } }
   useEffect(() => { load(); }, []);
   const setQuantity = (id, value) => setQuantities((current) => ({ ...current, [id]: value }));
   async function buy(product) { try { const response = await createDistributorStockOrder([{ productId: product._id, quantity: Number(quantities[product._id] || product.distributorMinimumQuantity || 1) }]); window.location.href = response.authorization_url; } catch (error) { setNotice(error.message || "Unable to start the stock purchase."); } }

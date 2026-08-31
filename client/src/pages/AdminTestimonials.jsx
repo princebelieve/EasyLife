@@ -6,7 +6,7 @@ import useAuth from "../context/AuthContext";
 
 const MAX_MEDIA_SIZE_MB = 500;
 const MAX_MEDIA_SIZE_BYTES = MAX_MEDIA_SIZE_MB * 1024 * 1024;
-const blank = { contentType: "story", mediaType: "text", title: "", name: "", role: "", testimony: "", linkUrl: "", videoUrl: "", featured: false, bannerEnabled: false, approved: true, status: "active", seoTitle: "", seoDescription: "", image: null, video: null, audio: null };
+const blank = { contentType: "story", mediaType: "text", title: "", name: "", role: "", testimony: "", linkUrl: "", videoUrl: "", featured: false, bannerEnabled: false, sitewideAdvertEnabled: false, approved: true, status: "active", seoTitle: "", seoDescription: "", image: null, video: null, audio: null };
 
 function uploadFileWithProgress(url, options, onProgress) {
   return new Promise((resolve, reject) => {

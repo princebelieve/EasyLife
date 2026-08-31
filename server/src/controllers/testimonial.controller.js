@@ -65,7 +65,7 @@ async function createContentUploadUrl(req, res) {
 
 async function createTestimonial(req, res) {
   try {
-    const { contentType, mediaType, title, name, role, testimony, linkUrl, videoUrl, featured, bannerEnabled, seoTitle, seoDescription, status } = req.body;
+    const { contentType, mediaType, title, name, role, testimony, linkUrl, videoUrl, featured, bannerEnabled, sitewideAdvertEnabled, seoTitle, seoDescription, status } = req.body;
     if (!name || !testimony) return res.status(400).json({ message: "Author or organisation and content are required." });
     const isAdmin = req.user.role === "admin";
 
@@ -80,6 +80,7 @@ async function createTestimonial(req, res) {
       contentType, mediaType: mediaType || (videoFile ? "video" : audioFile ? "audio" : image ? "image" : "text"), title, name, role, testimony, linkUrl, videoUrl, image, videoFile, audioFile,
       featured: asBoolean(featured),
       bannerEnabled: isAdmin && asBoolean(bannerEnabled),
+      sitewideAdvertEnabled: isAdmin && asBoolean(sitewideAdvertEnabled),
       approved: isAdmin,
       status: isAdmin ? (status || "active") : "inactive",
       submittedBy: req.user._id,
@@ -147,11 +148,13 @@ async function updateTestimonial(req, res) {
     if (req.user.role === "admin") {
       if (req.body.featured !== undefined) testimonial.featured = asBoolean(req.body.featured);
       if (req.body.bannerEnabled !== undefined) testimonial.bannerEnabled = asBoolean(req.body.bannerEnabled);
+      if (req.body.sitewideAdvertEnabled !== undefined) testimonial.sitewideAdvertEnabled = asBoolean(req.body.sitewideAdvertEnabled);
       if (req.body.approved !== undefined) testimonial.approved = asBoolean(req.body.approved);
       if (req.body.status !== undefined) testimonial.status = req.body.status;
     } else {
       testimonial.featured = false;
       testimonial.bannerEnabled = false;
+      testimonial.sitewideAdvertEnabled = false;
       testimonial.approved = false;
       testimonial.status = "inactive";
     }

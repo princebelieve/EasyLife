@@ -8,13 +8,36 @@ import UserLayout from "../components/user/UserLayout";
 export default function Dashboard() {
   const [orders, setOrders] = useState([]);
   const [user, setUser] = useState(null);
-  const { token } = useAuth();
+  const { token, setUser: setAuthenticatedUser } = useAuth();
+  const [distributorMessage, setDistributorMessage] = useState("");
+  const [showDistributorForm, setShowDistributorForm] = useState(false);
+  const [distributorApplication, setDistributorApplication] = useState({
+    businessName: "",
+    phone: "",
+    pickupAddress: "",
+    deliveryCoverage: "",
+    bankName: "",
+    accountName: "",
+    accountNumber: "",
+    note: "",
+  });
 
   useEffect(() => {
     async function load() {
       try {
         const profile = await getProfile(token);
         setUser(profile.user);
+        setAuthenticatedUser(profile.user);
+        setDistributorApplication({
+          businessName: profile.user.distributorBusinessName || profile.user.name || "",
+          phone: profile.user.phone || "",
+          pickupAddress: profile.user.distributorPickupAddress || profile.user.address || "",
+          deliveryCoverage: profile.user.distributorDeliveryCoverage || "",
+          bankName: profile.user.distributorBankName || "",
+          accountName: profile.user.distributorAccountName || "",
+          accountNumber: profile.user.distributorAccountNumber || "",
+          note: profile.user.distributorApplicationNote || "",
+        });
 
         const ordersData = await getMyOrders(token);
         setOrders(ordersData);
@@ -34,9 +57,35 @@ export default function Dashboard() {
     (o) => o.deliveryStatus === "delivered",
   ).length;
 
-  async function applyForDistributorAccount() {
-    try { await applyForDistributor(); setUser((current) => ({ ...current, distributorStatus: "pending" })); }
-    catch (error) { console.error(error); }
+  function updateDistributorApplication(event) {
+    const { name, value } = event.target;
+    setDistributorApplication((current) => ({ ...current, [name]: value }));
+  }
+
+  async function applyForDistributorAccount(event) {
+    event.preventDefault();
+    try {
+      const response = await applyForDistributor(distributorApplication);
+      const updatedUser = {
+        ...user,
+        distributorStatus: "pending",
+        distributorBusinessName: distributorApplication.businessName,
+        phone: distributorApplication.phone,
+        distributorPickupAddress: distributorApplication.pickupAddress,
+        distributorDeliveryCoverage: distributorApplication.deliveryCoverage,
+        distributorBankName: distributorApplication.bankName,
+        distributorAccountName: distributorApplication.accountName,
+        distributorAccountNumber: distributorApplication.accountNumber,
+        distributorApplicationNote: distributorApplication.note,
+      };
+      setUser(updatedUser);
+      setAuthenticatedUser(updatedUser);
+      setDistributorMessage(response.message || "Your distributor application is pending admin approval.");
+      setShowDistributorForm(false);
+    } catch (error) {
+      console.error(error);
+      setDistributorMessage(error.message || "Unable to submit your distributor application.");
+    }
   }
 
   return (
@@ -96,8 +145,35 @@ export default function Dashboard() {
           <button onClick={() => (window.location.href = "/profile")}>
             Edit Profile
           </button>
-          {user?.distributorStatus === "approved" ? <button onClick={() => (window.location.href = "/distributor")}>Open Distributor Dashboard</button> : user?.distributorStatus === "pending" ? <button disabled>Distributor application pending</button> : <button onClick={applyForDistributorAccount}>Apply to become a distributor</button>}
+          {user?.distributorStatus === "approved" ? <button onClick={() => (window.location.href = "/distributor")}>Open Distributor Dashboard</button> : user?.distributorStatus === "pending" ? <button disabled>Distributor application pending</button> : <button onClick={() => setShowDistributorForm((open) => !open)}>{showDistributorForm ? "Close distributor application" : "Apply to become a distributor"}</button>}
         </div>
+        {distributorMessage && <p className="inline-toast success">{distributorMessage}</p>}
+        {user?.distributorStatus === "pending" && <p className="muted">Your application has been submitted. An Easy Life administrator must approve it before you can access the Distributor Dashboard.</p>}
+        {showDistributorForm && user?.distributorStatus !== "pending" && (
+          <section className="content-card distributor-application">
+            <div>
+              <p className="eyebrow">Distributor application</p>
+              <h2>Tell us how you will serve customers</h2>
+              <p className="muted">Submit these details for review. You can update your customer payment and fulfilment settings after approval.</p>
+            </div>
+            <form onSubmit={applyForDistributorAccount} className="form distributor-application-form">
+              <div className="form-grid">
+                <label>Business or shop name<input name="businessName" value={distributorApplication.businessName} onChange={updateDistributorApplication} required /></label>
+                <label>Phone number<input name="phone" type="tel" value={distributorApplication.phone} onChange={updateDistributorApplication} required /></label>
+                <label className="form-grid-full">Pickup address<input name="pickupAddress" value={distributorApplication.pickupAddress} onChange={updateDistributorApplication} required /></label>
+                <label className="form-grid-full">Delivery areas <span className="muted">(optional)</span><input name="deliveryCoverage" value={distributorApplication.deliveryCoverage} onChange={updateDistributorApplication} placeholder="For example: Ibadan and nearby areas" /></label>
+                <label>Bank name<input name="bankName" value={distributorApplication.bankName} onChange={updateDistributorApplication} required /></label>
+                <label>Account name<input name="accountName" value={distributorApplication.accountName} onChange={updateDistributorApplication} required /></label>
+                <label>Account number<input name="accountNumber" inputMode="numeric" value={distributorApplication.accountNumber} onChange={updateDistributorApplication} required /></label>
+                <label className="form-grid-full">Anything else we should know? <span className="muted">(optional)</span><textarea name="note" value={distributorApplication.note} onChange={updateDistributorApplication} rows="3" placeholder="Describe your customer base or fulfilment plan" /></label>
+              </div>
+              <div className="form-actions">
+                <button className="primary" type="submit">Submit application for review</button>
+                <button type="button" onClick={() => setShowDistributorForm(false)}>Cancel</button>
+              </div>
+            </form>
+          </section>
+        )}
 
         {/* Account Information */}
         <div className="profile-info-grid">

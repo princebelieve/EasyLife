@@ -34,7 +34,7 @@ router.post("/", protect, async (req, res) => {
       return res.status(400).json({ message: "Choose a valid payment method." });
     }
 
-    if (paymentMethod === "cash_on_delivery" && country !== "NG") {
+    if (paymentMethod === "cash_on_delivery" && deliveryMethod === "delivery" && country !== "NG") {
       return res.status(400).json({
         message: "Payment on delivery is currently available for deliveries within Nigeria only.",
       });
