@@ -427,10 +427,12 @@ button {
     border-radius: 12px;
   }
 
-  .payment-method-option input {
+  .form .payment-method-option input {
     width: 22px;
+    min-height: 0;
     height: 22px;
     margin-top: 2px;
+    padding: 0;
   }
 
   .form .checkout-submit-button,
@@ -1979,6 +1981,23 @@ button:hover {
 .form textarea {
   min-height: 120px;
   padding: 16px 18px;
+}
+
+/* Checkout radio controls must not inherit the full-size form input treatment. */
+.form .payment-method-option input {
+  width: 20px;
+  min-height: 0;
+  height: 20px;
+  margin: 2px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+}
+
+.form .payment-method-option input:focus {
+  box-shadow: 0 0 0 3px rgba(201, 162, 74, .22);
 }
 
 .form input:focus {
