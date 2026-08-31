@@ -33,51 +33,93 @@ const promotions = [
 ];
 
 export default function ServicePromoCarousel() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activePromotion = promotions[activeIndex];
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [transitionsEnabled, setTransitionsEnabled] = useState(true);
+  const slides = [...promotions, promotions[0]];
+  const activeIndex = activeSlide % promotions.length;
 
   useEffect(() => {
+    promotions.forEach(({ image }) => {
+      const preloadImage = new Image();
+      preloadImage.src = image;
+    });
+
     const timer = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % promotions.length);
+      setActiveSlide((current) => current + 1);
     }, 5500);
     return () => window.clearInterval(timer);
   }, []);
 
   function showPrevious() {
-    setActiveIndex((current) => (current - 1 + promotions.length) % promotions.length);
+    if (activeSlide > 0) {
+      setActiveSlide((current) => current - 1);
+      return;
+    }
+
+    setTransitionsEnabled(false);
+    setActiveSlide(promotions.length);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        setTransitionsEnabled(true);
+        setActiveSlide(promotions.length - 1);
+      });
+    });
   }
 
   function showNext() {
-    setActiveIndex((current) => (current + 1) % promotions.length);
+    setActiveSlide((current) => current + 1);
+  }
+
+  function handleTrackTransitionEnd() {
+    if (activeSlide !== promotions.length) return;
+
+    setTransitionsEnabled(false);
+    setActiveSlide(0);
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => setTransitionsEnabled(true));
+    });
   }
 
   return (
     <section className="service-promo-section reveal" aria-label="Easy Life services">
       <div className="container">
-        <div className="service-promo" key={activePromotion.to}>
-          <img src={activePromotion.image} alt="" aria-hidden="true" />
-          <div className="service-promo-overlay" />
-          <div className="service-promo-content">
-            <span className="service-promo-kicker">FEATURED ADVERT</span>
-            <span className="service-promo-label">{activePromotion.label}</span>
-            <h2>{activePromotion.title}</h2>
-            <p>{activePromotion.text}</p>
-            <strong className="service-promo-destination">{activePromotion.destination}</strong>
-            {activePromotion.to.startsWith("http") ? (
-              <a className="easy-btn easy-btn-primary breathing-button" href={activePromotion.to}>
-                {activePromotion.action} <ArrowRight size={17} />
-              </a>
-            ) : (
-              <Link className="easy-btn easy-btn-primary breathing-button" to={activePromotion.to}>
-                {activePromotion.action} <ArrowRight size={17} />
-              </Link>
-            )}
+        <div className="service-promo-carousel">
+          <div
+            className="service-promo-track"
+            style={{
+              transform: `translateX(-${activeSlide * 100}%)`,
+              transition: transitionsEnabled ? "transform 0.55s ease" : "none",
+            }}
+            onTransitionEnd={handleTrackTransitionEnd}
+          >
+            {slides.map((promotion, index) => (
+              <article className="service-promo service-promo-slide" key={`${promotion.to}-${index}`}>
+                <img src={promotion.image} alt="" aria-hidden="true" />
+                <div className="service-promo-overlay" />
+                <div className="service-promo-content">
+                  <span className="service-promo-kicker">FEATURED ADVERT</span>
+                  <span className="service-promo-label">{promotion.label}</span>
+                  <h2>{promotion.title}</h2>
+                  <p>{promotion.text}</p>
+                  <strong className="service-promo-destination">{promotion.destination}</strong>
+                  {promotion.to.startsWith("http") ? (
+                    <a className="easy-btn easy-btn-primary breathing-button" href={promotion.to}>
+                      {promotion.action} <ArrowRight size={17} />
+                    </a>
+                  ) : (
+                    <Link className="easy-btn easy-btn-primary breathing-button" to={promotion.to}>
+                      {promotion.action} <ArrowRight size={17} />
+                    </Link>
+                  )}
+                </div>
+              </article>
+            ))}
           </div>
           <div className="service-promo-controls">
             <button type="button" onClick={showPrevious} aria-label="Previous advert"><ArrowLeft size={17} /></button>
             <div className="service-promo-dots" aria-label="Choose advert">
               {promotions.map((promotion, index) => (
-                <button key={promotion.label} type="button" className={index === activeIndex ? "active" : ""} onClick={() => setActiveIndex(index)} aria-label={`Show ${promotion.label}`} />
+                <button key={promotion.to} type="button" className={index === activeIndex ? "active" : ""} onClick={() => setActiveSlide(index)} aria-label={`Show ${promotion.title}`} />
               ))}
             </div>
             <button type="button" onClick={showNext} aria-label="Next advert"><ArrowRight size={17} /></button>

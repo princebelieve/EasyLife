@@ -5603,6 +5603,15 @@ button:hover,
 
 .service-promo-section { padding: 42px 0 60px; background: #eef3ef; }
 .service-promo { position: relative; min-height: 350px; overflow: hidden; border: 2px solid #e85d4a; border-radius: 8px; background: var(--navy); box-shadow: 0 20px 44px rgba(6, 59, 32, .2); animation: promoSlideIn .55s ease both; }
+.service-promo-carousel { position: relative; height: clamp(220px, 24vw, 280px); overflow: hidden; border: 0; border-radius: 18px; background: var(--navy); box-shadow: 0 14px 30px rgba(6, 59, 32, .18); }
+.service-promo-track { display: flex; height: 100%; will-change: transform; }
+.service-promo-carousel .service-promo { flex: 0 0 100%; width: 100%; min-height: 0; height: 100%; border: 0; border-radius: 0; box-shadow: none; animation: none; }
+.service-promo-carousel .service-promo > img { opacity: 1; }
+.service-promo-carousel .service-promo-overlay { right: auto; width: 58%; background: linear-gradient(90deg, rgba(3, 29, 16, .96), rgba(6, 59, 32, .82) 70%, rgba(6, 59, 32, .08)); }
+.service-promo-carousel .service-promo-content { width: min(650px, 58%); padding: 28px 32px; }
+.service-promo-carousel .service-promo-content h2 { margin: 6px 0 8px; font-size: clamp(1.65rem, 3.2vw, 2.75rem); }
+.service-promo-carousel .service-promo-content p { margin-bottom: 10px; font-size: .9rem; line-height: 1.45; }
+.service-promo-carousel .service-promo-destination { margin-bottom: 14px; font-size: .72rem; }
 .service-promo > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: .7; animation: promoImageDrift 5.5s ease both; }
 .service-promo-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(3, 29, 16, .97), rgba(6, 59, 32, .82) 52%, rgba(6, 59, 32, .3)); }
 .service-promo-content { position: relative; z-index: 1; width: min(700px, 78%); padding: 48px; color: var(--white); }
@@ -5620,7 +5629,8 @@ button:hover,
 @keyframes promoImageDrift { from { transform: scale(1.06); } to { transform: scale(1); } }
 
 @media (max-width: 600px) {
-  .service-promo { min-height: 540px; border-width: 3px; }
+  .service-promo, .service-promo-carousel, .service-promo-track { min-height: 540px; }
+  .service-promo-carousel { border-width: 3px; }
   .service-promo > img { height: 205px; object-position: center; opacity: .9; }
   .service-promo-overlay { height: 205px; background: linear-gradient(180deg, rgba(3, 29, 16, .08), rgba(3, 29, 16, .78)); }
   .service-promo-content { width: 100%; min-height: 335px; margin-top: 205px; padding: 26px 22px 88px; background: var(--navy); }
@@ -5631,6 +5641,24 @@ button:hover,
   .service-promo-destination { margin-bottom: 18px; font-size: .82rem; overflow-wrap: anywhere; }
   .service-promo-content .easy-btn { width: 100%; justify-content: center; }
   .service-promo-controls { right: 20px; bottom: 20px; }
+
+  .service-promo-carousel { height: 158px; min-height: 0; border-radius: 14px; }
+  .service-promo-carousel .service-promo,
+  .service-promo-carousel .service-promo-track { min-height: 0; height: 100%; }
+  .service-promo-carousel .service-promo > img { inset: 0; width: 100%; height: 100%; object-position: center; opacity: 1; }
+  .service-promo-carousel .service-promo-overlay { display: block; width: 74%; height: 100%; background: linear-gradient(90deg, rgba(3, 29, 16, .94), rgba(6, 59, 32, .68) 60%, rgba(6, 59, 32, 0)); }
+  .service-promo-carousel .service-promo-content { width: 72%; min-height: 0; margin-top: 0; padding: 15px 16px; background: transparent; }
+  .service-promo-carousel .service-promo-kicker { padding: 5px 7px; font-size: .55rem; }
+  .service-promo-carousel .service-promo-label { margin-top: 7px; font-size: .58rem; }
+  .service-promo-carousel .service-promo-content h2 { margin: 4px 0 8px; font-size: 1.2rem; line-height: 1.08; }
+  .service-promo-carousel .service-promo-content p,
+  .service-promo-carousel .service-promo-destination { display: none; }
+  .service-promo-carousel .service-promo-content .easy-btn { width: auto; padding: 7px 10px; font-size: .68rem; }
+  .service-promo-carousel .service-promo-controls { right: 12px; bottom: 10px; gap: 7px; }
+  .service-promo-carousel .service-promo-controls > button { width: 28px; height: 28px; }
+  .service-promo-carousel .service-promo-dots { gap: 4px; }
+  .service-promo-carousel .service-promo-dots button { width: 6px; height: 6px; }
+  .service-promo-carousel .service-promo-dots button.active { width: 16px; }
 }
 
 .outreach-hero, .journey-hero { padding: 78px 0; color: var(--white); background: linear-gradient(120deg, var(--navy), var(--navy-light)); }
