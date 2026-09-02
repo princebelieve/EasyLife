@@ -377,9 +377,8 @@ button {
 .payment-method-option strong { color: var(--navy); }
 .payment-method-option small { color: #52675b; line-height: 1.4; }
 .payment-method-option:has(input:disabled) { cursor: not-allowed; opacity: .56; }
-.checkout-whatsapp-summary { width: 100%; margin-top: 12px; border: 1px solid #1eae55; background: #25D366; color: #063b20; font-weight: 800; }
 .form .checkout-submit-button,
-.checkout-whatsapp-summary {
+.success-whatsapp-receipt {
   min-height: 50px;
   height: auto;
   padding: 12px 16px;
@@ -387,6 +386,8 @@ button {
   line-height: 1.35;
   white-space: normal;
 }
+.success-whatsapp-receipt { border: 1px solid #1eae55; background: #25d366; color: #063b20; font-weight: 800; }
+.success-whatsapp-hint { margin: 14px 0 0; color: #52675b; font-size: .88rem; line-height: 1.45; text-align: center; }
 .checkout-summary-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #edf0ee; }
 .checkout-summary-item p { margin: 0 0 4px; color: var(--navy); font-weight: 700; }
 .checkout-summary-item small { color: #52675b; }
@@ -436,7 +437,7 @@ button {
   }
 
   .form .checkout-submit-button,
-  .checkout-whatsapp-summary {
+  .success-whatsapp-receipt {
     min-height: 48px;
     padding: 11px 14px;
     font-size: 15px;

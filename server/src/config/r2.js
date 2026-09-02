@@ -33,6 +33,17 @@ async function uploadToR2(file, folder = "general") {
   return `${process.env.R2_PUBLIC_BASE_URL}/${key}`;
 }
 
+async function uploadBufferToR2(buffer, { fileName = "upload", contentType = "application/octet-stream", folder = "general" } = {}) {
+  const key = `${folder}/${Date.now()}-${safeFileName(fileName)}`;
+  await s3.send(new PutObjectCommand({
+    Bucket: process.env.R2_BUCKET,
+    Key: key,
+    Body: buffer,
+    ContentType: contentType,
+  }));
+  return `${process.env.R2_PUBLIC_BASE_URL.replace(/\/$/, "")}/${key}`;
+}
+
 function safeFileName(fileName = "upload") {
   return fileName.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-").slice(0, 120) || "upload";
 }
@@ -86,4 +97,4 @@ async function deleteFromR2(fileUrl) {
   return true;
 }
 
-module.exports = { uploadToR2, createPresignedContentUpload, deleteFromR2 };
+module.exports = { uploadToR2, uploadBufferToR2, createPresignedContentUpload, deleteFromR2 };

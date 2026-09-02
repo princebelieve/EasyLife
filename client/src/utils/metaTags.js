@@ -139,6 +139,7 @@ export function getShareUrl(productId, productName) {
 }
 
 export function getContentShareUrl(contentId) {
-  const apiBaseUrl = (import.meta.env.VITE_API_URL || window.location.origin).replace(/\/$/, "");
-  return `${apiBaseUrl}/api/share/content/${encodeURIComponent(contentId)}`;
+  // Share from the public web app, not the API host. Vercel serves this page
+  // with Open Graph tags before redirecting visitors to the content post.
+  return `${window.location.origin}/share/testimonial?id=${encodeURIComponent(contentId)}`;
 }

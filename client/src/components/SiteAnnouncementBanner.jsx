@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { X, ArrowRight } from "lucide-react";
 import { getTestimonials } from "../services/api";
 import useAuth from "../context/AuthContext";
+import { getSafeContentLink } from "../utils/contentLinks";
 
 export default function SiteAnnouncementBanner() {
   const [items, setItems] = useState([]);
@@ -31,7 +32,7 @@ export default function SiteAnnouncementBanner() {
 
   if (!items.length || dismissed || !visible) return null;
   const item = items[index];
-  const target = item.linkUrl || "/testimonials";
+  const target = getSafeContentLink(item.linkUrl, `/testimonials#${item._id}`);
   const isExternal = /^https?:\/\//i.test(target);
   function viewPost(event) {
     setDismissed(true);

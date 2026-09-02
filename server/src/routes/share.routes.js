@@ -9,7 +9,16 @@ function escapeHtml(value = "") {
 }
 
 function clientBaseUrl() {
-  return (process.env.CLIENT_URL || "http://localhost:5173").split(",")[0].trim().replace(/\/$/, "");
+  const configured = (process.env.CLIENT_URL || "http://localhost:5173").split(",")[0].trim().replace(/\/$/, "");
+  try {
+    const parsed = new URL(configured);
+    // A Render health-check URL is an API endpoint, never a customer-facing
+    // destination for a shared post. Fall back to the public web app instead.
+    if (/^\/health\/?$/i.test(parsed.pathname)) return "https://easylifewellnesshub.com";
+  } catch {
+    return "https://easylifewellnesshub.com";
+  }
+  return configured;
 }
 
 function youtubeThumbnail(url) {

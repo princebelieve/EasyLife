@@ -16,13 +16,6 @@ export default function Checkout() {
   const [distributor, setDistributor] = useState(null);
 
   const totalAmount = subtotal + shippingFee;
-  function sendOrderSummaryToWhatsApp() {
-    const items = cart.map((item) => `- ${item.quantity} x ${item.name} (${Number(item.price * item.quantity).toLocaleString()} NGN)`).join("\n");
-    const delivery = form.deliveryMethod === "pickup" ? "Pickup (no shipping fee)" : `Delivery (${shippingFee.toLocaleString()} NGN)`;
-    const message = `Hello Easy Life Wellness Hub, I would like help with this order:\n\n${items}\n\nSubtotal: ${subtotal.toLocaleString()} NGN\nCollection: ${delivery}\nTotal: ${totalAmount.toLocaleString()} NGN\n\nName: ${form.customerName || "Not entered"}\nPhone: ${form.phone || "Not entered"}`;
-    window.open(`https://wa.me/2348089938820?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
-  }
-
   const [form, setForm] = useState({
     customerName: "",
     email: "",
@@ -299,9 +292,6 @@ export default function Checkout() {
                   <span>{form.deliveryMethod === "pickup" ? `Pickup location: ${distributor.distributorPickupAddress || "Address will be confirmed by the distributor."}` : "Delivery will be arranged by this distributor after your order is confirmed."}</span>
                 </div>
               )}
-              <button type="button" className="checkout-whatsapp-summary" onClick={sendOrderSummaryToWhatsApp}>
-                Send order summary to Easy Life on WhatsApp
-              </button>
               <p className="muted" style={{ marginTop: 6 }}>
                 This amount becomes sales revenue only after payment is
                 confirmed.

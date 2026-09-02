@@ -1,6 +1,7 @@
 const Testimonial = require("../models/Testimonial");
 const User = require("../models/User");
-const { uploadToR2, createPresignedContentUpload } = require("../config/r2");
+const axios = require("axios");
+const { uploadToR2, uploadBufferToR2, createPresignedContentUpload } = require("../config/r2");
 const { createNotification, createNotificationsForUsers, notifyAdmins } = require("../services/notification.service");
 const { sendPushToUsers } = require("../services/push.service");
 const { sendAnnouncementEmail } = require("../services/email");
@@ -15,6 +16,48 @@ function lastValue(value) {
 
 function publicFilter() {
   return { approved: { $ne: false }, status: "active" };
+}
+
+function youtubeThumbnailUrl(videoUrl = "") {
+  try {
+    const parsed = new URL(videoUrl);
+    const host = parsed.hostname.toLowerCase();
+    const parts = parsed.pathname.split("/").filter(Boolean);
+    const videoId = host.endsWith("youtu.be")
+      ? parts[0]
+      : ["youtube.com", "www.youtube.com", "m.youtube.com"].includes(host)
+        ? parsed.searchParams.get("v") || (["shorts", "embed", "live"].includes(parts[0]) ? parts[1] : "")
+        : "";
+    return videoId ? `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg` : "";
+  } catch {
+    return "";
+  }
+}
+
+async function storeYoutubeThumbnail(videoUrl) {
+  const sourceUrl = youtubeThumbnailUrl(videoUrl);
+  if (!sourceUrl) return "";
+  try {
+    const response = await axios.get(sourceUrl, { responseType: "arraybuffer", timeout: 15000, maxContentLength: 8 * 1024 * 1024 });
+    const contentType = response.headers["content-type"] || "image/jpeg";
+    return uploadBufferToR2(Buffer.from(response.data), { fileName: "youtube-video-thumbnail.jpg", contentType, folder: "testimonials/images" });
+  } catch (error) {
+    console.warn("Unable to store YouTube video thumbnail:", error.message);
+    return "";
+  }
+}
+
+function contentDestination(post) {
+  const fallback = `/testimonials#${post._id}`;
+  const candidate = String(post.linkUrl || (post.mediaType === "video" ? post.videoUrl : "")).trim();
+  if (!candidate) return fallback;
+  if (candidate.startsWith("/")) return /^\/health\/?$/i.test(candidate) ? fallback : candidate;
+  try {
+    const parsed = new URL(candidate);
+    return /^\/health\/?$/i.test(parsed.pathname) ? fallback : parsed.toString();
+  } catch {
+    return fallback;
+  }
 }
 
 async function keepBannerLimit(currentId) {
@@ -75,6 +118,7 @@ async function createTestimonial(req, res) {
     if (req.files?.image?.[0]) image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
     if (req.files?.audio?.[0]) audioFile = await uploadToR2(req.files.audio[0], "testimonials/audio");
+    if (!image && !videoFile && videoUrl) image = await storeYoutubeThumbnail(videoUrl);
 
     const testimonial = await Testimonial.create({
       contentType, mediaType: mediaType || (videoFile ? "video" : audioFile ? "audio" : image ? "image" : "text"), title, name, role, testimony, linkUrl, videoUrl, image, videoFile, audioFile,
@@ -120,7 +164,7 @@ async function createTestimonial(req, res) {
 async function notifyUsersOfContent(post) {
   const users = await User.find({ isDeleted: { $ne: true }, isSuspended: { $ne: true } }).select("_id email").lean();
   const userIds = users.map((user) => user._id);
-  const link = post.linkUrl || "/testimonials";
+  const link = contentDestination(post);
   const payload = {
     type: `content.${post.contentType || "published"}`,
     title: post.title || "New Easy Life update",
@@ -170,6 +214,7 @@ async function updateTestimonial(req, res) {
     if (req.files?.image?.[0]) testimonial.image = await uploadToR2(req.files.image[0], "testimonials/images");
     if (req.files?.video?.[0]) testimonial.videoFile = await uploadToR2(req.files.video[0], "testimonials/videos");
     if (req.files?.audio?.[0]) testimonial.audioFile = await uploadToR2(req.files.audio[0], "testimonials/audio");
+    if (!testimonial.image && !testimonial.videoFile && testimonial.videoUrl) testimonial.image = await storeYoutubeThumbnail(testimonial.videoUrl);
 
     const shouldNotify = req.user.role === "admin" && testimonial.approved && testimonial.status === "active" && !testimonial.announcementNotifiedAt;
     await testimonial.save();

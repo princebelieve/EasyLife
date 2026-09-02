@@ -31,7 +31,8 @@ function createVideoThumbnail(file) {
     video.muted = true;
     video.src = objectUrl;
     video.onloadedmetadata = () => {
-      video.currentTime = Math.min(0.25, Math.max(0, video.duration - 0.01));
+      const duration = Number.isFinite(video.duration) ? video.duration : 1;
+      video.currentTime = Math.min(Math.max(0.5, duration * 0.1), Math.max(0.1, duration - 0.1));
     };
     video.onseeked = () => {
       const canvas = document.createElement("canvas");

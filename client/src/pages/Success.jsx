@@ -31,6 +31,17 @@ export default function Success() {
     ? "Your order has been confirmed and is being prepared."
     : "We're processing your payment. Check back soon for updates.";
 
+  function sendOrderReceiptToWhatsApp() {
+    if (!order) return;
+    const items = (order.items || []).map((item) => `- ${item.quantity} x ${item.name} (₦${Number(item.price * item.quantity).toLocaleString()})`).join("\n");
+    const fulfilment = order.deliveryMethod === "pickup"
+      ? `Pickup${order.pickupLocation ? `: ${order.pickupLocation}` : ""}`
+      : `Delivery${order.shippingService ? `: ${order.shippingService}` : ""}`;
+    const paymentStatus = isPaid ? "Paid" : isCashOnDelivery ? "Pay on delivery / pickup" : "Payment processing";
+    const message = `Hello Easy Life Wellness Hub, here is my order receipt:\n\nOrder: ${order.orderNumber || order._id}\nPayment: ${paymentStatus}\nCollection: ${fulfilment}\n\n${items}\n\nSubtotal: ₦${Number(order.subtotal || 0).toLocaleString()}\nShipping: ₦${Number(order.shippingFee || 0).toLocaleString()}\nTotal: ₦${Number(order.totalAmount || 0).toLocaleString()}\n\nCustomer: ${order.customerName}\nPhone: ${order.phone}\n${order.paymentReference ? `Payment reference: ${order.paymentReference}` : ""}`;
+    window.open(`https://wa.me/2348089938820?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+  }
+
   useEffect(() => {
     if (!orderToken) {
       setError("This order confirmation link is missing or invalid. Please view the order in your dashboard.");
@@ -377,6 +388,9 @@ export default function Success() {
               marginTop: 30,
             }}
           >
+            <button className="success-whatsapp-receipt" type="button" onClick={sendOrderReceiptToWhatsApp}>
+              Send order receipt to Easy Life on WhatsApp
+            </button>
             <button className="primary" onClick={() => navigate("/dashboard")}>
               View My Orders
             </button>
@@ -384,6 +398,7 @@ export default function Success() {
               <button>Continue Shopping</button>
             </Link>
           </div>
+          <p className="success-whatsapp-hint">WhatsApp opens with your order details ready. Tap Send there to notify Easy Life immediately.</p>
         </div>
       </div>
     </>
