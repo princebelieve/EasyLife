@@ -1,6 +1,6 @@
 //client/src/pages/Checkout.jsx
 import { useEffect, useState } from "react";
-import { getDistributorStore, getShippingDestinations, initializeCheckout, previewShipping } from "../services/api";
+import { getDistributorStore, getPublicStorePaymentSettings, getShippingDestinations, initializeCheckout, previewShipping } from "../services/api";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
 const COUNTRY_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
@@ -14,6 +14,7 @@ export default function Checkout() {
   const [checkoutError, setCheckoutError] = useState("");
   const [shippingError, setShippingError] = useState("");
   const [distributor, setDistributor] = useState(null);
+  const [storePaymentSettings, setStorePaymentSettings] = useState(null);
 
   const totalAmount = subtotal + shippingFee;
   const [form, setForm] = useState({
@@ -52,6 +53,10 @@ export default function Checkout() {
         setForm((current) => destinations.includes(current.country) ? current : { ...current, country: destinations[0] || "NG" });
       })
       .catch(() => setShippingDestinations(["NG"]));
+  }, []);
+
+  useEffect(() => {
+    getPublicStorePaymentSettings().then(setStorePaymentSettings).catch(() => setStorePaymentSettings(null));
   }, []);
 
   useEffect(() => {
@@ -108,7 +113,7 @@ export default function Checkout() {
         distributorCode: sessionStorage.getItem("activeDistributorCode") || "",
       });
 
-      if (["cash_on_delivery", "distributor_transfer"].includes(response.checkoutType)) {
+      if (["cash_on_delivery", "distributor_transfer", "manual_bank_transfer"].includes(response.checkoutType)) {
         await clearCart();
         window.location.href = response.confirmation_url;
         return;
@@ -197,10 +202,8 @@ export default function Checkout() {
                   <span><strong>Pay online securely</strong><small>Use card, bank transfer, or USSD through Paystack.</small></span>
                 </label>
                 {distributor && <label className="payment-method-option"><input type="radio" name="paymentMethod" value="distributor_transfer" checked={form.paymentMethod === "distributor_transfer"} onChange={handleChange} disabled={!distributor.distributorBankName || !distributor.distributorAccountNumber} /><span><strong>Transfer to {distributor.name}</strong><small>{distributor.distributorAccountName} · {distributor.distributorAccountNumber} · {distributor.distributorBankName}</small></span></label>}
-                <label className="payment-method-option">
-                  <input type="radio" name="paymentMethod" value="cash_on_delivery" checked={form.paymentMethod === "cash_on_delivery"} onChange={handleChange} disabled={form.deliveryMethod === "delivery" && form.country !== "NG"} />
-                  <span><strong>{form.deliveryMethod === "pickup" ? "Pay at pickup" : "Pay on delivery"}</strong><small>{form.deliveryMethod === "pickup" ? "Pay the total amount when you collect your order." : form.country === "NG" ? "Pay the total amount to the delivery agent when your order arrives." : "Available for deliveries within Nigeria only."}</small></span>
-                </label>
+                {!distributor && storePaymentSettings?.manualTransferEnabled && <label className="payment-method-option"><input type="radio" name="paymentMethod" value="manual_bank_transfer" checked={form.paymentMethod === "manual_bank_transfer"} onChange={handleChange} /><span><strong>Transfer directly to Easy Life</strong><small>{storePaymentSettings.accountName} · {storePaymentSettings.accountNumber} · {storePaymentSettings.bankName}{storePaymentSettings.transferInstructions ? ` — ${storePaymentSettings.transferInstructions}` : ""}</small></span></label>}
+                <label className="payment-method-option"><input type="radio" name="paymentMethod" value="cash_on_delivery" checked={form.paymentMethod === "cash_on_delivery"} onChange={handleChange} /><span><strong>Pay on delivery by transfer</strong><small>When the agent arrives, transfer to the official Easy Life account sent to your WhatsApp or phone. The agent confirms payment before handing over the order; no cash is collected.</small></span></label>
               </fieldset>
 
               <button
@@ -210,10 +213,12 @@ export default function Checkout() {
               >
                 {checkoutLoading
                   ? "Processing…"
-                  : form.paymentMethod === "cash_on_delivery"
-                    ? form.deliveryMethod === "pickup" ? "Place Order & Pay at Pickup" : "Place Order & Pay on Delivery"
-                    : form.paymentMethod === "distributor_transfer"
+                  : form.paymentMethod === "distributor_transfer"
                       ? "Place Transfer Order"
+                      : form.paymentMethod === "cash_on_delivery"
+                        ? "Place Pay-on-Delivery Order"
+                      : form.paymentMethod === "manual_bank_transfer"
+                        ? "Place Bank Transfer Order"
                       : "Continue to Secure Online Payment"}
               </button>
               <p style={{ marginTop: 12, fontSize: 14, color: "#666" }}>

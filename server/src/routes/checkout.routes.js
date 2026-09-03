@@ -7,6 +7,7 @@ const Cart = require("../models/Cart");
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 const User = require("../models/User");
+const StorePaymentSettings = require("../models/StorePaymentSettings");
 const paystack = require("../services/paystack");
 const { protect } = require("../middleware/auth");
 const { calculateShipping } = require("../config/shipping");
@@ -30,14 +31,8 @@ router.post("/", protect, async (req, res) => {
       paymentMethod = "paystack", distributorCode = "", deliveryMethod = "delivery",
     } = req.body;
 
-    if (!["paystack", "cash_on_delivery", "distributor_transfer"].includes(paymentMethod)) {
+    if (!["paystack", "cash_on_delivery", "distributor_transfer", "manual_bank_transfer"].includes(paymentMethod)) {
       return res.status(400).json({ message: "Choose a valid payment method." });
-    }
-
-    if (paymentMethod === "cash_on_delivery" && deliveryMethod === "delivery" && country !== "NG") {
-      return res.status(400).json({
-        message: "Payment on delivery is currently available for deliveries within Nigeria only.",
-      });
     }
 
     let distributor = null;
@@ -47,6 +42,13 @@ router.post("/", protect, async (req, res) => {
     }
     if (paymentMethod === "distributor_transfer" && !distributor) return res.status(400).json({ message: "Bank transfer is available only through an approved distributor shop." });
     if (paymentMethod === "distributor_transfer" && (!distributor.distributorBankName || !distributor.distributorAccountNumber)) return res.status(400).json({ message: "This distributor has not completed payment details yet." });
+    let storePaymentSettings = null;
+    if (paymentMethod === "manual_bank_transfer") {
+      storePaymentSettings = await StorePaymentSettings.findOne({ key: "default" });
+      if (!storePaymentSettings?.manualTransferEnabled || !storePaymentSettings.bankName || !storePaymentSettings.accountName || !storePaymentSettings.accountNumber) {
+        return res.status(400).json({ message: "Manual bank transfer is not available at the moment." });
+      }
+    }
 
     // 1. GET CART
     const cart = await Cart.findOne({ userId }).populate("items.productId");
@@ -147,19 +149,31 @@ router.post("/", protect, async (req, res) => {
       currency: "NGN",
       paymentMethod,
       cashCollectionStatus: paymentMethod === "cash_on_delivery" ? "pending_collection" : "not_applicable",
+      manualTransferStatus: paymentMethod === "manual_bank_transfer" ? "pending_verification" : "not_applicable",
       paymentReference,
       confirmationTokenHash,
       confirmationTokenExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
 
+    if (paymentMethod === "manual_bank_transfer") {
+      order.paymentInstructions = `Transfer ${totalAmount.toLocaleString()} NGN to ${storePaymentSettings.accountName} · ${storePaymentSettings.accountNumber} · ${storePaymentSettings.bankName}${storePaymentSettings.transferInstructions ? `. ${storePaymentSettings.transferInstructions}` : ""}`;
+      await order.save();
+    }
+    if (paymentMethod === "cash_on_delivery") {
+      order.paymentInstructions = "When the delivery agent arrives, make an online transfer to the official Easy Life Wellness Hub account sent to your WhatsApp or phone number. The agent confirms payment before handing over the order and does not collect cash.";
+      await order.save();
+    }
+
     // Create notification for user
     const orderNotif = await createNotification({
       userId,
       type: "order.created",
-      title: "Order Placed",
+      title: paymentMethod === "paystack" ? "Payment required" : "Order Placed",
       body: paymentMethod === "cash_on_delivery"
-        ? `Your order #${order._id.toString().slice(-6).toUpperCase()} has been received. Please pay the delivery agent on arrival.`
-        : `Your order #${order._id.toString().slice(-6).toUpperCase()} has been placed. Awaiting payment confirmation.`,
+        ? `Order #${order._id.toString().slice(-6).toUpperCase()} is pay on delivery. Transfer to the official Easy Life account when the agent arrives; payment must be confirmed before handover.`
+        : paymentMethod === "manual_bank_transfer"
+          ? `Your order #${order._id.toString().slice(-6).toUpperCase()} is awaiting bank-transfer verification.`
+        : `Payment is incomplete for order #${order._id.toString().slice(-6).toUpperCase()}. Complete payment before delivery can begin.`,
       link: `/dashboard`,
       data: { orderId: order._id },
     });
@@ -169,8 +183,8 @@ router.post("/", protect, async (req, res) => {
       const unreadCount = await countUnreadNotifications(userId);
 
       await sendPushToUser(userId, {
-        title: "Order Placed",
-        body: `Your order #${order._id.toString().slice(-6).toUpperCase()} has been placed.`,
+        title: paymentMethod === "paystack" ? "Payment required" : "Order Placed",
+        body: paymentMethod === "paystack" ? `Complete payment for order #${order._id.toString().slice(-6).toUpperCase()} before delivery can begin.` : `Your order #${order._id.toString().slice(-6).toUpperCase()} has been placed.`,
         link: `/dashboard`,
         badgeCount: unreadCount,
         data: { orderId: order._id },
@@ -179,7 +193,7 @@ router.post("/", protect, async (req, res) => {
       });
     }
 
-    if (paymentMethod === "cash_on_delivery" || paymentMethod === "distributor_transfer") {
+    if (["cash_on_delivery", "distributor_transfer", "manual_bank_transfer"].includes(paymentMethod)) {
       await Cart.findOneAndUpdate({ userId }, { items: [] });
       return res.json({
         checkoutType: paymentMethod,

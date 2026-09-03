@@ -388,6 +388,12 @@ button {
 }
 .success-whatsapp-receipt { border: 1px solid #1eae55; background: #25d366; color: #063b20; font-weight: 800; }
 .success-whatsapp-hint { margin: 14px 0 0; color: #52675b; font-size: .88rem; line-height: 1.45; text-align: center; }
+.manual-transfer-instructions { margin: 0 0 20px; padding: 16px; border-left: 4px solid var(--gold); border-radius: 0 10px 10px 0; background: #fff8e8; color: var(--navy); }
+.manual-transfer-instructions h4, .manual-transfer-instructions p { margin: 0 0 8px; }
+.manual-transfer-instructions small { color: #52675b; line-height: 1.45; }
+.pending-payment-action { display: grid; gap: 8px; margin-top: 16px; padding: 14px; border-left: 3px solid #d59500; border-radius: 0 10px 10px 0; background: #fff8e7; color: #624600; }
+.pending-payment-action span { color: #6a6457; font-size: .92rem; line-height: 1.45; }
+.pending-payment-action button { width: fit-content; min-height: 42px; margin-top: 2px; }
 .checkout-summary-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #edf0ee; }
 .checkout-summary-item p { margin: 0 0 4px; color: var(--navy); font-weight: 700; }
 .checkout-summary-item small { color: #52675b; }

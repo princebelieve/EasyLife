@@ -1,6 +1,6 @@
 //client/src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
-import { applyForDistributor, getMyOrders, getProfile } from "../services/api";
+import { applyForDistributor, completePendingPayment, getMyOrders, getProfile } from "../services/api";
 import { formatDate } from "../utils/formatDate";
 import useAuth from "../context/AuthContext";
 import UserLayout from "../components/user/UserLayout";
@@ -85,6 +85,15 @@ export default function Dashboard() {
     } catch (error) {
       console.error(error);
       setDistributorMessage(error.message || "Unable to submit your distributor application.");
+    }
+  }
+
+  async function completePayment(orderId) {
+    try {
+      const response = await completePendingPayment(orderId);
+      window.location.href = response.authorization_url;
+    } catch (error) {
+      setDistributorMessage(error.message || "Unable to restart payment. Please try again.");
     }
   }
 
@@ -335,6 +344,19 @@ export default function Dashboard() {
                       </div>
                     ))}
                   </div>
+                )}
+                {order.paymentMethod === "paystack" && order.paymentStatus === "pending" && (
+                  <div className="pending-payment-action">
+                    <strong>Payment incomplete</strong>
+                    <span>Complete payment before Easy Life can prepare or dispatch this order.</span>
+                    <button type="button" className="primary" onClick={() => completePayment(order._id)}>Complete payment</button>
+                  </div>
+                )}
+                {order.paymentMethod === "manual_bank_transfer" && order.paymentStatus !== "paid" && (
+                  <div className="pending-payment-action"><strong>Bank transfer awaiting verification</strong><span>{order.paymentInstructions || "Transfer to the account shown on your order confirmation, then send your receipt to Easy Life."}</span></div>
+                )}
+                {order.paymentMethod === "cash_on_delivery" && order.paymentStatus !== "paid" && (
+                  <div className="pending-payment-action"><strong>Pay on delivery by transfer</strong><span>{order.paymentInstructions || "When the agent arrives, transfer to the official Easy Life account sent to your WhatsApp or phone. The agent confirms payment before handing over the order."}</span></div>
                 )}
               </div>
             ))}

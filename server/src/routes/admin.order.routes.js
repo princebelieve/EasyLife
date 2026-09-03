@@ -63,6 +63,11 @@ router.put("/:id/status", protect, adminOnly, async (req, res) => {
 
   if (!order) return res.status(404).json({ message: "Order not found" });
 
+  const fulfilmentStatuses = ["confirmed", "processing", "ready_for_dispatch", "shipped", "out_for_delivery", "delivered"];
+  if (fulfilmentStatuses.includes(deliveryStatus) && order.paymentStatus !== "paid") {
+    return res.status(400).json({ message: "Payment must be confirmed before this order can be prepared or dispatched." });
+  }
+
   const oldStatus = order.deliveryStatus;
   order.deliveryStatus = deliveryStatus;
 
@@ -122,10 +127,25 @@ router.put("/:id/cash-collected", protect, adminOnly, async (req, res) => {
   }
 
   order.paymentStatus = "paid";
-  order.cashCollectionStatus = "collected";
+  order.cashCollectionStatus = "payment_confirmed";
   order.paidAt = order.paidAt || new Date();
+  order.deliveryStatus = order.deliveryStatus === "pending" ? "confirmed" : order.deliveryStatus;
+  order.statusHistory.push({ status: "payment_confirmed_before_handover" });
   await order.save();
 
+  res.json(order);
+});
+
+router.put("/:id/verify-manual-transfer", protect, adminOnly, async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) return res.status(404).json({ message: "Order not found" });
+  if (order.paymentMethod !== "manual_bank_transfer") return res.status(400).json({ message: "This order is not a manual bank transfer order." });
+  order.paymentStatus = "paid";
+  order.manualTransferStatus = "verified";
+  order.paidAt = order.paidAt || new Date();
+  order.deliveryStatus = order.deliveryStatus === "pending" ? "confirmed" : order.deliveryStatus;
+  order.statusHistory.push({ status: "payment_verified" });
+  await order.save();
   res.json(order);
 });
 

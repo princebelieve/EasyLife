@@ -1,7 +1,7 @@
 //client/src/pages/AdminOrderDetails.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getOrderById, markCashCollectedApi, updateOrderStatusApi } from "../services/api";
+import { getOrderById, markCashCollectedApi, updateOrderStatusApi, verifyManualTransferApi } from "../services/api";
 import { getToken } from "../utils/auth";
 import { formatDate } from "../utils/formatDate";
 
@@ -29,6 +29,11 @@ export default function AdminOrderDetails() {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  async function verifyManualTransfer() {
+    try { setOrder(await verifyManualTransferApi(order._id, getToken())); }
+    catch (err) { console.error(err); }
   }
 
   if (!order) return <p>Loading...</p>;
@@ -65,8 +70,10 @@ export default function AdminOrderDetails() {
       <div className="order-side">
         <div className="order-card">
           <h3>Summary</h3>
-          <p>Payment method: {order.paymentMethod === "cash_on_delivery" ? "Pay on delivery" : "Paystack"}</p>
-          {order.paymentMethod === "cash_on_delivery" && <p>Cash collection: {order.cashCollectionStatus}</p>}
+          <p>Payment method: {order.paymentMethod === "cash_on_delivery" ? "Pay on delivery" : order.paymentMethod === "manual_bank_transfer" ? "Manual bank transfer" : order.paymentMethod === "distributor_transfer" ? "Distributor transfer" : "Paystack"}</p>
+          {order.paymentMethod === "cash_on_delivery" && <p>Payment before handover: {order.cashCollectionStatus}</p>}
+          {order.paymentMethod === "manual_bank_transfer" && <p>Transfer verification: {order.manualTransferStatus}</p>}
+          {order.paymentInstructions && <p className="muted">{order.paymentInstructions}</p>}
           <p>Total: ₦{order.totalAmount}</p>
           <p>Placed: {formatDate(order.createdAt)}</p>
           {order.paidAt && <p>Paid: {formatDate(order.paidAt)}</p>}
@@ -98,9 +105,13 @@ export default function AdminOrderDetails() {
 
         {order.paymentMethod === "cash_on_delivery" && order.paymentStatus !== "paid" && (
           <div className="order-card">
-            <h3>Cash collection</h3>
-            <button type="button" className="primary" onClick={markCashCollected}>Mark cash collected</button>
+            <h3>Confirm payment before handover</h3>
+            <p>Confirm the customer’s bank transfer with the delivery agent before handing over this order. The agent must not collect cash.</p>
+            <button type="button" className="primary" onClick={markCashCollected}>Confirm transfer and release order</button>
           </div>
+        )}
+        {order.paymentMethod === "manual_bank_transfer" && order.paymentStatus !== "paid" && (
+          <div className="order-card"><h3>Bank transfer verification</h3><p>Confirm the transfer in your bank account before marking this order paid.</p><button type="button" className="primary" onClick={verifyManualTransfer}>Verify transfer and confirm order</button></div>
         )}
       </div>
     </div>

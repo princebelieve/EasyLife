@@ -236,6 +236,10 @@ export async function getShippingZones(token) {
   });
 }
 
+export async function completePendingPayment(orderId) {
+  return apiRequest(`/api/orders/${orderId}/complete-payment`, { method: "POST" });
+}
+
 export async function getDistributorDashboard() { return apiRequest("/api/distributor/dashboard"); }
 export async function getDistributorCatalog() { return apiRequest("/api/distributor/catalog"); }
 export async function getDistributorStore(code) { return apiRequest(`/api/distributor/store/${encodeURIComponent(code)}`); }
@@ -274,6 +278,18 @@ export async function updateShippingSettings(data, token) {
     },
     body: JSON.stringify(data),
   });
+}
+
+export async function getStorePaymentSettings(token) {
+  return apiRequest("/api/payment-settings/admin", { headers: { Authorization: `Bearer ${token}` } });
+}
+
+export async function updateStorePaymentSettings(data, token) {
+  return apiRequest("/api/payment-settings/admin", { method: "PUT", headers: { Authorization: `Bearer ${token}` }, body: JSON.stringify(data) });
+}
+
+export async function getPublicStorePaymentSettings() {
+  return apiRequest("/api/payment-settings/public");
 }
 
 export async function getProductCategories() {
@@ -648,6 +664,13 @@ export async function updateOrderStatusApi(orderId, deliveryStatus, token) {
 
 export async function markCashCollectedApi(orderId, token) {
   return apiRequest(`/api/admin/orders/${orderId}/cash-collected`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function verifyManualTransferApi(orderId, token) {
+  return apiRequest(`/api/admin/orders/${orderId}/verify-manual-transfer`, {
     method: "PUT",
     headers: { Authorization: `Bearer ${token}` },
   });

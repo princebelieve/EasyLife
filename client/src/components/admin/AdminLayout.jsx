@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   Truck,
   MapPinned,
+  WalletCards,
   MessageSquare,
   Video,
   Home,
@@ -102,6 +103,12 @@ export default function AdminLayout({ children }) {
       to: "/admin/shipping",
       label: "Shipping Zones",
       icon: <MapPinned size={18} />,
+    },
+
+    {
+      to: "/admin/payment-settings",
+      label: "Payment Settings",
+      icon: <WalletCards size={18} />,
     },
 
     {

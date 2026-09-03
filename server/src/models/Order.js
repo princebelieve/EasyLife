@@ -103,13 +103,19 @@ const orderSchema = new mongoose.Schema(
 
     paymentMethod: {
       type: String,
-      enum: ["paystack", "cash_on_delivery", "distributor_transfer"],
+      enum: ["paystack", "cash_on_delivery", "distributor_transfer", "manual_bank_transfer"],
       default: "paystack",
     },
 
     cashCollectionStatus: {
       type: String,
-      enum: ["not_applicable", "pending_collection", "collected", "failed"],
+      enum: ["not_applicable", "pending_collection", "payment_confirmed", "failed"],
+      default: "not_applicable",
+    },
+
+    manualTransferStatus: {
+      type: String,
+      enum: ["not_applicable", "pending_verification", "verified", "rejected"],
       default: "not_applicable",
     },
 

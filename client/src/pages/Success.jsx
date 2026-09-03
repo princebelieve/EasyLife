@@ -14,11 +14,14 @@ export default function Success() {
   const orderToken = searchParams.get("order_token");
   const isPaid = Boolean(order?.paymentStatus === "paid");
   const isCashOnDelivery = order?.paymentMethod === "cash_on_delivery";
+  const isManualTransfer = order?.paymentMethod === "manual_bank_transfer";
   const isError = Boolean(error || !order);
   const pageTitle = isError
     ? "⚠️ Verification Pending"
     : isCashOnDelivery
-    ? "Order received — pay on delivery"
+    ? "Order received — pay on delivery by transfer"
+    : isManualTransfer
+    ? "Order received — transfer awaiting verification"
     : isPaid
     ? "✅ Payment Received!"
     : "⏳ Payment Processing...";
@@ -26,7 +29,9 @@ export default function Success() {
     ? error ||
       "We're processing your payment. Order details will appear here shortly."
     : isCashOnDelivery
-    ? "We will confirm your order before dispatch. Please pay the delivery agent when it arrives."
+    ? "When the delivery agent arrives, transfer to the official Easy Life account sent to your WhatsApp or phone. The agent confirms your payment before handing over the order; no cash is collected."
+    : isManualTransfer
+    ? "Please complete the bank transfer using the account details below. Easy Life will verify your payment before processing the order."
     : isPaid
     ? "Your order has been confirmed and is being prepared."
     : "We're processing your payment. Check back soon for updates.";
@@ -210,7 +215,7 @@ export default function Success() {
                   color: isPaid ? "#155724" : "#856404",
                 }}
               >
-                {isPaid ? "PAID" : isCashOnDelivery ? "PAY ON DELIVERY" : "PENDING"}
+                {isPaid ? "PAID" : isCashOnDelivery ? "PAY ON DELIVERY" : isManualTransfer ? "TRANSFER VERIFICATION PENDING" : "PENDING"}
               </span>
             </div>
           </div>
@@ -363,6 +368,9 @@ export default function Success() {
           </div>
 
           {/* Payment Reference */}
+          {(isManualTransfer || isCashOnDelivery) && order.paymentInstructions && (
+            <div className="manual-transfer-instructions"><h4>Bank transfer instructions</h4><p>{order.paymentInstructions}</p><small>Use order number {order.orderNumber} as your transfer narration where possible, then send your receipt to Easy Life on WhatsApp below.</small></div>
+          )}
           <div
             style={{
               padding: "10px",
