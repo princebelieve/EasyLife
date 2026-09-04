@@ -85,7 +85,7 @@ router.post("/", protect, async (req, res) => {
       };
     });
 
-    const shippingData = deliveryMethod === "pickup" ? { shippingAvailable: true, shippingFee: 0, serviceName: "Pickup", estimatedDays: "Ready after confirmation" } : await calculateShipping({ country, items: cart.items });
+    const shippingData = deliveryMethod === "pickup" ? { shippingAvailable: true, shippingFee: 0, serviceName: "Pickup", estimatedDays: "Ready after confirmation" } : await calculateShipping({ country, state, items: cart.items });
 
     if (shippingData.shippingAvailable === false) {
       return res.status(400).json({

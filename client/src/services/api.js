@@ -263,6 +263,13 @@ export async function getShippingDestinations() {
   return data;
 }
 
+export async function getNigerianDeliveryStates() {
+  const res = await fetch(`${BASE_URL}/api/shipping/nigerian-states`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Unable to load Nigerian delivery states");
+  return data;
+}
+
 export async function getShippingSettings(token) {
   return apiRequest("/api/admin/shipping/settings", {
     headers: { Authorization: `Bearer ${token}` },
@@ -277,6 +284,35 @@ export async function updateShippingSettings(data, token) {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
+  });
+}
+
+export async function getNigerianStateShipping(token) {
+  return apiRequest("/api/admin/shipping/states", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+export async function createNigerianStateShipping(data, token) {
+  return apiRequest("/api/admin/shipping/states", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateNigerianStateShipping(id, data, token) {
+  return apiRequest(`/api/admin/shipping/states/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteNigerianStateShipping(id, token) {
+  return apiRequest(`/api/admin/shipping/states/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
   });
 }
 

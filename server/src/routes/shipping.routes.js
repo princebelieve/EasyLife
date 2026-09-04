@@ -7,6 +7,14 @@ const { calculateShipping } = require("../config/shipping");
 const ShippingZone = require("../models/ShippingZone");
 const ShippingSettings = require("../models/ShippingSettings");
 
+const NIGERIAN_STATES = [
+  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "Federal Capital Territory", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara",
+];
+
+router.get("/nigerian-states", async (req, res) => {
+  res.json(NIGERIAN_STATES.map((state) => ({ state })));
+});
+
 router.get("/destinations", async (req, res) => {
   try {
     const zones = await ShippingZone.find({ active: true, currency: "NGN" })
@@ -24,6 +32,7 @@ router.get("/summary", async (req, res) => {
   try {
     const shippingData = await calculateShipping({
       country: req.query.country || "NG",
+      state: req.query.state || "",
       items: [],
     });
     res.json(shippingData);
@@ -76,10 +85,11 @@ router.get("/merchant-rates", async (req, res) => {
 
 router.post("/preview", async (req, res) => {
   try {
-    const { country, items } = req.body;
+    const { country, state, items } = req.body;
 
     const shippingData = await calculateShipping({
       country,
+      state,
       items,
     });
 

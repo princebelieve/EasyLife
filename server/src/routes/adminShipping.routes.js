@@ -5,6 +5,7 @@ const router = express.Router();
 
 const ShippingZone = require("../models/ShippingZone");
 const ShippingSettings = require("../models/ShippingSettings");
+const NigerianStateShipping = require("../models/NigerianStateShipping");
 const { protect, adminOnly } = require("../middleware/auth");
 
 router.get("/settings", protect, adminOnly, async (req, res) => {
@@ -43,6 +44,35 @@ router.put("/settings", protect, adminOnly, async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Unable to save default shipping settings" });
   }
+});
+
+router.get("/states", protect, adminOnly, async (req, res) => {
+  try { res.json(await NigerianStateShipping.find().sort({ state: 1 })); }
+  catch { res.status(500).json({ message: "Unable to fetch state delivery rates." }); }
+});
+
+router.post("/states", protect, adminOnly, async (req, res) => {
+  try {
+    const state = String(req.body.state || "").trim().toUpperCase();
+    const baseDeliveryFee = Number(req.body.baseDeliveryFee);
+    if (!state || !Number.isFinite(baseDeliveryFee) || baseDeliveryFee < 0) return res.status(400).json({ message: "A state and a valid delivery fee are required." });
+    res.status(201).json(await NigerianStateShipping.create({ state, baseDeliveryFee, serviceName: req.body.serviceName || "State delivery", estimatedDays: req.body.estimatedDays || "2-5 business days", active: req.body.active !== false }));
+  } catch (error) { res.status(400).json({ message: error.code === 11000 ? "A delivery rate already exists for this state." : "Unable to save state delivery rate." }); }
+});
+
+router.put("/states/:id", protect, adminOnly, async (req, res) => {
+  try {
+    const baseDeliveryFee = Number(req.body.baseDeliveryFee);
+    if (!Number.isFinite(baseDeliveryFee) || baseDeliveryFee < 0) return res.status(400).json({ message: "Enter a valid delivery fee." });
+    const rate = await NigerianStateShipping.findByIdAndUpdate(req.params.id, { $set: { state: String(req.body.state || "").trim().toUpperCase(), baseDeliveryFee, serviceName: req.body.serviceName || "State delivery", estimatedDays: req.body.estimatedDays || "2-5 business days", active: req.body.active !== false } }, { new: true, runValidators: true });
+    if (!rate) return res.status(404).json({ message: "State delivery rate not found." });
+    res.json(rate);
+  } catch { res.status(400).json({ message: "Unable to update state delivery rate." }); }
+});
+
+router.delete("/states/:id", protect, adminOnly, async (req, res) => {
+  try { await NigerianStateShipping.findByIdAndDelete(req.params.id); res.json({ message: "State delivery rate deleted." }); }
+  catch { res.status(500).json({ message: "Unable to delete state delivery rate." }); }
 });
 
 // GET ALL ZONES

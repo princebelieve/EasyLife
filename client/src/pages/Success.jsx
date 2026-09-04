@@ -39,11 +39,14 @@ export default function Success() {
   function sendOrderReceiptToWhatsApp() {
     if (!order) return;
     const items = (order.items || []).map((item) => `- ${item.quantity} x ${item.name} (₦${Number(item.price * item.quantity).toLocaleString()})`).join("\n");
-    const fulfilment = order.deliveryMethod === "pickup"
+    const isPickup = order.deliveryMethod === "pickup";
+    const fulfilment = isPickup
       ? `Pickup${order.pickupLocation ? `: ${order.pickupLocation}` : ""}`
       : `Delivery${order.shippingService ? `: ${order.shippingService}` : ""}`;
+    const shippingAmount = isPickup ? 0 : Number(order.shippingFee || 0);
+    const totalAmount = Number(order.totalAmount || 0);
     const paymentStatus = isPaid ? "Paid" : isCashOnDelivery ? "Pay on delivery / pickup" : "Payment processing";
-    const message = `Hello Easy Life Wellness Hub, here is my order receipt:\n\nOrder: ${order.orderNumber || order._id}\nPayment: ${paymentStatus}\nCollection: ${fulfilment}\n\n${items}\n\nSubtotal: ₦${Number(order.subtotal || 0).toLocaleString()}\nShipping: ₦${Number(order.shippingFee || 0).toLocaleString()}\nTotal: ₦${Number(order.totalAmount || 0).toLocaleString()}\n\nCustomer: ${order.customerName}\nPhone: ${order.phone}\n${order.paymentReference ? `Payment reference: ${order.paymentReference}` : ""}`;
+    const message = `Hello Easy Life Wellness Hub, here is my order receipt:\n\nOrder: ${order.orderNumber || order._id}\nPayment: ${paymentStatus}\nCollection: ${fulfilment}\n\n${items}\n\nSubtotal: ₦${Number(order.subtotal || 0).toLocaleString()}\nShipping: ₦${shippingAmount.toLocaleString()}\nTotal: ₦${totalAmount.toLocaleString()}\n\nCustomer: ${order.customerName}\nPhone: ${order.phone}\n${order.paymentReference ? `Payment reference: ${order.paymentReference}` : ""}`;
     window.open(`https://wa.me/2348089938820?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   }
 
@@ -300,8 +303,8 @@ export default function Success() {
                 marginBottom: 8,
               }}
             >
-              <span style={{ color: "#666" }}>Shipping Fee</span>
-              <span>₦{order.shippingFee?.toLocaleString() || 0}</span>
+              <span style={{ color: "#666" }}>{order.deliveryMethod === "pickup" ? "Pickup Fee" : "Shipping Fee"}</span>
+              <span>₦{order.deliveryMethod === "pickup" ? 0 : (order.shippingFee?.toLocaleString() || 0)}</span>
             </div>
             <div
               style={{

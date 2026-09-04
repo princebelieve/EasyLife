@@ -1,6 +1,6 @@
 //client/src/pages/Checkout.jsx
 import { useEffect, useState } from "react";
-import { getDistributorStore, getPublicStorePaymentSettings, getShippingDestinations, initializeCheckout, previewShipping } from "../services/api";
+import { getDistributorStore, getNigerianDeliveryStates, getPublicStorePaymentSettings, getShippingDestinations, initializeCheckout, previewShipping } from "../services/api";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
 const COUNTRY_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
@@ -10,6 +10,7 @@ export default function Checkout() {
   const [shippingFee, setShippingFee] = useState(0);
   const [shippingInfo, setShippingInfo] = useState(null);
   const [shippingDestinations, setShippingDestinations] = useState(["NG"]);
+  const [nigerianStates, setNigerianStates] = useState([]);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [shippingError, setShippingError] = useState("");
@@ -56,6 +57,12 @@ export default function Checkout() {
   }, []);
 
   useEffect(() => {
+    getNigerianDeliveryStates()
+      .then((rates) => setNigerianStates(rates.map((rate) => rate.state)))
+      .catch(() => setNigerianStates([]));
+  }, []);
+
+  useEffect(() => {
     getPublicStorePaymentSettings().then(setStorePaymentSettings).catch(() => setStorePaymentSettings(null));
   }, []);
 
@@ -83,6 +90,7 @@ export default function Checkout() {
 
         const data = await previewShipping({
           country: form.country,
+          state: form.state,
           items: cart,
         });
 
@@ -100,7 +108,7 @@ export default function Checkout() {
     }
 
     loadShipping();
-  }, [form.country, form.deliveryMethod, cart]);
+  }, [form.country, form.state, form.deliveryMethod, cart]);
 
   async function handleCheckout(e) {
     e.preventDefault();
@@ -179,7 +187,14 @@ export default function Checkout() {
                     {shippingDestinations.map((country) => <option key={country} value={country}>{COUNTRY_NAMES.of(country) || country}</option>)}
                   </select>
                   <input name="city" placeholder="City" value={form.city} onChange={handleChange} required />
-                  <input name="state" placeholder="State / Region" value={form.state} onChange={handleChange} />
+                  {form.country === "NG" && nigerianStates.length > 0 ? (
+                    <select name="state" value={form.state} onChange={handleChange} required>
+                      <option value="">Select your state</option>
+                      {nigerianStates.map((state) => <option key={state} value={state}>{state}</option>)}
+                    </select>
+                  ) : (
+                    <input name="state" placeholder="State / Region" value={form.state} onChange={handleChange} />
+                  )}
                 </>
               ) : (
                 <div className="checkout-pickup-note">

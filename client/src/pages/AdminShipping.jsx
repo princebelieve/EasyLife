@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import {
+  createNigerianStateShipping,
   createShippingZone,
+  deleteNigerianStateShipping,
   deleteShippingZone,
+  getNigerianStateShipping,
   getShippingSettings,
   getShippingZones,
+  updateNigerianStateShipping,
   updateShippingSettings,
   updateShippingZone,
 } from "../services/api";
@@ -16,18 +20,34 @@ const blank = {
   dutiesAndTaxes: "customer", active: true,
 };
 
+const stateRateBlank = {
+  state: "",
+  baseDeliveryFee: 0,
+  serviceName: "State delivery",
+  estimatedDays: "2-5 business days",
+  active: true,
+};
+
+const NIGERIAN_STATES = [
+  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "Federal Capital Territory", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara",
+];
+
 export default function AdminShipping() {
   const { token } = useAuth();
   const [zones, setZones] = useState([]);
+  const [stateRates, setStateRates] = useState([]);
   const [form, setForm] = useState(blank);
+  const [stateRateForm, setStateRateForm] = useState(stateRateBlank);
   const [defaults, setDefaults] = useState({ defaultShippingPrice: 0, defaultDeliveryEstimate: "3-7 business days" });
   const [editing, setEditing] = useState(null);
+  const [editingStateRate, setEditingStateRate] = useState(null);
   const [message, setMessage] = useState("");
 
   const load = async () => {
     try {
-      const [loadedZones, loadedSettings] = await Promise.all([getShippingZones(token), getShippingSettings(token)]);
+      const [loadedZones, loadedSettings, loadedStateRates] = await Promise.all([getShippingZones(token), getShippingSettings(token), getNigerianStateShipping(token)]);
       setZones(loadedZones);
+      setStateRates(loadedStateRates);
       setDefaults({ defaultShippingPrice: loadedSettings.defaultShippingPrice ?? 0, defaultDeliveryEstimate: loadedSettings.defaultDeliveryEstimate ?? "3-7 business days" });
     } catch {
       setMessage("Unable to load shipping settings.");
@@ -39,6 +59,11 @@ export default function AdminShipping() {
   const change = (event) => {
     const { name, value, type, checked } = event.target;
     setForm((current) => ({ ...current, [name]: type === "checkbox" ? checked : value }));
+  };
+
+  const changeStateRate = (event) => {
+    const { name, value, type, checked } = event.target;
+    setStateRateForm((current) => ({ ...current, [name]: type === "checkbox" ? checked : value }));
   };
 
   async function saveDefaults(event) {
@@ -72,6 +97,25 @@ export default function AdminShipping() {
     }
   }
 
+  async function saveStateRate(event) {
+    event.preventDefault();
+    setMessage("");
+    try {
+      const payload = {
+        ...stateRateForm,
+        baseDeliveryFee: Number(stateRateForm.baseDeliveryFee),
+      };
+      if (editingStateRate) await updateNigerianStateShipping(editingStateRate, payload, token);
+      else await createNigerianStateShipping(payload, token);
+      setStateRateForm(stateRateBlank);
+      setEditingStateRate(null);
+      setMessage("Nigerian state delivery rate saved.");
+      load();
+    } catch (error) {
+      setMessage(error.message || "State delivery rate could not be saved.");
+    }
+  }
+
   return <div className="page">
     <h1>Shipping Policies</h1>
     <p className="muted">Checkout and product prices are charged in NGN. These same NGN rates are sent to Google Merchant Center.</p>
@@ -84,6 +128,23 @@ export default function AdminShipping() {
         <input required name="defaultDeliveryEstimate" placeholder="Default delivery estimate" value={defaults.defaultDeliveryEstimate} onChange={(event) => setDefaults((current) => ({ ...current, defaultDeliveryEstimate: event.target.value }))} />
       </div>
       <button type="submit">Save default shipping</button>
+    </form>
+
+    <form className="form" onSubmit={saveStateRate} style={{ marginTop: 32 }}>
+      <h2>Nigeria state delivery rates</h2>
+      <p className="muted">Set the exact delivery fee for each Nigerian state. A state rate overrides the NG country rate at checkout. States without their own rate use the NG country rate or the default rate.</p>
+      <div className="wizard-grid">
+        <select required name="state" value={stateRateForm.state} onChange={changeStateRate}>
+          <option value="">Select a state</option>
+          {NIGERIAN_STATES.map((state) => <option key={state} value={state}>{state}</option>)}
+        </select>
+        <input required type="number" min="0" name="baseDeliveryFee" placeholder="Delivery fee (NGN)" value={stateRateForm.baseDeliveryFee} onChange={changeStateRate} />
+        <input required name="serviceName" placeholder="Service name" value={stateRateForm.serviceName} onChange={changeStateRate} />
+        <input required name="estimatedDays" placeholder="Delivery estimate" value={stateRateForm.estimatedDays} onChange={changeStateRate} />
+      </div>
+      <label><input type="checkbox" name="active" checked={stateRateForm.active} onChange={changeStateRate} /> Active</label>
+      <button type="submit">{editingStateRate ? "Update state rate" : "Add state rate"}</button>
+      {editingStateRate && <button type="button" onClick={() => { setStateRateForm(stateRateBlank); setEditingStateRate(null); }}>Cancel</button>}
     </form>
 
     <form className="form" onSubmit={submit} style={{ marginTop: 32 }}>
@@ -108,6 +169,19 @@ export default function AdminShipping() {
     </form>
 
     {message && <p>{message}</p>}
+    <section style={{ marginTop: 32 }}>
+      <h2>Configured Nigeria state rates</h2>
+      {stateRates.length === 0 ? <p className="muted">No state rates yet. Add the states you currently deliver to above.</p> : (
+        <div className="grid">{stateRates.map((rate) => <article className="card" key={rate._id}>
+          <h3>{rate.state}</h3>
+          <p>₦{Number(rate.baseDeliveryFee).toLocaleString()}</p>
+          <p>{rate.serviceName} · {rate.estimatedDays}</p>
+          <p>{rate.active ? "Active at checkout" : "Inactive"}</p>
+          <button onClick={() => { const state = NIGERIAN_STATES.find((option) => option.toUpperCase() === rate.state) || rate.state; setEditingStateRate(rate._id); setStateRateForm({ ...stateRateBlank, ...rate, state }); }}>Edit</button>
+          <button className="btn-danger" onClick={async () => { try { await deleteNigerianStateShipping(rate._id, token); setMessage("State delivery rate deleted."); load(); } catch (error) { setMessage(error.message || "State delivery rate could not be deleted."); } }}>Delete</button>
+        </article>)}</div>
+      )}
+    </section>
     <div className="grid" style={{ marginTop: 32 }}>{zones.map((zone) => <article className="card" key={zone._id}>
       <h3>{zone.state} · {zone.serviceName}</h3>
       <p>₦{Number(zone.baseDeliveryFee).toLocaleString()}</p>

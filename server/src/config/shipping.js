@@ -1,12 +1,21 @@
 //server/src/config/shipping.js
 const ShippingZone = require("../models/ShippingZone");
 const ShippingSettings = require("../models/ShippingSettings");
+const NigerianStateShipping = require("../models/NigerianStateShipping");
 
 // `state` remains the persisted field name for backward-compatible data migration.
 // It now contains an ISO destination country code (for example NG or GB).
-// Every active destination has one honest flat rate and delivery estimate.
-async function calculateShipping({ country = "", items = [] }) {
+// Nigerian state rates take priority, followed by the country and global fallback rates.
+async function calculateShipping({ country = "", state = "", items = [] }) {
   const destination = country.toUpperCase().trim();
+  const stateName = state.toUpperCase().trim();
+  if (destination === "NG" && stateName) {
+    const stateRate = await NigerianStateShipping.findOne({ state: stateName, active: true });
+    if (stateRate) {
+      const shippingFee = Number(stateRate.baseDeliveryFee || 0);
+      return { shippingFee, flatRate: shippingFee, estimatedDays: stateRate.estimatedDays, serviceName: stateRate.serviceName, currency: "NGN", dutiesAndTaxes: "customer", shippingAvailable: true, rateScope: "state" };
+    }
+  }
   const zone = await ShippingZone.findOne({ state: destination, active: true });
 
   if (!zone) {

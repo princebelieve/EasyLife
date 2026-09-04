@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import useAuth from "../context/AuthContext";
 
-import { getProfile, updateProfile, changePassword, requestAccountDeletion } from "../services/api";
+import { getProfile, updateProfile, changePassword, requestAccountDeletion, getNigerianDeliveryStates } from "../services/api";
 
 import UserLayout from "../components/user/UserLayout";
 
@@ -17,6 +17,8 @@ export default function EditProfile() {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
+
+  const [nigerianStates, setNigerianStates] = useState([]);
 
   const [saving, setSaving] = useState(false);
 
@@ -61,6 +63,12 @@ export default function EditProfile() {
 
     load();
   }, [token]);
+
+  useEffect(() => {
+    getNigerianDeliveryStates()
+      .then((states) => setNigerianStates(states.map((item) => item.state)))
+      .catch(() => setNigerianStates([]));
+  }, []);
 
   function handleChange(e) {
     setForm({
@@ -270,13 +278,15 @@ export default function EditProfile() {
 
             <label>
               <span>State</span>
-              <input
-                type="text"
-                name="state"
-                placeholder="State"
-                value={form.state}
-                onChange={handleChange}
-              />
+              {nigerianStates.length > 0 ? (
+                <select name="state" value={form.state} onChange={handleChange}>
+                  <option value="">Select your state</option>
+                  {form.state && !nigerianStates.some((state) => state.toUpperCase() === form.state.toUpperCase()) && <option value={form.state}>{form.state}</option>}
+                  {nigerianStates.map((state) => <option key={state} value={state}>{state}</option>)}
+                </select>
+              ) : (
+                <input type="text" name="state" placeholder="State" value={form.state} onChange={handleChange} />
+              )}
             </label>
 
             <button type="submit" disabled={saving}>
