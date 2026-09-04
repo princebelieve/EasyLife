@@ -36,26 +36,26 @@ self.addEventListener("push", (event) => {
       data: data.data || {},
     };
 
-    event.waitUntil(
+    const backgroundTasks = [
       self.registration.showNotification(
         data.title || "Easy Life Wellness Hub",
         options,
       ),
-    );
+    ];
 
-    if (typeof data.data?.badgeCount === "number") {
-      event.waitUntil(
-        (async () => {
-          if (self.registration && "setAppBadge" in self.registration) {
-            if (data.data.badgeCount > 0) {
-              await self.registration.setAppBadge(data.data.badgeCount);
-            } else if ("clearAppBadge" in self.registration) {
-              await self.registration.clearAppBadge();
-            }
-          }
-        })(),
-      );
+    // The Badging API is exposed on WorkerNavigator (`self.navigator`) in a
+    // service worker, not on ServiceWorkerRegistration. This lets the badge
+    // update when the installed PWA has no open window.
+    if (typeof data.data?.badgeCount === "number" && self.navigator) {
+      const count = data.data.badgeCount;
+      if (count > 0 && typeof self.navigator.setAppBadge === "function") {
+        backgroundTasks.push(self.navigator.setAppBadge(count));
+      } else if (count <= 0 && typeof self.navigator.clearAppBadge === "function") {
+        backgroundTasks.push(self.navigator.clearAppBadge());
+      }
     }
+
+    event.waitUntil(Promise.all(backgroundTasks));
   } catch (error) {
     console.error("Error handling push event:", error);
   }

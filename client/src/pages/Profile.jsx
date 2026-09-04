@@ -47,7 +47,7 @@ export default function Profile() {
             <div>
               <h1>{user?.name}</h1>
 
-              <p style={{ margin: "4px 0", color: "var(--text)" }}>
+              <p className="profile-email" style={{ margin: "4px 0", color: "var(--text)" }}>
                 {user?.email}
               </p>
 

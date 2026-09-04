@@ -4855,6 +4855,16 @@ iframe {
 
 .profile-header>div:last-child {
   flex: 1;
+  min-width: 0;
+}
+
+.dashboard-hero > div:first-child {
+  min-width: 0;
+}
+
+.profile-email {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .profile-header h1 {
@@ -4920,10 +4930,51 @@ iframe {
 
 .avatar-upload {
   margin-top: 20px;
-  padding: 20px;
   background: var(--bg);
   border-radius: 10px;
   border: 2px dashed var(--gold);
+}
+
+.avatar-upload-dropzone {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 92px;
+  padding: 16px;
+  cursor: pointer;
+  color: var(--navy);
+}
+
+.avatar-upload-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.avatar-upload-placeholder {
+  display: grid;
+  flex: 0 0 58px;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border: 1px solid rgba(6, 59, 32, .28);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--navy-light);
+}
+
+.avatar-upload-dropzone strong,
+.avatar-upload-dropzone small {
+  display: block;
+}
+
+.avatar-upload-dropzone small {
+  margin-top: 3px;
+  color: #52675b;
 }
 
 .sidebar-avatar {
@@ -5862,6 +5913,15 @@ button:hover,
   .service-promo-carousel .service-promo-dots { gap: 4px; }
   .service-promo-carousel .service-promo-dots button { width: 6px; height: 6px; }
   .service-promo-carousel .service-promo-dots button.active { width: 16px; }
+}
+
+@media (max-width: 600px) {
+  .profile-page { padding: 16px; }
+  .profile-card { padding: 24px 18px; }
+  .profile-header { gap: 14px; }
+  .profile-avatar { width: 70px; height: 70px; font-size: 28px; }
+  .dashboard-hero { gap: 16px; padding: 24px 18px; }
+  .dashboard-hero h1 { overflow-wrap: anywhere; font-size: 26px; }
 }
 
 .outreach-hero, .journey-hero { padding: 78px 0; color: var(--white); background: linear-gradient(120deg, var(--navy), var(--navy-light)); }

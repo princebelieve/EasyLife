@@ -189,7 +189,7 @@ export default function EditProfile() {
                 {user?.name}
               </h2>
 
-              <p style={{ margin: "4px 0", color: "var(--text)" }}>
+              <p className="profile-email" style={{ margin: "4px 0", color: "var(--text)" }}>
                 {user?.email}
               </p>
               <p
