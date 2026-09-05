@@ -41,6 +41,7 @@ export default function AdminShipping() {
   const [defaults, setDefaults] = useState({ defaultShippingPrice: 0, defaultDeliveryEstimate: "3-7 business days" });
   const [editing, setEditing] = useState(null);
   const [editingStateRate, setEditingStateRate] = useState(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [message, setMessage] = useState("");
 
   const load = async () => {
@@ -118,27 +119,27 @@ export default function AdminShipping() {
 
   return <div className="page">
     <h1>Shipping Policies</h1>
-    <p className="muted">Checkout and product prices are charged in NGN. These same NGN rates are sent to Google Merchant Center.</p>
+    <p className="muted">For Nigeria, set one delivery price per state below. Checkout charges only that selected state price—no other shipping fee is added.</p>
 
-    <form className="form" onSubmit={saveDefaults}>
-      <h2>Default shipping</h2>
-      <p className="muted">Used when a customer selects a country without an active country policy.</p>
+    {showAdvanced && <form className="form" onSubmit={saveDefaults}>
+      <h2>Backup price for unconfigured locations</h2>
+      <p className="muted">Use this only as a safety price when no state or country price has been set. It is never added to a state price.</p>
       <div className="wizard-grid">
-        <input required type="number" min="0" name="defaultShippingPrice" placeholder="Default shipping price (NGN)" value={defaults.defaultShippingPrice} onChange={(event) => setDefaults((current) => ({ ...current, defaultShippingPrice: event.target.value }))} />
-        <input required name="defaultDeliveryEstimate" placeholder="Default delivery estimate" value={defaults.defaultDeliveryEstimate} onChange={(event) => setDefaults((current) => ({ ...current, defaultDeliveryEstimate: event.target.value }))} />
+        <input required type="number" min="0" name="defaultShippingPrice" placeholder="Backup delivery price (NGN)" value={defaults.defaultShippingPrice} onChange={(event) => setDefaults((current) => ({ ...current, defaultShippingPrice: event.target.value }))} />
+        <input required name="defaultDeliveryEstimate" placeholder="Backup delivery estimate" value={defaults.defaultDeliveryEstimate} onChange={(event) => setDefaults((current) => ({ ...current, defaultDeliveryEstimate: event.target.value }))} />
       </div>
-      <button type="submit">Save default shipping</button>
-    </form>
+      <button type="submit">Save backup price</button>
+    </form>}
 
     <form className="form" onSubmit={saveStateRate} style={{ marginTop: 32 }}>
       <h2>Nigeria state delivery rates</h2>
-      <p className="muted">Set the exact delivery fee for each Nigerian state. A state rate overrides the NG country rate at checkout. States without their own rate use the NG country rate or the default rate.</p>
+      <p className="muted">This is the main setup. Set the one delivery price customers pay when they select each Nigerian state.</p>
       <div className="wizard-grid">
         <select required name="state" value={stateRateForm.state} onChange={changeStateRate}>
           <option value="">Select a state</option>
           {NIGERIAN_STATES.map((state) => <option key={state} value={state}>{state}</option>)}
         </select>
-        <input required type="number" min="0" name="baseDeliveryFee" placeholder="Delivery fee (NGN)" value={stateRateForm.baseDeliveryFee} onChange={changeStateRate} />
+        <input required type="number" min="0" name="baseDeliveryFee" placeholder="State delivery price (NGN)" value={stateRateForm.baseDeliveryFee} onChange={changeStateRate} />
         <input required name="serviceName" placeholder="Service name" value={stateRateForm.serviceName} onChange={changeStateRate} />
         <input required name="estimatedDays" placeholder="Delivery estimate" value={stateRateForm.estimatedDays} onChange={changeStateRate} />
       </div>
@@ -147,12 +148,16 @@ export default function AdminShipping() {
       {editingStateRate && <button type="button" onClick={() => { setStateRateForm(stateRateBlank); setEditingStateRate(null); }}>Cancel</button>}
     </form>
 
-    <form className="form" onSubmit={submit} style={{ marginTop: 32 }}>
-      <h2>Country-specific shipping</h2>
-      <p className="muted">Add one active flat rate per destination country using ISO codes, such as NG, GH, GB, or US.</p>
+    <button type="button" className="secondary-button" style={{ marginTop: 20 }} onClick={() => setShowAdvanced((current) => !current)} aria-expanded={showAdvanced}>
+      {showAdvanced ? "Hide optional backup settings" : "Optional backup or international settings"}
+    </button>
+
+    {showAdvanced && <form className="form" onSubmit={submit} style={{ marginTop: 20 }}>
+      <h2>Country backup prices</h2>
+      <p className="muted">Optional. Use for countries outside Nigeria, or as an NG backup only while some Nigerian states have not been configured. It is never added to a state price.</p>
       <div className="wizard-grid">
         <input required name="state" maxLength="2" placeholder="Country code" value={form.state} onChange={change} />
-        <input required type="number" min="0" name="baseDeliveryFee" placeholder="Flat shipping fee (NGN)" value={form.baseDeliveryFee} onChange={change} />
+        <input required type="number" min="0" name="baseDeliveryFee" placeholder="Country backup price (NGN)" value={form.baseDeliveryFee} onChange={change} />
         <input required name="serviceName" placeholder="Service name" value={form.serviceName} onChange={change} />
       </div>
       <div className="wizard-grid">
@@ -166,7 +171,7 @@ export default function AdminShipping() {
       <label><input type="checkbox" name="active" checked={form.active} onChange={change} /> Active</label>
       <button type="submit">{editing ? "Update policy" : "Add policy"}</button>
       {editing && <button type="button" onClick={() => { setForm(blank); setEditing(null); }}>Cancel</button>}
-    </form>
+    </form>}
 
     {message && <p>{message}</p>}
     <section style={{ marginTop: 32 }}>
@@ -187,7 +192,7 @@ export default function AdminShipping() {
       <p>₦{Number(zone.baseDeliveryFee).toLocaleString()}</p>
       <p>{zone.handlingTimeMinDays}-{zone.handlingTimeMaxDays} handling days · {zone.transitTimeMinDays}-{zone.transitTimeMaxDays} transit days</p>
       <p>{zone.dutiesAndTaxes === "included" ? "Duties/taxes included" : "Customer pays import duties/taxes"}</p>
-      <button onClick={() => { setEditing(zone._id); setForm({ ...blank, ...zone }); }}>Edit</button>
+      <button onClick={() => { setShowAdvanced(true); setEditing(zone._id); setForm({ ...blank, ...zone }); }}>Edit</button>
       <button className="btn-danger" onClick={async () => { await deleteShippingZone(zone._id, token); load(); }}>Delete</button>
     </article>)}</div>
   </div>;
