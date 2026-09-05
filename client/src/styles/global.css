@@ -4978,7 +4978,65 @@ iframe {
 }
 
 .sidebar-avatar {
+  display: grid;
+  flex: 0 0 62px;
+  width: 62px;
+  height: 62px;
+  place-items: center;
+  border-radius: 50%;
+  background: #f7f5ef;
   overflow: hidden;
+}
+
+.sidebar-user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  border-bottom: 1px solid #f1ece5;
+}
+
+.sidebar-user-info {
+  min-width: 0;
+}
+
+.sidebar-user-info strong,
+.sidebar-user-info span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.avatar-upload-compact {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 1px dashed rgba(6, 59, 32, .45);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.avatar-upload-compact .avatar-upload-dropzone {
+  display: grid;
+  width: 100%;
+  min-height: 0;
+  height: 100%;
+  place-items: center;
+  gap: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.avatar-upload-compact .avatar-upload-placeholder {
+  width: 28px;
+  height: 28px;
+  flex-basis: 28px;
+  border: 0;
+  background: transparent;
+}
+
+.avatar-upload-compact .avatar-upload-dropzone strong {
+  font-size: 10px;
+  line-height: 1;
 }
 
 .profile-info-grid {

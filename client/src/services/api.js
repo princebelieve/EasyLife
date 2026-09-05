@@ -7,9 +7,15 @@ import {
   logout,
 } from "../utils/auth";
 const BASE_URL = import.meta.env.VITE_API_URL || "";
+let refreshInFlight = null;
 
-async function refreshAccessToken() {
+async function requestAccessTokenRefresh() {
   const refreshToken = getRefreshToken();
+
+  if (!refreshToken) {
+    logout();
+    throw new Error("Session expired");
+  }
 
   const res = await fetch(`${BASE_URL}/api/auth/refresh`, {
     method: "POST",
@@ -31,6 +37,19 @@ async function refreshAccessToken() {
   }
 
   return data.accessToken;
+}
+
+// Access tokens are deliberately short-lived. When several requests receive a
+// 401 together (common on an admin dashboard), they must share one refresh
+// request because refresh tokens are rotated by the server.
+function refreshAccessToken() {
+  if (!refreshInFlight) {
+    refreshInFlight = requestAccessTokenRefresh().finally(() => {
+      refreshInFlight = null;
+    });
+  }
+
+  return refreshInFlight;
 }
 
 async function apiRequest(endpoint, options = {}) {
@@ -68,12 +87,17 @@ async function apiRequest(endpoint, options = {}) {
   }
 
   if (res.status === 401) {
-    const newToken = await refreshAccessToken();
+    // Another request may have renewed the token while this request was in
+    // flight. Reuse it rather than rotating the refresh token again.
+    const currentToken = getToken();
+    const newToken = currentToken && currentToken !== token
+      ? currentToken
+      : await refreshAccessToken();
 
     const retry = await fetch(`${BASE_URL}${endpoint}`, {
       ...options,
       headers: {
-        ...options.headers,
+        ...cleanHeaders,
         Authorization: `Bearer ${newToken}`,
       },
     });

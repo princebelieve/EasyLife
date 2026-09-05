@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import useClickOutside from "../../hooks/useClickOutside";
 import useAuth from "../../context/AuthContext";
 import NotificationDropdown from "../NotificationDropdown";
+import AvatarUpload from "../AvatarUpload";
 
 import {
   Menu,
@@ -31,7 +32,7 @@ export default function AdminLayout({ children }) {
   const sidebarRef = useRef(null);
   const menuBtnRef = useRef(null);
 
-  const { logout, user } = useAuth();
+  const { logout, user, setUser } = useAuth();
 
   const navigate = useNavigate();
 
@@ -218,7 +219,7 @@ export default function AdminLayout({ children }) {
             {user?.avatar ? (
               <img src={user.avatar} alt="avatar" />
             ) : (
-              user?.name?.charAt(0)?.toUpperCase() || "A"
+              <AvatarUpload compact onUploaded={setUser} />
             )}
           </div>
 

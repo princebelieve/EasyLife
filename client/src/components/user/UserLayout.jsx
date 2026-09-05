@@ -5,13 +5,14 @@ import useClickOutside from "../../hooks/useClickOutside";
 import { Menu, X, User, ShoppingBag, Home, LogOut } from "lucide-react";
 import useAuth from "../../context/AuthContext";
 import NotificationDropdown from "../NotificationDropdown";
+import AvatarUpload from "../AvatarUpload";
 import { formatDate } from "../../utils/formatDate";
 
 export default function UserLayout({ children }) {
   const [open, setOpen] = useState(window.innerWidth >= 1024);
   const sidebarRef = useRef(null);
   const menuBtnRef = useRef(null);
-  const { logout, user } = useAuth();
+  const { logout, user, setUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -114,13 +115,12 @@ export default function UserLayout({ children }) {
             {user?.avatar ? (
               <img src={user.avatar} alt="avatar" />
             ) : (
-              user?.name?.charAt(0)?.toUpperCase() || "U"
+              <AvatarUpload compact onUploaded={setUser} />
             )}
           </div>
 
           <div className="sidebar-user-info">
             <strong>{user?.name || "User"}</strong>
-            <span>{user?.email}</span>
             {user?.createdAt && (
               <small
                 style={{ display: "block", marginTop: "6px", opacity: 0.7 }}
