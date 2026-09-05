@@ -9,12 +9,24 @@ const NigerianStateShipping = require("../models/NigerianStateShipping");
 async function calculateShipping({ country = "", state = "", items = [] }) {
   const destination = country.toUpperCase().trim();
   const stateName = state.toUpperCase().trim();
-  if (destination === "NG" && stateName) {
+  if (destination === "NG") {
+    if (!stateName) {
+      return {
+        shippingAvailable: false,
+        message: "Select a Nigerian state to see its delivery price.",
+      };
+    }
+
     const stateRate = await NigerianStateShipping.findOne({ state: stateName, active: true });
     if (stateRate) {
       const shippingFee = Number(stateRate.baseDeliveryFee || 0);
       return { shippingFee, flatRate: shippingFee, estimatedDays: stateRate.estimatedDays, serviceName: stateRate.serviceName, currency: "NGN", dutiesAndTaxes: "customer", shippingAvailable: true, rateScope: "state" };
     }
+
+    return {
+      shippingAvailable: false,
+      message: "Delivery is not yet configured for this state. Please contact Easy Life for assistance.",
+    };
   }
   const zone = await ShippingZone.findOne({ state: destination, active: true });
 

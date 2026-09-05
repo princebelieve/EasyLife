@@ -35,6 +35,9 @@ router.get("/summary", async (req, res) => {
       state: req.query.state || "",
       items: [],
     });
+    if (shippingData.shippingAvailable === false) {
+      return res.status(400).json(shippingData);
+    }
     res.json(shippingData);
   } catch (err) {
     console.error(err);
@@ -92,6 +95,10 @@ router.post("/preview", async (req, res) => {
       state,
       items,
     });
+
+    if (shippingData.shippingAvailable === false) {
+      return res.status(400).json(shippingData);
+    }
 
     res.json(shippingData);
   } catch (err) {

@@ -95,6 +95,9 @@ router.get("/", protect, adminOnly, async (req, res) => {
 // CREATE ZONE
 router.post("/", protect, adminOnly, async (req, res) => {
   try {
+    if (String(req.body.state || "").trim().toUpperCase() === "NG") {
+      return res.status(400).json({ message: "Nigeria uses state delivery prices. Add or edit a Nigerian state rate instead." });
+    }
     const zone = await ShippingZone.create(req.body);
 
     res.status(201).json(zone);
@@ -110,6 +113,9 @@ router.post("/", protect, adminOnly, async (req, res) => {
 // UPDATE ZONE
 router.put("/:id", protect, adminOnly, async (req, res) => {
   try {
+    if (String(req.body.state || "").trim().toUpperCase() === "NG") {
+      return res.status(400).json({ message: "Nigeria uses state delivery prices. Add or edit a Nigerian state rate instead." });
+    }
     const updated = await ShippingZone.findByIdAndUpdate(
       req.params.id,
       req.body,

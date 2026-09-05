@@ -14,7 +14,7 @@ import {
 import useAuth from "../context/AuthContext";
 
 const blank = {
-  state: "NG", baseDeliveryFee: 0, serviceName: "Standard Delivery",
+  state: "", baseDeliveryFee: 0, serviceName: "Standard Delivery",
   handlingTimeMinDays: 1, handlingTimeMaxDays: 2, transitTimeMinDays: 2,
   transitTimeMaxDays: 7, estimatedDays: "3-9 business days",
   dutiesAndTaxes: "customer", active: true,
@@ -123,7 +123,7 @@ export default function AdminShipping() {
 
     {showAdvanced && <form className="form" onSubmit={saveDefaults}>
       <h2>Backup price for unconfigured locations</h2>
-      <p className="muted">Use this only as a safety price when no state or country price has been set. It is never added to a state price.</p>
+      <p className="muted">Optional, for countries outside Nigeria only. Nigerian orders never use this price.</p>
       <div className="wizard-grid">
         <input required type="number" min="0" name="defaultShippingPrice" placeholder="Backup delivery price (NGN)" value={defaults.defaultShippingPrice} onChange={(event) => setDefaults((current) => ({ ...current, defaultShippingPrice: event.target.value }))} />
         <input required name="defaultDeliveryEstimate" placeholder="Backup delivery estimate" value={defaults.defaultDeliveryEstimate} onChange={(event) => setDefaults((current) => ({ ...current, defaultDeliveryEstimate: event.target.value }))} />
@@ -154,9 +154,9 @@ export default function AdminShipping() {
 
     {showAdvanced && <form className="form" onSubmit={submit} style={{ marginTop: 20 }}>
       <h2>Country backup prices</h2>
-      <p className="muted">Optional. Use for countries outside Nigeria, or as an NG backup only while some Nigerian states have not been configured. It is never added to a state price.</p>
+      <p className="muted">Optional, for countries outside Nigeria only. Do not enter NG here—Nigerian delivery must use the state price above.</p>
       <div className="wizard-grid">
-        <input required name="state" maxLength="2" placeholder="Country code" value={form.state} onChange={change} />
+        <input required name="state" maxLength="2" placeholder="Country code, e.g. GH or GB (not NG)" value={form.state} onChange={change} />
         <input required type="number" min="0" name="baseDeliveryFee" placeholder="Country backup price (NGN)" value={form.baseDeliveryFee} onChange={change} />
         <input required name="serviceName" placeholder="Service name" value={form.serviceName} onChange={change} />
       </div>

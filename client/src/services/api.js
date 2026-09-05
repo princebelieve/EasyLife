@@ -9,6 +9,17 @@ import {
 const BASE_URL = import.meta.env.VITE_API_URL || "";
 let refreshInFlight = null;
 
+async function readApiResponse(response) {
+  const body = await response.text();
+  if (!body) return {};
+
+  try {
+    return JSON.parse(body);
+  } catch {
+    return { message: `Server returned ${response.status} ${response.statusText || "error"}. Please confirm the API server is running and up to date.` };
+  }
+}
+
 async function requestAccessTokenRefresh() {
   const refreshToken = getRefreshToken();
 
@@ -78,13 +89,7 @@ async function apiRequest(endpoint, options = {}) {
     headers: cleanHeaders,
   });
 
-  let data = {};
-
-  try {
-    data = await res.json();
-  } catch {
-    data = {};
-  }
+  const data = await readApiResponse(res);
 
   if (res.status === 401) {
     // Another request may have renewed the token while this request was in
@@ -102,13 +107,7 @@ async function apiRequest(endpoint, options = {}) {
       },
     });
 
-    let retryData = {};
-
-    try {
-      retryData = await retry.json();
-    } catch {
-      retryData = {};
-    }
+    const retryData = await readApiResponse(retry);
 
     if (!retry.ok) {
       throw new Error(retryData.message || retryData.error || "Request failed");
@@ -275,7 +274,7 @@ export async function getAdminDistributorInventory() { return apiRequest("/api/a
 
 export async function getShippingSummary(country = "NG") {
   const res = await fetch(`${BASE_URL}/api/shipping/summary?country=${encodeURIComponent(country)}`);
-  const data = await res.json();
+  const data = await readApiResponse(res);
   if (!res.ok) throw new Error(data.message || "Unable to load delivery information");
   return data;
 }
