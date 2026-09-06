@@ -885,4 +885,11 @@ export async function submitMeasurement(data) {
   });
 }
 
+export async function getTransportCompanies(state) { return apiRequest(`/api/transport-companies${state ? `?state=${encodeURIComponent(state)}` : ""}`); }
+export async function getAdminTransportCompanies() { return apiRequest("/api/transport-companies/admin"); }
+export async function createTransportCompany(data) { return apiRequest("/api/transport-companies/admin", { method: "POST", body: JSON.stringify(data) }); }
+export async function updateTransportCompany(id, data) { return apiRequest(`/api/transport-companies/admin/${id}`, { method: "PUT", body: JSON.stringify(data) }); }
+export async function deleteTransportCompany(id) { return apiRequest(`/api/transport-companies/admin/${id}`, { method: "DELETE" }); }
+export async function importStarterTransportCompanies() { return apiRequest("/api/transport-companies/admin/import-starter", { method: "POST" }); }
+
 export { apiRequest };

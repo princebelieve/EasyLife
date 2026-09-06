@@ -29,6 +29,7 @@ const shareRoutes = require("./routes/share.routes");
 const distributorRoutes = require("./routes/distributor.routes");
 const adminDistributorRoutes = require("./routes/admin.distributor.routes");
 const paymentSettingsRoutes = require("./routes/payment.settings.routes");
+const transportCompanyRoutes = require("./routes/transportCompany.routes");
 const { runUserRetentionCleanup } = require("./routes/admin.user.routes");
 
 const Product = require("./models/Product");
@@ -73,6 +74,7 @@ app.use("/api/share", shareRoutes);
 app.use("/api/distributor", distributorRoutes);
 app.use("/api/admin/distributors", adminDistributorRoutes);
 app.use("/api/payment-settings", paymentSettingsRoutes);
+app.use("/api/transport-companies", transportCompanyRoutes);
 
 // DYNAMIC SITEMAP - serves at root level for Google
 app.get("/sitemap.xml", async (req, res) => {

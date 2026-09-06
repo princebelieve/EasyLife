@@ -1,25 +1,9 @@
 //client/src/pages/Checkout.jsx
 import { useEffect, useState } from "react";
-import { getDistributorStore, getNigerianDeliveryStates, getPublicStorePaymentSettings, getShippingDestinations, initializeCheckout, previewShipping } from "../services/api";
+import { getDistributorStore, getNigerianDeliveryStates, getPublicStorePaymentSettings, getShippingDestinations, getTransportCompanies, initializeCheckout, previewShipping } from "../services/api";
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
 const COUNTRY_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
-const BENIN_CITY_TRANSPORT_COMPANIES = [
-  "ABC Transport",
-  "Ameosa Motors",
-  "Big Joe Motors",
-  "Edo Line / Edo Choice",
-  "Edegbe Line",
-  "Efex Executive",
-  "Faith Motors",
-  "God Is Good Motors (GIGM)",
-  "GUO Transport",
-  "Iyare Motors",
-  "Peace Mass Transit",
-  "Unity Motors",
-  "Young Shall Grow",
-  "Other transport company or park",
-];
 
 export default function Checkout() {
   const { cart, subtotal, clearCart, removeFromCart } = useCart();
@@ -32,6 +16,7 @@ export default function Checkout() {
   const [shippingError, setShippingError] = useState("");
   const [distributor, setDistributor] = useState(null);
   const [storePaymentSettings, setStorePaymentSettings] = useState(null);
+  const [transportCompanies, setTransportCompanies] = useState([]);
 
   const totalAmount = subtotal + shippingFee;
   const [form, setForm] = useState({
@@ -73,6 +58,11 @@ export default function Checkout() {
       })
       .catch(() => setShippingDestinations(["NG"]));
   }, []);
+
+  useEffect(() => {
+    if (!form.state) { setTransportCompanies([]); return; }
+    getTransportCompanies(form.state).then(setTransportCompanies).catch(() => setTransportCompanies([]));
+  }, [form.state]);
 
   useEffect(() => {
     getNigerianDeliveryStates()
@@ -213,7 +203,7 @@ export default function Checkout() {
                   ) : (
                     <input name="state" placeholder="State / Region" value={form.state} onChange={handleChange} />
                   )}
-                  <label className="checkout-address-label">Transport company or park for collection <span>Your parcel will be sent to the closest available terminal in your state; we will confirm the exact terminal before dispatch.</span><select name="pickupTransportCompany" value={form.pickupTransportCompany} onChange={handleChange} required><option value="">Select the transport company or park for collection</option>{BENIN_CITY_TRANSPORT_COMPANIES.map((company) => <option key={company} value={company}>{company}</option>)}</select></label>{form.pickupTransportCompany === "Other transport company or park" && <input name="pickupOtherLocation" placeholder="Enter the transport company or park" value={form.pickupOtherLocation} onChange={handleChange} required />}
+                  <label className="checkout-address-label">Transport company or park for collection <span>Your parcel will be sent to the closest available terminal in your state; we will confirm the exact terminal before dispatch.</span><select name="pickupTransportCompany" value={form.pickupTransportCompany} onChange={handleChange} required><option value="">{form.state ? "Select the transport company or park" : "Select your state first"}</option>{transportCompanies.map((company) => <option key={company._id} value={company.name}>{company.name}</option>)}<option value="Other / specify a transport company or park">Other / specify a transport company or park</option></select></label><label className="checkout-address-label">Other / specify transport company or park <span>Complete this only when you select “Other / specify” above.</span><input name="pickupOtherLocation" placeholder="Enter the transport company or park" value={form.pickupOtherLocation} onChange={handleChange} required={form.pickupTransportCompany === "Other / specify a transport company or park"} /></label>
                 </>
               ) : (
                 <div className="checkout-pickup-note">
@@ -323,12 +313,12 @@ export default function Checkout() {
 
               <h2>Total to pay: ₦{totalAmount.toLocaleString()}</h2>
               <p className="muted" style={{ marginTop: 6 }}>
-                {form.deliveryMethod === "pickup" ? "Easy Life office pickup selected — no shipping fee applies." : `Collection from ${form.pickupTransportCompany === "Other transport company or park" ? form.pickupOtherLocation || "your selected transport company" : form.pickupTransportCompany || "your selected transport company"} — the delivery fee is included above.`}
+                {form.deliveryMethod === "pickup" ? "Easy Life office pickup selected — no shipping fee applies." : `Collection from ${form.pickupTransportCompany === "Other / specify a transport company or park" ? form.pickupOtherLocation || "your selected transport company" : form.pickupTransportCompany || "your selected transport company"} — the delivery fee is included above.`}
               </p>
               {distributor && (
                 <div className="distributor-delivery-summary">
                   <strong>Fulfilled by {distributor.name}</strong>
-                  <span>{form.deliveryMethod === "pickup" ? "Collect from the distributor's Benin office location after confirmation." : `Customer will collect from ${form.pickupTransportCompany === "Other transport company or park" ? form.pickupOtherLocation || "the selected transport company" : form.pickupTransportCompany || "the selected transport company"}.`}</span>
+                  <span>{form.deliveryMethod === "pickup" ? "Collect from the distributor's Benin office location after confirmation." : `Customer will collect from ${form.pickupTransportCompany === "Other / specify a transport company or park" ? form.pickupOtherLocation || "the selected transport company" : form.pickupTransportCompany || "the selected transport company"}.`}</span>
                 </div>
               )}
               <p className="muted" style={{ marginTop: 6 }}>

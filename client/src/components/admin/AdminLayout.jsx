@@ -108,6 +108,12 @@ export default function AdminLayout({ children }) {
     },
 
     {
+      to: "/admin/transport-companies",
+      label: "Transport Companies",
+      icon: <Truck size={18} />,
+    },
+
+    {
       to: "/admin/payment-settings",
       label: "Payment Settings",
       icon: <WalletCards size={18} />,
