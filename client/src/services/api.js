@@ -347,6 +347,17 @@ export async function updateStorePaymentSettings(data, token) {
   return apiRequest("/api/payment-settings/admin", { method: "PUT", headers: { Authorization: `Bearer ${token}` }, body: JSON.stringify(data) });
 }
 
+export async function getNigerianBanks() {
+  return apiRequest("/api/payment-settings/banks");
+}
+
+export async function resolveNigerianAccount(bankCode, accountNumber) {
+  return apiRequest("/api/payment-settings/resolve-account", {
+    method: "POST",
+    body: JSON.stringify({ bankCode, accountNumber }),
+  });
+}
+
 export async function getPublicStorePaymentSettings() {
   return apiRequest("/api/payment-settings/public");
 }

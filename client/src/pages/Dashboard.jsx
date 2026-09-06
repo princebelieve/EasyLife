@@ -1,22 +1,27 @@
 //client/src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
-import { applyForDistributor, completePendingPayment, getMyOrders, getProfile } from "../services/api";
+import { useSearchParams } from "react-router-dom";
+import { applyForDistributor, completePendingPayment, getMyOrders, getProfile, getNigerianBanks, resolveNigerianAccount } from "../services/api";
 import { formatDate } from "../utils/formatDate";
 import useAuth from "../context/AuthContext";
 import UserLayout from "../components/user/UserLayout";
 
 export default function Dashboard() {
+  const [searchParams] = useSearchParams();
   const [orders, setOrders] = useState([]);
   const [user, setUser] = useState(null);
   const { token, setUser: setAuthenticatedUser } = useAuth();
   const [distributorMessage, setDistributorMessage] = useState("");
-  const [showDistributorForm, setShowDistributorForm] = useState(false);
+  const [banks, setBanks] = useState([]);
+  const [resolvingAccount, setResolvingAccount] = useState(false);
+  const [showDistributorForm, setShowDistributorForm] = useState(() => searchParams.get("distributor") === "apply");
   const [distributorApplication, setDistributorApplication] = useState({
     businessName: "",
     phone: "",
     pickupAddress: "",
     deliveryCoverage: "",
     bankName: "",
+    bankCode: "",
     accountName: "",
     accountNumber: "",
     note: "",
@@ -34,6 +39,7 @@ export default function Dashboard() {
           pickupAddress: profile.user.distributorPickupAddress || profile.user.address || "",
           deliveryCoverage: profile.user.distributorDeliveryCoverage || "",
           bankName: profile.user.distributorBankName || "",
+          bankCode: profile.user.distributorBankCode || "",
           accountName: profile.user.distributorAccountName || "",
           accountNumber: profile.user.distributorAccountNumber || "",
           note: profile.user.distributorApplicationNote || "",
@@ -41,6 +47,9 @@ export default function Dashboard() {
 
         const ordersData = await getMyOrders(token);
         setOrders(ordersData);
+
+        const bankData = await getNigerianBanks();
+        setBanks(Array.isArray(bankData) ? bankData : bankData.banks || []);
       } catch (err) {
         console.error(err);
       }
@@ -48,6 +57,10 @@ export default function Dashboard() {
 
     load();
   }, [token]);
+
+  useEffect(() => {
+    if (searchParams.get("distributor") === "apply") setShowDistributorForm(true);
+  }, [searchParams]);
 
   const activeOrdersCount = orders.filter(
     (o) => o.deliveryStatus !== "delivered" && o.deliveryStatus !== "cancelled",
@@ -59,7 +72,31 @@ export default function Dashboard() {
 
   function updateDistributorApplication(event) {
     const { name, value } = event.target;
-    setDistributorApplication((current) => ({ ...current, [name]: value }));
+    setDistributorApplication((current) => {
+      if (name === "bankCode") {
+        const bank = banks.find((item) => String(item.code) === value);
+        return { ...current, bankCode: value, bankName: bank?.name || "", accountName: "" };
+      }
+      if (name === "accountNumber") return { ...current, accountNumber: value.replace(/\D/g, "").slice(0, 10), accountName: "" };
+      return { ...current, [name]: value };
+    });
+  }
+
+  async function verifyDistributorAccount() {
+    if (!distributorApplication.bankCode || distributorApplication.accountNumber.length !== 10) {
+      setDistributorMessage("Select your bank and enter the 10-digit account number first.");
+      return;
+    }
+    setResolvingAccount(true);
+    setDistributorMessage("");
+    try {
+      const result = await resolveNigerianAccount(distributorApplication.bankCode, distributorApplication.accountNumber);
+      setDistributorApplication((current) => ({ ...current, accountName: result.accountName || "" }));
+    } catch (error) {
+      setDistributorMessage(error.message || "We could not verify that account. Check the bank and account number.");
+    } finally {
+      setResolvingAccount(false);
+    }
   }
 
   async function applyForDistributorAccount(event) {
@@ -163,7 +200,7 @@ export default function Dashboard() {
             <div>
               <p className="eyebrow">Distributor application</p>
               <h2>Tell us how you will serve customers</h2>
-              <p className="muted">Submit these details for review. You can update your customer payment and fulfilment settings after approval.</p>
+              <p className="muted">Buy at distributor prices, sell through your own Easy Life link, and manage your available stock after approval.</p>
             </div>
             <form onSubmit={applyForDistributorAccount} className="form distributor-application-form">
               <div className="form-grid">
@@ -171,13 +208,14 @@ export default function Dashboard() {
                 <label>Phone number<input name="phone" type="tel" value={distributorApplication.phone} onChange={updateDistributorApplication} required /></label>
                 <label className="form-grid-full">Pickup address<input name="pickupAddress" value={distributorApplication.pickupAddress} onChange={updateDistributorApplication} required /></label>
                 <label className="form-grid-full">Delivery areas <span className="muted">(optional)</span><input name="deliveryCoverage" value={distributorApplication.deliveryCoverage} onChange={updateDistributorApplication} placeholder="For example: Ibadan and nearby areas" /></label>
-                <label>Bank name<input name="bankName" value={distributorApplication.bankName} onChange={updateDistributorApplication} required /></label>
-                <label>Account name<input name="accountName" value={distributorApplication.accountName} onChange={updateDistributorApplication} required /></label>
-                <label>Account number<input name="accountNumber" inputMode="numeric" value={distributorApplication.accountNumber} onChange={updateDistributorApplication} required /></label>
+                <label>Bank name<select name="bankCode" value={distributorApplication.bankCode} onChange={updateDistributorApplication} required><option value="">Select your bank</option>{banks.map((bank) => <option key={bank.code} value={bank.code}>{bank.name}</option>)}</select></label>
+                <label>Account number<input name="accountNumber" inputMode="numeric" value={distributorApplication.accountNumber} onChange={updateDistributorApplication} maxLength="10" required /></label>
+                <label>Verified account name<input value={distributorApplication.accountName} readOnly placeholder="Verify account to see the name" required /></label>
+                <div className="form-grid-full"><button type="button" onClick={verifyDistributorAccount} disabled={resolvingAccount || !distributorApplication.bankCode || distributorApplication.accountNumber.length !== 10}>{resolvingAccount ? "Verifying account…" : "Verify account name"}</button></div>
                 <label className="form-grid-full">Anything else we should know? <span className="muted">(optional)</span><textarea name="note" value={distributorApplication.note} onChange={updateDistributorApplication} rows="3" placeholder="Describe your customer base or fulfilment plan" /></label>
               </div>
               <div className="form-actions">
-                <button className="primary" type="submit">Submit application for review</button>
+                <button className="primary" type="submit" disabled={!distributorApplication.accountName}>Submit application for review</button>
                 <button type="button" onClick={() => setShowDistributorForm(false)}>Cancel</button>
               </div>
             </form>

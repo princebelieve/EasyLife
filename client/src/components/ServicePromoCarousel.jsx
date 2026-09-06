@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const promotions = [
   { label: "EASY LIFE WELLNESS HUB", title: "Natural health for a vibrant life.", text: "Explore wellness products, education, and practical support.", image: "/wellness.jpeg", to: "/collection", destination: "easylifewellnesshub.com/collection", action: "Shop wellness products" },
+  { label: "EARN WITH EASY LIFE", title: "Become an Easy Life Distributor", text: "Buy selected products at distributor prices, sell to your customers, and manage your stock from your own dashboard.", image: "/wellness.jpeg", to: "/dashboard?distributor=apply", destination: "Apply in your Easy Life account", action: "See distributor benefits" },
   { label: "EASY LIFE FAMILY", title: "Visit Easy Life Supermarket", text: "Shop everyday essentials for your home and family.", image: "/supermarket.jpeg", to: "https://supermarket.easylifewellnesshub.com", destination: "supermarket.easylifewellnesshub.com", action: "Visit supermarket" },
   { label: "EASY LIFE FAMILY", title: "Visit Easy Life Clinic", text: "Book eye-care appointments and get the support you need.", image: "/ceo.png", imageClass: "service-promo-image-ceo", to: "https://clinic.easylifewellnesshub.com", destination: "clinic.easylifewellnesshub.com", action: "Visit clinic" },
 ];

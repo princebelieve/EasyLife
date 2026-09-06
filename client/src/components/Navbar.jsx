@@ -15,7 +15,7 @@ export default function Navbar() {
 
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { isLoggedIn, isAdmin, logout } = useAuth();
+  const { isLoggedIn, isAdmin, logout, user } = useAuth();
   const { cartCount } = useCart();
   const { unreadCount } = useNotifications();
 
@@ -118,6 +118,10 @@ export default function Navbar() {
           {isLoggedIn && <Link to="/cart">Cart</Link>}
 
           {isLoggedIn && <Link to="/dashboard">Dashboard</Link>}
+
+          {isLoggedIn && user?.distributorStatus !== "approved" && user?.distributorStatus !== "pending" && <Link to="/dashboard?distributor=apply">Become a Distributor</Link>}
+
+          {isLoggedIn && user?.distributorStatus === "approved" && <Link to="/distributor">Distributor Dashboard</Link>}
 
           {isAdmin && <Link to="/admin">Admin</Link>}
 
@@ -253,6 +257,18 @@ export default function Navbar() {
               <Link to="/dashboard" onClick={() => setOpen(false)}>
                 My Orders
               </Link>
+
+              {user?.distributorStatus !== "approved" && user?.distributorStatus !== "pending" && (
+                <Link to="/dashboard?distributor=apply" onClick={() => setOpen(false)}>
+                  Become a Distributor
+                </Link>
+              )}
+
+              {user?.distributorStatus === "approved" && (
+                <Link to="/distributor" onClick={() => setOpen(false)}>
+                  Distributor Dashboard
+                </Link>
+              )}
 
               <Link to="/profile" onClick={() => setOpen(false)}>
                 Profile

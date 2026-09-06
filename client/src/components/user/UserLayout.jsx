@@ -2,7 +2,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import useClickOutside from "../../hooks/useClickOutside";
-import { Menu, X, User, ShoppingBag, Home, LogOut } from "lucide-react";
+import { Menu, X, User, ShoppingBag, Home, LogOut, Handshake } from "lucide-react";
 import useAuth from "../../context/AuthContext";
 import NotificationDropdown from "../NotificationDropdown";
 import AvatarUpload from "../AvatarUpload";
@@ -47,6 +47,8 @@ export default function UserLayout({ children }) {
     },
 
     ...(user?.distributorStatus === "approved" ? [{ to: "/distributor", label: "Distributor Dashboard", icon: <ShoppingBag size={18} /> }] : []),
+
+    ...(user?.distributorStatus !== "approved" && user?.distributorStatus !== "pending" ? [{ to: "/dashboard?distributor=apply", label: "Become a Distributor", icon: <Handshake size={18} /> }] : []),
 
     {
       to: "/checkout",
@@ -137,7 +139,7 @@ export default function UserLayout({ children }) {
               key={link.to}
               to={link.to}
               className={
-                location.pathname === link.to ? "active-admin-link" : ""
+                `${location.pathname}${location.search}` === link.to ? "active-admin-link" : ""
               }
             >
               {link.icon}

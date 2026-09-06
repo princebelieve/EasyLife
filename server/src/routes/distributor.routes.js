@@ -14,6 +14,26 @@ function approved(req, res, next) {
   next();
 }
 
+async function verifyDistributorAccount(bankCode, accountNumber) {
+  const normalizedNumber = String(accountNumber || "").replace(/\D/g, "");
+  if (!bankCode || normalizedNumber.length !== 10) {
+    const error = new Error("Select a bank and enter a valid 10-digit account number.");
+    error.status = 400;
+    throw error;
+  }
+  try {
+    const response = await paystack.get("/bank/resolve", { params: { bank_code: bankCode, account_number: normalizedNumber } });
+    const account = response.data?.data;
+    if (!account?.account_name) throw new Error("This account could not be verified.");
+    return { accountName: account.account_name, accountNumber: String(account.account_number || normalizedNumber).replace(/\D/g, "") };
+  } catch (error) {
+    if (error.status) throw error;
+    const resolvedError = new Error(error.response?.data?.message || "This account could not be verified.");
+    resolvedError.status = 400;
+    throw resolvedError;
+  }
+}
+
 router.get("/store/:code", async (req, res) => {
   const distributor = await User.findOne({ distributorCode: req.params.code.toUpperCase(), distributorStatus: "approved", isSuspended: { $ne: true }, isDeleted: { $ne: true } }).select("name distributorCode city state distributorBankName distributorAccountName distributorAccountNumber distributorPickupAddress distributorPickupEnabled distributorDeliveryEnabled").lean();
   if (!distributor) return res.status(404).json({ message: "This distributor shop is unavailable." });
@@ -36,6 +56,7 @@ router.get("/dashboard", protect, approved, async (req, res) => {
     orders,
     settings: {
       bankName: req.user.distributorBankName || "",
+      bankCode: req.user.distributorBankCode || "",
       accountName: req.user.distributorAccountName || "",
       accountNumber: req.user.distributorAccountNumber || "",
       pickupAddress: req.user.distributorPickupAddress || "",
@@ -79,28 +100,36 @@ router.post("/sales", protect, approved, async (req, res) => {
 router.post("/apply", protect, async (req, res) => {
   if (req.user.distributorStatus === "approved") return res.json({ message: "Your distributor account is already approved." });
   if (req.user.distributorStatus === "pending") return res.json({ message: "Your distributor application is already pending admin approval." });
-  const { businessName, phone, pickupAddress, deliveryCoverage, bankName, accountName, accountNumber, note } = req.body;
-  if (!businessName || !phone || !pickupAddress || !bankName || !accountName || !accountNumber) {
+  const { businessName, phone, pickupAddress, deliveryCoverage, bankName, bankCode, accountNumber, note } = req.body;
+  if (!businessName || !phone || !pickupAddress || !bankName || !bankCode || !accountNumber) {
     return res.status(400).json({ message: "Business name, phone, pickup address, and bank details are required." });
   }
+  let verifiedAccount;
+  try { verifiedAccount = await verifyDistributorAccount(bankCode, accountNumber); }
+  catch (error) { return res.status(error.status || 400).json({ message: error.message }); }
   req.user.distributorStatus = "pending";
   req.user.distributorBusinessName = String(businessName).trim();
   req.user.phone = String(phone).trim();
   req.user.distributorPickupAddress = String(pickupAddress).trim();
   req.user.distributorDeliveryCoverage = String(deliveryCoverage || "").trim();
   req.user.distributorBankName = String(bankName).trim();
-  req.user.distributorAccountName = String(accountName).trim();
-  req.user.distributorAccountNumber = String(accountNumber).trim();
+  req.user.distributorBankCode = String(bankCode).trim();
+  req.user.distributorAccountName = verifiedAccount.accountName;
+  req.user.distributorAccountNumber = verifiedAccount.accountNumber;
   req.user.distributorApplicationNote = String(note || "").trim();
   await req.user.save();
   res.json({ message: "Distributor application submitted for review." });
 });
 
 router.put("/settings", protect, approved, async (req, res) => {
-  const { bankName, accountName, accountNumber, pickupAddress, pickupEnabled, deliveryEnabled } = req.body;
+  const { bankName, bankCode, accountNumber, pickupAddress, pickupEnabled, deliveryEnabled } = req.body;
+  let verifiedAccount;
+  try { verifiedAccount = await verifyDistributorAccount(bankCode, accountNumber); }
+  catch (error) { return res.status(error.status || 400).json({ message: error.message }); }
   req.user.distributorBankName = String(bankName || "").trim();
-  req.user.distributorAccountName = String(accountName || "").trim();
-  req.user.distributorAccountNumber = String(accountNumber || "").trim();
+  req.user.distributorBankCode = String(bankCode || "").trim();
+  req.user.distributorAccountName = verifiedAccount.accountName;
+  req.user.distributorAccountNumber = verifiedAccount.accountNumber;
   req.user.distributorPickupAddress = String(pickupAddress || "").trim();
   req.user.distributorPickupEnabled = pickupEnabled !== false;
   req.user.distributorDeliveryEnabled = deliveryEnabled !== false;

@@ -24,6 +24,7 @@ import {
   User,
   Bell,
   LogOut,
+  Handshake,
 } from "lucide-react";
 
 export default function AdminLayout({ children }) {
@@ -142,6 +143,16 @@ export default function AdminLayout({ children }) {
       icon: <User size={18} />,
     },
 
+    ...(user?.distributorStatus === "approved" ? [{
+      to: "/distributor",
+      label: "Distributor Dashboard",
+      icon: <Handshake size={18} />,
+    }] : user?.distributorStatus !== "pending" ? [{
+      to: "/dashboard?distributor=apply",
+      label: "Become a Distributor",
+      icon: <Handshake size={18} />,
+    }] : []),
+
     {
       to: "/profile",
       label: "My Profile",
@@ -235,7 +246,7 @@ export default function AdminLayout({ children }) {
               key={link.to}
               to={link.to}
               className={
-                location.pathname === link.to ? "active-admin-link" : ""
+                `${location.pathname}${location.search}` === link.to ? "active-admin-link" : ""
               }
             >
               {link.icon}
