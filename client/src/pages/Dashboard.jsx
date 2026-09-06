@@ -5,6 +5,7 @@ import { applyForDistributor, completePendingPayment, getMyOrders, getProfile, g
 import { formatDate } from "../utils/formatDate";
 import useAuth from "../context/AuthContext";
 import UserLayout from "../components/user/UserLayout";
+import BankSelect from "../components/BankSelect";
 
 export default function Dashboard() {
   const [searchParams] = useSearchParams();
@@ -80,6 +81,11 @@ export default function Dashboard() {
       if (name === "accountNumber") return { ...current, accountNumber: value.replace(/\D/g, "").slice(0, 10), accountName: "" };
       return { ...current, [name]: value };
     });
+  }
+
+  function chooseDistributorBank(bankCode) {
+    const bank = banks.find((item) => String(item.code) === bankCode);
+    setDistributorApplication((current) => ({ ...current, bankCode, bankName: bank?.name || "", accountName: "" }));
   }
 
   async function verifyDistributorAccount() {
@@ -208,7 +214,7 @@ export default function Dashboard() {
                 <label>Phone number<input name="phone" type="tel" value={distributorApplication.phone} onChange={updateDistributorApplication} required /></label>
                 <label className="form-grid-full">Pickup address<input name="pickupAddress" value={distributorApplication.pickupAddress} onChange={updateDistributorApplication} required /></label>
                 <label className="form-grid-full">Delivery areas <span className="muted">(optional)</span><input name="deliveryCoverage" value={distributorApplication.deliveryCoverage} onChange={updateDistributorApplication} placeholder="For example: Ibadan and nearby areas" /></label>
-                <label>Bank name<select name="bankCode" value={distributorApplication.bankCode} onChange={updateDistributorApplication} required><option value="">Select your bank</option>{banks.map((bank) => <option key={bank.code} value={bank.code}>{bank.name}</option>)}</select></label>
+                <label>Bank name<BankSelect id="distributor-application-bank" banks={banks} value={distributorApplication.bankCode} onChange={chooseDistributorBank} required /></label>
                 <label>Account number<input name="accountNumber" inputMode="numeric" value={distributorApplication.accountNumber} onChange={updateDistributorApplication} maxLength="10" required /></label>
                 <label>Verified account name<input value={distributorApplication.accountName} readOnly placeholder="Verify account to see the name" required /></label>
                 <div className="form-grid-full"><button type="button" onClick={verifyDistributorAccount} disabled={resolvingAccount || !distributorApplication.bankCode || distributorApplication.accountNumber.length !== 10}>{resolvingAccount ? "Verifying account…" : "Verify account name"}</button></div>
