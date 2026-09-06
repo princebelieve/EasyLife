@@ -27,12 +27,18 @@ router.post("/", protect, async (req, res) => {
     const userId = req.user.id;
 
     const {
-      customerName, email, phone, address, city, state, country, notes,
+      customerName, email, phone, address, city, state, country, notes, pickupTransportCompany, pickupOtherLocation,
       paymentMethod = "paystack", distributorCode = "", deliveryMethod = "delivery",
     } = req.body;
 
     if (!["paystack", "cash_on_delivery", "distributor_transfer", "manual_bank_transfer"].includes(paymentMethod)) {
       return res.status(400).json({ message: "Choose a valid payment method." });
+    }
+    const selectedPickupLocation = String(pickupTransportCompany || "").trim() === "Other transport company or park"
+      ? String(pickupOtherLocation || "").trim()
+      : String(pickupTransportCompany || "").trim();
+    if (deliveryMethod === "pickup" && !selectedPickupLocation) {
+      return res.status(400).json({ message: "Select the transport company or motor park you prefer." });
     }
 
     let distributor = null;
@@ -114,7 +120,7 @@ router.post("/", protect, async (req, res) => {
         amount: totalAmount * 100,
         currency: "NGN",
         callback_url: `${clientUrl}/success?order_token=${confirmationToken}`,
-        metadata: { userId, customerName, phone, address, city, state, country, notes },
+        metadata: { userId, customerName, phone, address, city, state, country, notes, pickupLocation: selectedPickupLocation },
       });
       paymentReference = payment.data.data.reference;
       authorizationUrl = payment.data.data.authorization_url;
@@ -140,7 +146,7 @@ router.post("/", protect, async (req, res) => {
       deliveryFee: shippingFee,
       deliveryZone: country,
       deliveryMethod,
-      pickupLocation: deliveryMethod === "pickup" ? (distributor?.distributorPickupAddress || "Easy Life Wellness Hub") : "",
+      pickupLocation: deliveryMethod === "pickup" ? selectedPickupLocation : "",
       paymentInstructions: paymentMethod === "distributor_transfer" ? `Transfer ₦${totalAmount.toLocaleString()} to ${distributor.distributorAccountName} · ${distributor.distributorAccountNumber} · ${distributor.distributorBankName}` : "",
       deliveryEstimate: shippingData.estimatedDays || "",
       shippingService: shippingData.serviceName || "",

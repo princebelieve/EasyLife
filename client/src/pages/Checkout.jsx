@@ -4,6 +4,22 @@ import { getDistributorStore, getNigerianDeliveryStates, getPublicStorePaymentSe
 import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
 const COUNTRY_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
+const BENIN_CITY_TRANSPORT_COMPANIES = [
+  "ABC Transport",
+  "Ameosa Motors",
+  "Big Joe Motors",
+  "Edo Line / Edo Choice",
+  "Edegbe Line",
+  "Efex Executive",
+  "Faith Motors",
+  "God Is Good Motors (GIGM)",
+  "GUO Transport",
+  "Iyare Motors",
+  "Peace Mass Transit",
+  "Unity Motors",
+  "Young Shall Grow",
+  "Other transport company or park",
+];
 
 export default function Checkout() {
   const { cart, subtotal, clearCart, removeFromCart } = useCart();
@@ -29,6 +45,8 @@ export default function Checkout() {
     notes: "",
     paymentMethod: "paystack",
     deliveryMethod: "delivery",
+    pickupTransportCompany: "",
+    pickupOtherLocation: "",
   });
 
   function handleChange(e) {
@@ -199,7 +217,12 @@ export default function Checkout() {
               ) : (
                 <div className="checkout-pickup-note">
                   <strong>Pickup selected</strong>
-                  <span>{distributor?.distributorPickupAddress || "Easy Life Wellness Hub will confirm the pickup location after your order is placed."}</span>
+                  <span>Select the transport company or motor park where you would like to receive your order. Easy Life will confirm the handover details after your order is placed.</span>
+                  <select name="pickupTransportCompany" value={form.pickupTransportCompany} onChange={handleChange} required>
+                    <option value="">Select a Benin City transport company or park</option>
+                    {BENIN_CITY_TRANSPORT_COMPANIES.map((company) => <option key={company} value={company}>{company}</option>)}
+                  </select>
+                  {form.pickupTransportCompany === "Other transport company or park" && <input name="pickupOtherLocation" placeholder="Enter the transport company or motor park" value={form.pickupOtherLocation} onChange={handleChange} required />}
                 </div>
               )}
 
@@ -304,12 +327,12 @@ export default function Checkout() {
 
               <h2>Total to pay: ₦{totalAmount.toLocaleString()}</h2>
               <p className="muted" style={{ marginTop: 6 }}>
-                {form.deliveryMethod === "pickup" ? "Pickup selected — no shipping fee applies." : "Delivery selected — the delivery fee is included above."}
+                {form.deliveryMethod === "pickup" ? `Pickup at ${form.pickupTransportCompany === "Other transport company or park" ? form.pickupOtherLocation || "your selected transport company" : form.pickupTransportCompany || "your selected transport company"} — no shipping fee applies.` : "Delivery selected — the delivery fee is included above."}
               </p>
               {distributor && (
                 <div className="distributor-delivery-summary">
                   <strong>Fulfilled by {distributor.name}</strong>
-                  <span>{form.deliveryMethod === "pickup" ? `Pickup location: ${distributor.distributorPickupAddress || "Address will be confirmed by the distributor."}` : "Delivery will be arranged by this distributor after your order is confirmed."}</span>
+                  <span>{form.deliveryMethod === "pickup" ? `Preferred pickup point: ${form.pickupTransportCompany === "Other transport company or park" ? form.pickupOtherLocation || "Select a transport company above." : form.pickupTransportCompany || "Select a transport company above."}` : "Delivery will be arranged by this distributor after your order is confirmed."}</span>
                 </div>
               )}
               <p className="muted" style={{ marginTop: 6 }}>

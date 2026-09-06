@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   createNigerianStateShipping,
   createShippingZone,
@@ -43,6 +43,12 @@ export default function AdminShipping() {
   const [editingStateRate, setEditingStateRate] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [message, setMessage] = useState("");
+  const stateRateFormRef = useRef(null);
+  const countryFormRef = useRef(null);
+
+  function scrollToForm(ref) {
+    window.requestAnimationFrame(() => ref.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
 
   const load = async () => {
     try {
@@ -131,7 +137,7 @@ export default function AdminShipping() {
       <button type="submit">Save backup price</button>
     </form>}
 
-    <form className="form" onSubmit={saveStateRate} style={{ marginTop: 32 }}>
+    <form ref={stateRateFormRef} className="form" onSubmit={saveStateRate} style={{ marginTop: 32 }}>
       <h2>Nigeria state delivery rates</h2>
       <p className="muted">This is the main setup. Set the one delivery price customers pay when they select each Nigerian state.</p>
       <div className="wizard-grid">
@@ -152,7 +158,7 @@ export default function AdminShipping() {
       {showAdvanced ? "Hide optional backup settings" : "Optional backup or international settings"}
     </button>
 
-    {showAdvanced && <form className="form" onSubmit={submit} style={{ marginTop: 20 }}>
+    {showAdvanced && <form ref={countryFormRef} className="form" onSubmit={submit} style={{ marginTop: 20 }}>
       <h2>Country backup prices</h2>
       <p className="muted">Optional, for countries outside Nigeria only. Do not enter NG here—Nigerian delivery must use the state price above.</p>
       <div className="wizard-grid">
@@ -182,7 +188,7 @@ export default function AdminShipping() {
           <p>₦{Number(rate.baseDeliveryFee).toLocaleString()}</p>
           <p>{rate.serviceName} · {rate.estimatedDays}</p>
           <p>{rate.active ? "Active at checkout" : "Inactive"}</p>
-          <button onClick={() => { const state = NIGERIAN_STATES.find((option) => option.toUpperCase() === rate.state) || rate.state; setEditingStateRate(rate._id); setStateRateForm({ ...stateRateBlank, ...rate, state }); }}>Edit</button>
+          <button onClick={() => { const state = NIGERIAN_STATES.find((option) => option.toUpperCase() === rate.state) || rate.state; setEditingStateRate(rate._id); setStateRateForm({ ...stateRateBlank, ...rate, state }); scrollToForm(stateRateFormRef); }}>Edit</button>
           <button className="btn-danger" onClick={async () => { try { await deleteNigerianStateShipping(rate._id, token); setMessage("State delivery rate deleted."); load(); } catch (error) { setMessage(error.message || "State delivery rate could not be deleted."); } }}>Delete</button>
         </article>)}</div>
       )}
@@ -192,7 +198,7 @@ export default function AdminShipping() {
       <p>₦{Number(zone.baseDeliveryFee).toLocaleString()}</p>
       <p>{zone.handlingTimeMinDays}-{zone.handlingTimeMaxDays} handling days · {zone.transitTimeMinDays}-{zone.transitTimeMaxDays} transit days</p>
       <p>{zone.dutiesAndTaxes === "included" ? "Duties/taxes included" : "Customer pays import duties/taxes"}</p>
-      <button onClick={() => { setShowAdvanced(true); setEditing(zone._id); setForm({ ...blank, ...zone }); }}>Edit</button>
+      <button onClick={() => { setShowAdvanced(true); setEditing(zone._id); setForm({ ...blank, ...zone }); window.setTimeout(() => scrollToForm(countryFormRef), 0); }}>Edit</button>
       <button className="btn-danger" onClick={async () => { await deleteShippingZone(zone._id, token); load(); }}>Delete</button>
     </article>)}</div>
   </div>;

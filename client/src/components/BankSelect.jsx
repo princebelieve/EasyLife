@@ -6,7 +6,18 @@ export default function BankSelect({ banks = [], value, onChange, required = fal
   const selectedBank = useMemo(() => banks.find((bank) => String(bank.code) === String(value)), [banks, value]);
   const matches = useMemo(() => {
     const term = query.trim().toLowerCase();
-    return term ? banks.filter((bank) => bank.name.toLowerCase().includes(term)) : banks;
+    if (!term) return banks;
+
+    // A broad "contains" search leaves unrelated banks in the list. Keep the
+    // exact name-start matches first, followed only by matches at a word start.
+    const nameStarts = [];
+    const wordStarts = [];
+    banks.forEach((bank) => {
+      const name = bank.name.toLowerCase();
+      if (name.startsWith(term)) nameStarts.push(bank);
+      else if (name.split(/[\s-]+/).some((word) => word.startsWith(term))) wordStarts.push(bank);
+    });
+    return [...nameStarts, ...wordStarts];
   }, [banks, query]);
 
   useEffect(() => {
