@@ -37,7 +37,7 @@ router.post("/", protect, async (req, res) => {
     const selectedPickupLocation = String(pickupTransportCompany || "").trim() === "Other transport company or park"
       ? String(pickupOtherLocation || "").trim()
       : String(pickupTransportCompany || "").trim();
-    if (deliveryMethod === "pickup" && !selectedPickupLocation) {
+    if (deliveryMethod === "delivery" && !selectedPickupLocation) {
       return res.status(400).json({ message: "Select the transport company or motor park you prefer." });
     }
 
@@ -120,7 +120,7 @@ router.post("/", protect, async (req, res) => {
         amount: totalAmount * 100,
         currency: "NGN",
         callback_url: `${clientUrl}/success?order_token=${confirmationToken}`,
-        metadata: { userId, customerName, phone, address, city, state, country, notes, pickupLocation: selectedPickupLocation },
+        metadata: { userId, customerName, phone, state, country, notes, transportCompanyPickupPoint: selectedPickupLocation },
       });
       paymentReference = payment.data.data.reference;
       authorizationUrl = payment.data.data.authorization_url;
@@ -146,7 +146,8 @@ router.post("/", protect, async (req, res) => {
       deliveryFee: shippingFee,
       deliveryZone: country,
       deliveryMethod,
-      pickupLocation: deliveryMethod === "pickup" ? selectedPickupLocation : "",
+      pickupLocation: deliveryMethod === "pickup" ? (distributor?.distributorPickupAddress || "Easy Life Wellness Hub, Benin City") : "",
+      transportCompanyPickupPoint: deliveryMethod === "delivery" ? selectedPickupLocation : "",
       paymentInstructions: paymentMethod === "distributor_transfer" ? `Transfer ₦${totalAmount.toLocaleString()} to ${distributor.distributorAccountName} · ${distributor.distributorAccountNumber} · ${distributor.distributorBankName}` : "",
       deliveryEstimate: shippingData.estimatedDays || "",
       shippingService: shippingData.serviceName || "",

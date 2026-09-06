@@ -370,6 +370,9 @@ button {
 .payment-methods legend { margin-bottom: 4px; color: var(--navy); font-weight: 800; }
 .checkout-fulfilment-methods { margin: 18px 0; padding: 16px; border: 1px solid rgba(201, 162, 74, .55); border-radius: 14px; background: #fffaf0; }
 .checkout-fulfilment-methods legend { padding: 0 4px; font-size: 16px; }
+.checkout-fulfilment-help { margin: 0 0 10px; color: #52675b; font-size: .9rem; line-height: 1.4; }
+.checkout-address-label { display: grid; gap: 6px; color: var(--navy); font-weight: 700; }
+.checkout-address-label span { color: #52675b; font-size: .86rem; font-weight: 400; line-height: 1.4; }
 .payment-method-option { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid #d5dfd7; border-radius: 10px; background: #fff; cursor: pointer; }
 .payment-method-option:has(input:checked) { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(232, 198, 106, .18); }
 .payment-method-option input { width: 20px; height: 20px; flex: 0 0 auto; margin: 2px 0 0; padding: 0; accent-color: var(--navy-light); }

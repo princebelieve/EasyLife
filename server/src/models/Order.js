@@ -177,6 +177,7 @@ const orderSchema = new mongoose.Schema(
     },
 
     pickupLocation: { type: String, default: "" },
+    transportCompanyPickupPoint: { type: String, default: "" },
     paymentInstructions: { type: String, default: "" },
 
     deliveryEstimate: {

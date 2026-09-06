@@ -194,17 +194,17 @@ export default function Checkout() {
 
               <fieldset className="payment-methods checkout-fulfilment-methods">
                 <legend>How would you like to receive your order?</legend>
+                <p className="checkout-fulfilment-help">Delivery goes to a transport company or park in your selected state; customers collect from there. Office pickup is only for customers coming to Easy Life in Benin City.</p>
                 <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="delivery" checked={form.deliveryMethod === "delivery"} onChange={handleChange} /><span><strong>Delivery</strong><small>{distributor ? `${distributor.name} will arrange delivery.` : "Easy Life will arrange delivery."}</small></span></label>
                 <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="pickup" checked={form.deliveryMethod === "pickup"} onChange={handleChange} disabled={Boolean(distributor && !distributor.distributorPickupEnabled)} /><span><strong>Pick up — no shipping fee</strong><small>{distributor?.distributorPickupAddress || "Pick up from Easy Life Wellness Hub after confirmation."}</small></span></label>
               </fieldset>
 
               {form.deliveryMethod === "delivery" ? (
                 <>
-                  <input name="address" placeholder="Delivery Address" value={form.address} onChange={handleChange} required />
+                  <label className="checkout-address-label">Your address or nearest landmark <span>Used only to choose the closest transport company/park in your state. We do not deliver to your doorstep.</span><input name="address" placeholder="House address, street, community, or nearest landmark" value={form.address} onChange={handleChange} required /></label>
                   <select name="country" value={form.country} onChange={handleChange} required>
                     {shippingDestinations.map((country) => <option key={country} value={country}>{COUNTRY_NAMES.of(country) || country}</option>)}
                   </select>
-                  <input name="city" placeholder="City" value={form.city} onChange={handleChange} required />
                   {form.country === "NG" && nigerianStates.length > 0 ? (
                     <select name="state" value={form.state} onChange={handleChange} required>
                       <option value="">Select your state</option>
@@ -213,16 +213,12 @@ export default function Checkout() {
                   ) : (
                     <input name="state" placeholder="State / Region" value={form.state} onChange={handleChange} />
                   )}
+                  <label className="checkout-address-label">Transport company or park for collection <span>Your parcel will be sent to the closest available terminal in your state; we will confirm the exact terminal before dispatch.</span><select name="pickupTransportCompany" value={form.pickupTransportCompany} onChange={handleChange} required><option value="">Select the transport company or park for collection</option>{BENIN_CITY_TRANSPORT_COMPANIES.map((company) => <option key={company} value={company}>{company}</option>)}</select></label>{form.pickupTransportCompany === "Other transport company or park" && <input name="pickupOtherLocation" placeholder="Enter the transport company or park" value={form.pickupOtherLocation} onChange={handleChange} required />}
                 </>
               ) : (
                 <div className="checkout-pickup-note">
-                  <strong>Pickup selected</strong>
-                  <span>Select the transport company or motor park where you would like to receive your order. Easy Life will confirm the handover details after your order is placed.</span>
-                  <select name="pickupTransportCompany" value={form.pickupTransportCompany} onChange={handleChange} required>
-                    <option value="">Select a Benin City transport company or park</option>
-                    {BENIN_CITY_TRANSPORT_COMPANIES.map((company) => <option key={company} value={company}>{company}</option>)}
-                  </select>
-                  {form.pickupTransportCompany === "Other transport company or park" && <input name="pickupOtherLocation" placeholder="Enter the transport company or motor park" value={form.pickupOtherLocation} onChange={handleChange} required />}
+                  <strong>Easy Life office pickup selected</strong>
+                  <span>{distributor?.distributorPickupAddress || "Collect from Easy Life Wellness Hub in Benin City after confirmation."}</span>
                 </div>
               )}
 
@@ -327,12 +323,12 @@ export default function Checkout() {
 
               <h2>Total to pay: ₦{totalAmount.toLocaleString()}</h2>
               <p className="muted" style={{ marginTop: 6 }}>
-                {form.deliveryMethod === "pickup" ? `Pickup at ${form.pickupTransportCompany === "Other transport company or park" ? form.pickupOtherLocation || "your selected transport company" : form.pickupTransportCompany || "your selected transport company"} — no shipping fee applies.` : "Delivery selected — the delivery fee is included above."}
+                {form.deliveryMethod === "pickup" ? "Easy Life office pickup selected — no shipping fee applies." : `Collection from ${form.pickupTransportCompany === "Other transport company or park" ? form.pickupOtherLocation || "your selected transport company" : form.pickupTransportCompany || "your selected transport company"} — the delivery fee is included above.`}
               </p>
               {distributor && (
                 <div className="distributor-delivery-summary">
                   <strong>Fulfilled by {distributor.name}</strong>
-                  <span>{form.deliveryMethod === "pickup" ? `Preferred pickup point: ${form.pickupTransportCompany === "Other transport company or park" ? form.pickupOtherLocation || "Select a transport company above." : form.pickupTransportCompany || "Select a transport company above."}` : "Delivery will be arranged by this distributor after your order is confirmed."}</span>
+                  <span>{form.deliveryMethod === "pickup" ? "Collect from the distributor's Benin office location after confirmation." : `Customer will collect from ${form.pickupTransportCompany === "Other transport company or park" ? form.pickupOtherLocation || "the selected transport company" : form.pickupTransportCompany || "the selected transport company"}.`}</span>
                 </div>
               )}
               <p className="muted" style={{ marginTop: 6 }}>
