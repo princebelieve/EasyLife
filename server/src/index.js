@@ -33,7 +33,7 @@ const transportCompanyRoutes = require("./routes/transportCompany.routes");
 const { runUserRetentionCleanup } = require("./routes/admin.user.routes");
 
 const Product = require("./models/Product");
-const ShippingZone = require("./models/ShippingZone");
+const NigerianStateShipping = require("./models/NigerianStateShipping");
 const ShippingSettings = require("./models/ShippingSettings");
 
 const app = express();
@@ -147,12 +147,14 @@ app.get("/feed.xml", async (req, res) => {
       approved: { $ne: false },
     });
 
-    const baseUrl =
-      process.env.CLIENT_URL || process.env.BASE_URL || "http://localhost:5173";
+    const baseUrl = (process.env.CLIENT_URL || process.env.BASE_URL || "http://localhost:5173")
+      .split(",")[0]
+      .trim()
+      .replace(/\/$/, "");
 
     const [zones, settings] = await Promise.all([
-      ShippingZone.find({ active: true }).select(
-        "state baseDeliveryFee serviceName handlingTimeMinDays handlingTimeMaxDays transitTimeMinDays transitTimeMaxDays currency",
+      NigerianStateShipping.find({ active: true }).select(
+        "state baseDeliveryFee serviceName",
       ),
       ShippingSettings.findOneAndUpdate(
         { key: "default" },
@@ -163,16 +165,15 @@ app.get("/feed.xml", async (req, res) => {
     // Product and checkout prices are NGN, so only NGN delivery rates can be
     // advertised in this feed. Merchant requires the shipping price currency
     // to match the offer price currency.
-    const shippingRates = zones
-      .filter((zone) => (zone.currency || "NGN") === "NGN")
-      .map((zone) => ({
-        country: zone.state,
+    const shippingRates = zones.map((zone) => ({
+        country: "NG",
+        region: zone.state,
         price: Number(zone.baseDeliveryFee || 0),
         service: zone.serviceName || "Standard delivery",
-        minHandlingTime: Number(zone.handlingTimeMinDays || 0),
-        maxHandlingTime: Number(zone.handlingTimeMaxDays || 1),
-        minTransitTime: Number(zone.transitTimeMinDays || 0),
-        maxTransitTime: Number(zone.transitTimeMaxDays || 1),
+        minHandlingTime: 0,
+        maxHandlingTime: 1,
+        minTransitTime: 0,
+        maxTransitTime: 1,
       }));
 
     if (!shippingRates.length) {
@@ -228,6 +229,7 @@ app.get("/feed.xml", async (req, res) => {
       shippingRates.forEach((rate) => {
         xml += `    <g:shipping>\n`;
         xml += `      <g:country>${escapeXml(rate.country)}</g:country>\n`;
+        xml += `      <g:region>${escapeXml(rate.region || "")}</g:region>\n`;
         xml += `      <g:service>${escapeXml(rate.service)}</g:service>\n`;
         xml += `      <g:price>${rate.price.toFixed(2)} NGN</g:price>\n`;
         xml += `      <g:min_handling_time>${rate.minHandlingTime}</g:min_handling_time>\n`;

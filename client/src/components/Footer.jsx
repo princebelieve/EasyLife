@@ -1,6 +1,6 @@
 //client/src/components/Footer.jsx
 import { Link } from "react-router-dom";
-import { FaFacebook, FaYoutube } from "react-icons/fa";
+import { FaFacebook, FaTiktok, FaYoutube } from "react-icons/fa";
 import { SiX } from "react-icons/si";
 
 export default function Footer() {
@@ -96,6 +96,14 @@ export default function Footer() {
               aria-label="YouTube"
             >
               <FaYoutube size={24} />
+            </a>
+            <a
+              href="https://www.tiktok.com/@easy.life.wellnes6"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+            >
+              <FaTiktok size={24} />
             </a>
           </div>
         </div>

@@ -6,6 +6,7 @@ export default async function handler(req, res) {
   const clientUrl =
     process.env.CLIENT_URL ||
     (host ? `${protocol}://${host}` : "http://localhost:5173");
+  const publicClientUrl = clientUrl.split(",")[0].trim().replace(/\/$/, "");
     const apiUrl = `${backendUrl}/api/products`;
     const shippingUrl = `${backendUrl}/api/shipping/merchant-rates`;
 
@@ -38,7 +39,7 @@ export default async function handler(req, res) {
       "google_product_category",
       "identifier_exists",
       ...shippingRates.map(
-        () => "shipping(country:price:min_handling_time:max_handling_time:min_transit_time:max_transit_time)",
+        () => "shipping(country:region:service:price:min_handling_time:max_handling_time:min_transit_time:max_transit_time)",
       ),
     ];
 
@@ -62,7 +63,7 @@ export default async function handler(req, res) {
         product._id || product.sku,
         product.name,
         product.fullDescription || product.shortDescription || product.name,
-        `${clientUrl}/product/${product._id}`,
+        `${publicClientUrl}/product/${product._id}`,
         product.coverImage,
         `${Number(product.price || 0).toFixed(2)} NGN`,
         product.salePrice != null && Number(product.salePrice) < Number(product.price) ? `${Number(product.salePrice).toFixed(2)} NGN` : "",
@@ -73,7 +74,7 @@ export default async function handler(req, res) {
         product.googleProductCategory || "",
         product.gtin ? "yes" : "no",
         ...shippingRates.map((rate) =>
-          `${rate.country}:${Number(rate.price || 0).toFixed(2)} NGN:${rate.minHandlingTime}:${rate.maxHandlingTime}:${rate.minTransitTime}:${rate.maxTransitTime}`,
+          `${rate.country}:${rate.region || ""}:${rate.service || "Standard delivery"}:${Number(rate.price || 0).toFixed(2)} NGN:${rate.minHandlingTime}:${rate.maxHandlingTime}:${rate.minTransitTime}:${rate.maxTransitTime}`,
         ),
       ]
         .map(escapeCsvField)

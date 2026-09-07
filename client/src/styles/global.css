@@ -5922,10 +5922,10 @@ button:hover,
 .service-promo-carousel .service-promo > img { top: 14px; right: 14px; bottom: 14px; left: auto; width: calc(43% - 14px); height: calc(100% - 28px); border-radius: 12px; background: #dbe8df; box-shadow: 0 8px 18px rgba(0, 0, 0, .18); opacity: 1; }
 .service-promo-carousel .service-promo-image-ceo { box-sizing: border-box; padding: 12px 8px 0; object-fit: contain; object-position: center top; }
 .service-promo-carousel .service-promo-overlay { right: auto; width: 58%; background: linear-gradient(90deg, rgba(3, 29, 16, .96), rgba(6, 59, 32, .82) 70%, rgba(6, 59, 32, .08)); }
-.service-promo-carousel .service-promo-content { width: min(650px, 58%); padding: 28px 32px; }
-.service-promo-carousel .service-promo-content h2 { margin: 6px 0 8px; font-size: clamp(1.65rem, 3.2vw, 2.75rem); }
-.service-promo-carousel .service-promo-content p { margin-bottom: 10px; font-size: .9rem; line-height: 1.45; }
-.service-promo-carousel .service-promo-destination { margin-bottom: 14px; font-size: .72rem; }
+.service-promo-carousel .service-promo-content { width: min(650px, 58%); padding: 18px 28px; }
+.service-promo-carousel .service-promo-content h2 { margin: 5px 0 7px; font-size: clamp(1.5rem, 2.4vw, 2.15rem); }
+.service-promo-carousel .service-promo-content p { margin-bottom: 6px; font-size: .86rem; line-height: 1.3; }
+.service-promo-carousel .service-promo-destination { margin-bottom: 10px; font-size: .7rem; }
 .service-promo > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: .7; animation: promoImageDrift 5.5s ease both; }
 .service-promo-overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(3, 29, 16, .97), rgba(6, 59, 32, .82) 52%, rgba(6, 59, 32, .3)); }
 .service-promo-content { position: relative; z-index: 1; width: min(700px, 78%); padding: 48px; color: var(--white); }

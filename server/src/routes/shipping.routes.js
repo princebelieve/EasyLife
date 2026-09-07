@@ -5,6 +5,7 @@ const router = express.Router();
 
 const { calculateShipping } = require("../config/shipping");
 const ShippingZone = require("../models/ShippingZone");
+const NigerianStateShipping = require("../models/NigerianStateShipping");
 const ShippingSettings = require("../models/ShippingSettings");
 
 const NIGERIAN_STATES = [
@@ -49,9 +50,9 @@ router.get("/summary", async (req, res) => {
 // prices are NGN; Merchant requires a shipping price in the offer currency.
 router.get("/merchant-rates", async (req, res) => {
   try {
-    const [zones, settings] = await Promise.all([
-      ShippingZone.find({ active: true }).select(
-        "state baseDeliveryFee serviceName handlingTimeMinDays handlingTimeMaxDays transitTimeMinDays transitTimeMaxDays currency",
+    const [stateRates, settings] = await Promise.all([
+      NigerianStateShipping.find({ active: true }).select(
+        "state baseDeliveryFee serviceName estimatedDays",
       ),
       ShippingSettings.findOneAndUpdate(
         { key: "default" },
@@ -59,16 +60,15 @@ router.get("/merchant-rates", async (req, res) => {
         { new: true, upsert: true, setDefaultsOnInsert: true },
       ),
     ]);
-    const rates = zones
-      .filter((zone) => (zone.currency || "NGN") === "NGN")
-      .map((zone) => ({
-        country: zone.state,
-        price: Number(zone.baseDeliveryFee || 0),
-        service: zone.serviceName || "Standard delivery",
-        minHandlingTime: Number(zone.handlingTimeMinDays || 0),
-        maxHandlingTime: Number(zone.handlingTimeMaxDays || 1),
-        minTransitTime: Number(zone.transitTimeMinDays || 0),
-        maxTransitTime: Number(zone.transitTimeMaxDays || 1),
+    const rates = stateRates.map((rate) => ({
+        country: "NG",
+        region: rate.state,
+        price: Number(rate.baseDeliveryFee || 0),
+        service: rate.serviceName || "Standard delivery",
+        minHandlingTime: 0,
+        maxHandlingTime: 1,
+        minTransitTime: 0,
+        maxTransitTime: 1,
       }));
 
     res.json(rates.length ? rates : [{
