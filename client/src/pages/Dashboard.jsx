@@ -1,5 +1,5 @@
 //client/src/pages/Dashboard.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { applyForDistributor, completePendingPayment, getMyOrders, getProfile, getNigerianBanks, resolveNigerianAccount } from "../services/api";
 import { formatDate } from "../utils/formatDate";
@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [banks, setBanks] = useState([]);
   const [resolvingAccount, setResolvingAccount] = useState(false);
   const [showDistributorForm, setShowDistributorForm] = useState(() => searchParams.get("distributor") === "apply");
+  const distributorFormRef = useRef(null);
   const [distributorApplication, setDistributorApplication] = useState({
     businessName: "",
     phone: "",
@@ -62,6 +63,13 @@ export default function Dashboard() {
   useEffect(() => {
     if (searchParams.get("distributor") === "apply") setShowDistributorForm(true);
   }, [searchParams]);
+
+  useEffect(() => {
+    if (searchParams.get("distributor") !== "apply" || !showDistributorForm) return;
+    window.requestAnimationFrame(() => {
+      distributorFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, [searchParams, showDistributorForm]);
 
   const activeOrdersCount = orders.filter(
     (o) => o.deliveryStatus !== "delivered" && o.deliveryStatus !== "cancelled",
@@ -197,12 +205,12 @@ export default function Dashboard() {
           <button onClick={() => (window.location.href = "/profile")}>
             Edit Profile
           </button>
-          {user?.distributorStatus === "approved" ? <button onClick={() => (window.location.href = "/distributor")}>Open Distributor Dashboard</button> : user?.distributorStatus === "pending" ? <button disabled>Distributor application pending</button> : <button onClick={() => setShowDistributorForm((open) => !open)}>{showDistributorForm ? "Close distributor application" : "Apply to become a distributor"}</button>}
+          {user?.distributorStatus === "approved" ? <button onClick={() => (window.location.href = "/distributor")}>Open Distributor Dashboard</button> : user?.distributorStatus === "pending" ? <button disabled>Distributor application pending</button> : <button onClick={() => showDistributorForm ? setShowDistributorForm(false) : setShowDistributorForm(true)}>{showDistributorForm ? "Close distributor application" : "Apply to become a distributor"}</button>}
         </div>
         {distributorMessage && <p className="inline-toast success">{distributorMessage}</p>}
         {user?.distributorStatus === "pending" && <p className="muted">Your application has been submitted. An Easy Life administrator must approve it before you can access the Distributor Dashboard.</p>}
         {showDistributorForm && user?.distributorStatus !== "pending" && (
-          <section className="content-card distributor-application">
+          <section ref={distributorFormRef} className="content-card distributor-application">
             <div>
               <p className="eyebrow">Distributor application</p>
               <h2>Tell us how you will serve customers</h2>

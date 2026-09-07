@@ -5,7 +5,7 @@ const { protect, adminOnly } = require("../middleware/auth");
 
 const router = express.Router();
 const normalizeStates = (states) => [...new Set((Array.isArray(states) ? states : []).map((state) => String(state).trim().toUpperCase()).filter(Boolean))];
-const starterCompanies = ["ABC Transport", "Agofure Motors", "Ameosa Motors", "Big Joe Motors", "Chisco Transport", "Cross Country Transport", "Delta Line", "Edo Line / Edo Choice", "Edegbe Line", "Ekeson Transport", "Efex Executive", "Ezenwata Transport", "Faith Motors", "God Is Good Motors (GIGM)", "God's Time Motors", "Goodness and Mercy Transport", "GUO Transport", "Ifesinachi Transport", "ITC (Ijele Transport Company)", "Iyare Motors", "Peace Mass Transit", "The Young Shall Grow", "Unity Motors"];
+const starterCompanies = ["ABC Transport", "Agofure Motors", "Ameosa Motors", "Big Joe Motors", "Chisco Transport", "Cross Country Transport", "Delta Line", "Edo Line / Edo Choice", "Edegbe Line", "Ekeson Transport", "Efex Executive", "Ezenwata Transport", "Faith Motors", "God Is Good Motors (GIGM)", "God's Time Motors", "Goodness and Mercy Transport", "GUO Transport", "Ifesinachi Transport", "ITC (Imo State Transport Company)", "Ijele Transport Company", "Iyare Motors", "Peace Mass Transit", "The Young Shall Grow", "Unity Motors"];
 
 router.get("/", async (req, res) => {
   try {

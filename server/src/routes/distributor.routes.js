@@ -6,6 +6,8 @@ const DistributorInventory = require("../models/DistributorInventory");
 const DistributorStockOrder = require("../models/DistributorStockOrder");
 const User = require("../models/User");
 const paystack = require("../services/paystack");
+const { notifyAdmins } = require("../services/notification.service");
+const { sendPushToAdmins } = require("../services/push.service");
 
 const clientUrl = (process.env.CLIENT_URL || "http://localhost:5173").split(",")[0].trim().replace(/\/$/, "");
 
@@ -118,6 +120,21 @@ router.post("/apply", protect, async (req, res) => {
   req.user.distributorAccountNumber = verifiedAccount.accountNumber;
   req.user.distributorApplicationNote = String(note || "").trim();
   await req.user.save();
+
+  const admins = await User.find({ role: "admin" }).select("_id");
+  const adminIds = admins.map((admin) => admin._id);
+  if (adminIds.length > 0) {
+    const notificationPayload = {
+      type: "distributor.application.submitted",
+      title: "New Distributor Application",
+      body: `${req.user.name || req.user.email} submitted a distributor application for review.`,
+      link: "/admin/users",
+      data: { userId: req.user._id },
+    };
+    await notifyAdmins(notificationPayload, adminIds);
+    await sendPushToAdmins(adminIds, notificationPayload);
+  }
+
   res.json({ message: "Distributor application submitted for review." });
 });
 

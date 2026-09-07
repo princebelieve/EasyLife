@@ -7,6 +7,8 @@ const { protect, adminOnly } = require("../middleware/auth");
 const User = require("../models/User");
 const Cart = require("../models/Cart");
 const RefreshToken = require("../models/RefreshToken");
+const { createNotification } = require("../services/notification.service");
+const { sendPushToUser } = require("../services/push.service");
 
 const RETENTION_DAYS = 90;
 
@@ -69,6 +71,8 @@ router.put("/:id", protect, adminOnly, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    const wasDistributorApproved = user.distributorStatus === "approved";
+
     if (permanentDelete || deleteImmediately) {
       const result = await permanentDeleteUser(user._id);
       if (!result.deleted) {
@@ -109,6 +113,25 @@ router.put("/:id", protect, adminOnly, async (req, res) => {
     }
 
     await user.save();
+
+    if (user.distributorStatus === "approved" && !wasDistributorApproved) {
+      const notification = await createNotification({
+        userId: user._id,
+        type: "distributor.application.approved",
+        title: "Distributor Application Approved",
+        body: "Your distributor application has been approved. Your distributor dashboard is now available.",
+        link: "/distributor",
+        data: { distributorCode: user.distributorCode },
+      });
+      if (notification) {
+        await sendPushToUser(user._id, {
+          title: notification.title,
+          body: notification.body,
+          link: notification.link,
+          data: notification.data,
+        });
+      }
+    }
 
     res.json({
       message: "User updated",
