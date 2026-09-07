@@ -28,7 +28,7 @@ router.get("/products", async (req, res) => {
 
     products.forEach((product) => {
       xml += "  <entry>\n";
-      xml += `    <id>${baseUrl}/product/${product._id}</id>\n`;
+      xml += `    <id>${escapeXml(String(product.sku || product._id))}</id>\n`;
       xml += `    <title>${escapeXml(product.name)}</title>\n`;
       xml += `    <description>${escapeXml(product.fullDescription || product.shortDescription || product.name)}</description>\n`;
       xml += `    <link rel="alternate" type="text/html" href="${baseUrl}/product/${product._id}"/>\n`;

@@ -208,7 +208,7 @@ app.get("/feed.xml", async (req, res) => {
         product.fullDescription || product.shortDescription || product.name;
 
       xml += "  <entry>\n";
-      xml += `    <id>${baseUrl}/product/${product._id}</id>\n`;
+      xml += `    <id>${escapeXml(String(itemId))}</id>\n`;
       xml += `    <g:id>${escapeXml(String(itemId))}</g:id>\n`;
       xml += `    <title>${escapeXml(product.name)}</title>\n`;
       xml += `    <description>${escapeXml(description)}</description>\n`;
