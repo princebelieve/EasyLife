@@ -36,11 +36,13 @@ const sendVerificationLink = async ({ email, token }) => {
 
   try {
     await sendEmailVerification({ to: email, verificationUrl });
+    return true;
   } catch (err) {
     console.warn(
       `Failed to send verification email to ${email}: ${err?.message || err}`,
     );
     // Do not throw here; token is persisted and user can request resend
+    return false;
   }
 };
 
@@ -79,7 +81,7 @@ const registerUser = async (req, res) => {
       emailVerificationExpires,
     });
 
-    await sendVerificationLink({
+    const verificationEmailSent = await sendVerificationLink({
       email: user.email,
       token: emailVerificationToken,
     });
@@ -87,6 +89,7 @@ const registerUser = async (req, res) => {
     return res.status(201).json({
       message:
         "Account created. Check your email and verify your address before logging in.",
+      verificationEmailSent,
     });
   } catch (err) {
     console.error(err);
@@ -215,6 +218,11 @@ const googleSignIn = async (req, res) => {
         role: adminEmails.includes(normalizedEmail) ? "admin" : "user",
         emailVerified: true,
       });
+    } else if (!user.emailVerified) {
+      user.emailVerified = true;
+      user.emailVerificationToken = undefined;
+      user.emailVerificationExpires = undefined;
+      await user.save();
     }
 
     const accessToken = generateAccessToken(user);

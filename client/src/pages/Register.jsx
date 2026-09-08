@@ -4,7 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import GoogleSignInButton from "../components/GoogleSignInButton";
-import { registerUser, signInWithGoogle } from "../services/api";
+import { registerUser, resendVerificationEmail, signInWithGoogle } from "../services/api";
 import useAuth from "../context/AuthContext";
 
 export default function Register() {
@@ -20,6 +20,8 @@ export default function Register() {
   const [submitting, setSubmitting] = useState(false);
   const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
+  const [registrationMessage, setRegistrationMessage] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -32,19 +34,33 @@ export default function Register() {
 
     try {
       setSubmitting(true);
-      await registerUser({
+      const result = await registerUser({
         name: form.name,
         email: form.email,
         password: form.password,
       });
 
-      alert(
-        "Account created successfully. Please check your email to verify your address.",
+      setRegisteredEmail(form.email.trim());
+      setRegistrationMessage(
+        result.verificationEmailSent === false
+          ? "Your account was created, but the verification email could not be sent. Use Resend verification email below."
+          : "Account created. Check your email, including spam, to verify your address.",
       );
-      navigate("/login");
     } catch (err) {
       console.error(err);
       alert(err.message || "Unable to connect to server");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    try {
+      setSubmitting(true);
+      await resendVerificationEmail(registeredEmail);
+      setRegistrationMessage("A new verification email has been requested. Check your inbox and spam folder.");
+    } catch (err) {
+      setRegistrationMessage(err?.message || "Unable to resend the verification email.");
     } finally {
       setSubmitting(false);
     }
@@ -92,6 +108,17 @@ export default function Register() {
         <p className="muted" style={{ marginBottom: 20 }}>
           Join a community built around health, opportunity, and freedom.
         </p>
+
+        {registrationMessage && (
+          <div className="auth-message" role="status">
+            <p>{registrationMessage}</p>
+            {registeredEmail && (
+              <button type="button" onClick={handleResendVerification} disabled={submitting}>
+                Resend verification email
+              </button>
+            )}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
