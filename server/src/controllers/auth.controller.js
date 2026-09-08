@@ -57,7 +57,7 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Password must be at least 8 characters." });
     }
 
-    const normalizedEmail = String(email || "").toLowerCase();
+    const normalizedEmail = String(email || "").trim().toLowerCase();
 
     const exists = await User.findOne({ email: normalizedEmail });
 
@@ -92,7 +92,10 @@ const registerUser = async (req, res) => {
     console.error(err);
 
     if (err?.code === 11000) {
-      return res.status(400).json({ message: "User already exists" });
+      const duplicateField = Object.keys(err.keyPattern || {})[0];
+      return res.status(400).json({
+        message: duplicateField === "email" ? "User already exists" : "Unable to create this account. Please try again.",
+      });
     }
 
     res.status(500).json({
@@ -106,7 +109,7 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const normalizedEmail = String(email || "").toLowerCase();
+    const normalizedEmail = String(email || "").trim().toLowerCase();
 
     const user = await User.findOne({
       email: normalizedEmail,

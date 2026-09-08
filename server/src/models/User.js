@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
       default: "none",
     },
 
-    distributorCode: { type: String, default: "", unique: true, sparse: true },
+    distributorCode: { type: String, default: undefined, unique: true, sparse: true },
     distributorBankName: { type: String, default: "" },
     distributorBankCode: { type: String, default: "" },
     distributorAccountName: { type: String, default: "" },
