@@ -2,9 +2,16 @@ import { useEffect, useRef, useState } from "react";
 
 export default function GoogleSignInButton({ onSuccess, onError }) {
   const buttonRef = useRef(null);
+  const onSuccessRef = useRef(onSuccess);
+  const onErrorRef = useRef(onError);
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState(null);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+
+  useEffect(() => {
+    onSuccessRef.current = onSuccess;
+    onErrorRef.current = onError;
+  }, [onError, onSuccess]);
 
   useEffect(() => {
     if (!clientId) {
@@ -34,13 +41,13 @@ export default function GoogleSignInButton({ onSuccess, onError }) {
           client_id: clientId,
           callback: async (response) => {
             if (!response?.credential) {
-              return onError?.("Google sign-in failed. Please try again.");
+              return onErrorRef.current?.("Google sign-in failed. Please try again.");
             }
 
             try {
-              await onSuccess(response.credential);
+              await onSuccessRef.current?.(response.credential);
             } catch (err) {
-              onError?.(err?.message || "Unable to complete Google sign-in.");
+              onErrorRef.current?.(err?.message || "Unable to complete Google sign-in.");
             }
           },
           ux_mode: "popup",
@@ -66,7 +73,7 @@ export default function GoogleSignInButton({ onSuccess, onError }) {
     return () => {
       mounted = false;
     };
-  }, [clientId, onError, onSuccess]);
+  }, [clientId]);
 
   return (
     <div

@@ -49,6 +49,14 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    if (!String(name || "").trim() || !String(email || "").trim() || !String(password || "")) {
+      return res.status(400).json({ message: "Name, email, and password are required." });
+    }
+
+    if (String(password).length < 8) {
+      return res.status(400).json({ message: "Password must be at least 8 characters." });
+    }
+
     const normalizedEmail = String(email || "").toLowerCase();
 
     const exists = await User.findOne({ email: normalizedEmail });
@@ -62,7 +70,7 @@ const registerUser = async (req, res) => {
     const emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000;
 
     const user = await User.create({
-      name,
+      name: String(name).trim(),
       email: normalizedEmail,
       password: hashedPassword,
       role: adminEmails.includes(normalizedEmail) ? "admin" : "user",
@@ -82,6 +90,10 @@ const registerUser = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+
+    if (err?.code === 11000) {
+      return res.status(400).json({ message: "User already exists" });
+    }
 
     res.status(500).json({
       message: "Something went wrong. Please try again.",
