@@ -1,5 +1,5 @@
 const express = require("express");
-const { protect, adminOnly } = require("../middleware/auth");
+const { protect, adminOnly, adminOrSubadminOnly } = require("../middleware/auth");
 const Notification = require("../models/Notification");
 const { sendPushToUser, sendPushToUsers } = require("../services/push.service");
 
@@ -31,7 +31,7 @@ router.get("/", protect, async (req, res) => {
   }
 });
 
-router.get("/requests", protect, async (req, res) => {
+router.get("/requests", protect, adminOrSubadminOnly, async (req, res) => {
   try {
     const filter = { status: "pending" };
 

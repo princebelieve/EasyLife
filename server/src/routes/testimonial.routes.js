@@ -9,7 +9,7 @@ const {
   updateTestimonial,
   deleteTestimonial,
 } = require("../controllers/testimonial.controller");
-const { protect, adminOnly, adminOrSubadminOnly } = require("../middleware/auth");
+const { protect, adminOrSubadminOnly } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -31,6 +31,6 @@ router.put(
   upload.fields([{ name: "image", maxCount: 1 }, { name: "video", maxCount: 1 }, { name: "audio", maxCount: 1 }, { name: "videoFile", maxCount: 1 }, { name: "audioFile", maxCount: 1 }]),
   updateTestimonial,
 );
-router.delete("/admin/:id", protect, adminOnly, deleteTestimonial);
+router.delete("/admin/:id", protect, adminOrSubadminOnly, deleteTestimonial);
 
 module.exports = router;

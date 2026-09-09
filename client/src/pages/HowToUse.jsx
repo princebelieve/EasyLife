@@ -5,7 +5,7 @@ import useAuth from "../context/AuthContext";
 
 const customerSteps = [
   ["1", "Choose guest or account checkout", "You can pay online as a guest for a first order, or create an account to keep your cart, order history, delivery updates, and notifications connected to you."],
-  ["2", "Choose products", "Open Shop, read the product information, select Buy Now or add products to your cart, then adjust quantities or remove products before checkout."],
+  ["2", "Choose products", "Open Products, read the product information, select Buy Now or add products to your cart, then adjust quantities or remove products before checkout."],
   ["3", "Choose how to receive the order", "Choose Easy Life office pickup in Benin City to pay no shipping fee, or choose delivery to a transport company or park in your selected state. Delivery is for collection at the terminal, not doorstep delivery."],
   ["4", "Enter collection details", "For transport delivery, provide your address or nearest landmark, state, and preferred transport company or park. The address helps with routing; it does not mean doorstep delivery."],
   ["5", "Confirm one delivery fee", "The configured fee for your selected state is charged once for the complete order, no matter how many products are in your cart."],
@@ -23,6 +23,7 @@ const distributorSteps = [
 ];
 
 const adminTasks = [
+  ["Admin navigation", "Use the Admin dropdown in the main navbar for Products, Orders, Delivery, Shipping, Payments, Distributors, Content, Users, and other tools. Subadmins see only the tools their role permits."],
   ["Products", "Create, edit, publish, approve, or manage product catalogue details, prices, stock, images, descriptions, and Merchant Center fields such as GTIN, brand, and product category."],
   ["Orders and delivery", "Open each order to review customer details, transport collection point, payment status, delivery status, and fulfilment notes. Confirm payment before dispatch or handover."],
   ["Shipping and transport", "Set one whole-order delivery fee for each Nigerian state, manage optional backup policies, and maintain the transport company list customers can select."],
@@ -33,9 +34,9 @@ const adminTasks = [
 
 const subadminTasks = [
   ["Product work", "Subadmins can access the product workspace to add products and prepare catalogue updates. Administrator approval and publishing rules still apply."],
-  ["Content work", "Subadmins can work in Content Studio to prepare posts and media. Follow the approval process where the system marks a submission as pending."],
+  ["Content work", "Subadmins can create, edit, and remove only their own Content Studio submissions. New or changed content stays pending until an administrator approves it."],
   ["Notifications", "Subadmins can prepare individual or broadcast notifications. These are submitted for an administrator to approve before they are delivered."],
-  ["Access boundary", "Subadmins do not control users, payments, state shipping rates, transport companies, order fulfilment, distributor approval, or administrator-only sales and stock controls."],
+  ["Workspace navigation and access boundary", "Use Workspace in the navbar to open Products, Content Studio, and Send Notification. Subadmins do not control users, payments, state shipping rates, transport companies, order fulfilment, distributor approval, or administrator-only sales and stock controls."],
 ];
 
 function StepList({ items, numbered = false }) {
