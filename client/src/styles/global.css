@@ -653,9 +653,12 @@ button {
   font-size: 18px;
   font-weight: 700;
   color: var(--text);
-  line-height: 1.05;
-  max-width: 180px;
-  word-wrap: break-word;
+  line-height: 1.08;
+  white-space: nowrap;
+}
+
+.brand-name span {
+  display: block;
 }
 
 .desktop-nav {
@@ -669,6 +672,45 @@ button {
   display: flex;
   align-items: center;
   gap: 14px;
+}
+
+.cart-nav-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(6, 59, 32, 0.18);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--navy);
+  cursor: pointer;
+}
+
+.cart-nav-button:hover,
+.cart-nav-button:focus-visible {
+  background: rgba(6, 59, 32, 0.08);
+  border-color: var(--navy);
+}
+
+.cart-nav-count {
+  position: absolute;
+  top: -6px;
+  right: -7px;
+  display: grid;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  place-items: center;
+  border: 2px solid var(--cream);
+  border-radius: 999px;
+  background: var(--navy);
+  color: var(--cream);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .hamburger {
@@ -703,6 +745,43 @@ button {
   background: none;
   border: none;
   font-size: 15px;
+}
+
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown-toggle,
+.mobile-nav-group-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: -12px;
+  z-index: 1002;
+  display: grid;
+  min-width: 210px;
+  padding: 8px;
+  border: 1px solid rgba(6, 59, 32, 0.15);
+  border-radius: 12px;
+  background: var(--cream);
+  box-shadow: 0 14px 28px rgba(6, 59, 32, 0.16);
+}
+
+.nav-dropdown-menu a {
+  padding: 10px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.nav-dropdown-menu a:hover,
+.nav-dropdown-menu a:focus-visible {
+  background: rgba(6, 59, 32, 0.08);
 }
 
 .cta {
@@ -763,6 +842,47 @@ button {
   padding: 6px 0;
 }
 
+.mobile-nav-group-toggle {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.mobile-nav-submenu {
+  display: grid;
+  gap: 10px;
+  margin: 4px 0 2px 14px;
+  padding-left: 14px;
+  border-left: 2px solid rgba(6, 59, 32, 0.18);
+}
+
+.mobile-nav-submenu a {
+  font-size: 16px;
+}
+
+.director-home-section { padding-top: 18px; }
+.director-home-grid, .director-hero-grid, .director-story { display: grid; grid-template-columns: minmax(190px, .55fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 70px); align-items: center; }
+.director-home-grid > img { width: min(100%, 290px); max-height: 330px; object-fit: contain; justify-self: center; border-radius: 18px; background: linear-gradient(145deg, #d7eadb, #f7efd7); }
+.director-home-grid h2, .director-hero h1, .director-story h2 { color: var(--navy); }
+.director-page { background: var(--cream); }
+.director-hero { padding: 72px 0 48px; background: linear-gradient(135deg, #f7efd7, #dcecdf); }
+.director-hero-grid { grid-template-columns: minmax(0, 1.1fr) minmax(260px, .7fr); }
+.director-role { margin: -8px 0 18px; color: #52675b; font-weight: 700; }
+.director-portrait-wrap { align-self: end; text-align: center; }
+.director-portrait-wrap img { display: block; width: min(100%, 420px); max-height: 520px; margin: 0 auto; object-fit: contain; }
+.director-story { grid-template-columns: minmax(0, 1.15fr) minmax(260px, .65fr); }
+.director-meeting-card { padding: 28px; }
+.director-service-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.director-service-grid a { display: block; padding: 28px; color: var(--text); text-decoration: none; }
+.director-service-grid a span { color: var(--navy); font-weight: 800; }
+.director-records { max-width: 760px; }
+
+@media (max-width: 800px) {
+  .director-home-grid, .director-hero-grid, .director-story, .director-service-grid { grid-template-columns: 1fr; }
+  .director-home-grid > img { order: 2; }
+  .director-hero { padding: 48px 0 28px; }
+  .director-portrait-wrap img { max-height: 420px; }
+}
+
 @media (max-width: 900px) {
   .navbar {
     height: 76px;
@@ -802,6 +922,7 @@ button {
   .mobile-nav-actions {
     display: flex;
     align-items: center;
+    gap: 8px;
     order: 2;
     margin-left: auto;
     margin-right: 8px;

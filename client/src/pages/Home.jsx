@@ -101,6 +101,8 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="section director-home-section reveal"><div className="container director-home-grid"><img src="/ceo.png" alt="Dr. Chinasa Nwaka, Director of Easy Life Wellness Hub" /><div><p className="easy-eyebrow">MEET OUR DIRECTOR</p><h2>Wellness support with people at its heart.</h2><p>Dr. Chinasa Nwaka leads Easy Life Wellness Hub, Easy Life Clinic, and Easy Life Supermarket. With her team, she brings practical wellness education, responsibly selected products, and community support together in one place.</p><Link to="/our-director" className="easy-text-link">Read Dr. Nwaka’s story <ArrowRight size={17} /></Link></div></div></section>
+
         <section className="section easy-pillars reveal">
           <div className="container"><div className="easy-section-heading"><p className="easy-eyebrow">OUR CORE AREAS</p><h2>Learn, live well, and serve your community.</h2></div><div className="easy-pillar-grid">{pillars.map(({ icon: Icon, title, text }) => <article key={title} className="easy-pillar content-card"><Icon size={28} /><h3>{title}</h3><p>{text}</p></article>)}</div></div>
         </section>

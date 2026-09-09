@@ -61,6 +61,7 @@ import AdminDistributors from "./pages/AdminDistributors";
 import DistributorStore from "./pages/DistributorStore";
 import Outreach from "./pages/Outreach";
 import Journey from "./pages/Journey";
+import Director from "./pages/Director";
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions"));
@@ -170,6 +171,7 @@ export default function App() {
             <Route path="/testimonials" element={<Testimonials />} />
             <Route path="/outreach" element={<Outreach />} />
             <Route path="/journey" element={<Journey />} />
+            <Route path="/our-director" element={<Director />} />
             <Route path="/success" element={<Success />} />
             <Route path="/cancel" element={<Cancel />} />
 

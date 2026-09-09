@@ -1,7 +1,7 @@
 //client/src/components/Navbar.jsx
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, Menu, ShoppingCart, X } from "lucide-react";
 import { Download } from "lucide-react";
 import useAuth from "../context/AuthContext";
 import useClickOutside from "../hooks/useClickOutside";
@@ -14,6 +14,8 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [activeMobileSection, setActiveMobileSection] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const { isLoggedIn, isAdmin, isAdminOrSubadmin, logout, user } = useAuth();
   const { cartCount } = useCart();
@@ -102,8 +104,9 @@ export default function Navbar() {
           alt="Easy Life Wellness Hub"
           className={`logo ${scrolled ? "hide-logo" : ""}`}
         />
-        <span className="brand-name">
-          Easy Life Wellness Hub
+        <span className="brand-name" aria-label="Easy Life Wellness Hub">
+          <span>Easy Life</span>
+          <span>Wellness Hub</span>
         </span>
       </Link>
 
@@ -111,11 +114,40 @@ export default function Navbar() {
         <div className="nav-links">
           <Link to="/">Home</Link>
           <Link to="/collection">Shop</Link>
-          <Link to="/about">About</Link>
-          <Link to="/contact">Contact</Link>
-          <Link to="/how-to-use">How It Works</Link>
-
-          {cartCount > 0 && <Link to="/cart">Cart ({cartCount})</Link>}
+          <div className="nav-dropdown">
+            <button type="button" className="nav-dropdown-toggle" onClick={() => setActiveDropdown(activeDropdown === "explore" ? null : "explore")} aria-expanded={activeDropdown === "explore"} aria-haspopup="true">
+              Explore <ChevronDown size={16} aria-hidden="true" />
+            </button>
+            {activeDropdown === "explore" && <div className="nav-dropdown-menu" role="menu">
+              <Link role="menuitem" to="/about" onClick={() => setActiveDropdown(null)}>About Easy Life</Link>
+              <Link role="menuitem" to="/journey" onClick={() => setActiveDropdown(null)}>Our Journey</Link>
+              <Link role="menuitem" to="/outreach" onClick={() => setActiveDropdown(null)}>Community Outreach</Link>
+              <Link role="menuitem" to="/testimonials" onClick={() => setActiveDropdown(null)}>Testimonials</Link>
+              <Link role="menuitem" to="/our-director" onClick={() => setActiveDropdown(null)}>Our Director</Link>
+            </div>}
+          </div>
+          <div className="nav-dropdown">
+            <button type="button" className="nav-dropdown-toggle" onClick={() => setActiveDropdown(activeDropdown === "visit" ? null : "visit")} aria-expanded={activeDropdown === "visit"} aria-haspopup="true">
+              Visit <ChevronDown size={16} aria-hidden="true" />
+            </button>
+            {activeDropdown === "visit" && <div className="nav-dropdown-menu" role="menu">
+              <a role="menuitem" href="https://clinic.easylifewellnesshub.com" target="_blank" rel="noreferrer">Easy Life Clinic</a>
+              <a role="menuitem" href="https://supermarket.easylifewellnesshub.com" target="_blank" rel="noreferrer">Easy Life Supermarket</a>
+            </div>}
+          </div>
+          <div className="nav-dropdown">
+            <button type="button" className="nav-dropdown-toggle" onClick={() => setActiveDropdown(activeDropdown === "help" ? null : "help")} aria-expanded={activeDropdown === "help"} aria-haspopup="true">
+              Help <ChevronDown size={16} aria-hidden="true" />
+            </button>
+            {activeDropdown === "help" && <div className="nav-dropdown-menu" role="menu">
+              <Link role="menuitem" to="/how-to-use" onClick={() => setActiveDropdown(null)}>How It Works</Link>
+              <Link role="menuitem" to="/support" onClick={() => setActiveDropdown(null)}>Support Guide</Link>
+              <Link role="menuitem" to="/contact" onClick={() => setActiveDropdown(null)}>Contact Us</Link>
+              <Link role="menuitem" to="/refund-policy" onClick={() => setActiveDropdown(null)}>Returns & Refunds</Link>
+              <Link role="menuitem" to="/terms-conditions" onClick={() => setActiveDropdown(null)}>Terms & Conditions</Link>
+              <Link role="menuitem" to="/privacy-policy" onClick={() => setActiveDropdown(null)}>Privacy Policy</Link>
+            </div>}
+          </div>
 
           {isLoggedIn && <Link to="/dashboard">Dashboard</Link>}
 
@@ -140,15 +172,16 @@ export default function Navbar() {
         <div className="nav-actions">
           <NotificationDropdown />
 
-          {cartCount > 0 && (
-            <button
-              type="button"
-              className="cart-btn"
-              onClick={() => navigate("/cart")}
-            >
-              Cart ({cartCount})
-            </button>
-          )}
+          <button
+            type="button"
+            className="cart-nav-button"
+            onClick={() => navigate("/cart")}
+            aria-label={`Cart${cartCount ? `, ${cartCount} item${cartCount === 1 ? "" : "s"}` : " is empty"}`}
+            title="Cart"
+          >
+            <ShoppingCart size={21} aria-hidden="true" />
+            {cartCount > 0 && <span className="cart-nav-count">{cartCount}</span>}
+          </button>
 
           <button
             type="button"
@@ -161,6 +194,16 @@ export default function Navbar() {
       </div>
 
       <div className="mobile-nav-actions">
+        <button
+          type="button"
+          className="cart-nav-button"
+          onClick={() => navigate("/cart")}
+          aria-label={`Cart${cartCount ? `, ${cartCount} item${cartCount === 1 ? "" : "s"}` : " is empty"}`}
+          title="Cart"
+        >
+          <ShoppingCart size={21} aria-hidden="true" />
+          {cartCount > 0 && <span className="cart-nav-count">{cartCount}</span>}
+        </button>
         {isLoggedIn && (
           <NotificationBell
             count={unreadCount}
@@ -230,23 +273,42 @@ export default function Navbar() {
             Shop
           </Link>
 
-          <Link to="/about" onClick={() => setOpen(false)}>
-            About
-          </Link>
+          <div className="mobile-nav-group">
+            <button type="button" className="mobile-nav-group-toggle" onClick={() => setActiveMobileSection(activeMobileSection === "explore" ? null : "explore")} aria-expanded={activeMobileSection === "explore"}>
+              Explore <ChevronDown size={18} aria-hidden="true" />
+            </button>
+            {activeMobileSection === "explore" && <div className="mobile-nav-submenu">
+              <Link to="/about" onClick={() => setOpen(false)}>About Easy Life</Link>
+              <Link to="/journey" onClick={() => setOpen(false)}>Our Journey</Link>
+              <Link to="/outreach" onClick={() => setOpen(false)}>Community Outreach</Link>
+              <Link to="/testimonials" onClick={() => setOpen(false)}>Testimonials</Link>
+              <Link to="/our-director" onClick={() => setOpen(false)}>Our Director</Link>
+            </div>}
+          </div>
 
-          <Link to="/contact" onClick={() => setOpen(false)}>
-            Contact
-          </Link>
+          <div className="mobile-nav-group">
+            <button type="button" className="mobile-nav-group-toggle" onClick={() => setActiveMobileSection(activeMobileSection === "visit" ? null : "visit")} aria-expanded={activeMobileSection === "visit"}>
+              Visit <ChevronDown size={18} aria-hidden="true" />
+            </button>
+            {activeMobileSection === "visit" && <div className="mobile-nav-submenu">
+              <a href="https://clinic.easylifewellnesshub.com" target="_blank" rel="noreferrer">Easy Life Clinic</a>
+              <a href="https://supermarket.easylifewellnesshub.com" target="_blank" rel="noreferrer">Easy Life Supermarket</a>
+            </div>}
+          </div>
 
-          <Link to="/how-to-use" onClick={() => setOpen(false)}>
-            How It Works
-          </Link>
-
-          {cartCount > 0 && (
-            <Link to="/cart" onClick={() => setOpen(false)}>
-              Cart ({cartCount})
-            </Link>
-          )}
+          <div className="mobile-nav-group">
+            <button type="button" className="mobile-nav-group-toggle" onClick={() => setActiveMobileSection(activeMobileSection === "help" ? null : "help")} aria-expanded={activeMobileSection === "help"}>
+              Help <ChevronDown size={18} aria-hidden="true" />
+            </button>
+            {activeMobileSection === "help" && <div className="mobile-nav-submenu">
+              <Link to="/how-to-use" onClick={() => setOpen(false)}>How It Works</Link>
+              <Link to="/support" onClick={() => setOpen(false)}>Support Guide</Link>
+              <Link to="/contact" onClick={() => setOpen(false)}>Contact Us</Link>
+              <Link to="/refund-policy" onClick={() => setOpen(false)}>Returns & Refunds</Link>
+              <Link to="/terms-conditions" onClick={() => setOpen(false)}>Terms & Conditions</Link>
+              <Link to="/privacy-policy" onClick={() => setOpen(false)}>Privacy Policy</Link>
+            </div>}
+          </div>
 
           {isLoggedIn && <Link to="/notifications" onClick={() => setOpen(false)}>
             Notifications {unreadCount > 0 ? `(${unreadCount})` : ""}
