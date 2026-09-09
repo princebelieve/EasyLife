@@ -36,7 +36,7 @@ function createVideoThumbnail(file) {
     };
     video.onseeked = () => {
       const canvas = document.createElement("canvas");
-      const scale = Math.min(1, 1280 / video.videoWidth);
+      const scale = Math.min(1, 960 / video.videoWidth);
       canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
       canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
       canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -44,7 +44,7 @@ function createVideoThumbnail(file) {
         URL.revokeObjectURL(objectUrl);
         if (blob) resolve(new File([blob], "video-thumbnail.jpg", { type: "image/jpeg" }));
         else reject(new Error("Unable to create a video thumbnail."));
-      }, "image/jpeg", 0.9);
+      }, "image/jpeg", 0.78);
     };
     video.onerror = () => {
       URL.revokeObjectURL(objectUrl);
@@ -99,14 +99,14 @@ export default function AdminTestimonials() {
       if (file instanceof File) {
         setMessageType("info");
         setMessage("Uploading");
-        const { uploadUrl, publicUrl } = await getContentUploadUrl(file, mediaType, getToken());
-        const upload = await uploadFetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+        const { uploadUrl, publicUrl, uploadHeaders } = await getContentUploadUrl(file, mediaType, getToken());
+        const upload = await uploadFetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type, ...uploadHeaders }, body: file });
         if (!upload.ok) throw new Error(`Media upload failed (storage returned ${upload.status}). Please try again.`);
         data.append(mediaType === "image" ? "image" : `${mediaType}File`, publicUrl);
       }
       if (mediaType === "video" && form.image instanceof File) {
-        const { uploadUrl, publicUrl } = await getContentUploadUrl(form.image, "image", getToken());
-        const upload = await uploadFetch(uploadUrl, { method: "PUT", headers: { "Content-Type": form.image.type }, body: form.image });
+        const { uploadUrl, publicUrl, uploadHeaders } = await getContentUploadUrl(form.image, "image", getToken());
+        const upload = await uploadFetch(uploadUrl, { method: "PUT", headers: { "Content-Type": form.image.type, ...uploadHeaders }, body: form.image });
         if (!upload.ok) throw new Error(`Thumbnail upload failed (storage returned ${upload.status}). Please try again.`);
         data.append("image", publicUrl);
       }

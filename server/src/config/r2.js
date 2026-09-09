@@ -27,6 +27,7 @@ async function uploadToR2(file, folder = "general") {
       Key: key,
       Body: file.buffer,
       ContentType: file.mimetype,
+      CacheControl: "public, max-age=31536000, immutable",
     }),
   );
 
@@ -40,6 +41,7 @@ async function uploadBufferToR2(buffer, { fileName = "upload", contentType = "ap
     Key: key,
     Body: buffer,
     ContentType: contentType,
+    CacheControl: "public, max-age=31536000, immutable",
   }));
   return `${process.env.R2_PUBLIC_BASE_URL.replace(/\/$/, "")}/${key}`;
 }
@@ -56,9 +58,10 @@ async function createPresignedContentUpload({ mediaType, fileName, contentType }
   }
 
   const key = `${folder}/${randomUUID()}-${safeFileName(fileName)}`;
-  const command = new PutObjectCommand({ Bucket: process.env.R2_BUCKET, Key: key, ContentType: contentType });
+  const cacheControl = "public, max-age=31536000, immutable";
+  const command = new PutObjectCommand({ Bucket: process.env.R2_BUCKET, Key: key, ContentType: contentType, CacheControl: cacheControl });
   const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 10 * 60 });
-  return { uploadUrl, publicUrl: `${process.env.R2_PUBLIC_BASE_URL.replace(/\/$/, "")}/${key}` };
+  return { uploadUrl, publicUrl: `${process.env.R2_PUBLIC_BASE_URL.replace(/\/$/, "")}/${key}`, uploadHeaders: { "Cache-Control": cacheControl } };
 }
 
 function getR2KeyFromPublicUrl(fileUrl) {
