@@ -47,7 +47,22 @@ export default function Success() {
     const shippingAmount = isPickup ? 0 : Number(order.shippingFee || 0);
     const totalAmount = Number(order.totalAmount || 0);
     const paymentStatus = isPaid ? "Paid" : isCashOnDelivery ? "Pay on delivery / pickup" : "Payment processing";
-    const message = `Hello Easy Life Wellness Hub, here is my order receipt:\n\nOrder: ${order.orderNumber || order._id}\nPayment: ${paymentStatus}\nCollection: ${fulfilment}\n\n${items}\n\nSubtotal: ₦${Number(order.subtotal || 0).toLocaleString()}\nShipping: ₦${shippingAmount.toLocaleString()}\nTotal: ₦${totalAmount.toLocaleString()}\n\nCustomer: ${order.customerName}\nPhone: ${order.phone}\n${order.paymentReference ? `Payment reference: ${order.paymentReference}` : ""}`;
+    const collectionDetails = isPickup
+      ? `Pickup location: ${order.pickupLocation || "Easy Life Wellness Hub, Benin City"}`
+      : [
+          `Address / landmark: ${order.address || "Not provided"}`,
+          `State: ${order.state || "Not provided"}`,
+          order.city && `City / area: ${order.city}`,
+          order.transportCompanyPickupPoint && `Transport collection point: ${order.transportCompanyPickupPoint}`,
+        ].filter(Boolean).join("\n");
+    const paymentMethod = order.paymentMethod === "manual_bank_transfer"
+      ? "Direct Easy Life bank transfer"
+      : isCashOnDelivery
+        ? "Pay on delivery by transfer"
+        : order.paymentMethod === "distributor_transfer"
+          ? "Distributor bank transfer"
+          : "Paystack";
+    const message = `Hello Easy Life Wellness Hub, here is my order receipt:\n\nOrder: ${order.orderNumber || order._id}\nPayment method: ${paymentMethod}\nPayment status: ${paymentStatus}\nCollection: ${fulfilment}\n${collectionDetails}\n\n${items}\n\nSubtotal: ₦${Number(order.subtotal || 0).toLocaleString()}\nShipping: ₦${shippingAmount.toLocaleString()}\nTotal: ₦${totalAmount.toLocaleString()}\n\nCustomer: ${order.customerName}\nPhone: ${order.phone}\n${order.paymentReference ? `Payment reference: ${order.paymentReference}` : ""}`;
     window.open(`https://wa.me/2348089938820?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   }
 

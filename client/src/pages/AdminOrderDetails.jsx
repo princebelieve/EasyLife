@@ -99,6 +99,7 @@ export default function AdminOrderDetails() {
           {order.paymentMethod === "cash_on_delivery" && <p>Payment before handover: {order.cashCollectionStatus}</p>}
           {order.paymentMethod === "manual_bank_transfer" && <p>Transfer verification: {order.manualTransferStatus}</p>}
           {order.paymentInstructions && <p className="muted">{order.paymentInstructions}</p>}
+          {order.paymentReceipts?.length > 0 && <div><p><strong>Customer payment receipt{order.paymentReceipts.length === 1 ? "" : "s"}</strong></p>{order.paymentReceipts.map((receipt, index) => <p key={receipt.url}><a href={receipt.url} target="_blank" rel="noreferrer">Open receipt {index + 1}{receipt.fileName ? ` (${receipt.fileName})` : ""}</a></p>)}</div>}
           <p>Total: ₦{order.totalAmount}</p>
           <p>Placed: {formatDate(order.createdAt)}</p>
           {order.paidAt && <p>Paid: {formatDate(order.paidAt)}</p>}

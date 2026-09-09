@@ -899,6 +899,8 @@ button {
 .director-service-grid a { display: block; padding: 28px; color: var(--text); text-decoration: none; }
 .director-service-grid a span { color: var(--navy); font-weight: 800; }
 .director-records { max-width: 760px; }
+.director-registration-card { margin: 20px 0; padding: 20px 24px; }
+.director-registration-card p { margin: 8px 0; }
 
 @media (max-width: 800px) {
   .director-home-grid, .director-hero-grid, .director-story, .director-service-grid { grid-template-columns: 1fr; }
@@ -2259,12 +2261,15 @@ button:hover {
 
 .form-actions {
   display: flex;
+  justify-content: center;
   gap: 10px;
   margin-top: 10px;
 }
 
 .form-actions button {
   flex: 1;
+  width: auto;
+  min-width: min(100%, 170px);
 }
 
 .distributor-application {
@@ -2767,6 +2772,19 @@ button:hover {
   background: var(--gold);
   color: #111;
   font-weight: 700;
+}
+
+.support-assistant-human-link {
+  display: block;
+  margin: 0 14px 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #25d366;
+  color: #083d20;
+  font-size: .84rem;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
 }
 
 .hover-lift:hover {
@@ -6131,6 +6149,36 @@ button:hover,
   .service-promo-carousel .service-promo-dots button.active { width: 16px; }
 }
 
+/* Leadership feature: intentionally placed in the final brand layer so shared
+   page styles cannot flatten the portrait or its visual hierarchy. */
+.director-home-feature { padding: 58px 0; background: linear-gradient(115deg, #082b1a, #0e6337); color: #fff; overflow: hidden; }
+.director-home-feature-grid { display: grid; grid-template-columns: minmax(240px, .72fr) minmax(0, 1.1fr); gap: clamp(28px, 7vw, 100px); align-items: center; }
+.director-home-portrait { position: relative; min-height: 330px; overflow: hidden; border: 1px solid rgba(232, 198, 106, .6); border-radius: 18px; background: radial-gradient(circle at 50% 22%, #3e9b61, #063b20 68%); box-shadow: 0 24px 56px rgba(0, 0, 0, .3); }
+.director-home-portrait span, .director-portrait-label { position: absolute; z-index: 2; top: 18px; left: 18px; padding: 7px 10px; border: 1px solid rgba(232, 198, 106, .72); border-radius: 999px; background: rgba(5, 41, 24, .72); color: #f6e8c4; font-size: .66rem; font-weight: 900; letter-spacing: .11em; }
+.director-home-portrait img { position: absolute; right: 50%; bottom: 0; width: min(100%, 340px); height: 330px; transform: translateX(50%); object-fit: contain; object-position: bottom; filter: drop-shadow(0 14px 16px rgba(0, 0, 0, .3)); }
+.director-home-copy { max-width: 650px; }
+.director-home-copy h2 { color: #fff; }
+.director-home-copy > p:not(.easy-eyebrow) { color: rgba(246, 232, 196, .92); font-size: 1.06rem; line-height: 1.75; }
+
+.director-page { background: #f6e8c4; }
+.director-hero { position: relative; overflow: hidden; padding: 86px 0 0; background: radial-gradient(circle at 75% 10%, rgba(36, 137, 75, .55), transparent 30%), linear-gradient(125deg, #062919, #0d5a32); color: #fff; }
+.director-hero::after { position: absolute; right: -70px; bottom: -105px; width: 380px; height: 270px; border: 1px solid rgba(232, 198, 106, .32); border-radius: 50%; content: ""; }
+.director-hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(290px, .75fr); gap: clamp(32px, 6vw, 90px); align-items: end; }
+.director-hero-copy { padding: 10px 0 76px; max-width: 700px; }
+.director-hero-copy h1 { margin: 0 0 14px; color: #fff; font-size: clamp(3rem, 6vw, 5.8rem); line-height: .9; letter-spacing: -.055em; }
+.director-hero-copy h1 em { color: #e2b44d; font-family: Georgia, serif; font-weight: 400; }
+.director-role { display: inline-flex; align-items: center; gap: 8px; margin: 4px 0 16px; color: #f6e8c4; font-weight: 800; }
+.director-intro { max-width: 560px; margin: 0 0 13px; color: #e2b44d; font-size: 1.08rem; font-weight: 800; }
+.director-hero-copy > p:not(.easy-eyebrow):not(.director-role):not(.director-intro) { max-width: 640px; color: rgba(246, 232, 196, .92); font-size: 1.04rem; line-height: 1.75; }
+.easy-btn-outline { border: 1px solid rgba(255,255,255,.72); color: #fff; background: transparent; }
+.director-portrait-card { position: relative; min-height: 545px; overflow: hidden; border-radius: 24px 24px 0 0; background: radial-gradient(circle at 50% 25%, #56aa70, #063b20 72%); box-shadow: 0 26px 60px rgba(0,0,0,.28); }
+.director-portrait-card > img { position: absolute; bottom: 0; left: 50%; width: min(100%, 465px); height: 505px; transform: translateX(-50%); object-fit: contain; object-position: bottom; filter: drop-shadow(0 18px 20px rgba(0,0,0,.3)); }
+.director-portrait-caption { position: absolute; z-index: 2; right: 16px; bottom: 18px; left: 16px; display: grid; gap: 3px; padding: 14px 16px; border: 1px solid rgba(232, 198, 106, .4); border-radius: 12px; background: rgba(4, 38, 22, .78); color: #fff; backdrop-filter: blur(8px); }
+.director-portrait-caption strong { font-size: 1.1rem; }.director-portrait-caption span { color: #e8c66a; font-size: .82rem; }
+.director-story-section { background: #fff; }.director-story { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(270px, .65fr); gap: clamp(28px, 6vw, 82px); align-items: center; }.director-story h2, .director-records h2 { color: #103b22; font-size: clamp(2rem, 3.5vw, 3.3rem); line-height: 1.08; }.director-story > div > p:not(.easy-eyebrow), .director-records > p { color: #52675b; line-height: 1.75; }.director-meeting-card { padding: 30px; border-top: 4px solid #c99f3f; }.director-meeting-card svg { color: #0d5a32; }.director-family-section { padding: 76px 0; }.director-service-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }.director-service-grid a { display: block; min-height: 180px; padding: 30px; color: #173b27; text-decoration: none; }.director-service-grid svg { color: #0d5a32; }.director-service-grid h3 { margin: 17px 0 8px; font-size: 1.45rem; }.director-service-grid p { color: #52675b; line-height: 1.6; }.director-service-grid span { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; color: #0d5a32; font-weight: 800; }.director-records { max-width: 800px; }.director-registration-card { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 26px; margin: 22px 0; padding: 24px; }.director-registration-card p { margin: 0; color: #385345; line-height: 1.5; }
+
+@media (max-width: 800px) { .director-home-feature { padding: 42px 0; }.director-home-feature-grid, .director-hero-grid, .director-story, .director-service-grid { grid-template-columns: 1fr; }.director-home-portrait { width: min(100%, 350px); margin: 0 auto; }.director-hero { padding-top: 52px; }.director-hero-copy { padding-bottom: 26px; }.director-portrait-card { width: min(100%, 410px); min-height: 470px; margin: 0 auto; }.director-portrait-card > img { height: 440px; }.director-registration-card { grid-template-columns: 1fr; } }
+
 @media (max-width: 600px) {
   .profile-page { padding: 16px; }
   .profile-card { padding: 24px 18px; }
@@ -6217,6 +6265,8 @@ button:hover,
 .admin-testimonials .testimonial-admin-form {
   max-width: 900px;
   padding: clamp(22px, 4vw, 36px);
+  margin-left: auto;
+  margin-right: auto;
   border-color: rgba(6, 59, 32, .18);
   box-shadow: 0 18px 40px rgba(6, 59, 32, .08);
 }
@@ -6267,6 +6317,65 @@ button:hover,
 }
 .admin-testimonials .testimonial-admin-form button {
   min-height: 44px;
+}
+
+/* Keep Content Studio's form actions intentional instead of inheriting the
+   broad card/button dimensions used elsewhere in the storefront. */
+.admin-testimonials .testimonial-admin-form > button {
+  justify-self: center;
+  width: min(100%, 260px);
+  margin: 2px 0 0;
+}
+
+/* This must come after the generic `.card button` rule. Product cards have
+   two equal actions, so fixed card-wide button widths and side margins cause
+   the row to overflow and appear pushed left. */
+.card .card-actions > button {
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  margin: 0;
+}
+
+/* Video stories are a viewing experience, not product tiles. Give every
+   video its own centered row and a familiar wide player treatment. */
+.testimonials-grid .video-story-card,
+.testimonial-home-grid .video-story-card {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: min(100%, 880px);
+  border-radius: 14px;
+  background: #062516;
+}
+
+.video-story-card .testimonial-media,
+.video-story-card .testimonial-home-media {
+  aspect-ratio: 16 / 9;
+  background: #060806;
+}
+
+.video-story-card .testimonial-media iframe,
+.video-story-card .testimonial-home-media iframe {
+  min-height: 0;
+}
+
+.video-story-card .testimonial-body,
+.video-story-card .testimonial-home-body {
+  padding: 22px clamp(18px, 3vw, 30px) 26px;
+}
+
+.video-story-card .video-story-title {
+  margin: 0 0 12px;
+  color: var(--cream);
+  font-size: clamp(1.12rem, 2vw, 1.45rem);
+  line-height: 1.3;
+}
+
+@media (max-width: 600px) {
+  .testimonials-grid .video-story-card,
+  .testimonial-home-grid .video-story-card { width: 100%; border-radius: 10px; }
+  .video-story-card .testimonial-body,
+  .video-story-card .testimonial-home-body { padding: 18px 16px 22px; }
 }
 .admin-testimonials .testimonial-admin-form > p {
   margin: 2px 0 0;

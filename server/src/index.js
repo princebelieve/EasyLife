@@ -30,6 +30,7 @@ const distributorRoutes = require("./routes/distributor.routes");
 const adminDistributorRoutes = require("./routes/admin.distributor.routes");
 const paymentSettingsRoutes = require("./routes/payment.settings.routes");
 const transportCompanyRoutes = require("./routes/transportCompany.routes");
+const supportRoutes = require("./routes/support.routes");
 const { runUserRetentionCleanup } = require("./routes/admin.user.routes");
 
 const Product = require("./models/Product");
@@ -75,6 +76,7 @@ app.use("/api/distributor", distributorRoutes);
 app.use("/api/admin/distributors", adminDistributorRoutes);
 app.use("/api/payment-settings", paymentSettingsRoutes);
 app.use("/api/transport-companies", transportCompanyRoutes);
+app.use("/api/support", supportRoutes);
 
 // DYNAMIC SITEMAP - serves at root level for Google
 app.get("/sitemap.xml", async (req, res) => {
@@ -294,6 +296,10 @@ app.use((error, req, res, next) => {
   }
 
   if (error?.message === "Only audio, image, or video files are allowed.") {
+    return res.status(415).json({ message: error.message });
+  }
+
+  if (error?.message === "Upload a JPG, PNG, WEBP, or PDF receipt.") {
     return res.status(415).json({ message: error.message });
   }
 

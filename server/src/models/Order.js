@@ -185,6 +185,11 @@ const orderSchema = new mongoose.Schema(
     pickupLocation: { type: String, default: "" },
     transportCompanyPickupPoint: { type: String, default: "" },
     paymentInstructions: { type: String, default: "" },
+    paymentReceipts: [{
+      url: { type: String, default: "" },
+      fileName: { type: String, default: "" },
+      uploadedAt: { type: Date, default: Date.now },
+    }],
 
     deliveryEstimate: {
       type: String,

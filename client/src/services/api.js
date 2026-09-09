@@ -756,6 +756,16 @@ export async function verifyManualTransferApi(orderId, token) {
   });
 }
 
+export async function uploadPaymentReceipt(orderId, file, token) {
+  const body = new FormData();
+  body.append("receipt", file);
+  return apiRequest(`/api/orders/${orderId}/payment-receipt`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body,
+  });
+}
+
 export async function archiveOrderApi(orderId, token) {
   return apiRequest(`/api/admin/orders/${orderId}/archive`, {
     method: "PUT",
@@ -893,6 +903,10 @@ export async function submitMeasurement(data) {
 
     body: JSON.stringify(data),
   });
+}
+
+export async function askSupportBot(question) {
+  return apiRequest("/api/support/answer", { method: "POST", body: JSON.stringify({ question }) });
 }
 
 export async function getTransportCompanies(state) { return apiRequest(`/api/transport-companies${state ? `?state=${encodeURIComponent(state)}` : ""}`); }

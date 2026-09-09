@@ -99,6 +99,18 @@ const supportKnowledge = [
     ],
   },
   {
+    slug: "payments-and-receipts",
+    title: "Payments & Receipt Upload",
+    url: "/how-to-use",
+    summary: "Signed-in customers can pay online or, when enabled, transfer directly to Easy Life and upload proof for verification.",
+    keywords: ["payment", "paystack", "bank transfer", "manual transfer", "receipt", "proof", "account number"],
+    details: [
+      "At checkout, choose Transfer directly to Easy Life when that option is enabled. Use the displayed verified account details and order number as narration where possible.",
+      "After transfer, open Dashboard and upload a JPG, PNG, WEBP, or PDF receipt up to 5 MB. Easy Life reviews it before confirming the order.",
+      "For Paystack card, bank-transfer, and USSD payments, follow the secure Paystack screen instead of sending money to an unofficial account.",
+    ],
+  },
+  {
     slug: "delivery-and-shipping",
     title: "Delivery & Shipping",
     url: "/contact",

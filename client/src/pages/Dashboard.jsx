@@ -1,7 +1,7 @@
 //client/src/pages/Dashboard.jsx
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { applyForDistributor, completePendingPayment, getMyOrders, getProfile, getNigerianBanks, resolveNigerianAccount } from "../services/api";
+import { applyForDistributor, completePendingPayment, getMyOrders, getProfile, getNigerianBanks, resolveNigerianAccount, uploadPaymentReceipt } from "../services/api";
 import { formatDate } from "../utils/formatDate";
 import useAuth from "../context/AuthContext";
 import UserLayout from "../components/user/UserLayout";
@@ -15,6 +15,8 @@ export default function Dashboard() {
   const [distributorMessage, setDistributorMessage] = useState("");
   const [banks, setBanks] = useState([]);
   const [resolvingAccount, setResolvingAccount] = useState(false);
+  const [receiptMessage, setReceiptMessage] = useState("");
+  const [uploadingReceiptFor, setUploadingReceiptFor] = useState("");
   const [showDistributorForm, setShowDistributorForm] = useState(() => searchParams.get("distributor") === "apply");
   const distributorFormRef = useRef(null);
   const [distributorApplication, setDistributorApplication] = useState({
@@ -28,6 +30,21 @@ export default function Dashboard() {
     accountNumber: "",
     note: "",
   });
+
+  async function uploadReceipt(orderId, file) {
+    if (!file) return;
+    setReceiptMessage("");
+    setUploadingReceiptFor(orderId);
+    try {
+      const result = await uploadPaymentReceipt(orderId, file, token);
+      setReceiptMessage(result.message || "Receipt uploaded for verification.");
+      setOrders((current) => current.map((order) => order._id === orderId ? { ...order, paymentReceipts: [...(order.paymentReceipts || []), result.receipt] } : order));
+    } catch (error) {
+      setReceiptMessage(error.message || "Unable to upload the receipt.");
+    } finally {
+      setUploadingReceiptFor("");
+    }
+  }
 
   useEffect(() => {
     async function load() {
@@ -405,15 +422,16 @@ export default function Dashboard() {
                   </div>
                 )}
                 {order.paymentMethod === "manual_bank_transfer" && order.paymentStatus !== "paid" && (
-                  <div className="pending-payment-action"><strong>Bank transfer awaiting verification</strong><span>{order.paymentInstructions || "Transfer to the account shown on your order confirmation, then send your receipt to Easy Life."}</span></div>
+                  <div className="pending-payment-action"><strong>Bank transfer awaiting verification</strong><span>{order.paymentInstructions || "Transfer to the account shown on your order confirmation, then upload your receipt for Easy Life to verify."}</span><label className="secondary-button">{uploadingReceiptFor === order._id ? "Uploading receipt…" : "Upload payment receipt"}<input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" hidden disabled={uploadingReceiptFor === order._id} onChange={(event) => uploadReceipt(order._id, event.target.files?.[0])} /></label>{order.paymentReceipts?.length > 0 && <small>{order.paymentReceipts.length} receipt{order.paymentReceipts.length === 1 ? "" : "s"} uploaded.</small>}</div>
                 )}
                 {order.paymentMethod === "cash_on_delivery" && order.paymentStatus !== "paid" && (
-                  <div className="pending-payment-action"><strong>Pay on delivery by transfer</strong><span>{order.paymentInstructions || "When the agent arrives, transfer to the official Easy Life account sent to your WhatsApp or phone. The agent confirms payment before handing over the order."}</span></div>
+                  <div className="pending-payment-action"><strong>Pay on delivery by transfer</strong><span>{order.paymentInstructions || "When the agent arrives, transfer to the official Easy Life account sent to your WhatsApp or phone. The agent confirms payment before handing over the order."}</span><label className="secondary-button">{uploadingReceiptFor === order._id ? "Uploading receipt…" : "Upload payment receipt"}<input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" hidden disabled={uploadingReceiptFor === order._id} onChange={(event) => uploadReceipt(order._id, event.target.files?.[0])} /></label>{order.paymentReceipts?.length > 0 && <small>{order.paymentReceipts.length} receipt{order.paymentReceipts.length === 1 ? "" : "s"} uploaded.</small>}</div>
                 )}
               </div>
             ))}
           </div>
         )}
+        {receiptMessage && <p className="inline-toast success">{receiptMessage}</p>}
       </div>
     </UserLayout>
   );

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import supportKnowledge from "../config/supportKnowledge";
+import { askSupportBot } from "../services/api";
 
 const intentRules = [
   {
@@ -50,6 +51,10 @@ const intentRules = [
   {
     test: /\b(order|cart|checkout|purchase|buying)\b/i,
     entry: "orders-and-cart",
+  },
+  {
+    test: /\b(payment|paystack|bank transfer|manual transfer|receipt|proof of payment|account number)\b/i,
+    entry: "payments-and-receipts",
   },
   {
     test: /\b(contact|support|help|whatsapp|phone|email|call|enquiry)\b/i,
@@ -117,21 +122,26 @@ export default function SupportAssistant() {
     },
   ]);
   const [draft, setDraft] = useState("");
+  const [isAnswering, setIsAnswering] = useState(false);
 
-  const handleSend = (value) => {
+  const handleSend = async (value) => {
     const message = value.trim();
     if (!message) return;
 
     setMessages((prev) => [
       ...prev,
       { id: Date.now(), role: "user", text: message },
-      {
-        id: Date.now() + 1,
-        role: "assistant",
-        ...getReply(message),
-      },
     ]);
     setDraft("");
+    setIsAnswering(true);
+    try {
+      const reply = await askSupportBot(message);
+      setMessages((prev) => [...prev, { id: Date.now() + 1, role: "assistant", text: reply.answer, link: reply.link ? { label: reply.linkLabel || "Open related page", to: reply.link } : null }]);
+    } catch {
+      setMessages((prev) => [...prev, { id: Date.now() + 1, role: "assistant", ...getReply(message) }]);
+    } finally {
+      setIsAnswering(false);
+    }
   };
 
   return (
@@ -160,9 +170,11 @@ export default function SupportAssistant() {
               >
                 <span>{message.text}</span>
                 {message.link && (
-                  <Link className="support-assistant-link" to={message.link.to} onClick={() => setIsOpen(false)}>
-                    {message.link.label}
-                  </Link>
+                  message.link.to.startsWith("http") ? (
+                    <a className="support-assistant-link" href={message.link.to} target="_blank" rel="noreferrer">{message.link.label}</a>
+                  ) : (
+                    <Link className="support-assistant-link" to={message.link.to} onClick={() => setIsOpen(false)}>{message.link.label}</Link>
+                  )
                 )}
               </div>
             ))}
@@ -173,6 +185,8 @@ export default function SupportAssistant() {
               "Hello",
               "What wellness products do you offer?",
               "What training is available?",
+              "How do I upload my payment receipt?",
+              "I need a refund",
               "How can I join the community?",
               "How do I contact support?",
             ].map((suggestion) => (
@@ -181,6 +195,7 @@ export default function SupportAssistant() {
                 type="button"
                 className="support-assistant-chip"
                 onClick={() => handleSend(suggestion)}
+                disabled={isAnswering}
               >
                 {suggestion}
               </button>
@@ -199,11 +214,13 @@ export default function SupportAssistant() {
                 }
               }}
               placeholder="Ask about products, delivery, or support"
+              disabled={isAnswering}
             />
-            <button type="button" onClick={() => handleSend(draft)}>
-              Send
+            <button type="button" onClick={() => handleSend(draft)} disabled={isAnswering}>
+              {isAnswering ? "…" : "Send"}
             </button>
           </div>
+          <a className="support-assistant-human-link" href="https://wa.me/2348089938820?text=Hello%20Easy%20Life%2C%20I%20need%20help%20with%20an%20order." target="_blank" rel="noreferrer">Chat with Easy Life on WhatsApp</a>
         </div>
       )}
     </div>
