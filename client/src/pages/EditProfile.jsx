@@ -351,7 +351,7 @@ export default function EditProfile() {
           <section className="account-danger-zone">
             <h2>Delete account</h2>
             <p>
-              Request deletion of your Easy Life account. An administrator will review it; orders and records that must be retained are not deleted immediately.
+              Request deletion of your EASYLIFE account. An administrator will review it; orders and records that must be retained are not deleted immediately.
             </p>
             <button type="button" className="account-delete-request" onClick={handleAccountDeletionRequest}>
               Request account deletion

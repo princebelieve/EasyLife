@@ -25,7 +25,7 @@ async function calculateShipping({ country = "", state = "", items = [] }) {
 
     return {
       shippingAvailable: false,
-      message: "Delivery is not yet configured for this state. Please contact Easy Life for assistance.",
+      message: "Delivery is not yet configured for this state. Please contact EASYLIFE for assistance.",
     };
   }
   const zone = await ShippingZone.findOne({ state: destination, active: true });

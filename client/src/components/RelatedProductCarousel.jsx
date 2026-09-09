@@ -8,9 +8,9 @@ export default function RelatedProductCarousel({ products = [] }) {
     {
       _id: "become-a-distributor",
       type: "distributor-promo",
-      category: "EARN WITH EASY LIFE",
-      name: "Become an Easy Life Distributor",
-      shortDescription: "Access distributor prices, sell to customers through your own Easy Life link, and manage stock from a dedicated dashboard.",
+      category: "EARN WITH EASYLIFE",
+      name: "Become an EASYLIFE Distributor",
+      shortDescription: "Access distributor prices, sell to customers through your own EASYLIFE link, and manage stock from a dedicated dashboard.",
       coverImage: "/wellness.jpeg",
     },
   ];
@@ -53,7 +53,7 @@ export default function RelatedProductCarousel({ products = [] }) {
         onKeyDown={(event) => {
           if (!isDistributorPromo && (event.key === "Enter" || event.key === " ")) openProduct();
         }}
-        aria-label={isDistributorPromo ? "Become an Easy Life Distributor" : `View ${item.name}`}
+        aria-label={isDistributorPromo ? "Become an EASYLIFE Distributor" : `View ${item.name}`}
       >
         <img src={item.coverImage} alt="" aria-hidden="true" />
         <div className="service-promo-overlay" />

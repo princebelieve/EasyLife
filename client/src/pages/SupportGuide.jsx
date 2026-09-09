@@ -10,10 +10,10 @@ export default function SupportGuide() {
         <section className="support-guide-hero">
           <div className="container support-guide-hero-grid">
             <div>
-              <span className="eyebrow">EASY LIFE SUPPORT GUIDE</span>
+              <span className="eyebrow">EASYLIFE SUPPORT GUIDE</span>
               <h1>Clear answers for your wellness journey.</h1>
               <p>
-                Browse the Easy Life Wellness Hub guide for products, natural
+                Browse the EASYLIFE WELLNESS HUB guide for products, natural
                 wellness, training, membership, orders, delivery, policies,
                 and community support.
               </p>
@@ -21,7 +21,7 @@ export default function SupportGuide() {
             <div className="support-guide-badge">
               <strong>GOOD HEALTH</strong>
               <span>KNOWLEDGE · COMMUNITY</span>
-              <small>THE EASY LIFE</small>
+              <small>THE EASYLIFE</small>
             </div>
           </div>
         </section>
@@ -42,7 +42,7 @@ export default function SupportGuide() {
             <div className="support-guide-grid">
               {supportKnowledge.map((entry) => (
                 <article className="support-guide-card" key={entry.slug} id={entry.slug}>
-                  <span className="support-guide-card-label">EASY LIFE GUIDE</span>
+                  <span className="support-guide-card-label">EASYLIFE GUIDE</span>
                   <h2>{entry.title}</h2>
                   <p className="support-guide-summary">{entry.summary}</p>
                   <ul>

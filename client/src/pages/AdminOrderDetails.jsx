@@ -54,8 +54,8 @@ export default function AdminOrderDetails() {
           <h3>Fulfilment details</h3>
           {order.deliveryMethod === "pickup" ? (
             <>
-              <p><strong>Easy Life office pickup</strong></p>
-              <p>{order.pickupLocation || "Easy Life Wellness Hub, Benin City"}</p>
+              <p><strong>EASYLIFE office pickup</strong></p>
+              <p>{order.pickupLocation || "EASYLIFE WELLNESS HUB, Benin City"}</p>
               <p className="muted">No shipping fee applies. Confirm the order is ready before the customer collects it.</p>
             </>
           ) : (

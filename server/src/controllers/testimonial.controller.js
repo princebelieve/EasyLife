@@ -167,7 +167,7 @@ async function notifyUsersOfContent(post) {
   const link = contentDestination(post);
   const payload = {
     type: `content.${post.contentType || "published"}`,
-    title: post.title || "New Easy Life update",
+    title: post.title || "New EASYLIFE update",
     body: post.testimony.slice(0, 180),
     link,
     data: { contentId: post._id, contentType: post.contentType },

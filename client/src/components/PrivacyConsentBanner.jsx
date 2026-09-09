@@ -22,10 +22,10 @@ export default function PrivacyConsentBanner() {
   return (
     <aside className="privacy-consent-banner" role="dialog" aria-label="Privacy notice">
       <div className="privacy-consent-content">
-        <strong>Easy Life Wellness Hub: wellness, learning, and opportunity.</strong>
+        <strong>EASYLIFE WELLNESS HUB: wellness, learning, and opportunity.</strong>
         <p>
           Browse wellness products, learn through training, join the community,
-          request support, and manage orders. Easy Life uses Google Sign-In to
+          request support, and manage orders. EASYLIFE uses Google Sign-In to
           create and manage your account, and Gmail API only to send
           account-verification, password-reset, and important service emails from
           our official support account. We do not read, store, or modify the

@@ -148,7 +148,7 @@ router.post("/guest", async (req, res) => {
       deliveryStatus: "pending",
       deliveryZone: String(country || "NG").toUpperCase(),
       deliveryMethod,
-      pickupLocation: deliveryMethod === "pickup" ? "Easy Life Wellness Hub, Benin City" : "",
+      pickupLocation: deliveryMethod === "pickup" ? "EASYLIFE WELLNESS HUB, Benin City" : "",
       transportCompanyPickupPoint: deliveryMethod === "delivery" ? selectedPickupLocation : "",
       deliveryEstimate: shippingData.estimatedDays || "",
       shippingService: shippingData.serviceName || "",
@@ -299,7 +299,7 @@ router.post("/", protect, async (req, res) => {
       deliveryFee: shippingFee,
       deliveryZone: country,
       deliveryMethod,
-      pickupLocation: deliveryMethod === "pickup" ? (distributor?.distributorPickupAddress || "Easy Life Wellness Hub, Benin City") : "",
+      pickupLocation: deliveryMethod === "pickup" ? (distributor?.distributorPickupAddress || "EASYLIFE WELLNESS HUB, Benin City") : "",
       transportCompanyPickupPoint: deliveryMethod === "delivery" ? selectedPickupLocation : "",
       paymentInstructions: paymentMethod === "distributor_transfer" ? `Transfer ₦${totalAmount.toLocaleString()} to ${distributor.distributorAccountName} · ${distributor.distributorAccountNumber} · ${distributor.distributorBankName}` : "",
       deliveryEstimate: shippingData.estimatedDays || "",
@@ -320,7 +320,7 @@ router.post("/", protect, async (req, res) => {
       await order.save();
     }
     if (paymentMethod === "cash_on_delivery") {
-      order.paymentInstructions = "When the delivery agent arrives, make an online transfer to the official Easy Life Wellness Hub account sent to your WhatsApp or phone number. The agent confirms payment before handing over the order and does not collect cash.";
+      order.paymentInstructions = "When the delivery agent arrives, make an online transfer to the official EASYLIFE WELLNESS HUB account sent to your WhatsApp or phone number. The agent confirms payment before handing over the order and does not collect cash.";
       await order.save();
     }
 
@@ -330,7 +330,7 @@ router.post("/", protect, async (req, res) => {
       type: "order.created",
       title: paymentMethod === "paystack" ? "Payment required" : "Order Placed",
       body: paymentMethod === "cash_on_delivery"
-        ? `Order #${order._id.toString().slice(-6).toUpperCase()} is pay on delivery. Transfer to the official Easy Life account when the agent arrives; payment must be confirmed before handover.`
+        ? `Order #${order._id.toString().slice(-6).toUpperCase()} is pay on delivery. Transfer to the official EASYLIFE account when the agent arrives; payment must be confirmed before handover.`
         : paymentMethod === "manual_bank_transfer"
           ? `Your order #${order._id.toString().slice(-6).toUpperCase()} is awaiting bank-transfer verification.`
         : `Payment is incomplete for order #${order._id.toString().slice(-6).toUpperCase()}. Complete payment before delivery can begin.`,

@@ -44,7 +44,7 @@ self.addEventListener("push", (event) => {
 
     const backgroundTasks = [
       self.registration.showNotification(
-        data.title || "Easy Life Wellness Hub",
+        data.title || "EASYLIFE WELLNESS HUB",
         options,
       ),
     ];

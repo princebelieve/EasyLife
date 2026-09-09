@@ -30,9 +30,9 @@ export default function Success() {
     ? error ||
       "We're processing your payment. Order details will appear here shortly."
     : isCashOnDelivery
-    ? "When the delivery agent arrives, transfer to the official Easy Life account sent to your WhatsApp or phone. The agent confirms your payment before handing over the order; no cash is collected."
+    ? "When the delivery agent arrives, transfer to the official EASYLIFE account sent to your WhatsApp or phone. The agent confirms your payment before handing over the order; no cash is collected."
     : isManualTransfer
-    ? "Please complete the bank transfer using the account details below. Easy Life will verify your payment before processing the order."
+    ? "Please complete the bank transfer using the account details below. EASYLIFE will verify your payment before processing the order."
     : isPaid
     ? "Your order has been confirmed and is being prepared."
     : "We're processing your payment. Check back soon for updates.";
@@ -48,7 +48,7 @@ export default function Success() {
     const totalAmount = Number(order.totalAmount || 0);
     const paymentStatus = isPaid ? "Paid" : isCashOnDelivery ? "Pay on delivery / pickup" : "Payment processing";
     const collectionDetails = isPickup
-      ? `Pickup location: ${order.pickupLocation || "Easy Life Wellness Hub, Benin City"}`
+      ? `Pickup location: ${order.pickupLocation || "EASYLIFE WELLNESS HUB, Benin City"}`
       : [
           `Address / landmark: ${order.address || "Not provided"}`,
           `State: ${order.state || "Not provided"}`,
@@ -56,13 +56,13 @@ export default function Success() {
           order.transportCompanyPickupPoint && `Transport collection point: ${order.transportCompanyPickupPoint}`,
         ].filter(Boolean).join("\n");
     const paymentMethod = order.paymentMethod === "manual_bank_transfer"
-      ? "Direct Easy Life bank transfer"
+      ? "Direct EASYLIFE bank transfer"
       : isCashOnDelivery
         ? "Pay on delivery by transfer"
         : order.paymentMethod === "distributor_transfer"
           ? "Distributor bank transfer"
           : "Paystack";
-    const message = `Hello Easy Life Wellness Hub, here is my order receipt:\n\nOrder: ${order.orderNumber || order._id}\nPayment method: ${paymentMethod}\nPayment status: ${paymentStatus}\nCollection: ${fulfilment}\n${collectionDetails}\n\n${items}\n\nSubtotal: ₦${Number(order.subtotal || 0).toLocaleString()}\nShipping: ₦${shippingAmount.toLocaleString()}\nTotal: ₦${totalAmount.toLocaleString()}\n\nCustomer: ${order.customerName}\nPhone: ${order.phone}\n${order.paymentReference ? `Payment reference: ${order.paymentReference}` : ""}`;
+    const message = `Hello EASYLIFE WELLNESS HUB, here is my order receipt:\n\nOrder: ${order.orderNumber || order._id}\nPayment method: ${paymentMethod}\nPayment status: ${paymentStatus}\nCollection: ${fulfilment}\n${collectionDetails}\n\n${items}\n\nSubtotal: ₦${Number(order.subtotal || 0).toLocaleString()}\nShipping: ₦${shippingAmount.toLocaleString()}\nTotal: ₦${totalAmount.toLocaleString()}\n\nCustomer: ${order.customerName}\nPhone: ${order.phone}\n${order.paymentReference ? `Payment reference: ${order.paymentReference}` : ""}`;
     window.open(`https://wa.me/2348089938820?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   }
 
@@ -388,7 +388,7 @@ export default function Success() {
 
           {/* Payment Reference */}
           {(isManualTransfer || isCashOnDelivery) && order.paymentInstructions && (
-            <div className="manual-transfer-instructions"><h4>Bank transfer instructions</h4><p>{order.paymentInstructions}</p><small>Use order number {order.orderNumber} as your transfer narration where possible, then send your receipt to Easy Life on WhatsApp below.</small></div>
+            <div className="manual-transfer-instructions"><h4>Bank transfer instructions</h4><p>{order.paymentInstructions}</p><small>Use order number {order.orderNumber} as your transfer narration where possible, then send your receipt to EASYLIFE on WhatsApp below.</small></div>
           )}
           <div
             style={{
@@ -416,7 +416,7 @@ export default function Success() {
             }}
           >
             <button className="success-whatsapp-receipt" type="button" onClick={sendOrderReceiptToWhatsApp}>
-              Send order receipt to Easy Life on WhatsApp
+              Send order receipt to EASYLIFE on WhatsApp
             </button>
             {isGuestOrder ? (
               <Link to="/register">
@@ -431,7 +431,7 @@ export default function Success() {
               <button>Continue Shopping</button>
             </Link>
           </div>
-          <p className="success-whatsapp-hint">WhatsApp opens with your order details ready. Tap Send there to notify Easy Life immediately.</p>
+          <p className="success-whatsapp-hint">WhatsApp opens with your order details ready. Tap Send there to notify EASYLIFE immediately.</p>
         </div>
       </div>
     </>

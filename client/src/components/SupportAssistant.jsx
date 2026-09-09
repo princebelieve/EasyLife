@@ -6,18 +6,18 @@ import { askSupportBot } from "../services/api";
 const intentRules = [
   {
     test: /^(hi|hello|hey|good morning|good afternoon|good evening|greetings)\b/i,
-    reply: { text: "Hello! Welcome to Easy Life Wellness Hub. Are you looking for wellness products, training, membership, outreach, or support?" },
+    reply: { text: "Hello! Welcome to EASYLIFE WELLNESS HUB. Are you looking for wellness products, training, membership, outreach, or support?" },
   },
   {
     test: /\b(thank you|thanks|thank u|appreciate)\b/i,
-    reply: { text: "You’re welcome. I’m here to help you find the right Easy Life information." },
+    reply: { text: "You’re welcome. I’m here to help you find the right EASYLIFE information." },
   },
   {
     test: /\b(bye|goodbye|see you|that is all|that's all)\b/i,
-    reply: { text: "Thank you for visiting Easy Life Wellness Hub. Have a healthy, strong, and prosperous day!" },
+    reply: { text: "Thank you for visiting EASYLIFE WELLNESS HUB. Have a healthy, strong, and prosperous day!" },
   },
   {
-    test: /\b(who are you|what is easy life|tell me about easy life|what do you do)\b/i,
+    test: /\b(who are you|what is easylife|tell me about easylife|what do you do)\b/i,
     entry: "about-easy-life",
   },
   {
@@ -118,7 +118,7 @@ export default function SupportAssistant() {
     {
       id: 1,
       role: "assistant",
-      text: "Hi! I’m Easy Life’s support assistant. I can help with wellness products, training, services, delivery, returns, and contact options.",
+      text: "Hi! I’m EASYLIFE’s support assistant. I can help with wellness products, training, services, delivery, returns, and contact options.",
     },
   ]);
   const [draft, setDraft] = useState("");
@@ -158,7 +158,7 @@ export default function SupportAssistant() {
       {isOpen && (
         <div className="support-assistant-panel">
           <div className="support-assistant-header">
-            <strong>Easy Life Support</strong>
+            <strong>EASYLIFE Support</strong>
             <span>Online help</span>
           </div>
 
@@ -220,7 +220,7 @@ export default function SupportAssistant() {
               {isAnswering ? "…" : "Send"}
             </button>
           </div>
-          <a className="support-assistant-human-link" href="https://wa.me/2348089938820?text=Hello%20Easy%20Life%2C%20I%20need%20help%20with%20an%20order." target="_blank" rel="noreferrer">Chat with Easy Life on WhatsApp</a>
+          <a className="support-assistant-human-link" href="https://wa.me/2348089938820?text=Hello%20Easy%20Life%2C%20I%20need%20help%20with%20an%20order." target="_blank" rel="noreferrer">Chat with EASYLIFE on WhatsApp</a>
         </div>
       )}
     </div>

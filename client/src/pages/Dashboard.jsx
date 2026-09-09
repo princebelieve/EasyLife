@@ -225,13 +225,13 @@ export default function Dashboard() {
           {user?.distributorStatus === "approved" ? <button onClick={() => (window.location.href = "/distributor")}>Open Distributor Dashboard</button> : user?.distributorStatus === "pending" ? <button disabled>Distributor application pending</button> : <button onClick={() => showDistributorForm ? setShowDistributorForm(false) : setShowDistributorForm(true)}>{showDistributorForm ? "Close distributor application" : "Apply to become a distributor"}</button>}
         </div>
         {distributorMessage && <p className="inline-toast success">{distributorMessage}</p>}
-        {user?.distributorStatus === "pending" && <p className="muted">Your application has been submitted. An Easy Life administrator must approve it before you can access the Distributor Dashboard.</p>}
+        {user?.distributorStatus === "pending" && <p className="muted">Your application has been submitted. An EASYLIFE administrator must approve it before you can access the Distributor Dashboard.</p>}
         {showDistributorForm && user?.distributorStatus !== "pending" && (
           <section ref={distributorFormRef} className="content-card distributor-application">
             <div>
               <p className="eyebrow">Distributor application</p>
               <h2>Tell us how you will serve customers</h2>
-              <p className="muted">Buy at distributor prices, sell through your own Easy Life link, and manage your available stock after approval.</p>
+              <p className="muted">Buy at distributor prices, sell through your own EASYLIFE link, and manage your available stock after approval.</p>
             </div>
             <form onSubmit={applyForDistributorAccount} className="form distributor-application-form">
               <div className="form-grid">
@@ -417,15 +417,15 @@ export default function Dashboard() {
                 {order.paymentMethod === "paystack" && order.paymentStatus === "pending" && (
                   <div className="pending-payment-action">
                     <strong>Payment incomplete</strong>
-                    <span>Complete payment before Easy Life can prepare or dispatch this order.</span>
+                    <span>Complete payment before EASYLIFE can prepare or dispatch this order.</span>
                     <button type="button" className="primary" onClick={() => completePayment(order._id)}>Complete payment</button>
                   </div>
                 )}
                 {order.paymentMethod === "manual_bank_transfer" && order.paymentStatus !== "paid" && (
-                  <div className="pending-payment-action"><strong>Bank transfer awaiting verification</strong><span>{order.paymentInstructions || "Transfer to the account shown on your order confirmation, then upload your receipt for Easy Life to verify."}</span><label className="secondary-button">{uploadingReceiptFor === order._id ? "Uploading receipt…" : "Upload payment receipt"}<input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" hidden disabled={uploadingReceiptFor === order._id} onChange={(event) => uploadReceipt(order._id, event.target.files?.[0])} /></label>{order.paymentReceipts?.length > 0 && <small>{order.paymentReceipts.length} receipt{order.paymentReceipts.length === 1 ? "" : "s"} uploaded.</small>}</div>
+                  <div className="pending-payment-action"><strong>Bank transfer awaiting verification</strong><span>{order.paymentInstructions || "Transfer to the account shown on your order confirmation, then upload your receipt for EASYLIFE to verify."}</span><label className="secondary-button">{uploadingReceiptFor === order._id ? "Uploading receipt…" : "Upload payment receipt"}<input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" hidden disabled={uploadingReceiptFor === order._id} onChange={(event) => uploadReceipt(order._id, event.target.files?.[0])} /></label>{order.paymentReceipts?.length > 0 && <small>{order.paymentReceipts.length} receipt{order.paymentReceipts.length === 1 ? "" : "s"} uploaded.</small>}</div>
                 )}
                 {order.paymentMethod === "cash_on_delivery" && order.paymentStatus !== "paid" && (
-                  <div className="pending-payment-action"><strong>Pay on delivery by transfer</strong><span>{order.paymentInstructions || "When the agent arrives, transfer to the official Easy Life account sent to your WhatsApp or phone. The agent confirms payment before handing over the order."}</span><label className="secondary-button">{uploadingReceiptFor === order._id ? "Uploading receipt…" : "Upload payment receipt"}<input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" hidden disabled={uploadingReceiptFor === order._id} onChange={(event) => uploadReceipt(order._id, event.target.files?.[0])} /></label>{order.paymentReceipts?.length > 0 && <small>{order.paymentReceipts.length} receipt{order.paymentReceipts.length === 1 ? "" : "s"} uploaded.</small>}</div>
+                  <div className="pending-payment-action"><strong>Pay on delivery by transfer</strong><span>{order.paymentInstructions || "When the agent arrives, transfer to the official EASYLIFE account sent to your WhatsApp or phone. The agent confirms payment before handing over the order."}</span><label className="secondary-button">{uploadingReceiptFor === order._id ? "Uploading receipt…" : "Upload payment receipt"}<input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" hidden disabled={uploadingReceiptFor === order._id} onChange={(event) => uploadReceipt(order._id, event.target.files?.[0])} /></label>{order.paymentReceipts?.length > 0 && <small>{order.paymentReceipts.length} receipt{order.paymentReceipts.length === 1 ? "" : "s"} uploaded.</small>}</div>
                 )}
               </div>
             ))}

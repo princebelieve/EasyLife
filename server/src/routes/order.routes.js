@@ -94,7 +94,7 @@ router.post("/:id/payment-receipt", protect, receiptUpload.single("receipt"), as
 
     const admins = await User.find({ role: "admin" }).select("_id").lean();
     await notifyAdmins({ type: "order.payment_receipt", title: "Payment receipt uploaded", body: `${order.customerName || "A customer"} uploaded a receipt for ${order.orderNumber || "an order"}.`, link: `/admin/orders/${order._id}`, data: { orderId: String(order._id) } }, admins.map((admin) => String(admin._id)));
-    res.status(201).json({ message: "Receipt uploaded. Easy Life will verify the payment.", receipt: order.paymentReceipts[order.paymentReceipts.length - 1] });
+    res.status(201).json({ message: "Receipt uploaded. EASYLIFE will verify the payment.", receipt: order.paymentReceipts[order.paymentReceipts.length - 1] });
   } catch (error) {
     console.error("Payment receipt upload failed:", error);
     res.status(500).json({ message: error.message || "Unable to upload the receipt." });

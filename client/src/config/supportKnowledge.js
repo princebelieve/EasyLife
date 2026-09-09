@@ -1,10 +1,10 @@
 const supportKnowledge = [
   {
     slug: "about-easy-life",
-    title: "About Easy Life Wellness Hub",
+    title: "About EASYLIFE WELLNESS HUB",
     url: "/about",
-    summary: "Easy Life Wellness Hub provides wellness products, free practical education, and community support for healthier everyday living.",
-    keywords: ["about", "company", "vision", "mission", "easy life", "wellness hub", "who are you"],
+    summary: "EASYLIFE WELLNESS HUB provides wellness products, free practical education, and community support for healthier everyday living.",
+    keywords: ["about", "company", "vision", "mission", "easylife", "wellness hub", "who are you"],
     details: [
       "Our vision is to help people build healthier habits and stronger communities through wellness education, practical learning, and support.",
       "Our mission includes wellness education, quality products, wellness equipment, leadership development, and community outreach.",
@@ -25,7 +25,7 @@ const supportKnowledge = [
     slug: "wellness-products",
     title: "Wellness Products",
     url: "/collection",
-    summary: "Explore Easy Life wellness products for your everyday wellness journey.",
+    summary: "Explore EASYLIFE wellness products for your everyday wellness journey.",
     keywords: ["products", "shop", "buy", "order products", "collection", "tea", "supplements", "personal care"],
     details: [
       "Open the Wellness Shop to review available products, descriptions, prices, availability, and delivery information.",
@@ -39,7 +39,7 @@ const supportKnowledge = [
     summary: "High-quality wellness equipment for home use and professional care.",
     keywords: ["equipment", "device", "naturopathic equipment", "wellness device", "home care", "professional care"],
     details: [
-      "Ask Easy Life support about equipment specifications, suitability, availability, setup, and care before ordering.",
+      "Ask EASYLIFE support about equipment specifications, suitability, availability, setup, and care before ordering.",
       "Use equipment according to its product information and seek qualified professional advice for personal health concerns.",
     ],
   },
@@ -50,7 +50,7 @@ const supportKnowledge = [
     summary: "Free practical learning on wellness, hygiene, responsible product use, leadership, and community outreach.",
     keywords: ["wellness education", "hygiene", "training", "leadership", "community", "outreach"],
     details: [
-      "Easy Life provides practical learning in wellness, hygiene, responsible product use according to label directions, leadership, and public speaking.",
+      "EASYLIFE provides practical learning in wellness, hygiene, responsible product use according to label directions, leadership, and public speaking.",
       "Registered members do not receive commissions or rewards for recruiting other members.",
     ],
   },
@@ -58,7 +58,7 @@ const supportKnowledge = [
     slug: "training-and-leadership",
     title: "Training & Leadership",
     url: "/register",
-    summary: "Build practical skills, confidence, leadership ability, and a stronger network through Easy Life learning opportunities.",
+    summary: "Build practical skills, confidence, leadership ability, and a stronger network through EASYLIFE learning opportunities.",
     keywords: ["training", "leadership", "learning", "mentorship", "public speaking", "sales", "personal branding"],
     details: [
       "Free training takes place every Thursday at 11:00 AM at the Akpakpava location.",
@@ -69,7 +69,7 @@ const supportKnowledge = [
     slug: "membership",
     title: "Membership",
     url: "/register",
-    summary: "Learn freely and participate fully in the Easy Life community.",
+    summary: "Learn freely and participate fully in the EASYLIFE community.",
     keywords: ["membership", "member", "join", "community", "register", "mentorship"],
     details: [
       "Registered members may attend free Thursday training at 11:00 AM in Akpakpava and join official health-awareness outreaches.",
@@ -80,7 +80,7 @@ const supportKnowledge = [
     slug: "community-outreach",
     title: "Outreach & Partnerships",
     url: "/contact",
-    summary: "Easy Life works with wellness companies, schools, churches, NGOs, corporate organizations, and community associations to create meaningful local impact.",
+    summary: "EASYLIFE works with wellness companies, schools, churches, NGOs, corporate organizations, and community associations to create meaningful local impact.",
     keywords: ["outreach", "partnership", "sponsor", "school", "church", "ngo", "community", "organization"],
     details: [
       "Partners can discuss sponsorship, learning events, product showcases, wellness education, and community programs.",
@@ -102,11 +102,11 @@ const supportKnowledge = [
     slug: "payments-and-receipts",
     title: "Payments & Receipt Upload",
     url: "/how-to-use",
-    summary: "Signed-in customers can pay online or, when enabled, transfer directly to Easy Life and upload proof for verification.",
+    summary: "Signed-in customers can pay online or, when enabled, transfer directly to EASYLIFE and upload proof for verification.",
     keywords: ["payment", "paystack", "bank transfer", "manual transfer", "receipt", "proof", "account number"],
     details: [
-      "At checkout, choose Transfer directly to Easy Life when that option is enabled. Use the displayed verified account details and order number as narration where possible.",
-      "After transfer, open Dashboard and upload a JPG, PNG, WEBP, or PDF receipt up to 5 MB. Easy Life reviews it before confirming the order.",
+      "At checkout, choose Transfer directly to EASYLIFE when that option is enabled. Use the displayed verified account details and order number as narration where possible.",
+      "After transfer, open Dashboard and upload a JPG, PNG, WEBP, or PDF receipt up to 5 MB. EASYLIFE reviews it before confirming the order.",
       "For Paystack card, bank-transfer, and USSD payments, follow the secure Paystack screen instead of sending money to an unofficial account.",
     ],
   },
@@ -114,7 +114,7 @@ const supportKnowledge = [
     slug: "delivery-and-shipping",
     title: "Delivery & Shipping",
     url: "/contact",
-    summary: "Easy Life uses a simple flat delivery fee for checkout. The applicable rate and delivery estimate are shown before payment.",
+    summary: "EASYLIFE uses a simple flat delivery fee for checkout. The applicable rate and delivery estimate are shown before payment.",
     keywords: ["delivery", "shipping", "location", "nationwide", "fee", "arrival", "dispatch"],
     details: [
       "The checkout shows one flat delivery fee for the selected destination; it is not calculated from product weight, dimensions, or furniture-style categories.",
@@ -136,7 +136,7 @@ const supportKnowledge = [
     slug: "wellness-information",
     title: "Wellness Information",
     url: "/terms-conditions",
-    summary: "Easy Life educational materials and activities are for general education and wellbeing support.",
+    summary: "EASYLIFE educational materials and activities are for general education and wellbeing support.",
     keywords: ["medical", "diagnosis", "treatment", "doctor", "health advice", "safety"],
     details: [
       "Content on the website does not constitute medical advice, diagnosis, treatment, or a substitute for a qualified healthcare professional.",
@@ -147,7 +147,7 @@ const supportKnowledge = [
     slug: "contact-and-support",
     title: "Contact & Support",
     url: "/contact",
-    summary: "Contact Easy Life about wellness products, training, membership, outreach, partnerships, delivery, or order support.",
+    summary: "Contact EASYLIFE about wellness products, training, membership, outreach, partnerships, delivery, or order support.",
     keywords: ["contact", "support", "help", "whatsapp", "phone", "email", "call", "enquiry"],
     details: [
       "WhatsApp and phone support: 08089938820.",
@@ -159,7 +159,7 @@ const supportKnowledge = [
     slug: "privacy-and-account-data",
     title: "Privacy & Account Data",
     url: "/privacy-policy",
-    summary: "Easy Life uses account, order, support, and device information to provide services, process requests, secure the platform, and communicate with users.",
+    summary: "EASYLIFE uses account, order, support, and device information to provide services, process requests, secure the platform, and communicate with users.",
     keywords: ["privacy", "data", "personal information", "google sign in", "account security", "delete data"],
     details: [
       "Users may ask for access, correction, deletion, or restriction of certain personal data, subject to applicable law.",

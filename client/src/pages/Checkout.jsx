@@ -199,9 +199,9 @@ export default function Checkout() {
 
               <fieldset className="payment-methods checkout-fulfilment-methods">
                 <legend>How would you like to receive your order?</legend>
-                <p className="checkout-fulfilment-help">Delivery goes to a transport company or park in your selected state; customers collect from there. Office pickup is only for customers coming to Easy Life in Benin City.</p>
-                <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="delivery" checked={form.deliveryMethod === "delivery"} onChange={handleChange} /><span><strong>Delivery</strong><small>{distributor ? `${distributor.name} will arrange delivery.` : "Easy Life will arrange delivery."}</small></span></label>
-                <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="pickup" checked={form.deliveryMethod === "pickup"} onChange={handleChange} disabled={Boolean(distributor && !distributor.distributorPickupEnabled)} /><span><strong>Pick up — no shipping fee</strong><small>{distributor?.distributorPickupAddress || "Pick up from Easy Life Wellness Hub after confirmation."}</small></span></label>
+                <p className="checkout-fulfilment-help">Delivery goes to a transport company or park in your selected state; customers collect from there. Office pickup is only for customers coming to EASYLIFE in Benin City.</p>
+                <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="delivery" checked={form.deliveryMethod === "delivery"} onChange={handleChange} /><span><strong>Delivery</strong><small>{distributor ? `${distributor.name} will arrange delivery.` : "EASYLIFE will arrange delivery."}</small></span></label>
+                <label className="payment-method-option"><input type="radio" name="deliveryMethod" value="pickup" checked={form.deliveryMethod === "pickup"} onChange={handleChange} disabled={Boolean(distributor && !distributor.distributorPickupEnabled)} /><span><strong>Pick up — no shipping fee</strong><small>{distributor?.distributorPickupAddress || "Pick up from EASYLIFE WELLNESS HUB after confirmation."}</small></span></label>
               </fieldset>
 
               {form.deliveryMethod === "delivery" ? (
@@ -222,8 +222,8 @@ export default function Checkout() {
                 </>
               ) : (
                 <div className="checkout-pickup-note">
-                  <strong>Easy Life office pickup selected</strong>
-                  <span>{distributor?.distributorPickupAddress || "Collect from Easy Life Wellness Hub in Benin City after confirmation."}</span>
+                  <strong>EASYLIFE office pickup selected</strong>
+                  <span>{distributor?.distributorPickupAddress || "Collect from EASYLIFE WELLNESS HUB in Benin City after confirmation."}</span>
                 </div>
               )}
 
@@ -242,8 +242,8 @@ export default function Checkout() {
                 </label>
                 {isLoggedIn ? <>
                   {distributor && <label className="payment-method-option"><input type="radio" name="paymentMethod" value="distributor_transfer" checked={form.paymentMethod === "distributor_transfer"} onChange={handleChange} disabled={!distributor.distributorBankName || !distributor.distributorAccountNumber} /><span><strong>Transfer to {distributor.name}</strong><small>{distributor.distributorAccountName} · {distributor.distributorAccountNumber} · {distributor.distributorBankName}</small></span></label>}
-                  {!distributor && storePaymentSettings?.manualTransferEnabled && <label className="payment-method-option"><input type="radio" name="paymentMethod" value="manual_bank_transfer" checked={form.paymentMethod === "manual_bank_transfer"} onChange={handleChange} /><span><strong>Transfer directly to Easy Life</strong><small>{storePaymentSettings.accountName} · {storePaymentSettings.accountNumber} · {storePaymentSettings.bankName}{storePaymentSettings.transferInstructions ? ` — ${storePaymentSettings.transferInstructions}` : ""}</small></span></label>}
-                  <label className="payment-method-option"><input type="radio" name="paymentMethod" value="cash_on_delivery" checked={form.paymentMethod === "cash_on_delivery"} onChange={handleChange} /><span><strong>Pay on delivery by transfer</strong><small>When the agent arrives, transfer to the official Easy Life account sent to your WhatsApp or phone. The agent confirms payment before handing over the order; no cash is collected.</small></span></label>
+                  {!distributor && storePaymentSettings?.manualTransferEnabled && <label className="payment-method-option"><input type="radio" name="paymentMethod" value="manual_bank_transfer" checked={form.paymentMethod === "manual_bank_transfer"} onChange={handleChange} /><span><strong>Transfer directly to EASYLIFE</strong><small>{storePaymentSettings.accountName} · {storePaymentSettings.accountNumber} · {storePaymentSettings.bankName}{storePaymentSettings.transferInstructions ? ` — ${storePaymentSettings.transferInstructions}` : ""}</small></span></label>}
+                  <label className="payment-method-option"><input type="radio" name="paymentMethod" value="cash_on_delivery" checked={form.paymentMethod === "cash_on_delivery"} onChange={handleChange} /><span><strong>Pay on delivery by transfer</strong><small>When the agent arrives, transfer to the official EASYLIFE account sent to your WhatsApp or phone. The agent confirms payment before handing over the order; no cash is collected.</small></span></label>
                 </> : <p className="checkout-fulfilment-help">Guest checkout is online payment only. Sign in or create an account to use direct transfer or pay-on-delivery options.</p>}
               </fieldset>
 
@@ -330,7 +330,7 @@ export default function Checkout() {
 
               <h2>Total to pay: ₦{totalAmount.toLocaleString()}</h2>
               <p className="muted" style={{ marginTop: 6 }}>
-                {form.deliveryMethod === "pickup" ? "Easy Life office pickup selected — no shipping fee applies." : `Collection from ${form.pickupTransportCompany === "Other / specify a transport company or park" ? form.pickupOtherLocation || "your selected transport company" : form.pickupTransportCompany || "your selected transport company"} — the delivery fee is included above.`}
+                {form.deliveryMethod === "pickup" ? "EASYLIFE office pickup selected — no shipping fee applies." : `Collection from ${form.pickupTransportCompany === "Other / specify a transport company or park" ? form.pickupOtherLocation || "your selected transport company" : form.pickupTransportCompany || "your selected transport company"} — the delivery fee is included above.`}
               </p>
               {distributor && (
                 <div className="distributor-delivery-summary">

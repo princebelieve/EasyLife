@@ -5468,7 +5468,7 @@ iframe {
   box-shadow: 0 6px 16px rgba(31, 53, 86, 0.2);
 }
 
-/* Easy Life Wellness Hub */
+/* EASYLIFE WELLNESS HUB */
 .easy-life-home { color: #050805; background: #f6e8c4; }
 .easy-hero { background: radial-gradient(circle at 85% 20%, #159447 0, transparent 27%), linear-gradient(125deg, #050805, #063b20 58%, #075c32); color: #fff; padding: 104px 0 90px; overflow: hidden; position: relative; }
 .easy-hero:after { content: ""; position: absolute; inset: auto -10% -70px; height: 140px; background: #f6e8c4; border-radius: 50% 50% 0 0; opacity: .9; }
@@ -5531,11 +5531,11 @@ iframe {
 @keyframes easyHeroIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 .easy-hero-content { animation: easyHeroIn .8s ease both; }.easy-hero-card { animation: easyHeroIn .8s .18s ease both; }
 
-/* Easy Life footer palette and existing motion utilities on the new home. */
+/* EASYLIFE footer palette and existing motion utilities on the new home. */
 .footer { background: linear-gradient(135deg, #062919, #0d4827); border-top: 3px solid #c99f3f; }
 .footer-bottom { border-top: 1px solid rgba(226, 180, 77, .25); padding-top: 22px; }
 
-/* ================= EASY LIFE SITE-WIDE BRAND LAYER ================= */
+/* ================= EASYLIFE SITE-WIDE BRAND LAYER ================= */
 
 body {
   background: var(--cream);

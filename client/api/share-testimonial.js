@@ -38,10 +38,10 @@ export default async function handler(req, res) {
   try {
     const response = await fetch(`${apiBase}/testimonials/${encodeURIComponent(id)}`);
     const item = response.ok ? await response.json() : {};
-    const title = item.title || item.name || "Easy Life Wellness Hub";
-    const description = item.testimony || "Easy Life Wellness Hub community content.";
+    const title = item.title || item.name || "EASYLIFE WELLNESS HUB";
+    const description = item.testimony || "EASYLIFE WELLNESS HUB community content.";
     const image = item.image || youtubeThumbnail(item.videoUrl) || fallbackImage;
-    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><meta name="description" content="${escapeHtml(description)}"><meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(description)}"><meta property="og:image" content="${escapeHtml(image)}"><meta property="og:url" content="${pageUrl}"><meta property="og:type" content="article"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(description)}"><meta name="twitter:image" content="${escapeHtml(image)}"><meta http-equiv="refresh" content="0;url=${pageUrl}"></head><body><p>Opening Easy Life content...</p><script>location.replace(${JSON.stringify(pageUrl)})</script></body></html>`;
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><meta name="description" content="${escapeHtml(description)}"><meta property="og:title" content="${escapeHtml(title)}"><meta property="og:description" content="${escapeHtml(description)}"><meta property="og:image" content="${escapeHtml(image)}"><meta property="og:url" content="${pageUrl}"><meta property="og:type" content="article"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escapeHtml(title)}"><meta name="twitter:description" content="${escapeHtml(description)}"><meta name="twitter:image" content="${escapeHtml(image)}"><meta http-equiv="refresh" content="0;url=${pageUrl}"></head><body><p>Opening EASYLIFE content...</p><script>location.replace(${JSON.stringify(pageUrl)})</script></body></html>`;
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.status(200).send(html);
   } catch (error) {

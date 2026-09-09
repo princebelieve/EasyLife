@@ -69,7 +69,7 @@ export default function Hero() {
 
         <div>
           <button className="primary" onClick={() => navigate("/collection")}>
-            Explore Easy Life
+            Explore EASYLIFE
           </button>
 
           <button

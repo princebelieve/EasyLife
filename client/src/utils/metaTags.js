@@ -4,8 +4,8 @@
 
 export function setMetaTags(config) {
   const {
-    title = "Easy Life Wellness Hub",
-    description = "Easy Life Wellness Hub offers wellness products, free practical education, and community support for healthier everyday living.",
+    title = "EASYLIFE WELLNESS HUB",
+    description = "EASYLIFE WELLNESS HUB offers wellness products, free practical education, and community support for healthier everyday living.",
     image = "",
     url = window.location.href,
     type = "website",
@@ -107,7 +107,7 @@ export function setProductSchema(product, url) {
       availability: availability,
       seller: {
         "@type": "Organization",
-        name: "Easy Life Wellness Hub",
+        name: "EASYLIFE WELLNESS HUB",
       },
     },
     aggregateRating: product.rating

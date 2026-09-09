@@ -9,13 +9,13 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer-grid">
         <div className="footer-brand">
-          <img src="/logo.png" alt="Easy Life Wellness Hub" className="footer-logo" />
-          <h3>Easy Life Wellness Hub (EWH)</h3>
+          <img src="/logo.png" alt="EASYLIFE WELLNESS HUB" className="footer-logo" />
+          <h3>EASYLIFE WELLNESS HUB (EWH)</h3>
           <p>Nature Cares & Healthy Living.</p>
           <p className="footer-address">95, Akpakpava, Benin City, Edo State, Nigeria</p>
         </div>
 
-        <nav className="footer-links" aria-label="Explore Easy Life">
+        <nav className="footer-links" aria-label="Explore EASYLIFE">
           <h4>Explore</h4>
           <Link to="/collection">Shop Wellness Products</Link>
           <Link to="/testimonials">Testimonials</Link>
@@ -36,15 +36,15 @@ export default function Footer() {
             <Link to="/register">Register</Link>
           </>}
           <Link to="/support">Support Guide</Link>
-          <Link to="/how-to-use">How to Use Easy Life</Link>
+          <Link to="/how-to-use">How to Use EASYLIFE</Link>
         </nav>
 
         <div className="footer-contact">
           <h4>Contact & Follow</h4>
           <a href="mailto:support@easylifewellnesshub.com">support@easylifewellnesshub.com</a>
           <a href="tel:+2348089938820">08089938820</a>
-          <a href="https://clinic.easylifewellnesshub.com" target="_blank" rel="noopener noreferrer">Visit Easy Life Clinic</a>
-          <a href="https://supermarket.easylifewellnesshub.com" target="_blank" rel="noopener noreferrer">Visit Easy Life Supermarket</a>
+          <a href="https://clinic.easylifewellnesshub.com" target="_blank" rel="noopener noreferrer">Visit EASYLIFE Clinic</a>
+          <a href="https://supermarket.easylifewellnesshub.com" target="_blank" rel="noopener noreferrer">Visit EASYLIFE Supermarket</a>
           <div className="footer-social">
             <a href="https://www.facebook.com/share/19KyBKsDzg/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><FaFacebook size={24} /></a>
             <a href="https://wa.me/2348089938820" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><FaWhatsapp size={24} /></a>
@@ -59,7 +59,7 @@ export default function Footer() {
         <Link to="/refund-policy">Refund & Returns</Link>
         <Link to="/terms-conditions">Terms & Conditions</Link>
       </div>
-      <div className="footer-bottom">(c) {new Date().getFullYear()} Easy Life Wellness Hub. All rights reserved.</div>
+      <div className="footer-bottom">(c) {new Date().getFullYear()} EASYLIFE WELLNESS HUB. All rights reserved.</div>
     </footer>
   );
 }

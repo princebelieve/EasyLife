@@ -193,10 +193,10 @@ app.get("/feed.xml", async (req, res) => {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml +=
       '<feed xmlns="http://www.w3.org/2005/Atom" xmlns:g="http://base.google.com/ns/1.0">\n';
-    xml += `  <title>Easy Life Wellness Hub Products</title>\n`;
+    xml += `  <title>EASYLIFE WELLNESS HUB Products</title>\n`;
     xml += `  <link rel="alternate" type="text/html" href="${baseUrl}"/>\n`;
     xml += `  <updated>${new Date().toISOString()}</updated>\n`;
-    xml += `  <author><name>Easy Life Wellness Hub</name></author>\n`;
+    xml += `  <author><name>EASYLIFE WELLNESS HUB</name></author>\n`;
 
     products.forEach((product) => {
       // Availability: use Google canonical values
@@ -282,7 +282,7 @@ app.use("/api/push", pushRoutes);
 app.use("/api/admin/users", adminUserRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Easy Life Wellness Hub API is running");
+  res.send("EASYLIFE WELLNESS HUB API is running");
 });
 
 // Keep multipart validation errors in JSON so the Content Studio can show a
