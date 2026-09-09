@@ -15,6 +15,7 @@ export default function Success() {
   const isPaid = Boolean(order?.paymentStatus === "paid");
   const isCashOnDelivery = order?.paymentMethod === "cash_on_delivery";
   const isManualTransfer = order?.paymentMethod === "manual_bank_transfer";
+  const isGuestOrder = Boolean(order?.guestCheckout);
   const isError = Boolean(error || !order);
   const pageTitle = isError
     ? "⚠️ Verification Pending"
@@ -402,9 +403,15 @@ export default function Success() {
             <button className="success-whatsapp-receipt" type="button" onClick={sendOrderReceiptToWhatsApp}>
               Send order receipt to Easy Life on WhatsApp
             </button>
-            <button className="primary" onClick={() => navigate("/dashboard")}>
-              View My Orders
-            </button>
+            {isGuestOrder ? (
+              <Link to="/register">
+                <button className="primary">Create an account for future order tracking</button>
+              </Link>
+            ) : (
+              <button className="primary" onClick={() => navigate("/dashboard")}>
+                View My Orders
+              </button>
+            )}
             <Link to="/collection">
               <button>Continue Shopping</button>
             </Link>

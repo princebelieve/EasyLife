@@ -142,10 +142,12 @@ router.post("/", async (req, res) => {
 
       await order.save();
 
-      await Cart.findOneAndUpdate({ userId: order.userId }, { items: [] });
+      if (order.userId) {
+        await Cart.findOneAndUpdate({ userId: order.userId }, { items: [] });
+      }
 
       // Create notification for user
-      const paymentNotif = await createNotification({
+      const paymentNotif = order.userId && await createNotification({
         userId: order.userId,
         type: "payment.confirmed",
         title: "Payment Confirmed",

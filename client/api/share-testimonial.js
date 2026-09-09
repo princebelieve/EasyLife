@@ -1,3 +1,5 @@
+import { getServerApiBase } from "./_apiBase.js";
+
 function escapeHtml(value = "") {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -23,18 +25,18 @@ function youtubeThumbnail(url = "") {
 
 export default async function handler(req, res) {
   const id = req.query?.id;
-  const backendUrl = process.env.BACKEND_URL || process.env.API_URL || process.env.VITE_API_URL || process.env.BASE_URL;
+  const apiBase = getServerApiBase(req);
   const fallbackImage = "https://easylifewellnesshub.com/logo.png";
   const pageUrl = `https://easylifewellnesshub.com/testimonials${id ? `?post=${encodeURIComponent(id)}` : ""}`;
 
-  if (!id || !backendUrl) {
+  if (!id) {
     res.writeHead(302, { Location: pageUrl });
     res.end();
     return;
   }
 
   try {
-    const response = await fetch(`${backendUrl.replace(/\/$/, "")}/api/testimonials/${encodeURIComponent(id)}`);
+    const response = await fetch(`${apiBase}/testimonials/${encodeURIComponent(id)}`);
     const item = response.ok ? await response.json() : {};
     const title = item.title || item.name || "Easy Life Wellness Hub";
     const description = item.testimony || "Easy Life Wellness Hub community content.";

@@ -45,7 +45,31 @@ export default function AdminOrderDetails() {
 
         <div className="order-card">
           <h3>Customer Info</h3>
-          <p>{order.customerName}</p>
+          <p><strong>{order.customerName}</strong></p>
+          <p>Email: {order.email || "Not provided"}</p>
+          <p>Phone: {order.phone || "Not provided"}</p>
+        </div>
+
+        <div className="order-card">
+          <h3>Fulfilment details</h3>
+          {order.deliveryMethod === "pickup" ? (
+            <>
+              <p><strong>Easy Life office pickup</strong></p>
+              <p>{order.pickupLocation || "Easy Life Wellness Hub, Benin City"}</p>
+              <p className="muted">No shipping fee applies. Confirm the order is ready before the customer collects it.</p>
+            </>
+          ) : (
+            <>
+              <p><strong>Delivery to transport-company collection point</strong></p>
+              <p><strong>Address / nearest landmark:</strong> {order.address || "Not provided"}</p>
+              <p><strong>State:</strong> {order.state || "Not provided"}</p>
+              {order.city && <p><strong>City / area:</strong> {order.city}</p>}
+              <p><strong>Selected transport company or park:</strong> {order.transportCompanyPickupPoint || "Not selected"}</p>
+              {order.shippingService && <p><strong>Shipping service:</strong> {order.shippingService}</p>}
+              {order.deliveryEstimate && <p><strong>Estimated delivery:</strong> {order.deliveryEstimate}</p>}
+              <p className="muted">Do not send this order to the customer’s house. Confirm the closest available terminal and collection instructions before dispatch.</p>
+            </>
+          )}
         </div>
 
         <div className="order-card">
@@ -71,6 +95,7 @@ export default function AdminOrderDetails() {
         <div className="order-card">
           <h3>Summary</h3>
           <p>Payment method: {order.paymentMethod === "cash_on_delivery" ? "Pay on delivery" : order.paymentMethod === "manual_bank_transfer" ? "Manual bank transfer" : order.paymentMethod === "distributor_transfer" ? "Distributor transfer" : "Paystack"}</p>
+          <p>Payment status: <strong>{order.paymentStatus}</strong></p>
           {order.paymentMethod === "cash_on_delivery" && <p>Payment before handover: {order.cashCollectionStatus}</p>}
           {order.paymentMethod === "manual_bank_transfer" && <p>Transfer verification: {order.manualTransferStatus}</p>}
           {order.paymentInstructions && <p className="muted">{order.paymentInstructions}</p>}

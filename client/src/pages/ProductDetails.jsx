@@ -357,7 +357,7 @@ export default function ProductDetails() {
                 <h3>Delivery</h3>
                 {deliveryInfo.serviceName && <p><strong>Method:</strong> {deliveryInfo.serviceName}</p>}
                 {deliveryInfo.estimatedDays && <p><strong>Estimated delivery to Nigeria:</strong> {deliveryInfo.estimatedDays}</p>}
-                <p className="muted">Your delivery fee and estimate are confirmed for your destination at checkout.</p>
+                <p className="muted">Your delivery fee and estimate are confirmed for your destination at checkout. One delivery fee covers the complete order, not each product.</p>
               </div>
             )}
 

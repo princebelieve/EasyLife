@@ -10,6 +10,21 @@ import {
 } from "../services/api";
 
 const CartContext = createContext();
+const GUEST_CART_KEY = "easyLifeGuestCart";
+
+function readGuestCart() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(GUEST_CART_KEY) || "[]");
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item) => item?.productId && Number.isInteger(item.quantity) && item.quantity > 0);
+  } catch {
+    return [];
+  }
+}
+
+function saveGuestCart(items) {
+  localStorage.setItem(GUEST_CART_KEY, JSON.stringify(items));
+}
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
@@ -24,7 +39,7 @@ export function CartProvider({ children }) {
     setLoading(true);
 
     if (!token) {
-      setCart([]);
+      setCart(readGuestCart());
       setLoading(false);
       return;
     }
@@ -44,7 +59,9 @@ export function CartProvider({ children }) {
             productId: productObj._id || productObj,
             name: productObj.name || "",
             image: productObj.coverImage || "",
-            price: Number(productObj.price || 0),
+            price: Number(productObj.salePrice) >= 0 && Number(productObj.salePrice) < Number(productObj.price || 0)
+              ? Number(productObj.salePrice)
+              : Number(productObj.price || 0),
             quantity: item.quantity,
             deliveryCategory: productObj.deliveryCategory || "",
             category: productObj.category || "",
@@ -73,13 +90,6 @@ export function CartProvider({ children }) {
   }, [token]);
 
   async function addToCart(product, quantity = 1) {
-    if (!token) {
-      return {
-        success: false,
-        message: "Please login first.",
-      };
-    }
-
     const productId = product?._id;
     if (!productId) {
       return { success: false, message: "This product is unavailable." };
@@ -93,6 +103,28 @@ export function CartProvider({ children }) {
     addingProductIds.current.add(productId);
 
     try {
+      if (!token) {
+        const guestItem = {
+          productId,
+          name: product.name || "",
+          image: product.coverImage || "",
+          price: Number(product.salePrice) >= 0 && Number(product.salePrice) < Number(product.price || 0)
+            ? Number(product.salePrice)
+            : Number(product.price || 0),
+          quantity: Math.max(1, Number(quantity) || 1),
+          category: product.category || "",
+        };
+        setCart((current) => {
+          const existing = current.find((item) => item.productId === productId);
+          const next = existing
+            ? current.map((item) => item.productId === productId ? { ...item, quantity: item.quantity + guestItem.quantity } : item)
+            : [...current, guestItem];
+          saveGuestCart(next);
+          return next;
+        });
+        return { success: true };
+      }
+
       await addToCartApi(token, productId, quantity);
       await loadCart();
       return {
@@ -110,6 +142,15 @@ export function CartProvider({ children }) {
   }
 
   async function removeFromCart(productId) {
+    if (!token) {
+      setCart((current) => {
+        const next = current.filter((item) => item.productId !== productId);
+        saveGuestCart(next);
+        return next;
+      });
+      return;
+    }
+
     try {
       await removeFromCartApi(token, productId);
       loadCart();
@@ -121,6 +162,15 @@ export function CartProvider({ children }) {
   async function updateQuantity(productId, quantity) {
     if (quantity <= 0) {
       await removeFromCart(productId);
+      return;
+    }
+
+    if (!token) {
+      setCart((current) => {
+        const next = current.map((item) => item.productId === productId ? { ...item, quantity } : item);
+        saveGuestCart(next);
+        return next;
+      });
       return;
     }
 
@@ -144,6 +194,12 @@ export function CartProvider({ children }) {
   }
 
   async function clearCart() {
+    if (!token) {
+      localStorage.removeItem(GUEST_CART_KEY);
+      setCart([]);
+      return;
+    }
+
     try {
       await clearCartApi(token);
       setCart([]);

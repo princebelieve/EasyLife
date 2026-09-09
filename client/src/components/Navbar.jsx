@@ -15,7 +15,7 @@ export default function Navbar() {
 
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { isLoggedIn, isAdmin, logout, user } = useAuth();
+  const { isLoggedIn, isAdmin, isAdminOrSubadmin, logout, user } = useAuth();
   const { cartCount } = useCart();
   const { unreadCount } = useNotifications();
 
@@ -115,7 +115,7 @@ export default function Navbar() {
           <Link to="/contact">Contact</Link>
           <Link to="/how-to-use">How It Works</Link>
 
-          {isLoggedIn && <Link to="/cart">Cart</Link>}
+          {cartCount > 0 && <Link to="/cart">Cart ({cartCount})</Link>}
 
           {isLoggedIn && <Link to="/dashboard">Dashboard</Link>}
 
@@ -123,7 +123,7 @@ export default function Navbar() {
 
           {isLoggedIn && user?.distributorStatus === "approved" && <Link to="/distributor">Distributor Dashboard</Link>}
 
-          {isAdmin && <Link to="/admin">Admin</Link>}
+          {isAdminOrSubadmin && <Link to={isAdmin ? "/admin" : "/admin/products"}>{isAdmin ? "Admin" : "Workspace"}</Link>}
 
           {!isLoggedIn ? (
             <>
@@ -140,7 +140,7 @@ export default function Navbar() {
         <div className="nav-actions">
           <NotificationDropdown />
 
-          {isLoggedIn && (
+          {cartCount > 0 && (
             <button
               type="button"
               className="cart-btn"
@@ -242,15 +242,15 @@ export default function Navbar() {
             How It Works
           </Link>
 
-          {isLoggedIn && (
+          {cartCount > 0 && (
             <Link to="/cart" onClick={() => setOpen(false)}>
               Cart ({cartCount})
             </Link>
           )}
 
-          <Link to="/notifications" onClick={() => setOpen(false)}>
+          {isLoggedIn && <Link to="/notifications" onClick={() => setOpen(false)}>
             Notifications {unreadCount > 0 ? `(${unreadCount})` : ""}
-          </Link>
+          </Link>}
 
           {isLoggedIn && (
             <>
@@ -276,9 +276,9 @@ export default function Navbar() {
             </>
           )}
 
-          {isAdmin && (
-            <Link to="/admin/products" onClick={() => setOpen(false)}>
-              Admin
+          {isAdminOrSubadmin && (
+            <Link to={isAdmin ? "/admin" : "/admin/products"} onClick={() => setOpen(false)}>
+              {isAdmin ? "Admin" : "Workspace"}
             </Link>
           )}
 

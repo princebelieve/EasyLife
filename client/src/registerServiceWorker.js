@@ -25,25 +25,42 @@ async function subscribeToPush(registration) {
       return;
     }
 
+    const apiUrl = import.meta.env.VITE_API_URL || "";
+    const vapidResponse = await fetch(`${apiUrl}/api/push/vapid-public-key`);
+    if (!vapidResponse.ok) {
+      console.log("VAPID key not available on server");
+      return;
+    }
+
+    const { publicKey } = await vapidResponse.json();
+    if (!publicKey) {
+      console.log("No VAPID public key received");
+      return;
+    }
+
+    const applicationServerKey = urlBase64ToUint8Array(publicKey);
     let subscription = await registration.pushManager.getSubscription();
 
-    const apiUrl = import.meta.env.VITE_API_URL || "";
-    if (!subscription) {
-      const vapidResponse = await fetch(`${apiUrl}/api/push/vapid-public-key`);
-      if (!vapidResponse.ok) {
-        console.log("VAPID key not available on server");
+    // A subscription is bound to the VAPID public key it was created with.
+    // If deployment keys are rotated, retaining the old subscription makes
+    // every server-side push fail. Recreate it automatically in that case.
+    if (
+      subscription &&
+      !subscriptionMatchesVapidKey(subscription, applicationServerKey)
+    ) {
+      const unsubscribed = await subscription.unsubscribe();
+      if (!unsubscribed) {
+        console.warn("Unable to refresh outdated push subscription");
         return;
       }
+      subscription = null;
+    }
 
-      const { publicKey } = await vapidResponse.json();
-      if (!publicKey) {
-        console.log("No VAPID public key received");
-        return;
-      }
+    if (!subscription) {
 
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey),
+        applicationServerKey,
       });
     }
 
@@ -96,6 +113,22 @@ function urlBase64ToUint8Array(base64String) {
   }
 
   return outputArray;
+}
+
+function subscriptionMatchesVapidKey(subscription, expectedKey) {
+  const currentKey = subscription.options?.applicationServerKey;
+
+  // Older browsers may not expose this option. Preserve a working
+  // subscription rather than unnecessarily removing it in those browsers.
+  if (!currentKey) {
+    return true;
+  }
+
+  const currentKeyBytes = new Uint8Array(currentKey);
+  return (
+    currentKeyBytes.length === expectedKey.length &&
+    currentKeyBytes.every((byte, index) => byte === expectedKey[index])
+  );
 }
 
 export function registerServiceWorker() {

@@ -4,6 +4,14 @@
           "source": "/share/testimonial",
           "destination": "/api/share-testimonial"
         },
+        {
+          "source": "/share/product",
+          "destination": "/api/share-product"
+        },
+        {
+          "source": "/product/:id",
+          "destination": "/api/product-page?id=:id"
+        },
     {
       "source": "/api/products-feed.csv",
       "destination": "/api/products-feed"
@@ -15,6 +23,10 @@
     {
       "source": "/robots.txt",
       "destination": "/robots.txt"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://api.easylifewellnesshub.com/api/:path*"
     },
     {
       "source": "/(.*)",

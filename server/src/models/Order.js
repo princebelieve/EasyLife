@@ -38,6 +38,12 @@ const orderSchema = new mongoose.Schema(
       default: "",
     },
 
+    guestCheckout: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
     customerName: {
       type: String,
       default: "",

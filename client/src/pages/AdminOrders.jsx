@@ -1,5 +1,6 @@
 //client/src/pages/AdminOrders.jsx
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { getAdminOrders, updateOrderStatusApi } from "../services/api";
 import { formatDate } from "../utils/formatDate";
@@ -96,6 +97,10 @@ export default function AdminOrders() {
                       Delivery:
                       <strong> {order.deliveryStatus}</strong>
                     </p>
+
+                    <Link className="secondary-button" to={`/admin/orders/${order._id}`} style={{ display: "inline-block", marginTop: 12 }}>
+                      View order & fulfilment details
+                    </Link>
 
                     <select
                       value={order.deliveryStatus}

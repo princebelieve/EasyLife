@@ -122,22 +122,8 @@ export default function App() {
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/d/:code" element={<DistributorStore />} />
 
-            <Route
-              path="/cart"
-              element={
-                <RequireAuth>
-                  <Cart />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/checkout"
-              element={
-                <RequireAuth>
-                  <Checkout />
-                </RequireAuth>
-              }
-            />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
 
             <Route
               path="/dashboard"
@@ -336,16 +322,6 @@ export default function App() {
                     <AdminTestimonials />
                   </AdminLayout>
                 </RequireAdminOrSubadmin>
-              }
-            />
-            <Route
-              path="/admin/users"
-              element={
-                <RequireAdmin>
-                  <AdminLayout>
-                    <AdminUsers />
-                  </AdminLayout>
-                </RequireAdmin>
               }
             />
             <Route

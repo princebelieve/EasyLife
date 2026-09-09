@@ -139,13 +139,13 @@ export default function AdminShipping() {
 
     <form ref={stateRateFormRef} className="form" onSubmit={saveStateRate} style={{ marginTop: 32 }}>
       <h2>Nigeria state delivery rates</h2>
-      <p className="muted">This is the main setup. Set the one delivery price customers pay when they select each Nigerian state.</p>
+      <p className="muted">This is the main setup. Set the one delivery price for the entire order when customers select each Nigerian state.</p>
       <div className="wizard-grid">
         <select required name="state" value={stateRateForm.state} onChange={changeStateRate}>
           <option value="">Select a state</option>
           {NIGERIAN_STATES.map((state) => <option key={state} value={state}>{state}</option>)}
         </select>
-        <input required type="number" min="0" name="baseDeliveryFee" placeholder="State delivery price (NGN)" value={stateRateForm.baseDeliveryFee} onChange={changeStateRate} />
+        <input required type="number" min="0" name="baseDeliveryFee" placeholder="Whole-order delivery price (NGN)" value={stateRateForm.baseDeliveryFee} onChange={changeStateRate} />
         <input required name="serviceName" placeholder="Service name" value={stateRateForm.serviceName} onChange={changeStateRate} />
         <input required name="estimatedDays" placeholder="Delivery estimate" value={stateRateForm.estimatedDays} onChange={changeStateRate} />
       </div>

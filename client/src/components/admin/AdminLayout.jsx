@@ -58,7 +58,7 @@ export default function AdminLayout({ children }) {
     navigate("/login");
   }
 
-  const links = [
+  const allLinks = [
     {
       to: "/admin",
       label: "Dashboard",
@@ -172,6 +172,23 @@ export default function AdminLayout({ children }) {
     },
   ];
 
+  const adminOnlyLinks = new Set([
+    "/admin",
+    "/admin/orders",
+    "/admin/distributors",
+    "/admin/sales",
+    "/admin/stock",
+    "/admin/delivery",
+    "/admin/shipping",
+    "/admin/transport-companies",
+    "/admin/payment-settings",
+    "/admin/inquiries",
+    "/admin/users",
+  ]);
+  const links = allLinks.filter(
+    (link) => user?.role === "admin" || !adminOnlyLinks.has(link.to),
+  );
+
   return (
     <div className="admin-shell">
       {/* TOPBAR */}
@@ -198,13 +215,8 @@ export default function AdminLayout({ children }) {
 
         {/* DESKTOP QUICK NAV */}
         <nav className="admin-desktop-nav">
-          <Link to="/admin">Dashboard</Link>
-
           <Link to="/admin/products">Products</Link>
-
-          <Link to="/admin/orders">Orders</Link>
-
-          <Link to="/admin/sales">Sales</Link>
+          {user?.role === "admin" && <><Link to="/admin">Dashboard</Link><Link to="/admin/orders">Orders</Link><Link to="/admin/sales">Sales</Link></>}
         </nav>
 
         <div className="admin-topbar-right">

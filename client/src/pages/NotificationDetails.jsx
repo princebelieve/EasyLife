@@ -26,5 +26,12 @@ export default function NotificationDetails() {
   if (!notification) return <main className="page"><p>Loading notification...</p></main>;
 
   const target = getNotificationDestination(notification, isAdmin);
-  return <main className="page notification-detail-page"><button type="button" onClick={() => navigate("/notifications")}>Back to notifications</button><h1>{notification.title || "Notification"}</h1><p>{notification.body}</p><small>{new Date(notification.createdAt).toLocaleString()}</small><div><button type="button" onClick={() => navigate(target)}>{getNotificationActionLabel(notification, isAdmin)}</button><button type="button" onClick={() => navigate("/notifications")}>Close</button></div></main>;
+  const openDestination = () => {
+    if (/^(https?:|mailto:)/i.test(target)) {
+      window.open(target, "_blank", "noopener,noreferrer");
+      return;
+    }
+    navigate(target);
+  };
+  return <main className="page notification-detail-page"><button type="button" onClick={() => navigate("/notifications")}>Back to notifications</button><h1>{notification.title || "Notification"}</h1><p>{notification.body}</p><small>{new Date(notification.createdAt).toLocaleString()}</small><div><button type="button" onClick={openDestination}>{getNotificationActionLabel(notification, isAdmin)}</button><button type="button" onClick={() => navigate("/notifications")}>Close</button></div></main>;
 }

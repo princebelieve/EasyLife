@@ -1,13 +1,12 @@
+import { getServerApiBase } from "./_apiBase.js";
+
 export default async function handler(req, res) {
-  const backendUrl = process.env.VITE_API_URL || process.env.BASE_URL;
-  const apiUrl = backendUrl ? `${backendUrl.replace(/\/$/, "")}/api/products` : null;
+  const apiUrl = `${getServerApiBase(req)}/products`;
 
   try {
     let products = [];
-    if (apiUrl) {
-      const response = await fetch(apiUrl);
-      if (response.ok) products = await response.json();
-    }
+    const response = await fetch(apiUrl);
+    if (response.ok) products = await response.json();
 
     const baseUrl = "https://easylifewellnesshub.com";
     const staticPages = [

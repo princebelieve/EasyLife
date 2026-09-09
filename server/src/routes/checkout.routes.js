@@ -14,13 +14,165 @@ const { calculateShipping } = require("../config/shipping");
 const {
   createNotification,
   countUnreadNotifications,
+  notifyAdmins,
 } = require("../services/notification.service");
-const { sendPushToUser } = require("../services/push.service");
+const { sendPushToAdmins, sendPushToUser } = require("../services/push.service");
 
 const clientUrl = (process.env.CLIENT_URL || "http://localhost:5173")
   .split(",")[0]
   .trim()
   .replace(/\/$/, "");
+
+const guestCheckoutAttempts = new Map();
+
+function allowGuestCheckout(req) {
+  const forwardedFor = String(req.headers["x-forwarded-for"] || "");
+  const ip = (forwardedFor.split(",")[0] || req.ip || "unknown").trim();
+  const now = Date.now();
+  const windowMs = 15 * 60 * 1000;
+  const limit = 8;
+  const recent = (guestCheckoutAttempts.get(ip) || []).filter(
+    (timestamp) => now - timestamp < windowMs,
+  );
+
+  if (recent.length >= limit) return false;
+  recent.push(now);
+  guestCheckoutAttempts.set(ip, recent);
+  return true;
+}
+
+function validGuestItems(items) {
+  return Array.isArray(items) && items.length > 0 && items.length <= 20 && items.every(
+    (item) => item?.productId && Number.isSafeInteger(Number(item.quantity)) && Number(item.quantity) > 0 && Number(item.quantity) <= 50,
+  );
+}
+
+function getCheckoutPrice(product) {
+  const regularPrice = Number(product.price || 0);
+  const salePrice = Number(product.salePrice);
+  return Number.isFinite(salePrice) && salePrice >= 0 && salePrice < regularPrice
+    ? salePrice
+    : regularPrice;
+}
+
+router.post("/guest", async (req, res) => {
+  try {
+    if (!allowGuestCheckout(req)) {
+      return res.status(429).json({ message: "Too many checkout attempts. Please wait a few minutes and try again." });
+    }
+
+    const { customerName, email, phone, address, state, country = "NG", notes = "", pickupTransportCompany, pickupOtherLocation, deliveryMethod = "delivery", items } = req.body;
+    const normalizedEmail = String(email || "").trim().toLowerCase();
+    const normalizedPhone = String(phone || "").trim();
+    const normalizedName = String(customerName || "").trim();
+
+    if (!normalizedName || !/^\S+@\S+\.\S+$/.test(normalizedEmail) || !normalizedPhone) {
+      return res.status(400).json({ message: "Enter your name, a valid email address, and phone number." });
+    }
+    if (!validGuestItems(items)) {
+      return res.status(400).json({ message: "Your guest cart is invalid. Review the selected products and quantities." });
+    }
+
+    const selectedPickupLocation = String(pickupTransportCompany || "").trim() === "Other / specify a transport company or park"
+      ? String(pickupOtherLocation || "").trim()
+      : String(pickupTransportCompany || "").trim();
+    if (deliveryMethod === "delivery" && (!String(address || "").trim() || !selectedPickupLocation)) {
+      return res.status(400).json({ message: "Enter your address or landmark and select a transport company or park." });
+    }
+    if (!['delivery', 'pickup'].includes(deliveryMethod)) {
+      return res.status(400).json({ message: "Choose a valid delivery method." });
+    }
+
+    const requestedById = new Map(items.map((item) => [String(item.productId), Number(item.quantity)]));
+    const products = await Product.find({
+      _id: { $in: [...requestedById.keys()] },
+      hidden: { $ne: true },
+      pendingApproval: { $ne: true },
+      pendingDeletion: { $ne: true },
+      status: { $ne: "inactive" },
+      approved: { $ne: false },
+    });
+
+    if (products.length !== requestedById.size) {
+      return res.status(400).json({ message: "One or more products are no longer available. Refresh your cart and try again." });
+    }
+
+    let subtotal = 0;
+    const orderItems = products.map((product) => {
+      const quantity = requestedById.get(String(product._id));
+      if (Number(product.stock || 0) < quantity) {
+        const error = new Error(`${product.name} no longer has enough stock.`);
+        error.statusCode = 400;
+        throw error;
+      }
+      const price = getCheckoutPrice(product);
+      subtotal += price * quantity;
+      return { productId: String(product._id), name: product.name, image: product.coverImage, price, quantity };
+    });
+
+    const shippingData = deliveryMethod === "pickup"
+      ? { shippingAvailable: true, shippingFee: 0, serviceName: "Pickup", estimatedDays: "Ready after confirmation" }
+      : await calculateShipping({ country, state, items: orderItems });
+    if (shippingData.shippingAvailable === false) {
+      return res.status(400).json({ message: shippingData.message || "Shipping is not available for the selected destination." });
+    }
+
+    const shippingFee = Number(shippingData.shippingFee || 0);
+    const totalAmount = subtotal + shippingFee;
+    const confirmationToken = crypto.randomBytes(32).toString("hex");
+    const confirmationTokenHash = crypto.createHash("sha256").update(confirmationToken).digest("hex");
+    const payment = await paystack.post("/transaction/initialize", {
+      email: normalizedEmail,
+      amount: totalAmount * 100,
+      currency: "NGN",
+      callback_url: `${clientUrl}/success?order_token=${confirmationToken}`,
+      metadata: { guestCheckout: true, customerName: normalizedName, phone: normalizedPhone, state, country, transportCompanyPickupPoint: selectedPickupLocation },
+    });
+
+    const order = await Order.create({
+      guestCheckout: true,
+      customerName: normalizedName,
+      email: normalizedEmail,
+      phone: normalizedPhone,
+      address: String(address || "").trim(),
+      state: String(state || "").trim(),
+      notes: String(notes || "").trim(),
+      items: orderItems,
+      subtotal,
+      shippingFee,
+      deliveryFee: shippingFee,
+      totalAmount,
+      currency: "NGN",
+      paymentMethod: "paystack",
+      paymentStatus: "pending",
+      deliveryStatus: "pending",
+      deliveryZone: String(country || "NG").toUpperCase(),
+      deliveryMethod,
+      pickupLocation: deliveryMethod === "pickup" ? "Easy Life Wellness Hub, Benin City" : "",
+      transportCompanyPickupPoint: deliveryMethod === "delivery" ? selectedPickupLocation : "",
+      deliveryEstimate: shippingData.estimatedDays || "",
+      shippingService: shippingData.serviceName || "",
+      deliveryContact: normalizedPhone,
+      paymentReference: payment.data.data.reference,
+      confirmationTokenHash,
+      confirmationTokenExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    });
+
+    const admins = await User.find({ role: "admin", isDeleted: { $ne: true }, isSuspended: { $ne: true } }).select("_id").lean();
+    const adminIds = admins.map((admin) => admin._id);
+    if (adminIds.length) {
+      const title = "New guest order";
+      const body = `${normalizedName} placed a guest order for ₦${Number(totalAmount).toLocaleString()}.`;
+      await notifyAdmins({ type: "order.created.guest", title, body, link: `/admin/orders/${order._id}`, data: { orderId: order._id, guestCheckout: true } }, adminIds);
+      await sendPushToAdmins(adminIds, { title, body, link: `/admin/orders/${order._id}`, data: { orderId: order._id, guestCheckout: true } }).catch((error) => console.warn("Guest order push notification failed:", error));
+    }
+
+    res.status(201).json({ checkoutType: "paystack", authorization_url: payment.data.data.authorization_url, reference: payment.data.data.reference });
+  } catch (error) {
+    console.error("Guest checkout failed:", error.response?.data || error.message);
+    res.status(error.statusCode || 500).json({ message: error.message || "Guest checkout could not be started." });
+  }
+});
 
 router.post("/", protect, async (req, res) => {
   try {
@@ -78,7 +230,8 @@ router.post("/", protect, async (req, res) => {
     const orderItems = validCartItems.map((item) => {
       const product = item.productId;
 
-      const itemTotal = Number(product.price || 0) * item.quantity;
+      const unitPrice = getCheckoutPrice(product);
+      const itemTotal = unitPrice * item.quantity;
 
       subtotal += itemTotal;
 
@@ -86,7 +239,7 @@ router.post("/", protect, async (req, res) => {
         productId: product._id.toString(),
         name: product.name,
         image: product.coverImage,
-        price: Number(product.price || 0),
+        price: unitPrice,
         quantity: item.quantity,
       };
     });
@@ -198,6 +351,33 @@ router.post("/", protect, async (req, res) => {
       }).catch((err) => {
         console.warn("Push notification failed (non-critical):", err);
       });
+    }
+
+    // A customer order is also an operational event. Notify every active
+    // administrator with a direct link to the fulfilment details.
+    const admins = await User.find({ role: "admin", isDeleted: { $ne: true }, isSuspended: { $ne: true } }).select("_id").lean();
+    const adminIds = admins.map((admin) => admin._id);
+    if (adminIds.length) {
+      const orderCode = order.orderNumber || `#${order._id.toString().slice(-6).toUpperCase()}`;
+      const adminTitle = "New order placed";
+      const adminBody = `${orderCode}: ${customerName} placed an order for ₦${Number(totalAmount).toLocaleString()}.`;
+      const adminLink = `/admin/orders/${order._id}`;
+      const adminNotifications = await notifyAdmins({
+        type: "order.created.admin",
+        title: adminTitle,
+        body: adminBody,
+        link: adminLink,
+        data: { orderId: order._id, paymentMethod, paymentStatus: order.paymentStatus },
+      }, adminIds);
+
+      if (adminNotifications.length) {
+        await sendPushToAdmins(adminIds, {
+          title: adminTitle,
+          body: adminBody,
+          link: adminLink,
+          data: { orderId: order._id, paymentMethod, paymentStatus: order.paymentStatus },
+        }).catch((error) => console.warn("Admin order push notification failed (non-critical):", error));
+      }
     }
 
     if (["cash_on_delivery", "distributor_transfer", "manual_bank_transfer"].includes(paymentMethod)) {

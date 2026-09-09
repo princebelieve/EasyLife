@@ -134,8 +134,9 @@ export function setProductSchema(product, url) {
 }
 
 export function getShareUrl(productId, productName) {
-  const apiBaseUrl = (import.meta.env.VITE_API_URL || window.location.origin).replace(/\/$/, "");
-  return `${apiBaseUrl}/api/share/product/${encodeURIComponent(productId)}?utm_source=share&utm_medium=social&utm_campaign=${encodeURIComponent(productName)}`;
+  // Share from the public site. This route serves social-preview metadata,
+  // then redirects people to the real product detail page.
+  return `${window.location.origin}/share/product?id=${encodeURIComponent(productId)}&utm_source=share&utm_medium=social&utm_campaign=${encodeURIComponent(productName)}`;
 }
 
 export function getContentShareUrl(contentId) {

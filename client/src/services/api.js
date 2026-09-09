@@ -259,6 +259,16 @@ export async function getShippingZones(token) {
   });
 }
 
+export async function initializeGuestCheckout(payload) {
+  return apiRequest("/api/checkout/guest", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+}
+
 export async function completePendingPayment(orderId) {
   return apiRequest(`/api/orders/${orderId}/complete-payment`, { method: "POST" });
 }

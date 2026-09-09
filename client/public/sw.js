@@ -31,7 +31,13 @@ self.addEventListener("push", (event) => {
       body: data.body || "You have a new notification",
       icon: data.icon || "/logo.png",
       badge: data.badge || "/logo.png",
-      tag: data.tag || "notification",
+      // A shared tag causes each new alert to replace the previous one. Use a
+      // stable event id when the server has one, otherwise keep alerts unique.
+      tag:
+        data.tag ||
+        data.data?.notificationId ||
+        data.data?.orderId ||
+        `notification-${Date.now()}`,
       requireInteraction: data.requireInteraction || false,
       data: data.data || {},
     };
@@ -68,6 +74,7 @@ self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
   const link = event.notification.data?.link || "/";
+  const targetUrl = new URL(link, self.location.origin).href;
 
   event.waitUntil(
     self.clients
@@ -76,14 +83,14 @@ self.addEventListener("notificationclick", (event) => {
         // Check if there's already a window/tab with the target URL
         for (let i = 0; i < windowClients.length; i++) {
           const client = windowClients[i];
-          if (client.url === link && "focus" in client) {
+          if (client.url === targetUrl && "focus" in client) {
             return client.focus();
           }
         }
 
         // If not, open a new window
         if (self.clients.openWindow) {
-          return self.clients.openWindow(link);
+          return self.clients.openWindow(targetUrl);
         }
       }),
   );

@@ -1,14 +1,15 @@
+import { getServerApiBase } from "./_apiBase.js";
+
 export default async function handler(req, res) {
-  const backendUrl =
-    process.env.VITE_API_URL || process.env.BASE_URL || "http://localhost:4000";
+  const apiBase = getServerApiBase(req);
   const host = req.headers.host;
   const protocol = req.headers["x-forwarded-proto"] || "https";
   const clientUrl =
     process.env.CLIENT_URL ||
     (host ? `${protocol}://${host}` : "http://localhost:5173");
   const publicClientUrl = clientUrl.split(",")[0].trim().replace(/\/$/, "");
-    const apiUrl = `${backendUrl}/api/products`;
-    const shippingUrl = `${backendUrl}/api/shipping/merchant-rates`;
+    const apiUrl = `${apiBase}/products`;
+    const shippingUrl = `${apiBase}/shipping/merchant-rates`;
 
   try {
     const response = await fetch(apiUrl);
