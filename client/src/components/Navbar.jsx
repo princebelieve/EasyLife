@@ -106,7 +106,7 @@ export default function Navbar() {
         />
         <span className="brand-name" aria-label="EASYLIFE WELLNESS HUB">
           <span>EASYLIFE</span>
-          <span>Wellness Hub</span>
+          <span>WELLNESS HUB</span>
         </span>
       </Link>
 
