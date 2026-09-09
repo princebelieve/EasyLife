@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { FaFacebook, FaTiktok, FaWhatsapp, FaYoutube } from "react-icons/fa";
+import useAuth from "../context/AuthContext";
 
 export default function Footer() {
+  const { isLoggedIn, user } = useAuth();
+
   return (
     <footer className="footer">
       <div className="container footer-grid">
@@ -25,8 +28,13 @@ export default function Footer() {
           <h4>Customer Care</h4>
           <Link to="/dashboard">My Orders</Link>
           <Link to="/cart">Cart</Link>
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
+          {isLoggedIn ? <>
+            <Link to="/profile">My Profile</Link>
+            {user?.distributorStatus === "approved" && <Link to="/distributor">Distributor Dashboard</Link>}
+          </> : <>
+            <Link to="/login">Login</Link>
+            <Link to="/register">Register</Link>
+          </>}
           <Link to="/support">Support Guide</Link>
           <Link to="/how-to-use">How to Use Easy Life</Link>
         </nav>

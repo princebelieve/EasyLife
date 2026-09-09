@@ -27,6 +27,7 @@ import AdminProductForm from "./pages/AdminProductForm";
 import RequireAdmin from "./components/RequireAdmin.jsx";
 import RequireAdminOrSubadmin from "./components/RequireAdminOrSubadmin.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
+import RequireGuest from "./components/RequireGuest.jsx";
 import AdminOrders from "./pages/AdminOrders";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLayout from "./components/admin/AdminLayout";
@@ -176,8 +177,8 @@ export default function App() {
             <Route path="/cancel" element={<Cancel />} />
 
             {/* AUTH */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<RequireGuest><Login /></RequireGuest>} />
+            <Route path="/register" element={<RequireGuest><Register /></RequireGuest>} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
