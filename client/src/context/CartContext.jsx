@@ -12,6 +12,15 @@ import {
 const CartContext = createContext();
 const GUEST_CART_KEY = "easyLifeGuestCart";
 
+function getDisplayPrice(product = {}) {
+  const regularPrice = Number(product.price || 0);
+  const salePrice = product.salePrice == null ? null : Number(product.salePrice);
+
+  return Number.isFinite(salePrice) && salePrice >= 0 && salePrice < regularPrice
+    ? salePrice
+    : regularPrice;
+}
+
 function readGuestCart() {
   try {
     const parsed = JSON.parse(localStorage.getItem(GUEST_CART_KEY) || "[]");
@@ -59,9 +68,7 @@ export function CartProvider({ children }) {
             productId: productObj._id || productObj,
             name: productObj.name || "",
             image: productObj.coverImage || "",
-            price: Number(productObj.salePrice) >= 0 && Number(productObj.salePrice) < Number(productObj.price || 0)
-              ? Number(productObj.salePrice)
-              : Number(productObj.price || 0),
+            price: getDisplayPrice(productObj),
             quantity: item.quantity,
             deliveryCategory: productObj.deliveryCategory || "",
             category: productObj.category || "",
@@ -108,9 +115,7 @@ export function CartProvider({ children }) {
           productId,
           name: product.name || "",
           image: product.coverImage || "",
-          price: Number(product.salePrice) >= 0 && Number(product.salePrice) < Number(product.price || 0)
-            ? Number(product.salePrice)
-            : Number(product.price || 0),
+          price: getDisplayPrice(product),
           quantity: Math.max(1, Number(quantity) || 1),
           category: product.category || "",
         };

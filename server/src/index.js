@@ -217,8 +217,8 @@ app.get("/feed.xml", async (req, res) => {
       xml += `    <link rel="alternate" type="text/html" href="${baseUrl}/product/${product._id}"/>\n`;
       xml += `    <g:image_link>${product.coverImage}</g:image_link>\n`;
       const regularPrice = Number(product.price || 0);
-      const salePrice = Number(product.salePrice);
-      const hasSalePrice = Number.isFinite(salePrice) && salePrice >= 0 && salePrice < regularPrice;
+      const salePrice = product.salePrice == null ? null : Number(product.salePrice);
+      const hasSalePrice = salePrice != null && Number.isFinite(salePrice) && salePrice >= 0 && salePrice < regularPrice;
       xml += `    <g:price>${regularPrice.toFixed(2)} NGN</g:price>\n`;
       if (hasSalePrice) xml += `    <g:sale_price>${salePrice.toFixed(2)} NGN</g:sale_price>\n`;
       xml += `    <g:availability>${availability}</g:availability>\n`;

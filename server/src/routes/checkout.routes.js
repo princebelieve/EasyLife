@@ -49,8 +49,8 @@ function validGuestItems(items) {
 
 function getCheckoutPrice(product) {
   const regularPrice = Number(product.price || 0);
-  const salePrice = Number(product.salePrice);
-  return Number.isFinite(salePrice) && salePrice >= 0 && salePrice < regularPrice
+  const salePrice = product.salePrice == null ? null : Number(product.salePrice);
+  return salePrice != null && Number.isFinite(salePrice) && salePrice >= 0 && salePrice < regularPrice
     ? salePrice
     : regularPrice;
 }
