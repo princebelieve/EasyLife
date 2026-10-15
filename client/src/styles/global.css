@@ -6211,10 +6211,10 @@ button:hover,
 .testimonial-card, .testimonial-home-card { position: relative; overflow: hidden; border: 1px solid rgba(232, 198, 106, .42); border-radius: 8px; background: linear-gradient(145deg, #031d10, #063b20 58%, #0b7a43); box-shadow: 0 14px 34px rgba(6, 59, 32, .2), 0 0 22px rgba(21, 148, 71, .12); }
 .testimonial-media, .testimonial-home-card > video, .testimonial-home-card > img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; background: var(--navy); }
 .testimonial-media video { width: 100%; height: 100%; object-fit: cover; }
-.testimonial-media img { width: 100%; height: 100%; object-fit: cover; }
+.testimonial-media img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; background: #031d10; }
 .testimonial-media iframe, .testimonial-home-media iframe { width: 100%; height: 100%; min-height: 220px; border: 0; display: block; }
 .testimonial-home-media { position: relative; z-index: 1; width: 100%; aspect-ratio: 16 / 10; background: var(--navy); }
-.testimonial-home-media video, .testimonial-home-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.testimonial-home-media video, .testimonial-home-media img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; background: #031d10; }
 .testimonial-media video, .testimonial-home-media video { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; background: #000; image-rendering: auto; }
 .testimonial-home-media audio { display: block; width: calc(100% - 32px); margin: calc(31.25% - 20px) 16px; }
 .testimonial-placeholder { display: grid; place-items: center; height: 100%; color: var(--cream); letter-spacing: .1em; }
@@ -6497,3 +6497,22 @@ button:hover,
   .collection-product-promo .service-promo-dots button { width: 6px; height: 6px; }
   .collection-product-promo .service-promo-dots button.active { width: 16px; }
 }
+
+/* Announcement popup and uncropped uploaded media. */
+.site-announcement-banner { position: fixed; top: auto; right: 20px; bottom: 90px; left: auto; z-index: 1190; display: block; width: min(360px, calc(100vw - 32px)); min-height: 0; padding: 0; border: 1px solid rgba(232, 198, 106, .7); border-radius: 12px; background: #063b20; box-shadow: 0 18px 46px rgba(3, 29, 16, .34); color: var(--cream); animation: promoSlideIn .45s ease both; }
+.site-announcement-banner::before { display: none; }
+.site-announcement-banner > button { position: absolute; top: 8px; right: 8px; z-index: 2; display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid rgba(255,255,255,.55); border-radius: 50%; background: rgba(3, 29, 16, .7); color: var(--white); }
+.site-announcement-media { display: block; width: 100%; max-height: 220px; object-fit: contain; background: #031d10; }
+.site-announcement-audio { padding: 22px 16px 0; }
+.site-announcement-audio audio { width: 100%; }
+.site-announcement-copy { display: grid; gap: 8px; padding: 14px 16px 16px; }
+.site-announcement-copy h2 { margin: 0; color: var(--gold); font-size: 1rem; }
+.site-announcement-copy p { display: -webkit-box; overflow: hidden; margin: 0; color: #e5efe5; font-size: .84rem; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 4; }
+.site-announcement-copy small { color: rgba(229, 239, 229, .76); font-size: .72rem; }
+.site-announcement-copy a { display: inline-flex; align-items: center; justify-self: start; gap: 6px; padding: 8px 12px; border: 1px solid rgba(232, 198, 106, .7); border-radius: 6px; color: var(--cream); font-size: .82rem; font-weight: 800; text-decoration: none; }
+.testimonial-admin-card-content { min-width: 0; }
+.testimonial-admin-media { display: grid; gap: 10px; max-width: 360px; margin: 0 0 14px; }
+.testimonial-admin-media img, .testimonial-admin-media video { display: block; width: 100%; max-height: 240px; object-fit: contain; background: #031d10; }
+.testimonial-admin-media audio { width: 100%; }
+.testimonial-admin-card-content > small { display: block; margin-top: 6px; }
+@media (max-width: 600px) { .site-announcement-banner { right: 12px; bottom: 76px; left: 12px; width: auto; } .site-announcement-media { max-height: 180px; } }

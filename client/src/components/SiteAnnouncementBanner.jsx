@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { X, ArrowRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowRight, X } from "lucide-react";
 import { getTestimonials } from "../services/api";
 import useAuth from "../context/AuthContext";
 import { getSafeContentLink } from "../utils/contentLinks";
+
+function formatDateTime(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : date.toLocaleString();
+}
 
 export default function SiteAnnouncementBanner() {
   const [items, setItems] = useState([]);
@@ -26,7 +31,7 @@ export default function SiteAnnouncementBanner() {
 
   useEffect(() => {
     if (items.length < 2) return undefined;
-    const timer = window.setInterval(() => setIndex((current) => (current + 1) % items.length), 4500);
+    const timer = window.setInterval(() => setIndex((current) => (current + 1) % items.length), 6500);
     return () => window.clearInterval(timer);
   }, [items.length]);
 
@@ -44,22 +49,30 @@ export default function SiteAnnouncementBanner() {
 
   const announcementLink = isExternal ? (
     <a href={target} target="_blank" rel="noreferrer" onClick={viewPost}>
-      Read announcement <ArrowRight size={16} aria-hidden="true" />
+      Read more <ArrowRight size={16} aria-hidden="true" />
     </a>
   ) : (
     <Link to={target} onClick={viewPost}>
-      Read announcement <ArrowRight size={16} aria-hidden="true" />
+      Read more <ArrowRight size={16} aria-hidden="true" />
     </Link>
   );
 
   return (
-    <aside className="site-announcement-banner" role="status" aria-live="polite">
-      <span className="site-announcement-label">{item.contentType || "Announcement"}</span>
-      <span className="site-announcement-text">{item.title || item.testimony}</span>
-      {announcementLink}
+    <aside className="site-announcement-banner" aria-label="EASYLIFE announcement">
       <button type="button" onClick={() => setDismissed(true)} aria-label="Dismiss announcement">
         <X size={18} aria-hidden="true" />
       </button>
+      {item.mediaType === "image" && item.image && <img className="site-announcement-media" src={item.image} alt={item.title || item.name || "Announcement"} />}
+      {item.mediaType === "video" && item.videoFile && <video className="site-announcement-media" controls playsInline preload="metadata" poster={item.image || undefined} src={item.videoFile} />}
+      {item.mediaType === "audio" && item.audioFile && <div className="site-announcement-audio"><audio controls preload="metadata" src={item.audioFile} /></div>}
+      <div className="site-announcement-copy">
+        <span className="site-announcement-label">{item.contentType || "Announcement"}</span>
+        <h2>{item.title || item.name || "EASYLIFE announcement"}</h2>
+        {item.testimony && <p>{item.testimony}</p>}
+        {item.createdAt && <small>Uploaded {formatDateTime(item.createdAt)}</small>}
+        {item.updatedAt && item.updatedAt !== item.createdAt && <small>Updated {formatDateTime(item.updatedAt)}</small>}
+        {announcementLink}
+      </div>
     </aside>
   );
 }
