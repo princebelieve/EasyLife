@@ -32,6 +32,7 @@ export default function SiteAnnouncementBanner() {
 
   if (!items.length || dismissed || !visible) return null;
   const item = items[index];
+  const hasMedia = Boolean(item.videoFile || item.audioFile || item.image);
   const target = getSafeContentLink(item.linkUrl, `/testimonials#${item._id}`);
   const isExternal = /^https?:\/\//i.test(target);
   function viewPost(event) {
@@ -58,13 +59,11 @@ export default function SiteAnnouncementBanner() {
 
   return (
     <div className="site-announcement-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) dismiss(); }}>
-      <section className="site-announcement-popup" role="dialog" aria-modal="true" aria-labelledby="site-announcement-title">
+      <section className={`site-announcement-popup${hasMedia ? " has-media" : ""}`} role="dialog" aria-modal="true" aria-labelledby="site-announcement-title">
       <button type="button" className="site-announcement-close" onClick={dismiss} aria-label="Dismiss announcement">
         <X size={18} aria-hidden="true" />
       </button>
-      {item.mediaType === "image" && item.image && <img className="site-announcement-media" src={item.image} alt={item.title || item.name || "Announcement"} />}
-      {item.mediaType === "video" && item.videoFile && <video className="site-announcement-media" controls playsInline preload="metadata" poster={item.image || undefined} src={item.videoFile} />}
-      {item.mediaType === "audio" && item.audioFile && <div className="site-announcement-audio"><audio controls preload="metadata" src={item.audioFile} /></div>}
+      {item.videoFile ? <video className="site-announcement-media" controls playsInline preload="metadata" poster={item.image || undefined} src={item.videoFile} /> : item.audioFile ? <div className="site-announcement-audio"><audio controls preload="metadata" src={item.audioFile} /></div> : item.image ? <img className="site-announcement-media" src={item.image} alt={item.title || item.name || "Announcement"} /> : null}
       <div className="site-announcement-copy">
         <span className="site-announcement-label">{item.contentType || "Announcement"}</span>
         <h2 id="site-announcement-title">{item.title || item.name || "EASYLIFE announcement"}</h2>

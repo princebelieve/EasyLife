@@ -6522,3 +6522,47 @@ button:hover,
 .testimonials-grid > .testimonial-card, .testimonial-home-grid > .testimonial-home-card { grid-column: 1; justify-self: center; width: min(100%, 880px); }
 .testimonial-date { display: block; margin: 0 0 5px; color: rgba(229, 239, 229, .72); font-size: .76rem; }
 @media (max-width: 600px) { .site-announcement-media { max-height: 32vh; } .site-announcement-overlay { padding: 14px; } }
+
+/* Keep community content and promotions closer to familiar social feed cards. */
+.testimonial-card::before, .testimonial-home-card::before { display: none; }
+.testimonial-card, .testimonial-home-card { border: 1px solid #e4e6eb; border-radius: 10px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .1); }
+.testimonial-media { aspect-ratio: auto; max-height: 560px; display: grid; place-items: center; padding: 0; background: #f0f2f5; }
+.testimonial-media img { width: 100%; height: auto; max-height: 560px; object-fit: contain; background: #f0f2f5; }
+.testimonial-media video, .testimonial-media iframe { width: 100%; height: auto; max-height: 560px; aspect-ratio: 16 / 9; background: #111; }
+.testimonial-media audio { width: calc(100% - 32px); margin: 16px; }
+.testimonial-home-media { aspect-ratio: auto; max-height: 560px; display: grid; place-items: center; background: #f0f2f5; }
+.testimonial-home-media img, .testimonial-home-media video { width: 100%; height: auto; max-height: 560px; object-fit: contain; background: #f0f2f5; }
+.testimonial-home-media audio { width: calc(100% - 32px); margin: 16px; }
+.testimonial-body, .testimonial-home-body { padding: 16px 18px 18px; color: #1c1e21; }
+.testimonial-quote, .testimonial-home-card p { color: #1c1e21; line-height: 1.5; }
+.testimonial-body h2, .testimonial-home-card strong { color: #1c1e21; }
+.testimonial-body span, .testimonial-home-card span { color: #606770; }
+.testimonial-date { color: #65676b; }
+.post-share-button { border-color: #dadde1; background: #f0f2f5; color: #1c1e21; }
+
+.site-announcement-popup { background: #fff; color: #1c1e21; }
+.site-announcement-popup.has-media { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(250px, .9fr); align-items: stretch; width: min(760px, 100%); }
+.site-announcement-media { grid-column: 1; align-self: stretch; width: 100%; height: 100%; min-height: 260px; max-height: 440px; object-fit: contain; background: #f0f2f5; }
+.site-announcement-audio { grid-column: 1; display: grid; align-items: center; padding: 24px; background: #f0f2f5; }
+.site-announcement-copy { grid-column: 2; align-content: center; padding: 28px 24px; }
+.site-announcement-copy h2 { color: #1c1e21; font-size: 1.2rem; line-height: 1.3; }
+.site-announcement-copy p { color: #4b4f56; -webkit-line-clamp: 6; }
+.site-announcement-copy small { color: #65676b; }
+.site-announcement-copy a { border-color: #d8dadf; background: #f0f2f5; color: #1c1e21; }
+.site-announcement-close { background: rgba(28, 30, 33, .7); }
+
+.sitewide-image-advert { top: 112px; right: 20px; bottom: auto; width: min(430px, calc(100vw - 32px)); border-color: #e4e6eb; border-radius: 10px; background: #fff; box-shadow: 0 2px 12px rgba(0, 0, 0, .16); }
+.sitewide-image-advert a { display: grid; grid-template-columns: 130px minmax(0, 1fr); align-items: center; min-height: 126px; color: #1c1e21; }
+.sitewide-image-advert img { width: 130px; height: 126px; object-fit: cover; background: #f0f2f5; }
+.sitewide-image-advert-copy { padding: 12px 14px; }
+.sitewide-image-advert-copy strong { color: #1c1e21; }
+.sitewide-image-advert-copy span { color: #65676b; -webkit-line-clamp: 3; }
+.sitewide-image-advert-close { border-color: rgba(255,255,255,.8); }
+@media (max-width: 600px) {
+  .site-announcement-popup.has-media { grid-template-columns: 1fr; }
+  .site-announcement-media, .site-announcement-audio { grid-column: 1; min-height: 0; max-height: 34vh; }
+  .site-announcement-copy { grid-column: 1; padding: 18px; }
+  .sitewide-image-advert a { grid-template-columns: 100px minmax(0, 1fr); min-height: 104px; }
+  .sitewide-image-advert img { width: 100px; height: 104px; }
+  .sitewide-image-advert { top: auto; right: 12px; bottom: 76px; left: 12px; width: auto; }
+}
