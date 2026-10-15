@@ -4,12 +4,7 @@ import { ArrowRight, X } from "lucide-react";
 import { getTestimonials } from "../services/api";
 import useAuth from "../context/AuthContext";
 import { getSafeContentLink } from "../utils/contentLinks";
-
-function formatDateTime(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "" : date.toLocaleString();
-}
+import relativeDateTime from "../utils/relativeDateTime";
 
 export default function SiteAnnouncementBanner() {
   const [items, setItems] = useState([]);
@@ -47,6 +42,10 @@ export default function SiteAnnouncementBanner() {
     navigate("/login");
   }
 
+  function dismiss() {
+    setDismissed(true);
+  }
+
   const announcementLink = isExternal ? (
     <a href={target} target="_blank" rel="noreferrer" onClick={viewPost}>
       Read more <ArrowRight size={16} aria-hidden="true" />
@@ -58,8 +57,9 @@ export default function SiteAnnouncementBanner() {
   );
 
   return (
-    <aside className="site-announcement-banner" aria-label="EASYLIFE announcement">
-      <button type="button" onClick={() => setDismissed(true)} aria-label="Dismiss announcement">
+    <div className="site-announcement-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) dismiss(); }}>
+      <section className="site-announcement-popup" role="dialog" aria-modal="true" aria-labelledby="site-announcement-title">
+      <button type="button" className="site-announcement-close" onClick={dismiss} aria-label="Dismiss announcement">
         <X size={18} aria-hidden="true" />
       </button>
       {item.mediaType === "image" && item.image && <img className="site-announcement-media" src={item.image} alt={item.title || item.name || "Announcement"} />}
@@ -67,12 +67,13 @@ export default function SiteAnnouncementBanner() {
       {item.mediaType === "audio" && item.audioFile && <div className="site-announcement-audio"><audio controls preload="metadata" src={item.audioFile} /></div>}
       <div className="site-announcement-copy">
         <span className="site-announcement-label">{item.contentType || "Announcement"}</span>
-        <h2>{item.title || item.name || "EASYLIFE announcement"}</h2>
+        <h2 id="site-announcement-title">{item.title || item.name || "EASYLIFE announcement"}</h2>
         {item.testimony && <p>{item.testimony}</p>}
-        {item.createdAt && <small>Uploaded {formatDateTime(item.createdAt)}</small>}
-        {item.updatedAt && item.updatedAt !== item.createdAt && <small>Updated {formatDateTime(item.updatedAt)}</small>}
+        {item.createdAt && <small>Uploaded {relativeDateTime(item.createdAt)}</small>}
+        {item.updatedAt && item.updatedAt !== item.createdAt && <small>Updated {relativeDateTime(item.updatedAt)}</small>}
         {announcementLink}
       </div>
-    </aside>
+      </section>
+    </div>
   );
 }

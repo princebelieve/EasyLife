@@ -202,9 +202,15 @@ async function updateTestimonial(req, res) {
       testimonial.approved = false;
       testimonial.status = "inactive";
     }
-    if (req.body.image !== undefined) testimonial.image = lastValue(req.body.image);
-    if (req.body.videoFile !== undefined) testimonial.videoFile = lastValue(req.body.videoFile);
-    if (req.body.audioFile !== undefined) testimonial.audioFile = lastValue(req.body.audioFile);
+    if (req.body.image !== undefined) {
+      testimonial.image = lastValue(req.body.image);
+    }
+    if (req.body.videoFile !== undefined) {
+      testimonial.videoFile = lastValue(req.body.videoFile);
+    }
+    if (req.body.audioFile !== undefined) {
+      testimonial.audioFile = lastValue(req.body.audioFile);
+    }
     if (req.body.mediaType !== undefined) {
       testimonial.mediaType = req.body.mediaType;
       if (req.body.mediaType !== "image") testimonial.image = "";
